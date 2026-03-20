@@ -1,4 +1,6 @@
 import { useState } from 'react'
+
+const LS_START_SIDE = 'flashcard_start_side'
 import { FlashCard } from '@/features/flashcards/components/FlashCard'
 import { CardNavigation } from '@/features/flashcards/components/CardNavigation'
 import { useFlashcards } from '@/features/flashcards/hooks/useFlashcards'
@@ -21,6 +23,16 @@ export function FlashcardsPage() {
   const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null)
   const [selectedTag, setSelectedTag]           = useState<string | null>(null)
   const [showFilters, setShowFilters]           = useState(false)
+  const [startSide, setStartSide] = useState<'word' | 'explanation'>(
+    () => (localStorage.getItem(LS_START_SIDE) === 'explanation' ? 'explanation' : 'word')
+  )
+
+  function toggleStartSide() {
+    const next = startSide === 'word' ? 'explanation' : 'word'
+    setStartSide(next)
+    localStorage.setItem(LS_START_SIDE, next)
+    reset()
+  }
 
   const { updateEntry } = useEntryCrud()
 
@@ -50,13 +62,25 @@ export function FlashcardsPage() {
         {/* Title */}
         <h1 className="text-2xl font-bold text-gray-900 shrink-0">Flashcards</h1>
 
-        {/* Right side: rating + filters button */}
+        {/* Right side: rating + start side toggle + filters button */}
         <div className="flex items-center gap-3 sm:ml-auto">
           <RatingMultiSelect
             selected={selectedRatings}
             onChange={setSelectedRatings}
             compact
           />
+
+          <div className="w-px h-4 bg-gray-200 shrink-0" />
+
+          {/* Start side toggle */}
+          <button
+            onClick={toggleStartSide}
+            title={startSide === 'word' ? 'Showing word first — click to show explanation first' : 'Showing explanation first — click to show word first'}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+          >
+            <span>{startSide === 'word' ? '🔤' : '💬'}</span>
+            <span className="hidden sm:inline">{startSide === 'word' ? 'Word first' : 'Explanation first'}</span>
+          </button>
 
           <div className="w-px h-4 bg-gray-200 shrink-0" />
 
@@ -162,7 +186,7 @@ export function FlashcardsPage() {
         </div>
       ) : (
         <div className="max-w-xl mx-auto w-full flex flex-col gap-6 pt-2">
-          <FlashCard card={currentCard} isFlipped={isFlipped} onFlip={flip} />
+          <FlashCard card={currentCard} isFlipped={isFlipped} onFlip={flip} reversed={startSide === 'explanation'} />
 
           {/* Inline card actions */}
           <div className="flex items-center justify-between px-1">

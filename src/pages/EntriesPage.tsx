@@ -5,6 +5,7 @@ import { RatingMultiSelect } from "@/shared/ui/RatingMultiSelect";
 import { EntryCard } from "@/features/entries/components/EntryCard";
 import { EntryForm } from "@/features/entries/components/AddEntryForm";
 import { EditEntryModal } from "@/features/entries/components/EditEntryModal";
+import { EntryDetailModal } from "@/features/entries/components/EntryDetailModal";
 import { useEntries } from "@/features/entries/hooks/useEntries";
 import { Entry, EntryCategory } from "@/features/entries/types";
 
@@ -20,6 +21,7 @@ const CATEGORIES: Array<{ value: EntryCategory | "all"; label: string }> = [
 export function EntriesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingEntry, setEditingEntry] = useState<Entry | null>(null);
+  const [viewingEntry, setViewingEntry] = useState<Entry | null>(null);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   const location = useLocation();
@@ -94,13 +96,13 @@ export function EntriesPage() {
             placeholder="Search word or explanation..."
             className="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
           />
-          <div className="flex gap-1.5 flex-wrap">
+          <div className="flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:flex-wrap">
             {CATEGORIES.map(({ value, label }) => (
               <button
                 key={value}
                 onClick={() => setFilterCategory(value)}
                 className={[
-                  "px-3 py-2 rounded-lg text-sm font-medium border transition-colors",
+                  "shrink-0 px-3 py-2 rounded-lg text-sm font-medium border transition-colors",
                   filterCategory === value
                     ? "bg-indigo-600 text-white border-indigo-600"
                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50",
@@ -225,9 +227,19 @@ export function EntriesPage() {
               entry={entry}
               onRemove={removeEntry}
               onEdit={setEditingEntry}
+              onView={setViewingEntry}
             />
           ))}
         </div>
+      )}
+
+      {/* Detail modal */}
+      {viewingEntry && (
+        <EntryDetailModal
+          entry={viewingEntry}
+          onClose={() => setViewingEntry(null)}
+          onEdit={(entry) => { setViewingEntry(null); setEditingEntry(entry) }}
+        />
       )}
 
       {/* Edit modal */}
