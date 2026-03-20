@@ -9,7 +9,7 @@ export const MOCK_ENTRIES: Entry[] = [
     category: 'word',
     tags: ['advanced', 'adjective'],
     rating: 3,
-    includeInFlashcards: true,
+    includeInPractice: true,
     createdAt: '2024-01-10T10:00:00Z',
   },
   {
@@ -20,7 +20,7 @@ export const MOCK_ENTRIES: Entry[] = [
     category: 'idiom',
     tags: ['idiom', 'informal'],
     rating: 4,
-    includeInFlashcards: true,
+    includeInPractice: true,
     createdAt: '2024-01-12T14:30:00Z',
   },
   {
@@ -31,7 +31,7 @@ export const MOCK_ENTRIES: Entry[] = [
     category: 'word',
     tags: ['connector', 'formal'],
     rating: 5,
-    includeInFlashcards: true,
+    includeInPractice: true,
     createdAt: '2024-01-15T09:00:00Z',
   },
   {
@@ -42,7 +42,7 @@ export const MOCK_ENTRIES: Entry[] = [
     category: 'grammar',
     tags: ['tense', 'grammar'],
     rating: 2,
-    includeInFlashcards: false,
+    includeInPractice: false,
     createdAt: '2024-01-18T11:00:00Z',
   },
   {
@@ -53,7 +53,7 @@ export const MOCK_ENTRIES: Entry[] = [
     category: 'idiom',
     tags: ['idiom', 'social'],
     rating: 4,
-    includeInFlashcards: true,
+    includeInPractice: true,
     createdAt: '2024-01-20T16:00:00Z',
   },
   {
@@ -64,7 +64,7 @@ export const MOCK_ENTRIES: Entry[] = [
     category: 'word',
     tags: ['adjective', 'formal', 'advanced'],
     rating: 4,
-    includeInFlashcards: true,
+    includeInPractice: true,
     createdAt: '2024-01-22T08:00:00Z',
   },
   {
@@ -75,7 +75,7 @@ export const MOCK_ENTRIES: Entry[] = [
     category: 'phrase',
     tags: ['idiom', 'informal', 'warning'],
     rating: 3,
-    includeInFlashcards: true,
+    includeInPractice: true,
     createdAt: '2024-01-25T13:00:00Z',
   },
   {
@@ -86,7 +86,7 @@ export const MOCK_ENTRIES: Entry[] = [
     category: 'grammar',
     tags: ['conditional', 'grammar', 'intermediate'],
     rating: 3,
-    includeInFlashcards: false,
+    includeInPractice: false,
     createdAt: '2024-01-28T10:30:00Z',
   },
   {
@@ -97,7 +97,7 @@ export const MOCK_ENTRIES: Entry[] = [
     category: 'word',
     tags: ['adjective', 'academic'],
     rating: 5,
-    includeInFlashcards: true,
+    includeInPractice: true,
     createdAt: '2024-02-01T09:15:00Z',
   },
   {
@@ -108,7 +108,7 @@ export const MOCK_ENTRIES: Entry[] = [
     category: 'note',
     tags: ['phrasal-verb', 'common-mistake'],
     rating: 4,
-    includeInFlashcards: false,
+    includeInPractice: false,
     createdAt: '2024-02-05T14:00:00Z',
   },
 ]

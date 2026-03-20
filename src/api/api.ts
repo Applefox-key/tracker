@@ -13,7 +13,7 @@ interface RawEntry {
   category: EntryCategory
   tags: string          // JSON-encoded array
   rating: number
-  includeInFlashcards: 0 | 1
+  includeInPractice: 0 | 1
   createdAt: string
 }
 
@@ -25,7 +25,7 @@ interface EntryPayload {
   category: EntryCategory
   tags: string          // JSON-encoded array
   rating: number
-  includeInFlashcards: 0 | 1
+  includeInPractice: 0 | 1
 }
 
 interface LoginResponse {
@@ -44,7 +44,7 @@ function toEntry(raw: RawEntry): Entry {
     category: raw.category,
     tags: JSON.parse(raw.tags) as string[],
     rating: raw.rating,
-    includeInFlashcards: raw.includeInFlashcards === 1,
+    includeInPractice: raw.includeInPractice === 1,
     createdAt: raw.createdAt,
   }
 }
@@ -57,7 +57,7 @@ function toPayload(entry: Omit<Entry, 'id' | 'createdAt'>): EntryPayload {
     category: entry.category,
     tags: JSON.stringify(entry.tags),
     rating: entry.rating,
-    includeInFlashcards: entry.includeInFlashcards ? 1 : 0,
+    includeInPractice: entry.includeInPractice ? 1 : 0,
   }
 }
 
@@ -132,8 +132,8 @@ export const entriesApi = {
     if (data.category !== undefined) partial.category = data.category
     if (data.tags !== undefined) partial.tags = JSON.stringify(data.tags)
     if (data.rating !== undefined) partial.rating = data.rating
-    if (data.includeInFlashcards !== undefined)
-      partial.includeInFlashcards = data.includeInFlashcards ? 1 : 0
+    if (data.includeInPractice !== undefined)
+      partial.includeInPractice = data.includeInPractice ? 1 : 0
 
     const res = await apiClient.patch<RawEntry>(`/entries/${id}`, partial)
     return toEntry(res.data)

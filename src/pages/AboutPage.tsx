@@ -6,10 +6,10 @@ const FEATURES = [
       'Save words, phrases, grammar rules, idioms, and notes. Tag them, rate difficulty, and search instantly.',
   },
   {
-    icon: '🃏',
-    title: 'Flashcards',
+    icon: '🎯',
+    title: 'Practice',
     description:
-      'Study entries marked for review with an interactive flip-card deck. Filter by category, tag, or rating.',
+      'Study your entries with four interactive modes: flip cards, multiple choice quiz, match pairs, and word/letter puzzle.',
   },
   {
     icon: '📊',
@@ -27,7 +27,7 @@ export function AboutPage() {
       <div className="text-center flex flex-col gap-3 pt-4">
         <h1 className="text-3xl font-bold text-gray-900">Language Progress Tracker</h1>
         <p className="text-gray-500 text-lg leading-relaxed">
-          Track your learning progress, save entries, and study with flashcards.
+          Track your learning progress, save entries, and practise with interactive study activities.
         </p>
       </div>
 
@@ -57,8 +57,9 @@ export function AboutPage() {
         <h2 className="text-lg font-semibold text-gray-800">About</h2>
         <p className="text-sm text-gray-500 leading-relaxed">
           Language Progress Tracker is a personal study companion built to help language learners
-          organise their vocabulary, grammar notes, and idioms in one place. It is designed to be
-          fast, distraction-free, and offline-friendly.
+          organise their vocabulary, grammar notes, and idioms in one place. Reinforce what you
+          learn through practice modes — flashcards, quizzes, matching pairs, and puzzles. It is
+          designed to be fast, distraction-free, and offline-friendly.
         </p>
         <p className="text-sm text-gray-500 leading-relaxed">
           Built with React, TypeScript, Vite, Tailwind CSS, and Zustand.

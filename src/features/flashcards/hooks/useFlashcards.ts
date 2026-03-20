@@ -26,7 +26,7 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
   const allTags = useMemo(() => {
     const tagSet = new Set<string>()
     entries
-      .filter((e) => e.includeInFlashcards)
+      .filter((e) => e.includeInPractice)
       .forEach((e) => e.tags.forEach((t) => tagSet.add(t)))
     return Array.from(tagSet).sort()
   }, [entries])
@@ -34,7 +34,7 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
   const cards: Flashcard[] = useMemo(() => {
     return entries
       .filter((e) => {
-        if (!e.includeInFlashcards) return false
+        if (!e.includeInPractice) return false
         if (selectedRatings.length > 0 && !selectedRatings.includes(e.rating)) return false
         if (selectedCategory !== null && e.category !== selectedCategory) return false
         if (selectedTag !== null && !e.tags.includes(selectedTag)) return false

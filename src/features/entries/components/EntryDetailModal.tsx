@@ -106,10 +106,10 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
 
           <div className="flex items-center gap-2">
             <span
-              className={['w-2 h-2 rounded-full shrink-0', entry.includeInFlashcards ? 'bg-green-500' : 'bg-gray-300'].join(' ')}
+              className={['w-2 h-2 rounded-full shrink-0', entry.includeInPractice ? 'bg-green-500' : 'bg-gray-300'].join(' ')}
             />
             <span className="text-sm text-gray-600">
-              {entry.includeInFlashcards ? 'Included in flashcards' : 'Not in flashcards'}
+              {entry.includeInPractice ? 'Included in practice' : 'Not in practice'}
             </span>
           </div>
 

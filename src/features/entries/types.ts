@@ -8,6 +8,6 @@ export interface Entry {
   category: EntryCategory
   tags: string[]
   rating: number
-  includeInFlashcards: boolean
+  includeInPractice: boolean
   createdAt: string
 }

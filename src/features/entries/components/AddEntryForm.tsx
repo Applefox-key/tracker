@@ -9,7 +9,7 @@ export interface EntryFormValues {
   category: EntryCategory;
   tags: string[];
   rating: number;
-  includeInFlashcards: boolean;
+  includeInPractice: boolean;
 }
 
 interface EntryFormProps {
@@ -28,7 +28,7 @@ const DEFAULT_VALUES: EntryFormValues = {
   category: "word",
   tags: [],
   rating: 3,
-  includeInFlashcards: false,
+  includeInPractice: false,
 };
 
 function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
@@ -71,7 +71,7 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
   const [category, setCategory] = useState<EntryCategory>(init.category);
   const [tagsRaw, setTagsRaw] = useState(tagsToRaw(init.tags));
   const [rating, setRating] = useState(init.rating);
-  const [includeInFlashcards, setIncludeInFlashcards] = useState(init.includeInFlashcards);
+  const [includeInPractice, setIncludeInFlashcards] = useState(init.includeInPractice);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -83,7 +83,7 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
       category,
       tags: parseTags(tagsRaw),
       rating,
-      includeInFlashcards,
+      includeInPractice,
     });
   }
 
@@ -181,12 +181,12 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
           <input
             id="flashcards-check"
             type="checkbox"
-            checked={includeInFlashcards}
+            checked={includeInPractice}
             onChange={(e) => setIncludeInFlashcards(e.target.checked)}
             className="w-4 h-4 accent-indigo-600 cursor-pointer"
           />
           <label htmlFor="flashcards-check" className="text-sm text-gray-700 cursor-pointer select-none">
-            Include in flashcards
+            Include in practice
           </label>
         </div>
       </div>

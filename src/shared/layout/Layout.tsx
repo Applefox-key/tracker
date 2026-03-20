@@ -6,7 +6,7 @@ import { useEntriesData } from '@/hooks/useEntriesData'
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: '📊' },
   { to: '/entries', label: 'Entries', icon: '📝' },
-  { to: '/flashcards', label: 'Flashcards', icon: '🃏' },
+  { to: '/practice', label: 'Practice', icon: '🎯' },
   { to: '/about', label: 'About', icon: 'ℹ️' },
 ]
 

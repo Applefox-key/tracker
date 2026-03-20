@@ -87,7 +87,7 @@ export function DashboardPage() {
 
     const todayCount  = entries.filter((e) => new Date(e.createdAt) >= today).length
     const weekCount   = entries.filter((e) => new Date(e.createdAt) >= weekStart).length
-    const flashCount  = entries.filter((e) => e.includeInFlashcards).length
+    const flashCount  = entries.filter((e) => e.includeInPractice).length
     const avgRating   = entries.length > 0
       ? (entries.reduce((sum, e) => sum + e.rating, 0) / entries.length).toFixed(1)
       : '—'
@@ -135,7 +135,7 @@ export function DashboardPage() {
           sub="last 7 days"
         />
         <StatCard
-          label="Flashcards"
+          label="Practice"
           value={stats.flashCount}
           color="text-violet-600"
         />

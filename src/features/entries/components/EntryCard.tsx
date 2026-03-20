@@ -76,9 +76,9 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
           <div className="w-px h-4 bg-gray-200 shrink-0" />
 
           <ToggleSwitch
-            checked={entry.includeInFlashcards}
-            onChange={(v) => updateEntry(entry.id, { includeInFlashcards: v })}
-            label="Flashcard"
+            checked={entry.includeInPractice}
+            onChange={(v) => updateEntry(entry.id, { includeInPractice: v })}
+            label="Practice"
           />
         </div>
 

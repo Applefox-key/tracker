@@ -198,9 +198,9 @@ export function FlashcardsPage() {
               />
             </div>
             <button
-              onClick={() => updateEntry(currentCard.id, { includeInFlashcards: false })}
+              onClick={() => updateEntry(currentCard.id, { includeInPractice: false })}
               className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-500 active:text-red-700 transition-colors font-medium px-2 py-1 rounded-lg hover:bg-red-50 active:bg-red-100"
-              title="Remove from flashcards"
+              title="Remove from practice"
             >
               <span>✕</span>
               <span>Remove</span>
