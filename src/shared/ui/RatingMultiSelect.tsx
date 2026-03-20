@@ -1,0 +1,103 @@
+import { useState } from 'react'
+
+interface RatingMultiSelectProps {
+  selected: number[]
+  onChange: (selected: number[]) => void
+  /** Compact mode: bare stars, no box or number labels */
+  compact?: boolean
+}
+
+export function RatingMultiSelect({ selected, onChange, compact = false }: RatingMultiSelectProps) {
+  const [hovered, setHovered] = useState<number | null>(null)
+
+  function toggle(star: number) {
+    onChange(
+      selected.includes(star)
+        ? selected.filter((s) => s !== star)
+        : [...selected, star]
+    )
+  }
+
+  if (compact) {
+    return (
+      <div className="flex items-center gap-0.5">
+        {[1, 2, 3, 4, 5].map((star) => {
+          const isSelected = selected.includes(star)
+          const isHovered  = hovered === star
+          return (
+            <button
+              key={star}
+              type="button"
+              onClick={() => toggle(star)}
+              onMouseEnter={() => setHovered(star)}
+              onMouseLeave={() => setHovered(null)}
+              aria-pressed={isSelected}
+              aria-label={`Toggle rating ${star}`}
+              className="text-base leading-none cursor-pointer focus:outline-none transition-transform hover:scale-125 px-0.5"
+            >
+              <span
+                className={
+                  isSelected
+                    ? isHovered ? 'text-amber-600' : 'text-amber-400'
+                    : isHovered ? 'text-amber-300' : 'text-gray-300'
+                }
+              >
+                ★
+              </span>
+            </button>
+          )
+        })}
+        {selected.length > 0 && (
+          <span className="ml-1.5 text-xs text-amber-500 font-medium">
+            {[...selected].sort((a, b) => a - b).join(',')}
+          </span>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex gap-2">
+        {[1, 2, 3, 4, 5].map((star) => {
+          const isSelected = selected.includes(star)
+          const isHovered  = hovered === star
+          return (
+            <button
+              key={star}
+              type="button"
+              onClick={() => toggle(star)}
+              onMouseEnter={() => setHovered(star)}
+              onMouseLeave={() => setHovered(null)}
+              aria-pressed={isSelected}
+              aria-label={`Toggle rating ${star}`}
+              className={[
+                'flex flex-col items-center gap-0.5 w-10 py-2 rounded-xl border-2 font-medium',
+                'cursor-pointer transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400',
+                isSelected
+                  ? isHovered
+                    ? 'bg-amber-100 border-amber-500 text-amber-600'
+                    : 'bg-amber-50  border-amber-400 text-amber-500'
+                  : isHovered
+                    ? 'bg-gray-50   border-amber-300 text-amber-400'
+                    : 'bg-white     border-gray-200  text-gray-300',
+              ].join(' ')}
+            >
+              <span className="text-xl leading-none">★</span>
+              <span className="text-xs leading-none">{star}</span>
+            </button>
+          )
+        })}
+      </div>
+
+      {selected.length > 0 && (
+        <p className="text-xs text-gray-500">
+          Selected:{' '}
+          <span className="font-medium text-amber-600">
+            {[...selected].sort((a, b) => a - b).join(', ')}
+          </span>
+        </p>
+      )}
+    </div>
+  )
+}
