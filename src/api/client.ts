@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-// const BASE_URL = 'https://api.learnapp.pro'
-export const BASE_URL = "http://localhost:8000";
+const BASE_URL = 'https://api.learnapp.pro'
+// export const BASE_URL = "http://localhost:8000";
 export const TOKEN_KEY = 'tokentracker'
 
 export const apiClient = axios.create({
