@@ -1,11 +1,8 @@
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useEntriesStore } from '@/features/entries/store/entriesStore'
-import { usePracticeTags, wordCount, EMPTY_FILTERS } from '@/features/practice/hooks/usePracticeEntries'
-import { PracticeFilterPanel } from '@/features/practice/components/PracticeFilterPanel'
-import { RatingMultiSelect } from '@/shared/ui/RatingMultiSelect'
+import { wordCount, EMPTY_FILTERS } from '@/features/practice/hooks/usePracticeEntries'
 import { Button } from '@/shared/ui/Button'
-import type { EntryCategory } from '@/features/entries/types'
 
 const MODES = [
   {
@@ -45,28 +42,9 @@ const MODES = [
 export function PracticePage() {
   const entries = useEntriesStore((s) => s.entries)
   const navigate = useNavigate()
-  const allTags = usePracticeTags()
-
-  const [selectedRatings, setSelectedRatings] = useState<number[]>([])
-  const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null)
-  const [selectedTag, setSelectedTag] = useState<string | null>(null)
-  const [showFilters, setShowFilters] = useState(false)
-
-  const ratingsKey = selectedRatings.join(',')
-  const activeFilterCount = [
-    selectedRatings.length > 0,
-    selectedCategory !== null,
-    selectedTag !== null,
-  ].filter(Boolean).length
 
   const counts = useMemo(() => {
-    const base = entries.filter((e) => {
-      if (!e.includeInPractice) return false
-      if (selectedRatings.length && !selectedRatings.includes(e.rating)) return false
-      if (selectedCategory !== null && e.category !== selectedCategory) return false
-      if (selectedTag !== null && !e.tags.includes(selectedTag)) return false
-      return true
-    })
+    const base = entries.filter((e) => e.includeInPractice)
     return {
       flashcards: base.length,
       quiz:  base.filter((e) => e.category !== 'note').length,
@@ -75,55 +53,15 @@ export function PracticePage() {
         .filter((e) => !['note', 'grammar'].includes(e.category))
         .filter((e) => wordCount(e.word) <= 10).length,
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entries, ratingsKey, selectedCategory, selectedTag])
-
-  function clearFilters() {
-    setSelectedRatings([])
-    setSelectedCategory(null)
-    setSelectedTag(null)
-  }
+  }, [entries])
 
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Practice</h1>
-          <p className="text-gray-500 mt-1 text-sm">Choose a study mode</p>
-        </div>
-        <div className="flex items-center gap-3 sm:ml-auto">
-          <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} compact />
-          <div className="w-px h-4 bg-gray-200 shrink-0" />
-          <Button
-            variant={showFilters ? 'primary' : 'secondary'}
-            size="sm"
-            onClick={() => setShowFilters((v) => !v)}
-          >
-            <span className="hidden sm:inline">Filters</span>
-            <span className="sm:hidden">⚙</span>
-            {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
-            <span className="text-xs ml-1">{showFilters ? '▲' : '▼'}</span>
-          </Button>
-          {activeFilterCount > 0 && (
-            <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium shrink-0">
-              Clear
-            </button>
-          )}
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Practice</h1>
+        <p className="text-gray-500 mt-1 text-sm">Choose a study mode</p>
       </div>
-
-      <hr className="border-gray-200" />
-
-      {showFilters && (
-        <PracticeFilterPanel
-          allTags={allTags}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          selectedTag={selectedTag}
-          onTagChange={setSelectedTag}
-        />
-      )}
 
       {/* Mode cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

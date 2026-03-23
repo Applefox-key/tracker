@@ -21,11 +21,20 @@ export function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
   }, [onClose])
 
   function handleSubmit(values: EntryFormValues) {
-    updateEntry(entry.id, values)
+    const { tagIds, ...entryData } = values
+    updateEntry(entry.id, { ...entryData, tags: [] }, tagIds)
     onClose()
   }
 
-  const { id: _id, createdAt: _createdAt, ...initialValues } = entry
+  const initialValues: EntryFormValues = {
+    word: entry.word,
+    explanation: entry.explanation,
+    example: entry.example,
+    category: entry.category,
+    tagIds: entry.tags.map((t) => t.id),
+    rating: entry.rating,
+    includeInPractice: entry.includeInPractice,
+  }
 
   return (
     <div

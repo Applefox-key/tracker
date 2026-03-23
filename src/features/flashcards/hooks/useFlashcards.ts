@@ -2,12 +2,12 @@ import { useEffect, useMemo } from 'react'
 import { useEntriesStore } from '@/features/entries/store/entriesStore'
 import { useFlashcardsStore } from '../store/flashcardsStore'
 import { Flashcard } from '../types'
-import { EntryCategory } from '@/features/entries/types'
+import { EntryCategory, EntryTag } from '@/features/entries/types'
 
 export interface FlashcardFilters {
   selectedRatings: number[]
   selectedCategory: EntryCategory | null
-  selectedTag: string | null
+  selectedTag: number | null
 }
 
 const EMPTY_FILTERS: FlashcardFilters = {
@@ -24,11 +24,11 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
 
   // All tags available on flashcard-eligible entries (unaffected by other filters)
   const allTags = useMemo(() => {
-    const tagSet = new Set<string>()
+    const seen = new Map<number, EntryTag>()
     entries
       .filter((e) => e.includeInPractice)
-      .forEach((e) => e.tags.forEach((t) => tagSet.add(t)))
-    return Array.from(tagSet).sort()
+      .forEach((e) => e.tags.forEach((t) => seen.set(t.id, t)))
+    return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name))
   }, [entries])
 
   const cards: Flashcard[] = useMemo(() => {
@@ -37,7 +37,7 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
         if (!e.includeInPractice) return false
         if (selectedRatings.length > 0 && !selectedRatings.includes(e.rating)) return false
         if (selectedCategory !== null && e.category !== selectedCategory) return false
-        if (selectedTag !== null && !e.tags.includes(selectedTag)) return false
+        if (selectedTag !== null && !e.tags.some((t) => t.id === selectedTag)) return false
         return true
       })
       .map((e) => ({

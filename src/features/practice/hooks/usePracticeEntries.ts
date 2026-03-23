@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import { useEntriesStore } from '@/features/entries/store/entriesStore'
-import type { Entry, EntryCategory } from '@/features/entries/types'
+import type { Entry, EntryCategory, EntryTag } from '@/features/entries/types'
 
 export interface PracticeFilters {
   selectedRatings: number[]
   selectedCategory: EntryCategory | null
-  selectedTag: string | null
+  selectedTag: number | null
 }
 
 export const EMPTY_FILTERS: PracticeFilters = {
@@ -34,7 +34,7 @@ function applyFilters(entries: Entry[], f: PracticeFilters): Entry[] {
     if (!e.includeInPractice) return false
     if (f.selectedRatings.length && !f.selectedRatings.includes(e.rating)) return false
     if (f.selectedCategory !== null && e.category !== f.selectedCategory) return false
-    if (f.selectedTag !== null && !e.tags.includes(f.selectedTag)) return false
+    if (f.selectedTag !== null && !e.tags.some((t) => t.id === f.selectedTag)) return false
     return true
   })
 }
@@ -55,11 +55,11 @@ export function usePracticeEntries(mode: PracticeMode, filters: PracticeFilters)
   }, [entries, mode, ratingsKey, selectedCategory, selectedTag])
 }
 
-export function usePracticeTags(): string[] {
+export function usePracticeTags(): EntryTag[] {
   const entries = useEntriesStore((s) => s.entries)
   return useMemo(() => {
-    const tags = new Set<string>()
-    entries.filter((e) => e.includeInPractice).forEach((e) => e.tags.forEach((t) => tags.add(t)))
-    return Array.from(tags).sort()
+    const seen = new Map<number, EntryTag>()
+    entries.filter((e) => e.includeInPractice).forEach((e) => e.tags.forEach((t) => seen.set(t.id, t)))
+    return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name))
   }, [entries])
 }

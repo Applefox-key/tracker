@@ -1,29 +1,28 @@
 import { apiClient, TOKEN_KEY } from './client'
-import type { Entry, EntryCategory } from '@/features/entries/types'
+import type { Entry, EntryCategory, EntryTag } from '@/features/entries/types'
 import type { User, LoginCredentials } from '@/features/auth/types'
 
 // ── Raw server shapes ──────────────────────────────────────────────────────
 
-/** Shape returned by the server for an entry (SQLite-specific types) */
+/** Shape returned by the server for an entry */
 interface RawEntry {
   id: number
   word: string
   explanation: string
   example: string
   category: EntryCategory
-  tags: string          // JSON-encoded array
+  tags: EntryTag[]
   rating: number
   includeInPractice: 0 | 1
   createdAt: string
 }
 
-/** Shape sent to the server when creating or updating an entry */
+/** Shape sent to the server when creating or updating an entry (tags handled separately) */
 interface EntryPayload {
   word: string
   explanation: string
   example: string
   category: EntryCategory
-  tags: string          // JSON-encoded array
   rating: number
   includeInPractice: 0 | 1
 }
@@ -42,20 +41,19 @@ function toEntry(raw: RawEntry): Entry {
     explanation: raw.explanation,
     example: raw.example,
     category: raw.category,
-    tags: JSON.parse(raw.tags) as string[],
+    tags: raw.tags,
     rating: raw.rating,
     includeInPractice: raw.includeInPractice === 1,
     createdAt: raw.createdAt,
   }
 }
 
-function toPayload(entry: Omit<Entry, 'id' | 'createdAt'>): EntryPayload {
+function toPayload({ tags: _tags, ...entry }: Omit<Entry, 'id' | 'createdAt'>): EntryPayload {
   return {
     word: entry.word,
     explanation: entry.explanation,
     example: entry.example,
     category: entry.category,
-    tags: JSON.stringify(entry.tags),
     rating: entry.rating,
     includeInPractice: entry.includeInPractice ? 1 : 0,
   }
@@ -124,13 +122,11 @@ export const entriesApi = {
   },
 
   async updateEntry(id: number, data: Partial<Omit<Entry, 'id' | 'createdAt'>>): Promise<Entry> {
-    // Build a partial payload — only include fields that are being updated
     const partial: Partial<EntryPayload> = {}
     if (data.word !== undefined) partial.word = data.word
     if (data.explanation !== undefined) partial.explanation = data.explanation
     if (data.example !== undefined) partial.example = data.example
     if (data.category !== undefined) partial.category = data.category
-    if (data.tags !== undefined) partial.tags = JSON.stringify(data.tags)
     if (data.rating !== undefined) partial.rating = data.rating
     if (data.includeInPractice !== undefined)
       partial.includeInPractice = data.includeInPractice ? 1 : 0
@@ -141,5 +137,37 @@ export const entriesApi = {
 
   async deleteEntry(id: number): Promise<void> {
     await apiClient.delete(`/entries/${id}`)
+  },
+}
+
+// ── Entry Tags API ─────────────────────────────────────────────────────────
+
+export const entryTagsApi = {
+  async getAll(): Promise<EntryTag[]> {
+    const res = await apiClient.get<{ data: EntryTag[] }>('/entry-tags')
+    return res.data.data ?? []
+  },
+
+  async create(name: string): Promise<{ id: number }> {
+    const res = await apiClient.post<{ message: string; id: number }>('/entry-tags', { name })
+    return { id: res.data.id }
+  },
+
+  async edit(id: number, name: string): Promise<EntryTag> {
+    const res = await apiClient.patch<EntryTag>(`/entry-tags/${id}`, { name })
+    return res.data
+  },
+
+  async delete(id: number): Promise<void> {
+    await apiClient.delete(`/entry-tags/${id}`)
+  },
+
+  async getByEntry(entryId: number): Promise<EntryTag[]> {
+    const res = await apiClient.get<{ data: EntryTag[] }>(`/entry-tags/entry/${entryId}`)
+    return res.data.data ?? []
+  },
+
+  async setEntryTags(entryId: number, tagIds: number[]): Promise<void> {
+    await apiClient.put(`/entry-tags/entry/${entryId}`, { tagIds })
   },
 }

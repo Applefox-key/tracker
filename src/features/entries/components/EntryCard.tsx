@@ -25,12 +25,12 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
   return (
     <div
       className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer"
-      onClick={() => onView(entry)}
-    >
+      onClick={() => onView(entry)}>
       {/* Header row */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <p className="text-base font-semibold text-gray-900 truncate">{entry.word}</p>
+          {/* <p className="text-base font-semibold text-gray-900 truncate">{entry.word}</p> */}
+          <p className="text-lg font-semibold text-gray-900 truncate">{entry.word}</p>
           <p className="text-sm text-gray-500 mt-0.5 truncate">{entry.explanation}</p>
           <p className="text-xs text-gray-300 mt-1">
             {new Date(entry.createdAt).toLocaleDateString("en-GB", {
@@ -58,8 +58,8 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
       {entry.tags.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {entry.tags.map((tag) => (
-            <span key={tag} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-              #{tag}
+            <span key={tag.id} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+              #{tag.name}
             </span>
           ))}
         </div>
@@ -68,8 +68,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
       {/* Footer row — stop propagation so clicks here don't open detail view */}
       <div
         className="flex flex-wrap flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:gap-3"
-        onClick={(e) => e.stopPropagation()}
-      >
+        onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-3 justify-between">
           <RatingStars value={entry.rating} onChange={(v) => updateEntry(entry.id, { rating: v })} />
 

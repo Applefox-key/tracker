@@ -91,8 +91,8 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
               <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1.5">Tags</p>
               <div className="flex flex-wrap gap-1.5">
                 {entry.tags.map((tag) => (
-                  <span key={tag} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                    #{tag}
+                  <span key={tag.id} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                    #{tag.name}
                   </span>
                 ))}
               </div>

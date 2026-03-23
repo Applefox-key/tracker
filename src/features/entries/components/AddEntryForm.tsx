@@ -1,13 +1,14 @@
 import { FormEvent, useState } from "react";
 import { EntryCategory } from "../types";
 import { Button } from "@/shared/ui/Button";
+import { TagCombobox } from "@/shared/ui/TagCombobox";
 
 export interface EntryFormValues {
   word: string;
   explanation: string;
   example: string;
   category: EntryCategory;
-  tags: string[];
+  tagIds: number[];
   rating: number;
   includeInPractice: boolean;
 }
@@ -26,7 +27,7 @@ const DEFAULT_VALUES: EntryFormValues = {
   explanation: "",
   example: "",
   category: "word",
-  tags: [],
+  tagIds: [],
   rating: 3,
   includeInPractice: false,
 };
@@ -51,17 +52,6 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
   );
 }
 
-function parseTags(raw: string): string[] {
-  return raw
-    .split(/[,\s]+/)
-    .map((t) => t.replace(/^#/, "").trim().toLowerCase())
-    .filter(Boolean);
-}
-
-function tagsToRaw(tags: string[]): string {
-  return tags.join(", ");
-}
-
 export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryFormProps) {
   const init = initialValues ?? DEFAULT_VALUES;
 
@@ -69,9 +59,9 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
   const [explanation, setExplanation] = useState(init.explanation);
   const [example, setExample] = useState(init.example);
   const [category, setCategory] = useState<EntryCategory>(init.category);
-  const [tagsRaw, setTagsRaw] = useState(tagsToRaw(init.tags));
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>(init.tagIds);
   const [rating, setRating] = useState(init.rating);
-  const [includeInPractice, setIncludeInFlashcards] = useState(init.includeInPractice);
+  const [includeInPractice, setIncludeInPractice] = useState(init.includeInPractice);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -81,7 +71,7 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
       explanation: explanation.trim(),
       example: example.trim(),
       category,
-      tags: parseTags(tagsRaw),
+      tagIds: selectedTagIds,
       rating,
       includeInPractice,
     });
@@ -150,28 +140,12 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
       </div>
 
       {/* Tags */}
-      <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-600">
-          Tags <span className="text-gray-400 font-normal">(comma or space separated)</span>
-        </label>
-        <input
-          value={tagsRaw}
-          onChange={(e) => setTagsRaw(e.target.value)}
-          placeholder="e.g. formal, advanced, connector"
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-        />
-        {parseTags(tagsRaw).length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-1">
-            {parseTags(tagsRaw).map((tag) => (
-              <span key={tag} className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
-                #{tag}
-              </span>
-            ))}
-          </div>
-        )}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-medium text-gray-600">Tags</label>
+        <TagCombobox selectedIds={selectedTagIds} onChange={setSelectedTagIds} />
       </div>
 
-      {/* Rating & Flashcards row */}
+      {/* Rating & Practice row */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-gray-600">How well do you know it?</label>
@@ -182,7 +156,7 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
             id="flashcards-check"
             type="checkbox"
             checked={includeInPractice}
-            onChange={(e) => setIncludeInFlashcards(e.target.checked)}
+            onChange={(e) => setIncludeInPractice(e.target.checked)}
             className="w-4 h-4 accent-indigo-600 cursor-pointer"
           />
           <label htmlFor="flashcards-check" className="text-sm text-gray-700 cursor-pointer select-none">

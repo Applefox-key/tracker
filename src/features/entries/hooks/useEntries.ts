@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useEntriesStore } from '../store/entriesStore'
 import { useEntryCrud } from '@/hooks/useEntryCrud'
-import { EntryCategory } from '../types'
+import { EntryCategory, EntryTag } from '../types'
 
 export function useEntries() {
   const entries = useEntriesStore((s) => s.entries)
@@ -9,13 +9,13 @@ export function useEntries() {
 
   const [search, setSearch] = useState('')
   const [filterCategory, setFilterCategory] = useState<EntryCategory | 'all'>('all')
-  const [selectedTag, setSelectedTag] = useState<string | null>(null)
+  const [selectedTag, setSelectedTag] = useState<number | null>(null)
   const [selectedRatings, setSelectedRatings] = useState<number[]>([])
 
   const allTags = useMemo(() => {
-    const tagSet = new Set<string>()
-    entries.forEach((e) => e.tags.forEach((t) => tagSet.add(t)))
-    return Array.from(tagSet).sort()
+    const seen = new Map<number, EntryTag>()
+    entries.forEach((e) => e.tags.forEach((t) => seen.set(t.id, t)))
+    return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name))
   }, [entries])
 
   const filtered = useMemo(() => {
@@ -24,7 +24,7 @@ export function useEntries() {
         e.word.toLowerCase().includes(search.toLowerCase()) ||
         e.explanation.toLowerCase().includes(search.toLowerCase())
       const matchesCategory = filterCategory === 'all' || e.category === filterCategory
-      const matchesTag = selectedTag === null || e.tags.includes(selectedTag)
+      const matchesTag = selectedTag === null || e.tags.some((t) => t.id === selectedTag)
       const matchesRating = selectedRatings.length === 0 || selectedRatings.includes(e.rating)
       return matchesSearch && matchesCategory && matchesTag && matchesRating
     })

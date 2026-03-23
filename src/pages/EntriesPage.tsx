@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/shared/ui/Button";
 import { RatingMultiSelect } from "@/shared/ui/RatingMultiSelect";
 import { EntryCard } from "@/features/entries/components/EntryCard";
-import { EntryForm } from "@/features/entries/components/AddEntryForm";
+import { EntryForm, EntryFormValues } from "@/features/entries/components/AddEntryForm";
 import { EditEntryModal } from "@/features/entries/components/EditEntryModal";
 import { EntryDetailModal } from "@/features/entries/components/EntryDetailModal";
 import { useEntries } from "@/features/entries/hooks/useEntries";
@@ -57,8 +57,9 @@ export function EntriesPage() {
     selectedRatings.length > 0,
   ].filter(Boolean).length;
 
-  function handleAdd(values: Parameters<typeof addEntry>[0]) {
-    addEntry(values);
+  function handleAdd(values: EntryFormValues) {
+    const { tagIds, ...entryData } = values;
+    addEntry({ ...entryData, tags: [] }, tagIds);
     setShowForm(false);
   }
 
@@ -85,24 +86,26 @@ export function EntriesPage() {
       )}
 
       {/* ── Filter section ── */}
-      <div className="flex flex-col gap-4 p-4 bg-gray-50 border border-gray-200 rounded-xl">
+      <div className="flex flex-col gap-2 p-3 bg-gray-50 border border-gray-200 rounded-xl">
 
-        {/* Row 1: search + category */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        {/* Row 1: search + category chips + filters toggle */}
+        <div className="flex flex-col sm:flex-row gap-2">
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search word or explanation..."
-            className="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            placeholder="Search..."
+            className="sm:w-48 bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm
+                       focus:outline-none focus:ring-2 focus:ring-indigo-400 shrink-0"
           />
-          <div className="flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:flex-wrap">
+          <div className="flex gap-1.5 flex-1 overflow-x-auto [scrollbar-width:none]
+                          [&::-webkit-scrollbar]:hidden sm:flex-wrap items-center">
             {CATEGORIES.map(({ value, label }) => (
               <button
                 key={value}
                 onClick={() => setFilterCategory(value)}
                 className={[
-                  "shrink-0 px-3 py-2 rounded-lg text-sm font-medium border transition-colors",
+                  "shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
                   filterCategory === value
                     ? "bg-indigo-600 text-white border-indigo-600"
                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50",
@@ -112,71 +115,63 @@ export function EntriesPage() {
               </button>
             ))}
           </div>
-        </div>
-
-        {/* Row 2: filters toggle */}
-        <div className="flex items-center gap-2">
           <button
             onClick={() => setIsFiltersOpen((v) => !v)}
             className={[
-              "px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors",
-              isFiltersOpen
+              "shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
+              isFiltersOpen || advancedFilterCount > 0
                 ? "bg-indigo-600 text-white border-indigo-600"
                 : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50",
             ].join(" ")}
           >
-            Filters{advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}
-            <span className="text-xs ml-1">{isFiltersOpen ? "▲" : "▼"}</span>
+            Filters{advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}{" "}
+            {isFiltersOpen ? "▲" : "▼"}
           </button>
         </div>
 
-        {/* Row 3: advanced filters (collapsible) */}
+        {/* Row 2: advanced filters */}
         {isFiltersOpen && (
-          <>
+          <div className="flex flex-col gap-3 pt-2 border-t border-gray-200">
             {allTags.length > 0 && (
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs font-medium text-gray-500 shrink-0">Tag:</span>
                 {allTags.map((tag) => (
                   <button
-                    key={tag}
-                    onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+                    key={tag.id}
+                    onClick={() => setSelectedTag(selectedTag === tag.id ? null : tag.id)}
                     className={[
-                      "px-2.5 py-1 rounded-full text-xs font-medium border transition-colors",
-                      selectedTag === tag
+                      "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
+                      selectedTag === tag.id
                         ? "bg-indigo-600 text-white border-indigo-600"
                         : "bg-white text-gray-500 border-gray-300 hover:border-indigo-400 hover:text-indigo-600",
                     ].join(" ")}
                   >
-                    #{tag}
+                    #{tag.name}
                   </button>
                 ))}
               </div>
             )}
 
-            <div className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-gray-500">Select ratings:</span>
+            <div className="flex items-start gap-3 flex-wrap">
+              <span className="text-xs font-medium text-gray-500 shrink-0 pt-1.5">Rating:</span>
               <RatingMultiSelect
                 selected={selectedRatings}
                 onChange={setSelectedRatings}
               />
             </div>
-          </>
+          </div>
         )}
 
         {/* Active filters + clear */}
         {hasActiveFilters && (
-          <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-gray-200">
-            <span className="text-xs text-gray-400">Active filters:</span>
-
+          <div className="flex items-center gap-2 flex-wrap pt-1.5 border-t border-gray-200">
+            <span className="text-xs text-gray-400">Active:</span>
             {filterCategory !== "all" && (
-              <ActiveChip
-                label={filterCategory}
-                onRemove={() => setFilterCategory("all")}
-              />
+              <ActiveChip label={filterCategory} onRemove={() => setFilterCategory("all")} />
             )}
             {selectedTag !== null && (
               <ActiveChip
-                label={`#${selectedTag}`}
+                label={`#${allTags.find((t) => t.id === selectedTag)?.name ?? selectedTag}`}
                 onRemove={() => setSelectedTag(null)}
               />
             )}
@@ -187,12 +182,8 @@ export function EntriesPage() {
               />
             )}
             {search !== "" && (
-              <ActiveChip
-                label={`"${search}"`}
-                onRemove={() => setSearch("")}
-              />
+              <ActiveChip label={`"${search}"`} onRemove={() => setSearch("")} />
             )}
-
             <button
               onClick={clearFilters}
               className="ml-auto text-xs text-red-500 hover:text-red-700 font-medium"
@@ -253,7 +244,6 @@ export function EntriesPage() {
   );
 }
 
-// ── Small internal chip component ──────────────────────────────────────────
 function ActiveChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-medium">
