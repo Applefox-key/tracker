@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/shared/ui/Button";
 import { RatingMultiSelect } from "@/shared/ui/RatingMultiSelect";
+import { RatingStars } from "@/shared/ui/RatingStars";
 import { EntryCard } from "@/features/entries/components/EntryCard";
 import { EntryForm, EntryFormValues } from "@/features/entries/components/AddEntryForm";
 import { EditEntryModal } from "@/features/entries/components/EditEntryModal";
@@ -23,6 +24,7 @@ export function EntriesPage() {
   const [editingEntry, setEditingEntry] = useState<Entry | null>(null);
   const [viewingEntry, setViewingEntry] = useState<Entry | null>(null);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<"expanded" | "collapsed">("expanded");
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -52,10 +54,7 @@ export function EntriesPage() {
     removeEntry,
   } = useEntries();
 
-  const advancedFilterCount = [
-    selectedTag !== null,
-    selectedRatings.length > 0,
-  ].filter(Boolean).length;
+  const advancedFilterCount = [selectedTag !== null, selectedRatings.length > 0].filter(Boolean).length;
 
   function handleAdd(values: EntryFormValues) {
     const { tagIds, ...entryData } = values;
@@ -71,23 +70,14 @@ export function EntriesPage() {
           <h1 className="text-2xl font-bold text-gray-900">Entries</h1>
           <p className="text-gray-500 mt-1">{totalCount} words &amp; phrases saved</p>
         </div>
-        <Button onClick={() => setShowForm((v) => !v)}>
-          {showForm ? "Cancel" : "+ Add Entry"}
-        </Button>
+        <Button onClick={() => setShowForm((v) => !v)}>{showForm ? "Cancel" : "+ Add Entry"}</Button>
       </div>
 
       {/* Add form */}
-      {showForm && (
-        <EntryForm
-          mode="create"
-          onSubmit={handleAdd}
-          onCancel={() => setShowForm(false)}
-        />
-      )}
+      {showForm && <EntryForm mode="create" onSubmit={handleAdd} onCancel={() => setShowForm(false)} />}
 
       {/* ── Filter section ── */}
       <div className="flex flex-col gap-2 p-3 bg-gray-50 border border-gray-200 rounded-xl">
-
         {/* Row 1: search + category chips + filters toggle */}
         <div className="flex flex-col sm:flex-row gap-2">
           <input
@@ -98,7 +88,8 @@ export function EntriesPage() {
             className="sm:w-48 bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm
                        focus:outline-none focus:ring-2 focus:ring-indigo-400 shrink-0"
           />
-          <div className="flex gap-1.5 flex-1 overflow-x-auto [scrollbar-width:none]
+          <div
+            className="flex gap-1.5 flex-1 overflow-x-auto [scrollbar-width:none]
                           [&::-webkit-scrollbar]:hidden sm:flex-wrap items-center">
             {CATEGORIES.map(({ value, label }) => (
               <button
@@ -109,8 +100,7 @@ export function EntriesPage() {
                   filterCategory === value
                     ? "bg-indigo-600 text-white border-indigo-600"
                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50",
-                ].join(" ")}
-              >
+                ].join(" ")}>
                 {label}
               </button>
             ))}
@@ -122,10 +112,8 @@ export function EntriesPage() {
               isFiltersOpen || advancedFilterCount > 0
                 ? "bg-indigo-600 text-white border-indigo-600"
                 : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50",
-            ].join(" ")}
-          >
-            Filters{advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}{" "}
-            {isFiltersOpen ? "▲" : "▼"}
+            ].join(" ")}>
+            Filters{advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""} {isFiltersOpen ? "▲" : "▼"}
           </button>
         </div>
 
@@ -144,8 +132,7 @@ export function EntriesPage() {
                       selectedTag === tag.id
                         ? "bg-indigo-600 text-white border-indigo-600"
                         : "bg-white text-gray-500 border-gray-300 hover:border-indigo-400 hover:text-indigo-600",
-                    ].join(" ")}
-                  >
+                    ].join(" ")}>
                     #{tag.name}
                   </button>
                 ))}
@@ -154,10 +141,7 @@ export function EntriesPage() {
 
             <div className="flex items-start gap-3 flex-wrap">
               <span className="text-xs font-medium text-gray-500 shrink-0 pt-1.5">Rating:</span>
-              <RatingMultiSelect
-                selected={selectedRatings}
-                onChange={setSelectedRatings}
-              />
+              <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />
             </div>
           </div>
         )}
@@ -181,23 +165,69 @@ export function EntriesPage() {
                 onRemove={() => setSelectedRatings([])}
               />
             )}
-            {search !== "" && (
-              <ActiveChip label={`"${search}"`} onRemove={() => setSearch("")} />
-            )}
-            <button
-              onClick={clearFilters}
-              className="ml-auto text-xs text-red-500 hover:text-red-700 font-medium"
-            >
+            {search !== "" && <ActiveChip label={`"${search}"`} onRemove={() => setSearch("")} />}
+            <button onClick={clearFilters} className="ml-auto text-xs text-red-500 hover:text-red-700 font-medium">
               Clear all
             </button>
           </div>
         )}
       </div>
 
-      {/* Entry count */}
-      <p className="text-sm text-gray-400 -mt-2">
-        Showing {entries.length} of {totalCount} entries
-      </p>
+      {/* Entry count + view toggle */}
+      <div className="flex items-center justify-between -mt-2">
+        <p className="text-sm text-gray-400">
+          Showing {entries.length} of {totalCount} entries
+        </p>
+        <div className="flex items-center gap-1 p-0.5 bg-gray-100 rounded-lg">
+          <button
+            onClick={() => setViewMode("expanded")}
+            title="Expanded view"
+            className={[
+              "p-1.5 rounded-md transition-colors",
+              viewMode === "expanded" ? "bg-white shadow-sm text-gray-700" : "text-gray-400 hover:text-gray-600",
+            ].join(" ")}>
+            {/* grid icon */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+            </svg>
+          </button>
+          <button
+            onClick={() => setViewMode("collapsed")}
+            title="Compact view"
+            className={[
+              "p-1.5 rounded-md transition-colors",
+              viewMode === "collapsed" ? "bg-white shadow-sm text-gray-700" : "text-gray-400 hover:text-gray-600",
+            ].join(" ")}>
+            {/* list icon */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+        </div>
+      </div>
 
       {/* Entry list */}
       {entries.length === 0 ? (
@@ -210,7 +240,7 @@ export function EntriesPage() {
             </button>
           </p>
         </div>
-      ) : (
+      ) : viewMode === "expanded" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {entries.map((entry) => (
             <EntryCard
@@ -222,6 +252,12 @@ export function EntriesPage() {
             />
           ))}
         </div>
+      ) : (
+        <div className="flex flex-col divide-y divide-gray-100 border border-gray-200 rounded-xl overflow-hidden bg-white">
+          {entries.map((entry) => (
+            <EntryRow key={entry.id} entry={entry} onView={setViewingEntry} />
+          ))}
+        </div>
       )}
 
       {/* Detail modal */}
@@ -229,17 +265,59 @@ export function EntriesPage() {
         <EntryDetailModal
           entry={viewingEntry}
           onClose={() => setViewingEntry(null)}
-          onEdit={(entry) => { setViewingEntry(null); setEditingEntry(entry) }}
+          onEdit={(entry) => {
+            setViewingEntry(null);
+            setEditingEntry(entry);
+          }}
         />
       )}
 
       {/* Edit modal */}
-      {editingEntry && (
-        <EditEntryModal
-          entry={editingEntry}
-          onClose={() => setEditingEntry(null)}
-        />
-      )}
+      {editingEntry && <EditEntryModal entry={editingEntry} onClose={() => setEditingEntry(null)} />}
+    </div>
+  );
+}
+
+const categoryColors: Record<EntryCategory, string> = {
+  word: "bg-blue-100 text-blue-700",
+  phrase: "bg-green-100 text-green-700",
+  grammar: "bg-purple-100 text-purple-700",
+  idiom: "bg-orange-100 text-orange-700",
+  note: "bg-teal-100 text-teal-700",
+};
+
+function EntryRow({ entry, onView }: { entry: Entry; onView: (e: Entry) => void }) {
+  return (
+    <div
+      className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors"
+      onClick={() => onView(entry)}>
+      {/* Category dot */}
+      <span
+        className={[
+          "shrink-0 px-2 py-0.5 rounded-full text-xs font-medium capitalize hidden sm:inline-block",
+          categoryColors[entry.category],
+        ].join(" ")}>
+        {entry.category}
+      </span>
+
+      {/* Word */}
+      <p className="flex-1 min-w-0 font-medium text-gray-900 truncate text-sm">{entry.word}</p>
+
+      {/* In practice badge */}
+      <span
+        className={[
+          "shrink-0 text-xs font-medium px-2 py-0.5 rounded-full",
+          entry.includeInPractice ? "bg-violet-100 text-violet-600" : "bg-gray-100 text-gray-400",
+        ].join(" ")}
+        title={entry.includeInPractice ? "In practice" : "Not in practice"}>
+        {entry.includeInPractice ? "Practice" : "—"}
+      </span>
+      {/* Rating — read only */}
+      <RatingStars value={entry.rating} readOnly />
+      {/* Date */}
+      <p className="shrink-0 text-xs text-gray-400 hidden sm:block tabular-nums">
+        {new Date(entry.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+      </p>
     </div>
   );
 }
@@ -251,8 +329,7 @@ function ActiveChip({ label, onRemove }: { label: string; onRemove: () => void }
       <button
         onClick={onRemove}
         className="hover:text-indigo-900 leading-none focus:outline-none"
-        aria-label={`Remove ${label} filter`}
-      >
+        aria-label={`Remove ${label} filter`}>
         ✕
       </button>
     </span>
