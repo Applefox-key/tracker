@@ -114,7 +114,7 @@ export function DashboardPage() {
         <Link
           to="/entries"
           state={{ openCreateForm: true }}
-          className="sm:hidden fixed top-20 z-50 w-11 h-11 rounded-full bg-indigo-600 flex items-center
+          className="sm:hidden fixed top-[70px] right-4 z-50 w-11 h-11 rounded-full bg-indigo-600 flex items-center
                      justify-center text-white hover:bg-indigo-700
                      active:scale-95 transition-transform shadow-md"
           style={{ right: 17 }}>
@@ -151,8 +151,8 @@ export function DashboardPage() {
           <Link to="/entries">
             <Button variant="secondary">Browse Entries</Button>
           </Link>
-          <Link to="/flashcards">
-            <Button variant="secondary">Practice Flashcards</Button>
+          <Link to="/practice">
+            <Button variant="secondary">Practice</Button>
           </Link>
         </div>
       </Card>
@@ -164,9 +164,9 @@ export function DashboardPage() {
             Browse
           </button>
         </Link>
-        <Link to="/flashcards" className="flex-1">
+        <Link to="/practice" className="flex-1">
           <button className="w-full border border-gray-200 rounded-xl py-2.5 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-            Flashcards
+            Practice
           </button>
         </Link>
       </div>
