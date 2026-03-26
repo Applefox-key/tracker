@@ -7,6 +7,7 @@ export const TOKEN_KEY = 'tokentracker'
 export const apiClient = axios.create({
   baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
 })
 
 // Attach Bearer token to every request
