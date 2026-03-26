@@ -11,6 +11,8 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isLoading: false,
       error: null,
+      isInitializing: true,
+      setInitializing: (v) => set({ isInitializing: v }),
 
       enterDemoMode: () => {
         set({ mode: 'demo', isAuthenticated: true, user: null, error: null })

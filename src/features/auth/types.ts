@@ -18,6 +18,8 @@ export interface AuthState {
   user: User | null
   isLoading: boolean
   error: string | null
+  isInitializing: boolean
+  setInitializing: (v: boolean) => void
   login: (credentials: LoginCredentials) => Promise<void>
   logout: () => void
   enterDemoMode: () => void

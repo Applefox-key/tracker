@@ -21,10 +21,13 @@ const queryClient = new QueryClient({
 export function App() {
   useEffect(() => {
     const token = localStorage.getItem(TOKEN_KEY)
-    const { mode } = useAuthStore.getState()
+    const { mode, setInitializing } = useAuthStore.getState()
 
-    if (!token && mode === 'unauthenticated') {
-      // No token in localStorage — try cookie auth (cross-project SSO)
+    if (token || mode !== 'unauthenticated') {
+      // Already authenticated via localStorage — no cookie check needed
+      setInitializing(false)
+    } else {
+      // No token — try cookie auth
       authApi.getUser()
         .then((user) => {
           useAuthStore.setState({
@@ -34,8 +37,9 @@ export function App() {
           })
         })
         .catch(() => {
-          // No valid cookie — stay unauthenticated, show login page
+          // No valid cookie — stay unauthenticated
         })
+        .finally(() => setInitializing(false))
     }
   }, [])
 
