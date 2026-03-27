@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { DemoBanner } from "@/features/auth/components/DemoBanner";
 import { useEntriesData } from "@/hooks/useEntriesData";
@@ -65,8 +65,8 @@ export function Layout() {
     <div className="min-h-screen flex flex-col">
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-          <span className="sm:hidden text-xl font-bold text-indigo-600">LP</span>
-          <span className="hidden sm:inline text-xl font-bold text-indigo-600 tracking-tight">Language Progress</span>
+          <span className="sm:hidden text-xl font-bold text-emerald-600">LP</span>
+          <span className="hidden sm:inline text-xl font-bold text-emerald-600 tracking-tight">Language Progress</span>
 
           <nav className="flex items-center gap-1">
             {navItems.map(({ to, label, icon }) => (
@@ -76,8 +76,8 @@ export function Layout() {
                 end
                 className={({ isActive }) =>
                   [
-                    "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    isActive ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
+                    "flex items-center gap-1.5 px-1 text-lg sm:px-3 py-2 rounded-lg sm:text-sm font-medium transition-colors",
+                    isActive ? "bg-emerald-50 text-emerald-700" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
                   ].join(" ")
                 }>
                 <span>{icon}</span>
@@ -86,95 +86,121 @@ export function Layout() {
             ))}
           </nav>
 
-          <div id="apps-dropdown-root" className="relative">
-            <button
-              onClick={() => setAppsOpen((prev) => !prev)}
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm border transition-colors ${
-                appsOpen
-                  ? "bg-indigo-50 border-indigo-300 text-indigo-700"
-                  : "border-gray-200 text-gray-500 hover:bg-gray-50"
-              }`}>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-                <rect x="1" y="1" width="5" height="5" rx="1.5" />
-                <rect x="10" y="1" width="5" height="5" rx="1.5" />
-                <rect x="1" y="10" width="5" height="5" rx="1.5" />
-                <rect x="10" y="10" width="5" height="5" rx="1.5" />
-              </svg>
-              <span className="hidden sm:inline">Apps</span>
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 10 10"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                className="hidden sm:block"
-                style={{ transform: appsOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
-                <path d="M2 3l3 3 3-3" />
-              </svg>
-            </button>
-
-            {appsOpen && (
-              <div className="fixed right-4 sm:absolute sm:right-0 top-[68px] sm:top-10 z-50 w-72 bg-white border border-gray-200 rounded-2xl shadow-xl p-3">
-                <p className="text-xs text-gray-400 uppercase tracking-wider mb-2.5 px-1">learnapp.pro — all tools</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {APPS.map((app) =>
-                    app.current ? (
-                      <div
-                        key={app.name}
-                        className="flex flex-col gap-1 p-2.5 rounded-xl border-2 border-green-500 bg-green-50 cursor-default">
+          <div className="flex justify-end  items-center">
+            <div id="apps-dropdown-root" className="relative">
+              <button
+                onClick={() => setAppsOpen((prev) => !prev)}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm border transition-colors ${
+                  appsOpen
+                    ? "bg-emerald-50 border-emerald-300 text-emerald-700"
+                    : "border-gray-200 text-gray-500 hover:bg-gray-50"
+                }`}>
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                  <rect x="1" y="1" width="5" height="5" rx="1.5" />
+                  <rect x="10" y="1" width="5" height="5" rx="1.5" />
+                  <rect x="1" y="10" width="5" height="5" rx="1.5" />
+                  <rect x="10" y="10" width="5" height="5" rx="1.5" />
+                </svg>
+                <span className="hidden sm:inline">Apps</span>
+                <svg
+                  width="10"
+                  height="10"
+                  viewBox="0 0 10 10"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  className="hidden sm:block"
+                  style={{ transform: appsOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>
+                  <path d="M2 3l3 3 3-3" />
+                </svg>
+              </button>
+              {appsOpen && (
+                <div className="fixed right-4 sm:absolute sm:right-0 top-[68px] sm:top-10 z-50 w-72 bg-white border border-gray-200 rounded-2xl shadow-xl p-3">
+                  <p className="text-xs text-gray-400 uppercase tracking-wider mb-2.5 px-1">learnapp.pro — all tools</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {APPS.map((app) =>
+                      app.current ? (
                         <div
-                          className="w-7 h-7 rounded-lg flex items-center justify-center mb-1"
-                          style={{ background: app.iconBg }}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill={app.iconColor}>
-                            <rect x="2" y="3" width="20" height="14" rx="2" />
-                            <path d="M8 21h8M12 17v4" />
-                          </svg>
+                          key={app.name}
+                          className="flex flex-col gap-1 p-2.5 rounded-xl border-2 border-green-500 bg-green-50 cursor-default">
+                          <div
+                            className="w-7 h-7 rounded-lg flex items-center justify-center mb-1"
+                            style={{ background: app.iconBg }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill={app.iconColor}>
+                              <rect x="2" y="3" width="20" height="14" rx="2" />
+                              <path d="M8 21h8M12 17v4" />
+                            </svg>
+                          </div>
+                          <span className="text-xs font-semibold text-green-800">{app.name}</span>
+                          <span className="text-xs text-green-500 leading-tight">{app.desc}</span>
+                          <span className="text-xs bg-green-100 text-green-700 rounded px-1.5 py-0.5 w-fit mt-0.5">
+                            current
+                          </span>
                         </div>
-                        <span className="text-xs font-semibold text-green-800">{app.name}</span>
-                        <span className="text-xs text-green-500 leading-tight">{app.desc}</span>
-                        <span className="text-xs bg-green-100 text-green-700 rounded px-1.5 py-0.5 w-fit mt-0.5">
-                          current
-                        </span>
-                      </div>
-                    ) : (
-                      <a
-                        key={app.name}
-                        href={app.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex flex-col gap-1 p-2.5 rounded-xl border border-gray-200 hover:border-violet-300 hover:bg-violet-50 transition-colors no-underline cursor-pointer">
-                        <div
-                          className="w-7 h-7 rounded-lg flex items-center justify-center mb-1"
-                          style={{ background: app.iconBg }}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill={app.iconColor}>
-                            <rect x="2" y="3" width="20" height="14" rx="2" />
-                            <path d="M8 21h8M12 17v4" />
-                          </svg>
-                        </div>
-                        <span className="text-xs font-semibold text-gray-800">{app.name}</span>
-                        <span className="text-xs text-gray-400 leading-tight">{app.desc}</span>
-                      </a>
-                    ),
-                  )}
+                      ) : (
+                        <a
+                          key={app.name}
+                          href={app.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex flex-col gap-1 p-2.5 rounded-xl border border-gray-200 hover:border-violet-300 hover:bg-violet-50 transition-colors no-underline cursor-pointer">
+                          <div
+                            className="w-7 h-7 rounded-lg flex items-center justify-center mb-1"
+                            style={{ background: app.iconBg }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill={app.iconColor}>
+                              <rect x="2" y="3" width="20" height="14" rx="2" />
+                              <path d="M8 21h8M12 17v4" />
+                            </svg>
+                          </div>
+                          <span className="text-xs font-semibold text-gray-800">{app.name}</span>
+                          <span className="text-xs text-gray-400 leading-tight">{app.desc}</span>
+                        </a>
+                      ),
+                    )}
+                  </div>
                 </div>
+              )}
+            </div>
+            {isAuthenticated && (
+              <div className="flex items-center gap-3 ml-3">
+                {mode === "authenticated" && user?.name && (
+                  <Link to="/profile" title="Profile">
+                    {user?.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt={user.name}
+                        className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-slate-600 hover:ring-2 hover:ring-emerald-400 transition-all"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-medium hover:ring-2 hover:ring-emerald-400 transition-all cursor-pointer">
+                        {user?.name?.[0]?.toUpperCase() ?? "U"}
+                      </div>
+                    )}
+                  </Link>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="text-sm font-medium text-gray-500 hover:text-red-600 transition-colors px-2 py-1 rounded-lg hover:bg-red-50">
+                  <span className="hidden sm:block">{mode === "demo" ? "Exit demo" : "Logout"}</span>
+                  <svg
+                    className="block sm:hidden"
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                    strokeLinecap="round"
+                    strokeLinejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                </button>
               </div>
             )}
           </div>
-
-          {isAuthenticated && (
-            <div className="flex items-center gap-3 ml-3">
-              {mode === "authenticated" && user?.name && (
-                <span className="hidden sm:block text-xs text-gray-500 truncate max-w-[120px]">{user.name}</span>
-              )}
-              <button
-                onClick={handleLogout}
-                className="text-sm font-medium text-gray-500 hover:text-red-600 transition-colors px-2 py-1 rounded-lg hover:bg-red-50">
-                {mode === "demo" ? "Exit demo" : "Logout"}
-              </button>
-            </div>
-          )}
         </div>
       </header>
 

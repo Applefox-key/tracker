@@ -11,6 +11,7 @@ import { MatchPage } from '@/pages/practice/MatchPage'
 import { PuzzlePage } from '@/pages/practice/PuzzlePage'
 import { AboutPage } from '@/pages/AboutPage'
 import { LoginPage } from '@/pages/LoginPage'
+import { ProfilePage } from '@/pages/ProfilePage'
 
 function RootRedirect() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
           { path: 'practice/quiz', element: <QuizPage /> },
           { path: 'practice/match', element: <MatchPage /> },
           { path: 'practice/puzzle', element: <PuzzlePage /> },
+          { path: 'profile', element: <ProfilePage /> },
         ],
       },
     ],

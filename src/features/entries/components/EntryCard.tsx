@@ -51,7 +51,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
 
       {/* Example */}
       {entry.example && (
-        <p className="text-sm text-gray-600 italic border-l-2 border-indigo-200 pl-3">{entry.example}</p>
+        <p className="text-sm text-gray-600 italic border-l-2 border-emerald-200 pl-3">{entry.example}</p>
       )}
 
       {/* Tags */}
@@ -86,7 +86,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
             variant="ghost"
             size="sm"
             onClick={() => onEdit(entry)}
-            className="text-indigo-500 hover:bg-indigo-50">
+            className="text-emerald-500 hover:bg-emerald-50">
             Edit
           </Button>
           <Button variant="ghost" size="sm" onClick={() => onRemove(entry.id)} className="text-red-500 hover:bg-red-50">

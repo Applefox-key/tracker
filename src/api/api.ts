@@ -1,4 +1,5 @@
-import { apiClient, TOKEN_KEY } from './client'
+import axios from 'axios'
+import { apiClient, TOKEN_KEY, BASE_URL } from './client'
 import type { Entry, EntryCategory, EntryTag } from '@/features/entries/types'
 import type { User, LoginCredentials } from '@/features/auth/types'
 
@@ -81,6 +82,18 @@ export const authApi = {
 
   async updateUser(data: Partial<User>): Promise<User> {
     const res = await apiClient.patch<{ data: User }>('/users', data)
+    return res.data.data
+  },
+
+  async uploadAvatar(file: File): Promise<User> {
+    // Uses raw axios to avoid the data-wrapper interceptor (FormData must not be wrapped)
+    const formData = new FormData()
+    formData.append('avatar', file)
+    const token = localStorage.getItem(TOKEN_KEY)
+    const res = await axios.patch<{ data: User }>(`${BASE_URL}/users`, formData, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      withCredentials: true,
+    })
     return res.data.data
   },
 

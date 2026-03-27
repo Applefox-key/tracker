@@ -108,7 +108,7 @@ export function FlashcardsPage() {
                 className={[
                   "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
                   selectedCategory === null
-                    ? "bg-indigo-600 text-white border-indigo-600"
+                    ? "bg-emerald-600 text-white border-emerald-600"
                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50",
                 ].join(" ")}>
                 All
@@ -120,7 +120,7 @@ export function FlashcardsPage() {
                   className={[
                     "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
                     selectedCategory === key
-                      ? "bg-indigo-600 text-white border-indigo-600"
+                      ? "bg-emerald-600 text-white border-emerald-600"
                       : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50",
                   ].join(" ")}>
                   {label}
@@ -141,8 +141,8 @@ export function FlashcardsPage() {
                     className={[
                       "px-2.5 py-1 rounded-full text-xs font-medium border transition-colors",
                       selectedTag === tag.id
-                        ? "bg-indigo-600 text-white border-indigo-600"
-                        : "bg-white text-gray-500 border-gray-300 hover:border-indigo-400 hover:text-indigo-600",
+                        ? "bg-emerald-600 text-white border-emerald-600"
+                        : "bg-white text-gray-500 border-gray-300 hover:border-emerald-400 hover:text-emerald-600",
                     ].join(" ")}>
                     #{tag.name}
                   </button>
@@ -160,7 +160,7 @@ export function FlashcardsPage() {
             {activeFilterCount > 0 ? "No flashcards match your filters." : "No flashcards available."}
           </p>
           {activeFilterCount > 0 && (
-            <button onClick={clearFilters} className="text-sm text-indigo-500 hover:underline">
+            <button onClick={clearFilters} className="text-sm text-emerald-500 hover:underline">
               Clear filters
             </button>
           )}

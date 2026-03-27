@@ -29,7 +29,7 @@ export function EntriesPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const initialDateFilter = (location.state?.dateFilter as DateFilter) ?? 'all';
+  const initialDateFilter = (location.state?.dateFilter as DateFilter) ?? "all";
 
   useEffect(() => {
     if (location.state?.openCreateForm) {
@@ -58,7 +58,9 @@ export function EntriesPage() {
     removeEntry,
   } = useEntries(initialDateFilter);
 
-  const advancedFilterCount = [selectedTag !== null, selectedRatings.length > 0, dateFilter !== 'all'].filter(Boolean).length;
+  const advancedFilterCount = [selectedTag !== null, selectedRatings.length > 0, dateFilter !== "all"].filter(
+    Boolean,
+  ).length;
 
   function handleAdd(values: EntryFormValues) {
     const { tagIds, ...entryData } = values;
@@ -90,7 +92,7 @@ export function EntriesPage() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search..."
             className="sm:w-48 bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm
-                       focus:outline-none focus:ring-2 focus:ring-indigo-400 shrink-0"
+                       focus:outline-none focus:ring-2 focus:ring-emerald-400 shrink-0"
           />
           <div
             className="flex gap-1.5 flex-1 overflow-x-auto [scrollbar-width:none]
@@ -102,7 +104,7 @@ export function EntriesPage() {
                 className={[
                   "shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
                   filterCategory === value
-                    ? "bg-indigo-600 text-white border-indigo-600"
+                    ? "bg-emerald-600 text-white border-emerald-600"
                     : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50",
                 ].join(" ")}>
                 {label}
@@ -114,7 +116,7 @@ export function EntriesPage() {
             className={[
               "shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
               isFiltersOpen || advancedFilterCount > 0
-                ? "bg-indigo-600 text-white border-indigo-600"
+                ? "bg-emerald-600 text-white border-emerald-600"
                 : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50",
             ].join(" ")}>
             Filters{advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""} {isFiltersOpen ? "▲" : "▼"}
@@ -134,8 +136,8 @@ export function EntriesPage() {
                     className={[
                       "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
                       selectedTag === tag.id
-                        ? "bg-indigo-600 text-white border-indigo-600"
-                        : "bg-white text-gray-500 border-gray-300 hover:border-indigo-400 hover:text-indigo-600",
+                        ? "bg-emerald-600 text-white border-emerald-600"
+                        : "bg-white text-gray-500 border-gray-300 hover:border-emerald-400 hover:text-emerald-600",
                     ].join(" ")}>
                     #{tag.name}
                   </button>
@@ -145,15 +147,20 @@ export function EntriesPage() {
 
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-medium text-gray-500 shrink-0">Date:</span>
-              {([{ value: 'today', label: 'Today' }, { value: 'week', label: 'This week' }] as const).map(({ value, label }) => (
+              {(
+                [
+                  { value: "today", label: "Today" },
+                  { value: "week", label: "This week" },
+                ] as const
+              ).map(({ value, label }) => (
                 <button
                   key={value}
-                  onClick={() => setDateFilter(dateFilter === value ? 'all' : value)}
+                  onClick={() => setDateFilter(dateFilter === value ? "all" : value)}
                   className={[
                     "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
                     dateFilter === value
-                      ? "bg-indigo-600 text-white border-indigo-600"
-                      : "bg-white text-gray-500 border-gray-300 hover:border-indigo-400 hover:text-indigo-600",
+                      ? "bg-emerald-600 text-white border-emerald-600"
+                      : "bg-white text-gray-500 border-gray-300 hover:border-emerald-400 hover:text-emerald-600",
                   ].join(" ")}>
                   {label}
                 </button>
@@ -186,10 +193,10 @@ export function EntriesPage() {
                 onRemove={() => setSelectedRatings([])}
               />
             )}
-            {dateFilter !== 'all' && (
+            {dateFilter !== "all" && (
               <ActiveChip
-                label={dateFilter === 'today' ? 'Today' : 'This week'}
-                onRemove={() => setDateFilter('all')}
+                label={dateFilter === "today" ? "Today" : "This week"}
+                onRemove={() => setDateFilter("all")}
               />
             )}
             {search !== "" && <ActiveChip label={`"${search}"`} onRemove={() => setSearch("")} />}
@@ -262,7 +269,7 @@ export function EntriesPage() {
           <p className="text-lg">No entries match your filters</p>
           <p className="text-sm mt-1">
             Try adjusting your filters or{" "}
-            <button className="text-indigo-500 hover:underline" onClick={clearFilters}>
+            <button className="text-emerald-500 hover:underline" onClick={clearFilters}>
               clear all
             </button>
           </p>
@@ -351,11 +358,11 @@ function EntryRow({ entry, onView }: { entry: Entry; onView: (e: Entry) => void 
 
 function ActiveChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-medium">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">
       {label}
       <button
         onClick={onRemove}
-        className="hover:text-indigo-900 leading-none focus:outline-none"
+        className="hover:text-emerald-900 leading-none focus:outline-none"
         aria-label={`Remove ${label} filter`}>
         ✕
       </button>

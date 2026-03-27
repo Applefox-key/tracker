@@ -43,13 +43,20 @@ interface StatCardProps {
 
 function StatCard({ label, value, color, sub, to, toState }: StatCardProps) {
   const card = (
-    <Card padding="sm" className={`p-2 sm:p-6 flex flex-col items-center gap-0.5 sm:gap-1 min-w-0${to ? ' hover:shadow-md transition-shadow cursor-pointer' : ''}`}>
+    <Card
+      padding="sm"
+      className={` h-full p-2 sm:p-6 flex flex-col items-center gap-0.5 sm:gap-1 min-w-0${to ? " hover:shadow-md transition-shadow cursor-pointer" : ""}`}>
       <p className={`text-xl sm:text-3xl font-extrabold ${color} truncate`}>{value}</p>
       <p className="text-xs sm:text-sm text-gray-600 font-medium leading-tight text-center">{label}</p>
       {sub && <p className="text-xs text-gray-400 hidden sm:block">{sub}</p>}
     </Card>
   );
-  if (to) return <Link to={to} state={toState} className="block">{card}</Link>;
+  if (to)
+    return (
+      <Link to={to} state={toState} className="block">
+        {card}
+      </Link>
+    );
   return card;
 }
 
@@ -118,8 +125,8 @@ export function DashboardPage() {
         <Link
           to="/entries"
           state={{ openCreateForm: true }}
-          className="sm:hidden fixed top-[70px] right-4 z-50 w-11 h-11 rounded-full bg-indigo-600 flex items-center
-                     justify-center text-white hover:bg-indigo-700
+          className="sm:hidden fixed top-[70px] right-4 z-50 w-11 h-11 rounded-full bg-emerald-600 flex items-center
+                     justify-center text-white hover:bg-emerald-700
                      active:scale-95 transition-transform shadow-md"
           style={{ right: 17 }}>
           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
@@ -130,17 +137,42 @@ export function DashboardPage() {
 
       {/* ── Stats — mobile (3-col grid) ── */}
       <div className="grid grid-cols-3 gap-2 sm:hidden">
-        <StatCard label="Total Entries" value={entries.length}   color="text-indigo-600"  to="/entries" />
-        <StatCard label="Added Today"   value={stats.todayCount} color="text-emerald-600" to="/entries" toState={{ dateFilter: 'today' }} />
-        <StatCard label="This Week"     value={stats.weekCount}  color="text-cyan-600"    to="/entries" toState={{ dateFilter: 'week' }} />
+        <StatCard label="Total Entries" value={entries.length} color="text-emerald-600" to="/entries" />
+        <StatCard
+          label="Added Today"
+          value={stats.todayCount}
+          color="text-emerald-600"
+          to="/entries"
+          toState={{ dateFilter: "today" }}
+        />
+        <StatCard
+          label="This Week"
+          value={stats.weekCount}
+          color="text-cyan-600"
+          to="/entries"
+          toState={{ dateFilter: "week" }}
+        />
       </div>
       {/* ── Stats — desktop grid ── */}
       <div className="hidden sm:grid grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
-        <StatCard label="Total Entries" value={entries.length}   color="text-indigo-600"  to="/entries" />
-        <StatCard label="Added Today"   value={stats.todayCount} color="text-emerald-600" to="/entries" toState={{ dateFilter: 'today' }} />
-        <StatCard label="This Week"     value={stats.weekCount}  color="text-cyan-600"    to="/entries" toState={{ dateFilter: 'week' }} sub="last 7 days" />
-        <StatCard label="Practice"      value={stats.flashCount} color="text-violet-600"  to="/practice" />
-        <StatCard label="Avg Rating"    value={stats.avgRating}  color="text-amber-500"   to="/practice" sub="out of 5" />
+        <StatCard label="Total Entries" value={entries.length} color="text-blue-600" to="/entries" />
+        <StatCard
+          label="Added Today"
+          value={stats.todayCount}
+          color="text-green-600"
+          to="/entries"
+          toState={{ dateFilter: "today" }}
+        />
+        <StatCard
+          label="This Week"
+          value={stats.weekCount}
+          color="text-cyan-600"
+          to="/entries"
+          toState={{ dateFilter: "week" }}
+          sub="last 7 days"
+        />
+        <StatCard label="Practice" value={stats.flashCount} color="text-violet-600" to="/practice" />
+        <StatCard label="Avg Rating" value={stats.avgRating} color="text-amber-500" to="/practice" sub="out of 5" />
       </div>
 
       {/* ── Quick Actions — desktop card ── */}
@@ -202,7 +234,7 @@ export function DashboardPage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Recent Entries</CardTitle>
-            <Link to="/entries" className="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+            <Link to="/entries" className="text-sm text-emerald-600 hover:text-emerald-800 font-medium">
               View all →
             </Link>
           </div>

@@ -4,6 +4,7 @@ export interface User {
   id: string
   email: string
   name: string
+  avatar: string | null
 }
 
 export interface LoginCredentials {
@@ -23,4 +24,6 @@ export interface AuthState {
   login: (credentials: LoginCredentials) => Promise<void>
   logout: () => void
   enterDemoMode: () => void
+  updateUser: (data: Partial<Pick<User, 'name' | 'email'>>) => Promise<void>
+  setUser: (user: User) => void
 }

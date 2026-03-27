@@ -38,6 +38,13 @@ export const useAuthStore = create<AuthState>()(
         useAuthStore.getState().mode === 'authenticated' && authApi.logout().catch(() => void 0)
         set({ mode: 'unauthenticated', isAuthenticated: false, user: null, error: null })
       },
+
+      updateUser: async (data) => {
+        const updated = await authApi.updateUser(data)
+        set((s) => ({ user: s.user ? { ...s.user, ...updated } : updated }))
+      },
+
+      setUser: (user) => set({ user }),
     }),
     {
       name: 'auth',

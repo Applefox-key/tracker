@@ -1,29 +1,22 @@
-import { Button } from '@/shared/ui/Button'
+import { Button } from "@/shared/ui/Button";
 
 interface CardNavigationProps {
-  currentIndex: number
-  total: number
-  progress: number
-  onPrev: () => void
-  onNext: () => void
-  onReset: () => void
+  currentIndex: number;
+  total: number;
+  progress: number;
+  onPrev: () => void;
+  onNext: () => void;
+  onReset: () => void;
 }
 
-export function CardNavigation({
-  currentIndex,
-  total,
-  progress,
-  onPrev,
-  onNext,
-  onReset,
-}: CardNavigationProps) {
+export function CardNavigation({ currentIndex, total, progress, onPrev, onNext, onReset }: CardNavigationProps) {
   return (
     <div className="flex flex-col gap-4">
       {/* Progress bar */}
       <div className="flex items-center gap-3">
         <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
           <div
-            className="bg-indigo-500 h-2 rounded-full transition-all duration-300"
+            className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -43,5 +36,5 @@ export function CardNavigation({
         <Button onClick={onNext}>Next →</Button>
       </div>
     </div>
-  )
+  );
 }

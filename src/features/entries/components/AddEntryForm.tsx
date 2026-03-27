@@ -80,8 +80,10 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
   const isEdit = mode === "edit";
 
   return (
-    <form onSubmit={handleSubmit} className="bg-indigo-50 border border-indigo-200 rounded-xl p-5 flex flex-col gap-4">
-      <p className="font-semibold text-indigo-800">{isEdit ? "Edit Entry" : "New Entry"}</p>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 flex flex-col gap-4">
+      <p className="font-semibold text-emerald-800">{isEdit ? "Edit Entry" : "New Entry"}</p>
 
       {/* Word & Explanation */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -92,7 +94,7 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
             value={word}
             onChange={(e) => setWord(e.target.value)}
             placeholder="e.g. serendipity"
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
           />
         </div>
         <div className="flex flex-col gap-1">
@@ -102,7 +104,7 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
             value={explanation}
             onChange={(e) => setExplanation(e.target.value)}
             placeholder="e.g. щаслива випадковість"
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
           />
         </div>
       </div>
@@ -114,7 +116,7 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
           value={example}
           onChange={(e) => setExample(e.target.value)}
           placeholder="e.g. It was pure serendipity that we met."
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
         />
       </div>
 
@@ -130,7 +132,7 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
               className={[
                 "px-3 py-1.5 rounded-lg text-sm font-medium border capitalize transition-colors",
                 category === cat
-                  ? "bg-indigo-600 text-white border-indigo-600"
+                  ? "bg-emerald-600 text-white border-emerald-600"
                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50",
               ].join(" ")}>
               {cat}
@@ -157,7 +159,7 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
             type="checkbox"
             checked={includeInPractice}
             onChange={(e) => setIncludeInPractice(e.target.checked)}
-            className="w-4 h-4 accent-indigo-600 cursor-pointer"
+            className="w-4 h-4 accent-emerald-600 cursor-pointer"
           />
           <label htmlFor="flashcards-check" className="text-sm text-gray-700 cursor-pointer select-none">
             Include in practice

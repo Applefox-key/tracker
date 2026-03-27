@@ -24,6 +24,7 @@ export async function loginApi(credentials: LoginCredentials): Promise<User> {
     id: crypto.randomUUID(),
     email: email.trim().toLowerCase(),
     name,
+    avatar: null,
   }
 }
 
