@@ -21,12 +21,12 @@ const APPS = [
     iconColor: "#4f46e5",
   },
   {
-    name: "LearnFast",
+    name: "Phrasely",
     desc: "90-second method",
-    href: "https://phrases.learnapp.pro",
+    href: "https://phrasely.learnapp.pro",
     current: false,
     iconBg: "#faf5ff",
-    iconColor: "#7c3aed",
+    iconColor: "#0d9488",
   },
   {
     name: "Tracker",
@@ -116,10 +116,8 @@ export function Layout() {
             </button>
 
             {appsOpen && (
-              <div className="absolute right-0 top-10 z-50 w-72 bg-white border border-gray-200 rounded-2xl shadow-xl p-3">
-                <p className="text-xs text-gray-400 uppercase tracking-wider mb-2.5 px-1">
-                  learnapp.pro — all tools
-                </p>
+              <div className="fixed right-4 sm:absolute sm:right-0 top-[68px] sm:top-10 z-50 w-72 bg-white border border-gray-200 rounded-2xl shadow-xl p-3">
+                <p className="text-xs text-gray-400 uppercase tracking-wider mb-2.5 px-1">learnapp.pro — all tools</p>
                 <div className="grid grid-cols-2 gap-2">
                   {APPS.map((app) =>
                     app.current ? (

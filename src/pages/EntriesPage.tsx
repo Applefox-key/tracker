@@ -7,7 +7,7 @@ import { EntryCard } from "@/features/entries/components/EntryCard";
 import { EntryForm, EntryFormValues } from "@/features/entries/components/AddEntryForm";
 import { EditEntryModal } from "@/features/entries/components/EditEntryModal";
 import { EntryDetailModal } from "@/features/entries/components/EntryDetailModal";
-import { useEntries } from "@/features/entries/hooks/useEntries";
+import { useEntries, DateFilter } from "@/features/entries/hooks/useEntries";
 import { Entry, EntryCategory } from "@/features/entries/types";
 
 const CATEGORIES: Array<{ value: EntryCategory | "all"; label: string }> = [
@@ -29,6 +29,8 @@ export function EntriesPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const initialDateFilter = (location.state?.dateFilter as DateFilter) ?? 'all';
+
   useEffect(() => {
     if (location.state?.openCreateForm) {
       setShowForm(true);
@@ -48,13 +50,15 @@ export function EntriesPage() {
     setSelectedTag,
     selectedRatings,
     setSelectedRatings,
+    dateFilter,
+    setDateFilter,
     hasActiveFilters,
     clearFilters,
     addEntry,
     removeEntry,
-  } = useEntries();
+  } = useEntries(initialDateFilter);
 
-  const advancedFilterCount = [selectedTag !== null, selectedRatings.length > 0].filter(Boolean).length;
+  const advancedFilterCount = [selectedTag !== null, selectedRatings.length > 0, dateFilter !== 'all'].filter(Boolean).length;
 
   function handleAdd(values: EntryFormValues) {
     const { tagIds, ...entryData } = values;
@@ -139,6 +143,23 @@ export function EntriesPage() {
               </div>
             )}
 
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-medium text-gray-500 shrink-0">Date:</span>
+              {([{ value: 'today', label: 'Today' }, { value: 'week', label: 'This week' }] as const).map(({ value, label }) => (
+                <button
+                  key={value}
+                  onClick={() => setDateFilter(dateFilter === value ? 'all' : value)}
+                  className={[
+                    "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
+                    dateFilter === value
+                      ? "bg-indigo-600 text-white border-indigo-600"
+                      : "bg-white text-gray-500 border-gray-300 hover:border-indigo-400 hover:text-indigo-600",
+                  ].join(" ")}>
+                  {label}
+                </button>
+              ))}
+            </div>
+
             <div className="flex items-start gap-3 flex-wrap">
               <span className="text-xs font-medium text-gray-500 shrink-0 pt-1.5">Rating:</span>
               <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />
@@ -163,6 +184,12 @@ export function EntriesPage() {
               <ActiveChip
                 label={`★ ${[...selectedRatings].sort((a, b) => a - b).join(", ")}`}
                 onRemove={() => setSelectedRatings([])}
+              />
+            )}
+            {dateFilter !== 'all' && (
+              <ActiveChip
+                label={dateFilter === 'today' ? 'Today' : 'This week'}
+                onRemove={() => setDateFilter('all')}
               />
             )}
             {search !== "" && <ActiveChip label={`"${search}"`} onRemove={() => setSearch("")} />}

@@ -37,16 +37,20 @@ interface StatCardProps {
   value: string | number;
   color: string;
   sub?: string;
+  to?: string;
+  toState?: object;
 }
 
-function StatCard({ label, value, color, sub }: StatCardProps) {
-  return (
-    <Card padding="sm" className="p-2 sm:p-6 flex flex-col items-center gap-0.5 sm:gap-1 min-w-0">
+function StatCard({ label, value, color, sub, to, toState }: StatCardProps) {
+  const card = (
+    <Card padding="sm" className={`p-2 sm:p-6 flex flex-col items-center gap-0.5 sm:gap-1 min-w-0${to ? ' hover:shadow-md transition-shadow cursor-pointer' : ''}`}>
       <p className={`text-xl sm:text-3xl font-extrabold ${color} truncate`}>{value}</p>
       <p className="text-xs sm:text-sm text-gray-600 font-medium leading-tight text-center">{label}</p>
       {sub && <p className="text-xs text-gray-400 hidden sm:block">{sub}</p>}
     </Card>
   );
+  if (to) return <Link to={to} state={toState} className="block">{card}</Link>;
+  return card;
 }
 
 interface CategoryRowProps {
@@ -124,19 +128,19 @@ export function DashboardPage() {
         </Link>
       </div>
 
-      {/* ── Stats — mobile (3 + 2 grid) ── */}
+      {/* ── Stats — mobile (3-col grid) ── */}
       <div className="grid grid-cols-3 gap-2 sm:hidden">
-        <StatCard label="Total Entries" value={entries.length} color="text-indigo-600" />
-        <StatCard label="Added Today" value={stats.todayCount} color="text-emerald-600" />
-        <StatCard label="This Week" value={stats.weekCount} color="text-cyan-600" />
+        <StatCard label="Total Entries" value={entries.length}   color="text-indigo-600"  to="/entries" />
+        <StatCard label="Added Today"   value={stats.todayCount} color="text-emerald-600" to="/entries" toState={{ dateFilter: 'today' }} />
+        <StatCard label="This Week"     value={stats.weekCount}  color="text-cyan-600"    to="/entries" toState={{ dateFilter: 'week' }} />
       </div>
       {/* ── Stats — desktop grid ── */}
       <div className="hidden sm:grid grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
-        <StatCard label="Total Entries" value={entries.length} color="text-indigo-600" />
-        <StatCard label="Added Today" value={stats.todayCount} color="text-emerald-600" />
-        <StatCard label="This Week" value={stats.weekCount} color="text-cyan-600" sub="last 7 days" />
-        <StatCard label="Practice" value={stats.flashCount} color="text-violet-600" />
-        <StatCard label="Avg Rating" value={stats.avgRating} color="text-amber-500" sub="out of 5" />
+        <StatCard label="Total Entries" value={entries.length}   color="text-indigo-600"  to="/entries" />
+        <StatCard label="Added Today"   value={stats.todayCount} color="text-emerald-600" to="/entries" toState={{ dateFilter: 'today' }} />
+        <StatCard label="This Week"     value={stats.weekCount}  color="text-cyan-600"    to="/entries" toState={{ dateFilter: 'week' }} sub="last 7 days" />
+        <StatCard label="Practice"      value={stats.flashCount} color="text-violet-600"  to="/practice" />
+        <StatCard label="Avg Rating"    value={stats.avgRating}  color="text-amber-500"   to="/practice" sub="out of 5" />
       </div>
 
       {/* ── Quick Actions — desktop card ── */}
