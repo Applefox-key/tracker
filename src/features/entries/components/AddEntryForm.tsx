@@ -45,7 +45,7 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
           onMouseLeave={() => setHovered(0)}
           className="text-xl leading-none focus:outline-none transition-transform hover:scale-110"
           aria-label={`Rate ${star}`}>
-          <span className={(hovered || value) >= star ? "text-amber-400" : "text-gray-300"}>★</span>
+          <span className={(hovered || value) >= star ? "text-amber-400" : "text-gray-300 dark:text-gray-600"}>★</span>
         </button>
       ))}
     </div>
@@ -78,51 +78,52 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
   }
 
   const isEdit = mode === "edit";
+  const inputCls = "border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500";
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 flex flex-col gap-4">
-      <p className="font-semibold text-emerald-800">{isEdit ? "Edit Entry" : "New Entry"}</p>
+      className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-5 flex flex-col gap-4">
+      <p className="font-semibold text-emerald-800 dark:text-emerald-300">{isEdit ? "Edit Entry" : "New Entry"}</p>
 
       {/* Word & Explanation */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-600">Word / Phrase *</label>
+          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Word / Phrase *</label>
           <input
             required
             value={word}
             onChange={(e) => setWord(e.target.value)}
             placeholder="e.g. serendipity"
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            className={inputCls}
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-600">Explanation *</label>
+          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Explanation *</label>
           <input
             required
             value={explanation}
             onChange={(e) => setExplanation(e.target.value)}
             placeholder="e.g. щаслива випадковість"
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            className={inputCls}
           />
         </div>
       </div>
 
       {/* Example */}
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-600">Example sentence</label>
+        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Example sentence</label>
         <input
           value={example}
           onChange={(e) => setExample(e.target.value)}
           placeholder="e.g. It was pure serendipity that we met."
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          className={inputCls}
         />
       </div>
 
       {/* Category */}
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-600">Category</label>
+        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Category</label>
         <div className="flex gap-2 flex-wrap">
           {CATEGORIES.map((cat) => (
             <button
@@ -133,7 +134,7 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
                 "px-3 py-1.5 rounded-lg text-sm font-medium border capitalize transition-colors",
                 category === cat
                   ? "bg-emerald-600 text-white border-emerald-600"
-                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50",
+                  : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600",
               ].join(" ")}>
               {cat}
             </button>
@@ -143,14 +144,14 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
 
       {/* Tags */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium text-gray-600">Tags</label>
+        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Tags</label>
         <TagCombobox selectedIds={selectedTagIds} onChange={setSelectedTagIds} />
       </div>
 
       {/* Rating & Practice row */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-600">How well do you know it?</label>
+          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">How well do you know it?</label>
           <StarRating value={rating} onChange={setRating} />
         </div>
         <div className="sm:ml-auto flex items-center gap-2">
@@ -161,7 +162,7 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
             onChange={(e) => setIncludeInPractice(e.target.checked)}
             className="w-4 h-4 accent-emerald-600 cursor-pointer"
           />
-          <label htmlFor="flashcards-check" className="text-sm text-gray-700 cursor-pointer select-none">
+          <label htmlFor="flashcards-check" className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
             Include in practice
           </label>
         </div>

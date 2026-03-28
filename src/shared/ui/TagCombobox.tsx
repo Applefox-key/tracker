@@ -88,7 +88,7 @@ export function TagCombobox({ selectedIds, onChange, placeholder }: TagComboboxP
     <div ref={containerRef} className="relative">
       {/* Input row */}
       <div
-        className="flex flex-wrap items-center gap-1 border border-gray-300 rounded-lg px-3 py-2 min-h-[42px] cursor-text focus-within:ring-2 focus-within:ring-emerald-400 focus-within:border-transparent bg-white"
+        className="flex flex-wrap items-center gap-1 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 min-h-[42px] cursor-text focus-within:ring-2 focus-within:ring-emerald-400 focus-within:border-transparent bg-white dark:bg-gray-700"
         onClick={() => {
           setIsOpen(true);
           inputRef.current?.focus();
@@ -99,7 +99,7 @@ export function TagCombobox({ selectedIds, onChange, placeholder }: TagComboboxP
           return (
             <span
               key={id}
-              className="inline-flex items-center gap-1 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full shrink-0">
+              className="inline-flex items-center gap-1 text-xs bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded-full shrink-0">
               {tag.name}
               <button
                 type="button"
@@ -107,7 +107,7 @@ export function TagCombobox({ selectedIds, onChange, placeholder }: TagComboboxP
                   e.stopPropagation();
                   removeTag(id);
                 }}
-                className="hover:text-emerald-900 leading-none">
+                className="hover:text-emerald-900 dark:hover:text-emerald-200 leading-none">
                 ×
               </button>
             </span>
@@ -124,13 +124,13 @@ export function TagCombobox({ selectedIds, onChange, placeholder }: TagComboboxP
           onKeyDown={handleKeyDown}
           onFocus={() => setIsOpen(true)}
           placeholder={selectedIds.length === 0 ? (placeholder ?? "Add tags…") : ""}
-          className="flex-1 min-w-[80px] outline-none text-sm bg-transparent"
+          className="flex-1 min-w-[80px] outline-none text-sm bg-transparent text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
         />
       </div>
 
       {/* Dropdown */}
       {showDropdown && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-md max-h-48 overflow-y-auto">
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md max-h-48 overflow-y-auto">
           {filtered.map((tag) => (
             <div
               key={tag.id}
@@ -138,7 +138,7 @@ export function TagCombobox({ selectedIds, onChange, placeholder }: TagComboboxP
                 e.preventDefault();
                 selectTag(tag.id);
               }}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 cursor-pointer">
+              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-400 cursor-pointer">
               <span className="text-emerald-400 text-xs">#</span>
               {tag.name}
             </div>
@@ -150,14 +150,14 @@ export function TagCombobox({ selectedIds, onChange, placeholder }: TagComboboxP
                 e.preventDefault();
                 handleCreate(inputValue.trim().toLowerCase());
               }}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-emerald-600 hover:bg-emerald-50 cursor-pointer border-t border-gray-100">
+              className="flex items-center gap-2 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 cursor-pointer border-t border-gray-100 dark:border-gray-700">
               <span className="text-base leading-none">+</span>
               Create tag &ldquo;<strong>{inputValue.trim()}</strong>&rdquo;
             </div>
           )}
 
           {filtered.length === 0 && !showCreate && (
-            <div className="px-3 py-2 text-xs text-gray-400 italic">No matching tags</div>
+            <div className="px-3 py-2 text-xs text-gray-400 dark:text-gray-500 italic">No matching tags</div>
           )}
         </div>
       )}

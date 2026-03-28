@@ -25,7 +25,7 @@ export function RatingStars({ value, onChange, readOnly = false }: RatingStarsPr
           ].join(' ')}
           aria-label={`Rate ${star}`}
         >
-          <span className={(hovered || value) >= star ? 'text-amber-400' : 'text-gray-200'}>
+          <span className={(hovered || value) >= star ? 'text-amber-400' : 'text-gray-200 dark:text-gray-700'}>
             ★
           </span>
         </button>

@@ -58,8 +58,8 @@ export function PracticePage() {
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Practice</h1>
-        <p className="text-gray-500 mt-1 text-sm">Choose a study mode</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Practice</h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Choose a study mode</p>
       </div>
 
       {/* Mode cards */}
@@ -71,22 +71,24 @@ export function PracticePage() {
             <div
               key={mode.key}
               className={[
-                "bg-white rounded-2xl border p-2 sm:p-6 flex flex-col gap-4 transition-shadow",
-                disabled ? "border-gray-100 opacity-60" : "border-gray-200 shadow-sm hover:shadow-md",
+                "bg-white dark:bg-gray-800 rounded-2xl border p-2 sm:p-6 flex flex-col gap-4 transition-shadow",
+                disabled
+                  ? "border-gray-100 dark:border-gray-700/50 opacity-60"
+                  : "border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md",
               ].join(" ")}>
               <div className="flex items-start gap-3">
                 <span className="text-3xl leading-none">{mode.icon}</span>
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-lg font-semibold text-gray-900">{mode.label}</h2>
-                  <p className="text-sm text-gray-500 mt-0.5">{mode.description}</p>
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{mode.label}</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{mode.description}</p>
                 </div>
               </div>
               <div className="flex items-center justify-between mt-auto">
-                <span className="text-sm text-gray-400">
+                <span className="text-sm text-gray-400 dark:text-gray-500">
                   {count} {count === 1 ? "entry" : "entries"} available
                 </span>
                 {disabled ? (
-                  <span className="text-xs text-gray-400 italic">Need at least {mode.min}</span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500 italic">Need at least {mode.min}</span>
                 ) : (
                   <Button size="sm" onClick={() => navigate(mode.route)}>
                     Start →

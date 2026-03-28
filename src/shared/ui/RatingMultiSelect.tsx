@@ -39,7 +39,7 @@ export function RatingMultiSelect({ selected, onChange, compact = false }: Ratin
                 className={
                   isSelected
                     ? isHovered ? 'text-amber-600' : 'text-amber-400'
-                    : isHovered ? 'text-amber-300' : 'text-gray-300'
+                    : isHovered ? 'text-amber-300' : 'text-gray-300 dark:text-gray-600'
                 }
               >
                 ★
@@ -76,11 +76,11 @@ export function RatingMultiSelect({ selected, onChange, compact = false }: Ratin
               'focus-visible:ring-2 focus-visible:ring-amber-400',
               isSelected
                 ? isHovered
-                  ? 'bg-amber-100 border-amber-500 text-amber-600'
-                  : 'bg-amber-50 border-amber-400 text-amber-500'
+                  ? 'bg-amber-100 border-amber-500 text-amber-600 dark:bg-amber-900/40 dark:border-amber-500'
+                  : 'bg-amber-50 border-amber-400 text-amber-500 dark:bg-amber-900/30 dark:border-amber-600'
                 : isHovered
-                  ? 'bg-gray-50 border-amber-300 text-amber-400'
-                  : 'bg-white border-gray-200 text-gray-300',
+                  ? 'bg-gray-50 border-amber-300 text-amber-400 dark:bg-gray-700 dark:border-amber-600'
+                  : 'bg-white border-gray-200 text-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-500',
             ].join(' ')}
           >
             <span className="text-sm leading-none tracking-tight">

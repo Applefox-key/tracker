@@ -28,7 +28,6 @@ export function ProfilePage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Local preview immediately
     const objectUrl = URL.createObjectURL(file);
     setAvatarPreview(objectUrl);
     setUploadError(null);
@@ -37,13 +36,12 @@ export function ProfilePage() {
     try {
       const updated = await authApi.uploadAvatar(file);
       setUser(updated);
-      setAvatarPreview(null); // server URL now in store
+      setAvatarPreview(null);
     } catch {
       setUploadError("Failed to upload avatar. Please try again.");
       setAvatarPreview(null);
     } finally {
       setUploading(false);
-      // Reset input so the same file can be re-selected if needed
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
@@ -63,11 +61,13 @@ export function ProfilePage() {
     }
   }
 
+  const inputCls = "border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100";
+
   return (
     <div className="max-w-lg mx-auto flex flex-col gap-6 py-4">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
-        <p className="text-gray-500 mt-1 text-sm">Manage your account details</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Profile</h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Manage your account details</p>
       </div>
 
       {/* Avatar upload */}
@@ -77,15 +77,14 @@ export function ProfilePage() {
             type="button"
             onClick={handleAvatarClick}
             disabled={uploading}
-            className="relative w-16 h-16 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2">
+            className="relative w-16 h-16 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
             {currentAvatar ? (
               <img src={currentAvatar} alt={user?.name} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-semibold select-none">
+              <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-2xl font-semibold select-none">
                 {initials}
               </div>
             )}
-            {/* Hover overlay */}
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
               {uploading ? (
                 <svg className="animate-spin w-5 h-5 text-white" viewBox="0 0 24 24" fill="none">
@@ -101,34 +100,28 @@ export function ProfilePage() {
               )}
             </div>
           </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleFileChange}
-          />
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
         </div>
 
         <div>
-          <p className="font-semibold text-gray-900">{user?.name}</p>
-          <p className="text-sm text-gray-500">{user?.email}</p>
+          <p className="font-semibold text-gray-900 dark:text-gray-100">{user?.name}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
           <button
             type="button"
             onClick={handleAvatarClick}
             disabled={uploading}
-            className="text-xs text-emerald-600 hover:text-emerald-800 mt-0.5 disabled:opacity-50">
+            className="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 mt-0.5 disabled:opacity-50">
             {uploading ? "Uploading…" : "Change photo"}
           </button>
         </div>
       </div>
 
-      {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
+      {uploadError && <p className="text-sm text-red-600 dark:text-red-400">{uploadError}</p>}
 
       {/* Profile form */}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 bg-white border border-gray-200 rounded-2xl p-6">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="profile-name" className="text-sm font-medium text-gray-700">
+          <label htmlFor="profile-name" className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Name
           </label>
           <input
@@ -136,13 +129,13 @@ export function ProfilePage() {
             type="text"
             value={name}
             onChange={(e) => { setName(e.target.value); setSaved(false); }}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent"
+            className={inputCls}
             required
           />
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="profile-email" className="text-sm font-medium text-gray-700">
+          <label htmlFor="profile-email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Email
           </label>
           <input
@@ -150,13 +143,13 @@ export function ProfilePage() {
             type="email"
             value={email}
             onChange={(e) => { setEmail(e.target.value); setSaved(false); }}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent"
+            className={inputCls}
             required
           />
         </div>
 
-        {saveError && <p className="text-sm text-red-600">{saveError}</p>}
-        {saved && <p className="text-sm text-emerald-600">Changes saved.</p>}
+        {saveError && <p className="text-sm text-red-600 dark:text-red-400">{saveError}</p>}
+        {saved && <p className="text-sm text-emerald-600 dark:text-emerald-400">Changes saved.</p>}
 
         <button
           type="submit"

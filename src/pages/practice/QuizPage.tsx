@@ -19,13 +19,13 @@ function SessionHeader({ current, total, onQuit }: { current: number; total: num
   const pct = total > 0 ? Math.round((current / total) * 100) : 0;
   return (
     <div className="flex items-center gap-4">
-      <button onClick={onQuit} className="text-sm text-gray-400 hover:text-gray-600 transition-colors shrink-0">
+      <button onClick={onQuit} className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
         ✕ Quit
       </button>
-      <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+      <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
         <div className="bg-emerald-500 h-2 rounded-full transition-all duration-300" style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-sm text-gray-500 shrink-0 tabular-nums">
+      <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0 tabular-nums">
         {current + 1} / {total}
       </span>
     </div>
@@ -49,9 +49,7 @@ export function QuizPage() {
 
   const filteredEntries = usePracticeEntries("quiz", { selectedRatings, selectedCategory, selectedTag });
 
-  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(
-    Boolean,
-  ).length;
+  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(Boolean).length;
 
   const currentQuestion = questions[currentIdx] ?? null;
   const options = useMemo(
@@ -93,10 +91,10 @@ export function QuizPage() {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/practice")} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={() => navigate("/practice")} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             ← Back
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">Quiz</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Quiz</h1>
           <div className="flex items-center gap-2 ml-auto">
             <Button variant={showFilters ? "primary" : "secondary"} size="sm" onClick={() => setShowFilters((v) => !v)}>
               <span className="hidden sm:inline">Filters</span>
@@ -105,9 +103,7 @@ export function QuizPage() {
               <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
             </Button>
             {activeFilterCount > 0 && (
-              <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">
-                Clear
-              </button>
+              <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">Clear</button>
             )}
           </div>
         </div>
@@ -124,21 +120,19 @@ export function QuizPage() {
           />
         )}
 
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">🧠</span>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Quiz Mode</h2>
-            <p className="text-gray-500 mt-1 text-sm">Choose the correct word from 4 options</p>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Quiz Mode</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Choose the correct word from 4 options</p>
           </div>
-          <p className="text-sm text-gray-400">{filteredEntries.length} entries available</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">{filteredEntries.length} entries available</p>
           {!canStart && (
-            <p className="text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2">
+            <p className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-2">
               Need at least 4 entries to start
             </p>
           )}
-          <Button onClick={startSession} disabled={!canStart} size="lg">
-            Start Quiz →
-          </Button>
+          <Button onClick={startSession} disabled={!canStart} size="lg">Start Quiz →</Button>
         </div>
       </div>
     );
@@ -149,26 +143,22 @@ export function QuizPage() {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/practice")} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={() => navigate("/practice")} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             ← Practice
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">Quiz — Results</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Quiz — Results</h1>
         </div>
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">{pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "💪"}</span>
           <div>
-            <p className="text-3xl font-bold text-gray-900">
-              {correctCount} / {questions.length}
-            </p>
-            <p className="text-gray-500 mt-1">{pct}% correct</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{correctCount} / {questions.length}</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">{pct}% correct</p>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
             <div className="bg-emerald-500 h-3 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
           </div>
           <div className="flex gap-3 flex-wrap justify-center">
-            <Button variant="secondary" onClick={startSession}>
-              Try again
-            </Button>
+            <Button variant="secondary" onClick={startSession}>Try again</Button>
             <Button onClick={() => navigate("/practice")}>Back to Practice</Button>
           </div>
         </div>
@@ -180,11 +170,11 @@ export function QuizPage() {
   return (
     <div className="flex flex-col gap-6 max-w-xl mx-auto w-full">
       <SessionHeader current={currentIdx} total={questions.length} onQuit={() => setPhase("setup")} />
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 flex flex-col gap-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col gap-4">
         <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">What word is this?</span>
-        <p className="text-lg font-semibold text-gray-800 leading-relaxed">{currentQuestion!.explanation}</p>
+        <p className="text-lg font-semibold text-gray-800 dark:text-gray-100 leading-relaxed">{currentQuestion!.explanation}</p>
         {currentQuestion!.example && (
-          <p className="text-sm text-gray-500 italic border-l-2 border-emerald-200 pl-3">{currentQuestion!.example}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">{currentQuestion!.example}</p>
         )}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -192,10 +182,14 @@ export function QuizPage() {
           const isCorrect = opt === currentQuestion!.word;
           const isSelected = opt === selected;
           let cls = "w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-colors ";
-          if (!answered) cls += "bg-white border-gray-200 hover:border-emerald-400 hover:bg-emerald-50 text-gray-700";
-          else if (isCorrect) cls += "bg-green-50 border-green-400 text-green-800";
-          else if (isSelected) cls += "bg-red-50 border-red-400 text-red-800";
-          else cls += "bg-white border-gray-100 text-gray-400";
+          if (!answered)
+            cls += "bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-gray-700 dark:text-gray-200";
+          else if (isCorrect)
+            cls += "bg-green-50 dark:bg-green-900/20 border-green-400 text-green-800 dark:text-green-400";
+          else if (isSelected)
+            cls += "bg-red-50 dark:bg-red-900/20 border-red-400 text-red-800 dark:text-red-400";
+          else
+            cls += "bg-white dark:bg-gray-700 border-gray-100 dark:border-gray-600 text-gray-400 dark:text-gray-500";
           return (
             <button key={opt} onClick={() => handleSelect(opt)} disabled={answered} className={cls}>
               {opt}

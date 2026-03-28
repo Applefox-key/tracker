@@ -14,7 +14,7 @@ export function DemoBanner() {
   }
 
   return (
-    <div className="bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-center text-sm text-amber-800">
+    <div className="bg-amber-50 dark:bg-amber-900/20 border-b border-amber-200 dark:border-amber-800 px-4 py-2.5 text-center text-sm text-amber-800 dark:text-amber-300">
       <span className="font-medium">Demo mode</span>
       {' — your changes are not saved. '}
       <button onClick={handleLogin} className="underline font-medium hover:text-amber-900">

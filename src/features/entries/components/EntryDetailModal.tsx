@@ -4,11 +4,11 @@ import { Button } from "@/shared/ui/Button";
 import { RatingStars } from "@/shared/ui/RatingStars";
 
 const categoryColors: Record<Entry["category"], string> = {
-  word: "bg-blue-100 text-blue-700",
-  phrase: "bg-green-100 text-green-700",
-  grammar: "bg-purple-100 text-purple-700",
-  idiom: "bg-orange-100 text-orange-700",
-  note: "bg-teal-100 text-teal-700",
+  word: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+  phrase: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+  grammar: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+  idiom: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
+  note: "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400",
 };
 
 interface EntryDetailModalProps {
@@ -36,12 +36,12 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
       onClick={onClose}>
       <div
-        className="w-full max-w-lg bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]"
+        className="w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-xl flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}>
         {/* Header */}
-        <div className="flex items-start justify-between p-6 border-b border-gray-100">
+        <div className="flex items-start justify-between p-6 border-b border-gray-100 dark:border-gray-700">
           <div className="flex-1 min-w-0 pr-4">
-            <h2 className="text-xl font-bold text-gray-900 break-words">{entry.word}</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 break-words">{entry.word}</h2>
             <span
               className={[
                 "inline-block mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
@@ -53,7 +53,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
           <button
             onClick={onClose}
             aria-label="Close"
-            className="shrink-0 p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+            className="shrink-0 p-1 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
               <path
                 fillRule="evenodd"
@@ -68,15 +68,15 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
         <div className="flex flex-col gap-5 p-6 overflow-y-auto">
           {entry.explanation && (
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Explanation</p>
-              <p className="text-sm text-gray-700 leading-relaxed">{entry.explanation}</p>
+              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">Explanation</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{entry.explanation}</p>
             </div>
           )}
 
           {entry.example && (
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Example</p>
-              <p className="text-sm text-gray-600 italic border-l-2 border-emerald-200 pl-3 leading-relaxed">
+              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">Example</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 leading-relaxed">
                 {entry.example}
               </p>
             </div>
@@ -84,10 +84,10 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
 
           {entry.tags.length > 0 && (
             <div>
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1.5">Tags</p>
+              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1.5">Tags</p>
               <div className="flex flex-wrap gap-1.5">
                 {entry.tags.map((tag) => (
-                  <span key={tag.id} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                  <span key={tag.id} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
                     #{tag.name}
                   </span>
                 ))}
@@ -96,7 +96,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
           )}
 
           <div>
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1.5">Rating</p>
+            <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1.5">Rating</p>
             <RatingStars value={entry.rating} readOnly />
           </div>
 
@@ -104,15 +104,15 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
             <span
               className={[
                 "w-2 h-2 rounded-full shrink-0",
-                entry.includeInPractice ? "bg-green-500" : "bg-gray-300",
+                entry.includeInPractice ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600",
               ].join(" ")}
             />
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-600 dark:text-gray-400">
               {entry.includeInPractice ? "Included in practice" : "Not in practice"}
             </span>
           </div>
 
-          <p className="text-xs text-gray-300">
+          <p className="text-xs text-gray-300 dark:text-gray-600">
             Added{" "}
             {new Date(entry.createdAt).toLocaleDateString("en-GB", {
               day: "numeric",
@@ -123,7 +123,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2 px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
+        <div className="flex justify-end gap-2 px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-2xl">
           <Button variant="secondary" onClick={onClose}>
             Close
           </Button>

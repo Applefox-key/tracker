@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { DemoBanner } from "@/features/auth/components/DemoBanner";
+import { DarkModeToggle } from "@/shared/ui/DarkModeToggle";
 import { useEntriesData } from "@/hooks/useEntriesData";
 
 const navItems = [
-  { to: "/dashboard", label: "Dashboard", icon: "📊" },
-  { to: "/entries", label: "Entries", icon: "📝" },
-  { to: "/practice", label: "Practice", icon: "🎯" },
-  { to: "/about", label: "About", icon: "ℹ️" },
+  { to: "/dashboard", label: "Dashboard", icon: "📊", mobileLabel: true },
+  { to: "/entries", label: "Entries", icon: "📝", mobileLabel: true },
+  { to: "/practice", label: "Practice", icon: "🎯", mobileLabel: true },
+  { to: "/about", label: "About", icon: "ℹ️", mobileLabel: false },
 ];
 
 const APPS = [
@@ -61,39 +62,51 @@ export function Layout() {
     navigate("/login", { replace: true });
   }
 
+  const navLinkCls = ({ isActive }: { isActive: boolean }) =>
+    [
+      "flex items-center gap-1.5 px-1 text-lg sm:px-3 py-2 rounded-lg sm:text-sm font-medium transition-colors",
+      isActive
+        ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
+    ].join(" ");
+
+  const mobileNavLinkCls = ({ isActive }: { isActive: boolean }) =>
+    [
+      "flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-colors",
+      isActive
+        ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
+    ].join(" ");
+
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+        {/* ── Row 1: logo | nav (desktop) | right controls ── */}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-          <span className="sm:hidden text-xl font-bold text-emerald-600">LP</span>
-          <span className="hidden sm:inline text-xl font-bold text-emerald-600 tracking-tight">Language Progress</span>
+          {/* <span className="sm:hidden text-xl font-bold text-emerald-600">LP</span> */}
+          <span className="inline text-xl font-bold text-emerald-600 tracking-tight">Language Progress</span>
 
-          <nav className="flex items-center gap-1">
+          {/* Nav — desktop only in row 1 */}
+          <nav className="hidden sm:flex items-center gap-1">
             {navItems.map(({ to, label, icon }) => (
-              <NavLink
-                key={to}
-                to={to}
-                end
-                className={({ isActive }) =>
-                  [
-                    "flex items-center gap-1.5 px-1 text-lg sm:px-3 py-2 rounded-lg sm:text-sm font-medium transition-colors",
-                    isActive ? "bg-emerald-50 text-emerald-700" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
-                  ].join(" ")
-                }>
+              <NavLink key={to} to={to} end className={navLinkCls}>
                 <span>{icon}</span>
-                <span className="hidden sm:inline">{label}</span>
+                <span>{label}</span>
               </NavLink>
             ))}
           </nav>
 
-          <div className="flex justify-end  items-center">
+          {/* Right controls */}
+          <div className="flex justify-end items-center gap-1">
+            <DarkModeToggle />
+
             <div id="apps-dropdown-root" className="relative">
               <button
                 onClick={() => setAppsOpen((prev) => !prev)}
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm border transition-colors ${
                   appsOpen
-                    ? "bg-emerald-50 border-emerald-300 text-emerald-700"
-                    : "border-gray-200 text-gray-500 hover:bg-gray-50"
+                    ? "bg-emerald-50 border-emerald-300 text-emerald-700 dark:bg-emerald-900/30 dark:border-emerald-700 dark:text-emerald-400"
+                    : "border-gray-200 text-gray-500 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"
                 }`}>
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
                   <rect x="1" y="1" width="5" height="5" rx="1.5" />
@@ -116,14 +129,16 @@ export function Layout() {
                 </svg>
               </button>
               {appsOpen && (
-                <div className="fixed right-4 sm:absolute sm:right-0 top-[68px] sm:top-10 z-50 w-72 bg-white border border-gray-200 rounded-2xl shadow-xl p-3">
-                  <p className="text-xs text-gray-400 uppercase tracking-wider mb-2.5 px-1">learnapp.pro — all tools</p>
+                <div className="fixed right-4 sm:absolute sm:right-0 top-[68px] sm:top-10 z-50 w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-xl p-3">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2.5 px-1">
+                    learnapp.pro — all tools
+                  </p>
                   <div className="grid grid-cols-2 gap-2">
                     {APPS.map((app) =>
                       app.current ? (
                         <div
                           key={app.name}
-                          className="flex flex-col gap-1 p-2.5 rounded-xl border-2 border-green-500 bg-green-50 cursor-default">
+                          className="flex flex-col gap-1 p-2.5 rounded-xl border-2 border-green-500 bg-green-50 dark:bg-green-900/20 cursor-default">
                           <div
                             className="w-7 h-7 rounded-lg flex items-center justify-center mb-1"
                             style={{ background: app.iconBg }}>
@@ -132,9 +147,9 @@ export function Layout() {
                               <path d="M8 21h8M12 17v4" />
                             </svg>
                           </div>
-                          <span className="text-xs font-semibold text-green-800">{app.name}</span>
-                          <span className="text-xs text-green-500 leading-tight">{app.desc}</span>
-                          <span className="text-xs bg-green-100 text-green-700 rounded px-1.5 py-0.5 w-fit mt-0.5">
+                          <span className="text-xs font-semibold text-green-800 dark:text-green-400">{app.name}</span>
+                          <span className="text-xs text-green-500 dark:text-green-500 leading-tight">{app.desc}</span>
+                          <span className="text-xs bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 rounded px-1.5 py-0.5 w-fit mt-0.5">
                             current
                           </span>
                         </div>
@@ -144,7 +159,7 @@ export function Layout() {
                           href={app.href}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex flex-col gap-1 p-2.5 rounded-xl border border-gray-200 hover:border-violet-300 hover:bg-violet-50 transition-colors no-underline cursor-pointer">
+                          className="flex flex-col gap-1 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-violet-300 dark:hover:border-violet-700 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors no-underline cursor-pointer">
                           <div
                             className="w-7 h-7 rounded-lg flex items-center justify-center mb-1"
                             style={{ background: app.iconBg }}>
@@ -153,8 +168,8 @@ export function Layout() {
                               <path d="M8 21h8M12 17v4" />
                             </svg>
                           </div>
-                          <span className="text-xs font-semibold text-gray-800">{app.name}</span>
-                          <span className="text-xs text-gray-400 leading-tight">{app.desc}</span>
+                          <span className="text-xs font-semibold text-gray-800 dark:text-gray-200">{app.name}</span>
+                          <span className="text-xs text-gray-400 dark:text-gray-500 leading-tight">{app.desc}</span>
                         </a>
                       ),
                     )}
@@ -162,29 +177,58 @@ export function Layout() {
                 </div>
               )}
             </div>
+
             {isAuthenticated && (
-              <div className="flex items-center gap-3 ml-3">
+              <div className="flex items-center gap-2 ml-1">
                 {mode === "authenticated" && user?.name && (
                   <Link to="/profile" title="Profile">
                     {user?.avatar ? (
                       <img
                         src={user.avatar}
                         alt={user.name}
-                        className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-slate-600 hover:ring-2 hover:ring-emerald-400 transition-all"
+                        className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-gray-600 hover:ring-2 hover:ring-emerald-400 transition-all"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-medium hover:ring-2 hover:ring-emerald-400 transition-all cursor-pointer">
+                      <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-sm font-medium hover:ring-2 hover:ring-emerald-400 transition-all cursor-pointer">
                         {user?.name?.[0]?.toUpperCase() ?? "U"}
                       </div>
                     )}
                   </Link>
                 )}
+                {/* Logout — desktop only in row 1 */}
                 <button
                   onClick={handleLogout}
-                  className="text-sm font-medium text-gray-500 hover:text-red-600 transition-colors px-2 py-1 rounded-lg hover:bg-red-50">
-                  <span className="hidden sm:block">{mode === "demo" ? "Exit demo" : "Logout"}</span>
+                  className="hidden sm:block text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors px-2 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20">
+                  {mode === "demo" ? "Exit demo" : "Logout"}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ── Row 2: mobile only — nav links + logout ── */}
+        <div className="sm:hidden border-t border-gray-100 dark:border-gray-700/60">
+          <div className="max-w-5xl mx-auto px-2 flex items-center justify-between h-11">
+            <nav className="flex items-center gap-0.5">
+              {navItems
+                .filter((el) => el.mobileLabel)
+                .map(({ to, label, icon, mobileLabel }) => (
+                  <NavLink key={to} to={to} end className={mobileNavLinkCls}>
+                    <span>{icon}</span>
+                    {mobileLabel && <span>{label}</span>}
+                  </NavLink>
+                ))}
+            </nav>
+            <div className="flex">
+              <NavLink key={""} to={"/about"} end className={mobileNavLinkCls}>
+                <span>{"ℹ️"}</span>
+              </NavLink>
+              {isAuthenticated && (
+                <button
+                  onClick={handleLogout}
+                  title={mode === "demo" ? "Exit demo" : "Logout"}
+                  className="flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors shrink-0">
                   <svg
-                    className="block sm:hidden"
                     viewBox="0 0 24 24"
                     width="18"
                     height="18"
@@ -198,8 +242,8 @@ export function Layout() {
                     <line x1="21" y1="12" x2="9" y2="12" />
                   </svg>
                 </button>
-              </div>
-            )}
+              )}{" "}
+            </div>
           </div>
         </div>
       </header>
@@ -210,7 +254,7 @@ export function Layout() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-gray-200 bg-white py-4 text-center text-xs text-gray-400">
+      <footer className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 py-4 text-center text-xs text-gray-400 dark:text-gray-500">
         Language Progress — keep learning every day
       </footer>
     </div>

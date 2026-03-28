@@ -46,9 +46,7 @@ export function MatchPage() {
 
   const filteredEntries = usePracticeEntries("match", { selectedRatings, selectedCategory, selectedTag });
 
-  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(
-    Boolean,
-  ).length;
+  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(Boolean).length;
 
   const roundEntries = allEntries.slice(roundStart, roundStart + ROUND_SIZE);
   const roundSize = roundEntries.length;
@@ -122,12 +120,10 @@ export function MatchPage() {
     const isSelected = selectedId === card.id;
     const isWrong = wrongIds.has(card.id);
     const base = "w-full rounded-xl border px-3 py-2.5 text-left transition-all duration-150 select-none ";
-    if (isMatched) return base + "bg-green-50 border-green-300 text-green-700 cursor-default opacity-60";
-    if (isWrong) return base + "bg-red-50 border-red-400 text-red-700 cursor-default";
-    if (isSelected) return base + "bg-emerald-50 border-emerald-500 text-emerald-800 shadow-sm cursor-pointer";
-    return (
-      base + "bg-white border-gray-200 text-gray-800 hover:border-emerald-300 hover:bg-emerald-50/50 cursor-pointer"
-    );
+    if (isMatched) return base + "bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 cursor-default opacity-60";
+    if (isWrong) return base + "bg-red-50 dark:bg-red-900/20 border-red-400 text-red-700 dark:text-red-400 cursor-default";
+    if (isSelected) return base + "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 text-emerald-800 dark:text-emerald-300 shadow-sm cursor-pointer";
+    return base + "bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200 hover:border-emerald-300 hover:bg-emerald-50/50 dark:hover:border-emerald-600 dark:hover:bg-emerald-900/10 cursor-pointer";
   }
 
   if (!isPlaying) {
@@ -135,10 +131,10 @@ export function MatchPage() {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/practice")} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={() => navigate("/practice")} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             ← Back
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">Match</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Match</h1>
           <div className="flex items-center gap-2 ml-auto">
             <Button variant={showFilters ? "primary" : "secondary"} size="sm" onClick={() => setShowFilters((v) => !v)}>
               <span className="hidden sm:inline">Filters</span>
@@ -147,9 +143,7 @@ export function MatchPage() {
               <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
             </Button>
             {activeFilterCount > 0 && (
-              <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">
-                Clear
-              </button>
+              <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">Clear</button>
             )}
           </div>
         </div>
@@ -166,21 +160,19 @@ export function MatchPage() {
           />
         )}
 
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">🔗</span>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Match Mode</h2>
-            <p className="text-gray-500 mt-1 text-sm">Connect words with their explanations</p>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Match Mode</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Connect words with their explanations</p>
           </div>
-          <p className="text-sm text-gray-400">{filteredEntries.length} entries available</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">{filteredEntries.length} entries available</p>
           {!canStart && (
-            <p className="text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2">
+            <p className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-2">
               Need at least 2 entries to start
             </p>
           )}
-          <Button onClick={startSession} disabled={!canStart} size="lg">
-            Start Match →
-          </Button>
+          <Button onClick={startSession} disabled={!canStart} size="lg">Start Match →</Button>
         </div>
       </div>
     );
@@ -191,23 +183,19 @@ export function MatchPage() {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/practice")} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={() => navigate("/practice")} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             ← Practice
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">Match — Done!</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Match — Done!</h1>
         </div>
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">🎉</span>
           <div>
-            <p className="text-3xl font-bold text-gray-900">
-              {finalTotal} / {totalPairs}
-            </p>
-            <p className="text-gray-500 mt-1">pairs matched</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{finalTotal} / {totalPairs}</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">pairs matched</p>
           </div>
           <div className="flex gap-3 flex-wrap justify-center">
-            <Button variant="secondary" onClick={startSession}>
-              Play again
-            </Button>
+            <Button variant="secondary" onClick={startSession}>Play again</Button>
             <Button onClick={() => navigate("/practice")}>Back to Practice</Button>
           </div>
         </div>
@@ -232,25 +220,20 @@ export function MatchPage() {
 
       <div className="flex flex-col gap-5 max-w-2xl mx-auto w-full">
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => setIsPlaying(false)}
-            className="text-sm text-gray-400 hover:text-gray-600 transition-colors shrink-0">
+          <button onClick={() => setIsPlaying(false)} className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
             ✕ Quit
           </button>
-          <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-            <div
-              className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${overallProgress}%` }}
-            />
+          <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+            <div className="bg-emerald-500 h-2 rounded-full transition-all duration-300" style={{ width: `${overallProgress}%` }} />
           </div>
-          <span className="text-sm text-gray-500 shrink-0 tabular-nums">
+          <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0 tabular-nums">
             {totalMatched + matched.size} / {totalPairs}
           </span>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide text-center">Words</p>
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide text-center">Explanations</p>
+          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center">Words</p>
+          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center">Explanations</p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -283,12 +266,7 @@ export function MatchPage() {
                     className="text-xs leading-snug block"
                     style={
                       !isSelected
-                        ? {
-                            display: "-webkit-box",
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: "vertical",
-                            overflow: "hidden",
-                          }
+                        ? { display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }
                         : undefined
                     }>
                     {card.text}
@@ -301,12 +279,12 @@ export function MatchPage() {
         </div>
 
         {!roundComplete && (
-          <p className="text-xs text-gray-400 text-center">Select a word, then its explanation to match</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 text-center">Select a word, then its explanation to match</p>
         )}
 
         {roundComplete && (
           <div className="flex flex-col items-center gap-4 py-4">
-            <p className="text-green-600 font-semibold">
+            <p className="text-green-600 dark:text-green-400 font-semibold">
               {roundStart + ROUND_SIZE >= allEntries.length ? "All pairs matched! 🎉" : "Round complete! 🎉"}
             </p>
             <Button onClick={advanceRound}>

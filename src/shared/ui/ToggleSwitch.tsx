@@ -22,7 +22,7 @@ export function ToggleSwitch({ checked, onChange, label, id }: ToggleSwitchProps
         <div
           className={[
             "w-9 h-5 rounded-full transition-colors duration-200",
-            checked ? "bg-emerald-600" : "bg-gray-300 group-hover:bg-gray-400",
+            checked ? "bg-emerald-600" : "bg-gray-300 dark:bg-gray-600 group-hover:bg-gray-400 dark:group-hover:bg-gray-500",
           ].join(" ")}
         />
         {/* Thumb */}
@@ -33,7 +33,7 @@ export function ToggleSwitch({ checked, onChange, label, id }: ToggleSwitchProps
           ].join(" ")}
         />
       </div>
-      {label && <span className="text-xs text-gray-600">{label}</span>}
+      {label && <span className="text-xs text-gray-600 dark:text-gray-400">{label}</span>}
     </label>
   );
 }

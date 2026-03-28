@@ -5,11 +5,11 @@ import { RatingStars } from "@/shared/ui/RatingStars";
 import { ToggleSwitch } from "@/shared/ui/ToggleSwitch";
 
 const categoryColors: Record<Entry["category"], string> = {
-  word: "bg-blue-100 text-blue-700",
-  phrase: "bg-green-100 text-green-700",
-  grammar: "bg-purple-100 text-purple-700",
-  idiom: "bg-orange-100 text-orange-700",
-  note: "bg-teal-100 text-teal-700",
+  word: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+  phrase: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+  grammar: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+  idiom: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
+  note: "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400",
 };
 
 interface EntryCardProps {
@@ -24,15 +24,14 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
 
   return (
     <div
-      className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer"
       onClick={() => onView(entry)}>
       {/* Header row */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          {/* <p className="text-base font-semibold text-gray-900 truncate">{entry.word}</p> */}
-          <p className="text-lg font-semibold text-gray-900 truncate">{entry.word}</p>
-          <p className="text-sm text-gray-500 mt-0.5 truncate">{entry.explanation}</p>
-          <p className="text-xs text-gray-300 mt-1">
+          <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">{entry.word}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 truncate">{entry.explanation}</p>
+          <p className="text-xs text-gray-300 dark:text-gray-600 mt-1">
             {new Date(entry.createdAt).toLocaleDateString("en-GB", {
               day: "numeric",
               month: "short",
@@ -51,14 +50,14 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
 
       {/* Example */}
       {entry.example && (
-        <p className="text-sm text-gray-600 italic border-l-2 border-emerald-200 pl-3">{entry.example}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">{entry.example}</p>
       )}
 
       {/* Tags */}
       {entry.tags.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {entry.tags.map((tag) => (
-            <span key={tag.id} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+            <span key={tag.id} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
               #{tag.name}
             </span>
           ))}
@@ -72,7 +71,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
         <div className="flex items-center gap-3 justify-between">
           <RatingStars value={entry.rating} onChange={(v) => updateEntry(entry.id, { rating: v })} />
 
-          <div className="w-px h-4 bg-gray-200 shrink-0" />
+          <div className="w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
 
           <ToggleSwitch
             checked={entry.includeInPractice}
@@ -86,10 +85,10 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
             variant="ghost"
             size="sm"
             onClick={() => onEdit(entry)}
-            className="text-emerald-500 hover:bg-emerald-50">
+            className="text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
             Edit
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => onRemove(entry.id)} className="text-red-500 hover:bg-red-50">
+          <Button variant="ghost" size="sm" onClick={() => onRemove(entry.id)} className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
             Remove
           </Button>
         </div>

@@ -5,8 +5,6 @@ import { authApi } from "@/api/api";
 
 type Mode = "login" | "register" | "forgot";
 
-// ── Reusable field wrapper ─────────────────────────────────────────────────
-
 function Field({
   label,
   htmlFor,
@@ -20,16 +18,14 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={htmlFor} className="text-sm font-medium text-gray-700">
+      <label htmlFor={htmlFor} className="text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
       </label>
       {children}
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
     </div>
   );
 }
-
-// ── Password input with show/hide toggle ───────────────────────────────────
 
 function PasswordInput({
   id,
@@ -53,40 +49,33 @@ function PasswordInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="••••••••"
-        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 pr-14 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent"
+        className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2.5 pr-14 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
       />
       <button
         type="button"
         tabIndex={-1}
         onClick={() => setShow((v) => !v)}
         aria-label={show ? "Hide password" : "Show password"}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 transition-colors">
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
         {show ? "Hide" : "Show"}
       </button>
     </div>
   );
 }
 
-// ── Main page ──────────────────────────────────────────────────────────────
-
 export function LoginPage() {
   const [mode, setMode] = useState<Mode>("login");
 
-  // Login state
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginErrors, setLoginErrors] = useState<{ email?: string; password?: string }>({});
 
-  // Register state
   const [regName, setRegName] = useState("");
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
-  const [regErrors, setRegErrors] = useState<{ name?: string; email?: string; password?: string; general?: string }>(
-    {},
-  );
+  const [regErrors, setRegErrors] = useState<{ name?: string; email?: string; password?: string; general?: string }>({});
   const [regLoading, setRegLoading] = useState(false);
 
-  // Forgot password state
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotError, setForgotError] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
@@ -100,19 +89,13 @@ export function LoginPage() {
   const { isAuthenticated } = useAuthStore();
   if (isAuthenticated) return <Navigate to={from} replace />;
 
-  // ── Handlers ────────────────────────────────────────────────────────────
-
   async function handleLogin(e: FormEvent) {
     e.preventDefault();
     const errors: typeof loginErrors = {};
     if (!loginEmail.trim()) errors.email = "Email is required.";
     if (!loginPassword.trim()) errors.password = "Password is required.";
-    if (Object.keys(errors).length) {
-      setLoginErrors(errors);
-      return;
-    }
+    if (Object.keys(errors).length) { setLoginErrors(errors); return; }
     setLoginErrors({});
-
     try {
       await login({ email: loginEmail, password: loginPassword });
       navigate(from, { replace: true });
@@ -128,13 +111,9 @@ export function LoginPage() {
     if (!regEmail.trim()) errors.email = "Email is required.";
     if (!regPassword.trim()) errors.password = "Password is required.";
     else if (regPassword.length < 6) errors.password = "Password must be at least 6 characters.";
-    if (Object.keys(errors).length) {
-      setRegErrors(errors);
-      return;
-    }
+    if (Object.keys(errors).length) { setRegErrors(errors); return; }
     setRegErrors({});
     setRegLoading(true);
-
     try {
       await authApi.register({ name: regName, email: regEmail, password: regPassword });
       await login({ email: regEmail, password: regPassword });
@@ -148,13 +127,9 @@ export function LoginPage() {
 
   async function handleForgot(e: FormEvent) {
     e.preventDefault();
-    if (!forgotEmail.trim()) {
-      setForgotError("Email is required.");
-      return;
-    }
+    if (!forgotEmail.trim()) { setForgotError("Email is required."); return; }
     setForgotError("");
     setForgotLoading(true);
-
     try {
       await authApi.sendPasswordResetEmail(forgotEmail);
       setForgotSuccess(true);
@@ -179,36 +154,32 @@ export function LoginPage() {
     forgot: "Reset your password",
   };
 
-  // ── Shared classes ───────────────────────────────────────────────────────
-
   const inputCls =
-    "border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent";
+    "border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500";
   const primaryBtn =
     "mt-1 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-lg px-4 py-2.5 text-sm transition-colors";
   const linkBtn = "text-emerald-600 hover:text-emerald-800 font-medium transition-colors";
 
-  // ── Render ───────────────────────────────────────────────────────────────
-
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         {/* Branding */}
         <div className="text-center mb-8">
           <span className="text-3xl font-bold text-emerald-600 tracking-tight">Language Progress</span>
-          <p className="text-gray-500 mt-2 text-sm">{subtitles[mode]}</p>
+          <p className="text-gray-500 dark:text-gray-400 mt-2 text-sm">{subtitles[mode]}</p>
           <Link
             to="/about"
-            className="text-xs text-gray-400 hover:text-emerald-500 transition-colors mt-1 inline-block">
+            className="text-xs text-gray-400 dark:text-gray-500 hover:text-emerald-500 transition-colors mt-1 inline-block">
             ← About the app
           </Link>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 flex flex-col gap-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col gap-6">
           {/* ── Login ── */}
           {mode === "login" && (
             <>
-              <h1 className="text-xl font-semibold text-gray-900">Sign in</h1>
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Sign in</h1>
 
               <form onSubmit={handleLogin} className="flex flex-col gap-4" noValidate>
                 <Field label="Email" htmlFor="login-email" error={loginErrors.email}>
@@ -239,7 +210,7 @@ export function LoginPage() {
                 </Field>
 
                 {loginStoreError && (
-                  <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                  <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">
                     {loginStoreError}
                   </p>
                 )}
@@ -249,7 +220,7 @@ export function LoginPage() {
                 </button>
               </form>
 
-              <p className="text-sm text-center text-gray-500">
+              <p className="text-sm text-center text-gray-500 dark:text-gray-400">
                 Don&apos;t have an account?{" "}
                 <button onClick={() => switchMode("register")} className={linkBtn}>
                   Sign up
@@ -257,9 +228,9 @@ export function LoginPage() {
               </p>
 
               <div className="flex items-center gap-3">
-                <hr className="flex-1 border-gray-200" />
-                <span className="text-xs text-gray-400">or</span>
-                <hr className="flex-1 border-gray-200" />
+                <hr className="flex-1 border-gray-200 dark:border-gray-700" />
+                <span className="text-xs text-gray-400 dark:text-gray-500">or</span>
+                <hr className="flex-1 border-gray-200 dark:border-gray-700" />
               </div>
 
               <div className="flex flex-col gap-2 text-center">
@@ -269,10 +240,10 @@ export function LoginPage() {
                     enterDemoMode();
                     navigate("/dashboard", { replace: true });
                   }}
-                  className="w-full border border-gray-300 hover:border-emerald-400 hover:bg-emerald-50 text-gray-700 hover:text-emerald-700 font-medium rounded-lg px-4 py-2.5 text-sm transition-colors">
+                  className="w-full border border-gray-300 dark:border-gray-600 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 font-medium rounded-lg px-4 py-2.5 text-sm transition-colors">
                   Try demo
                 </button>
-                <p className="text-xs text-gray-400">Explore with sample data — no account needed</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">Explore with sample data — no account needed</p>
               </div>
             </>
           )}
@@ -280,44 +251,23 @@ export function LoginPage() {
           {/* ── Register ── */}
           {mode === "register" && (
             <>
-              <h1 className="text-xl font-semibold text-gray-900">Create account</h1>
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Create account</h1>
 
               <form onSubmit={handleRegister} className="flex flex-col gap-4" noValidate>
                 <Field label="Name" htmlFor="reg-name" error={regErrors.name}>
-                  <input
-                    id="reg-name"
-                    type="text"
-                    autoComplete="name"
-                    value={regName}
-                    onChange={(e) => setRegName(e.target.value)}
-                    placeholder="Your name"
-                    className={inputCls}
-                  />
+                  <input id="reg-name" type="text" autoComplete="name" value={regName} onChange={(e) => setRegName(e.target.value)} placeholder="Your name" className={inputCls} />
                 </Field>
 
                 <Field label="Email" htmlFor="reg-email" error={regErrors.email}>
-                  <input
-                    id="reg-email"
-                    type="email"
-                    autoComplete="email"
-                    value={regEmail}
-                    onChange={(e) => setRegEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    className={inputCls}
-                  />
+                  <input id="reg-email" type="email" autoComplete="email" value={regEmail} onChange={(e) => setRegEmail(e.target.value)} placeholder="you@example.com" className={inputCls} />
                 </Field>
 
                 <Field label="Password" htmlFor="reg-password" error={regErrors.password}>
-                  <PasswordInput
-                    id="reg-password"
-                    value={regPassword}
-                    onChange={setRegPassword}
-                    autoComplete="new-password"
-                  />
+                  <PasswordInput id="reg-password" value={regPassword} onChange={setRegPassword} autoComplete="new-password" />
                 </Field>
 
                 {regErrors.general && (
-                  <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                  <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">
                     {regErrors.general}
                   </p>
                 )}
@@ -327,7 +277,7 @@ export function LoginPage() {
                 </button>
               </form>
 
-              <p className="text-sm text-center text-gray-500">
+              <p className="text-sm text-center text-gray-500 dark:text-gray-400">
                 Already have an account?{" "}
                 <button onClick={() => switchMode("login")} className={linkBtn}>
                   Sign in
@@ -339,11 +289,11 @@ export function LoginPage() {
           {/* ── Forgot password ── */}
           {mode === "forgot" && (
             <>
-              <h1 className="text-xl font-semibold text-gray-900">Reset password</h1>
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Reset password</h1>
 
               {forgotSuccess ? (
                 <div className="flex flex-col gap-4">
-                  <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-3">
+                  <p className="text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg px-3 py-3">
                     Check your email for reset instructions.
                   </p>
                   <button
@@ -374,7 +324,7 @@ export function LoginPage() {
                   <button
                     type="button"
                     onClick={() => switchMode("login")}
-                    className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
                     ← Back to sign in
                   </button>
                 </form>

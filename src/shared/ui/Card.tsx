@@ -15,7 +15,7 @@ export function Card({ padding = 'md', className = '', children, ...props }: Car
     <div
       {...props}
       className={[
-        'bg-white rounded-xl border border-gray-200 shadow-sm',
+        'bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm',
         paddingClasses[padding],
         className,
       ].join(' ')}
@@ -39,7 +39,7 @@ interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {}
 
 export function CardTitle({ className = '', children, ...props }: CardTitleProps) {
   return (
-    <h3 {...props} className={['text-lg font-semibold text-gray-900', className].join(' ')}>
+    <h3 {...props} className={['text-lg font-semibold text-gray-900 dark:text-gray-100', className].join(' ')}>
       {children}
     </h3>
   )

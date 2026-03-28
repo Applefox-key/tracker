@@ -47,8 +47,10 @@ function StatCard({ label, value, color, sub, to, toState }: StatCardProps) {
       padding="sm"
       className={` h-full p-2 sm:p-6 flex flex-col items-center gap-0.5 sm:gap-1 min-w-0${to ? " hover:shadow-md transition-shadow cursor-pointer" : ""}`}>
       <p className={`text-xl sm:text-3xl font-extrabold ${color} truncate`}>{value}</p>
-      <p className="text-xs sm:text-sm text-gray-600 font-medium leading-tight text-center">{label}</p>
-      {sub && <p className="text-xs text-gray-400 hidden sm:block">{sub}</p>}
+      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium leading-tight text-center">
+        {label}
+      </p>
+      {sub && <p className="text-xs text-gray-400 dark:text-gray-500 hidden sm:block">{sub}</p>}
     </Card>
   );
   if (to)
@@ -72,12 +74,12 @@ function CategoryRow({ label, count, total, barColor }: CategoryRowProps) {
   return (
     <div className="flex flex-col gap-0.5 sm:gap-1.5">
       <div className="flex items-center justify-between text-xs sm:text-sm">
-        <span className="font-medium text-gray-700">{label}</span>
-        <span className="text-gray-400 tabular-nums">
-          {count} <span className="text-gray-300">·</span> {pct}%
+        <span className="font-medium text-gray-700 dark:text-gray-300">{label}</span>
+        <span className="text-gray-400 dark:text-gray-500 tabular-nums">
+          {count} <span className="text-gray-300 dark:text-gray-600">·</span> {pct}%
         </span>
       </div>
-      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
         <div className={`h-full rounded-full transition-all duration-500 ${barColor}`} style={{ width: `${pct}%` }} />
       </div>
     </div>
@@ -117,15 +119,30 @@ export function DashboardPage() {
   return (
     <div className="flex flex-col gap-5 sm:gap-8">
       {/* ── Title row ── */}
-      <div className="flex items-center justify-between sm:block">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 mt-1 hidden sm:block">Your language learning at a glance</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1 hidden sm:block">Your language learning at a glance</p>
         </div>
+        {/* Quick actions — desktop */}
+        <div className="hidden sm:flex flex-wrap gap-2">
+          <Link to="/entries" state={{ openCreateForm: true }}>
+            <Button>+ Add New Entry</Button>
+          </Link>
+          <Link to="/entries">
+            <Button variant="secondary">Browse Entries</Button>
+          </Link>
+          <Link to="/practice">
+            <Button variant="secondary">Practice</Button>
+          </Link>
+        </div>
+
+        {/* FAB — mobile */}
+
         <Link
           to="/entries"
           state={{ openCreateForm: true }}
-          className="sm:hidden fixed top-[70px] right-4 z-50 w-11 h-11 rounded-full bg-emerald-600 flex items-center
+          className="sm:hidden fixed top-[115px] right-4 z-50 w-11 h-11 rounded-full bg-emerald-600 flex items-center
                      justify-center text-white hover:bg-emerald-700
                      active:scale-95 transition-transform shadow-md"
           style={{ right: 17 }}>
@@ -175,88 +192,58 @@ export function DashboardPage() {
         <StatCard label="Avg Rating" value={stats.avgRating} color="text-amber-500" to="/practice" sub="out of 5" />
       </div>
 
-      {/* ── Quick Actions — desktop card ── */}
-      <Card className="hidden sm:block">
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-        </CardHeader>
-        <div className="flex flex-wrap gap-3">
-          <Link to="/entries" state={{ openCreateForm: true }}>
-            <Button size="lg">+ Add New Entry</Button>
-          </Link>
-          <Link to="/entries">
-            <Button variant="secondary">Browse Entries</Button>
-          </Link>
-          <Link to="/practice">
-            <Button variant="secondary">Practice</Button>
-          </Link>
-        </div>
-      </Card>
+      <div className="flex flex-col sm:flex-row gap-5 sm:gap-8 sm:items-start">
+        {/* ── Category distribution ── */}
+        <Card className="sm:flex-1">
+          <CardHeader className="mb-2 sm:mb-4">
+            <CardTitle className="text-sm sm:text-lg">Category Distribution</CardTitle>
+          </CardHeader>
+          {entries.length === 0 ? (
+            <p className="text-sm text-gray-400 dark:text-gray-500">No entries yet.</p>
+          ) : (
+            <div className="flex flex-col gap-1 sm:gap-4">
+              {CATEGORIES.map(({ key, label, color }) => (
+                <CategoryRow
+                  key={key}
+                  label={label}
+                  count={categoryCounts[key] ?? 0}
+                  total={entries.length}
+                  barColor={color}
+                />
+              ))}
+            </div>
+          )}
+        </Card>
 
-      {/* ── Quick Actions — mobile compact buttons ── */}
-      <div className="flex gap-2 sm:hidden">
-        <Link to="/entries" className="flex-1">
-          <button className="w-full border border-gray-200 rounded-xl py-2.5 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-            Browse
-          </button>
-        </Link>
-        <Link to="/practice" className="flex-1">
-          <button className="w-full border border-gray-200 rounded-xl py-2.5 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-            Practice
-          </button>
-        </Link>
-      </div>
-
-      {/* ── Category distribution ── */}
-      <Card>
-        <CardHeader className="mb-2 sm:mb-4">
-          <CardTitle className="text-sm sm:text-lg">Category Distribution</CardTitle>
-        </CardHeader>
-        {entries.length === 0 ? (
-          <p className="text-sm text-gray-400">No entries yet.</p>
-        ) : (
-          <div className="flex flex-col gap-1 sm:gap-4">
-            {CATEGORIES.map(({ key, label, color }) => (
-              <CategoryRow
-                key={key}
-                label={label}
-                count={categoryCounts[key] ?? 0}
-                total={entries.length}
-                barColor={color}
-              />
-            ))}
-          </div>
-        )}
-      </Card>
-
-      {/* ── Recent entries ── */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Recent Entries</CardTitle>
-            <Link to="/entries" className="text-sm text-emerald-600 hover:text-emerald-800 font-medium">
-              View all →
-            </Link>
-          </div>
-        </CardHeader>
-        {recentEntries.length === 0 ? (
-          <p className="text-sm text-gray-400">No entries yet.</p>
-        ) : (
-          <div className="flex flex-col divide-y divide-gray-100">
-            {recentEntries.map((entry) => (
-              <div key={entry.id} className="py-3 flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-medium text-gray-900">{entry.word}</p>
-                  <p className="text-sm text-gray-500">{entry.explanation}</p>
+        {/* ── Recent entries ── */}
+        <Card className="sm:flex-1">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Recent Entries</CardTitle>
+              <Link to="/entries" className="text-sm text-emerald-600 hover:text-emerald-800 font-medium">
+                View all →
+              </Link>
+            </div>
+          </CardHeader>
+          {recentEntries.length === 0 ? (
+            <p className="text-sm text-gray-400 dark:text-gray-500">No entries yet.</p>
+          ) : (
+            <div className="flex flex-col divide-y divide-gray-100 dark:divide-gray-700">
+              {recentEntries.map((entry) => (
+                <div key={entry.id} className="py-3 flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-gray-100">{entry.word}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{entry.explanation}</p>
+                  </div>
+                  <span className="shrink-0 text-xs text-gray-400 dark:text-gray-500 capitalize bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
+                    {entry.category}
+                  </span>
                 </div>
-                <span className="shrink-0 text-xs text-gray-400 capitalize bg-gray-100 px-2 py-0.5 rounded-full">
-                  {entry.category}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </Card>
+              ))}
+            </div>
+          )}
+        </Card>
+      </div>
     </div>
   );
 }

@@ -11,7 +11,7 @@ const CATEGORIES: Array<{ key: EntryCategory; label: string }> = [
 
 const btnBase = "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors";
 const active = "bg-emerald-600 text-white border-emerald-600";
-const inactive = "bg-white text-gray-600 border-gray-300 hover:bg-gray-50";
+const inactive = "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600";
 
 interface Props {
   allTags: EntryTag[];
@@ -33,9 +33,9 @@ export function PracticeFilterPanel({
   onRatingsChange,
 }: Props) {
   return (
-    <div className="flex flex-col gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl">
+    <div className="flex flex-col gap-3 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
       <div className="flex items-start gap-2 flex-wrap">
-        <span className="text-xs font-medium text-gray-500 pt-1.5 shrink-0 w-16">Category:</span>
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pt-1.5 shrink-0 w-16">Category:</span>
         <div className="flex gap-1.5 flex-wrap">
           <button
             onClick={() => onCategoryChange(null)}
@@ -55,7 +55,7 @@ export function PracticeFilterPanel({
 
       {allTags.length > 0 && (
         <div className="flex items-start gap-2 flex-wrap">
-          <span className="text-xs font-medium text-gray-500 pt-1 shrink-0 w-16">Tag:</span>
+          <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pt-1 shrink-0 w-16">Tag:</span>
           <div className="flex gap-1.5 flex-wrap">
             {allTags.map((tag) => (
               <button
@@ -65,7 +65,7 @@ export function PracticeFilterPanel({
                   "px-2.5 py-1 rounded-full text-xs font-medium border transition-colors",
                   selectedTag === tag.id
                     ? "bg-emerald-600 text-white border-emerald-600"
-                    : "bg-white text-gray-500 border-gray-300 hover:border-emerald-400 hover:text-emerald-600",
+                    : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600 hover:border-emerald-400 hover:text-emerald-600",
                 ].join(" ")}>
                 #{tag.name}
               </button>
@@ -75,7 +75,7 @@ export function PracticeFilterPanel({
       )}
 
       <div className="flex items-start gap-2 flex-wrap">
-        <span className="text-xs font-medium text-gray-500 pt-1.5 shrink-0 w-16">Rating:</span>
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pt-1.5 shrink-0 w-16">Rating:</span>
         <RatingMultiSelect selected={selectedRatings} onChange={onRatingsChange} />
       </div>
     </div>
