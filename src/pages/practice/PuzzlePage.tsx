@@ -53,6 +53,7 @@ export function PuzzlePage() {
   const [answerPhase, setAnswerPhase] = useState<AnswerPhase>("thinking");
   const [score, setScore] = useState(0);
   const [isDone, setIsDone] = useState(false);
+  const [showExample, setShowExample] = useState(false);
 
   const filteredEntries = usePracticeEntries("puzzle", { selectedRatings, selectedCategory, selectedTag });
 
@@ -67,6 +68,7 @@ export function PuzzlePage() {
     setPlaced([]);
     setTileMode(mode);
     setAnswerPhase("thinking");
+    setShowExample(false);
   }, [currentIdx, questions]);
 
   useEffect(() => {
@@ -223,7 +225,9 @@ export function PuzzlePage() {
         </span>
         <p className="text-base font-semibold text-gray-800 dark:text-gray-100 leading-relaxed">{currentEntry.explanation}</p>
         {currentEntry.example && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">{currentEntry.example}</p>
+          showExample
+            ? <p className="text-sm text-gray-500 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">{currentEntry.example}</p>
+            : <button onClick={() => setShowExample(true)} className="text-sm text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 text-left transition-colors">Show example…</button>
         )}
       </div>
 

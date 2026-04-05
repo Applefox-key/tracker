@@ -46,6 +46,7 @@ export function QuizPage() {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
+  const [showExample, setShowExample] = useState(false);
 
   const filteredEntries = usePracticeEntries("quiz", { selectedRatings, selectedCategory, selectedTag });
 
@@ -83,6 +84,7 @@ export function QuizPage() {
     else {
       setCurrentIdx((i) => i + 1);
       setSelected(null);
+      setShowExample(false);
     }
   }
 
@@ -174,7 +176,9 @@ export function QuizPage() {
         <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">What word is this?</span>
         <p className="text-lg font-semibold text-gray-800 dark:text-gray-100 leading-relaxed">{currentQuestion!.explanation}</p>
         {currentQuestion!.example && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">{currentQuestion!.example}</p>
+          showExample
+            ? <p className="text-sm text-gray-500 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">{currentQuestion!.example}</p>
+            : <button onClick={() => setShowExample(true)} className="text-sm text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 text-left transition-colors">Show example…</button>
         )}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
