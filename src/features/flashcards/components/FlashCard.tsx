@@ -5,9 +5,10 @@ interface FlashCardProps {
   isFlipped: boolean;
   onFlip: () => void;
   reversed?: boolean;
+  flipAnimated?: boolean;
 }
 
-export function FlashCard({ card, isFlipped, onFlip, reversed = false }: FlashCardProps) {
+export function FlashCard({ card, isFlipped, onFlip, reversed = false, flipAnimated = true }: FlashCardProps) {
   const frontLabel = reversed ? "Explanation" : "Word";
   const frontText = reversed ? card.back : card.front;
   const backLabel = reversed ? "Word" : "Explanation";
@@ -16,10 +17,11 @@ export function FlashCard({ card, isFlipped, onFlip, reversed = false }: FlashCa
   return (
     <div className="cursor-pointer select-none" style={{ perspective: "1200px" }} onClick={onFlip}>
       <div
-        className="relative w-full transition-transform duration-500"
+        className="relative w-full"
         style={{
           transformStyle: "preserve-3d",
           transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
+          transition: flipAnimated ? "transform 500ms" : "none",
           minHeight: "260px",
         }}>
         {/* Front */}

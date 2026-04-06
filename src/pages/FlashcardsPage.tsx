@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 
 const LS_START_SIDE = "flashcard_start_side";
 import { FlashCard } from "@/features/flashcards/components/FlashCard";
@@ -39,6 +39,25 @@ export function FlashcardsPage() {
   const { currentCard, currentIndex, total, progress, isFlipped, allTags, goNext, goPrev, flip, reset } = useFlashcards(
     { selectedRatings, selectedCategory, selectedTag },
   );
+
+  const [cardVisible, setCardVisible] = useState(true);
+  const [flipAnimated, setFlipAnimated] = useState(true);
+  const navLock = useRef(false);
+
+  const navigate = useCallback((action: () => void) => {
+    if (navLock.current) return;
+    navLock.current = true;
+    setFlipAnimated(false);
+    setCardVisible(false);
+    setTimeout(() => {
+      action();
+      setTimeout(() => {
+        setCardVisible(true);
+        setFlipAnimated(true);
+        navLock.current = false;
+      }, 50);
+    }, 200);
+  }, []);
 
   const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(
     Boolean,
@@ -154,7 +173,11 @@ export function FlashcardsPage() {
         </div>
       ) : (
         <div className="max-w-xl mx-auto w-full flex flex-col gap-6 pt-2">
-          <FlashCard card={currentCard} isFlipped={isFlipped} onFlip={flip} reversed={startSide === "explanation"} />
+          <div
+            className="transition-all duration-200"
+            style={{ opacity: cardVisible ? 1 : 0, transform: cardVisible ? "translateY(0)" : "translateY(10px)" }}>
+            <FlashCard card={currentCard} isFlipped={isFlipped} onFlip={flip} reversed={startSide === "explanation"} flipAnimated={flipAnimated} />
+          </div>
 
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-2">
@@ -174,8 +197,8 @@ export function FlashcardsPage() {
             currentIndex={currentIndex}
             total={total}
             progress={progress}
-            onPrev={goPrev}
-            onNext={goNext}
+            onPrev={() => navigate(goPrev)}
+            onNext={() => navigate(goNext)}
             onReset={reset}
           />
           <p className="text-center text-xs text-gray-300 dark:text-gray-600">Tap the card to flip · use buttons to navigate</p>
