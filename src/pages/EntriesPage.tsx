@@ -23,6 +23,7 @@ export function EntriesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingEntry, setEditingEntry] = useState<Entry | null>(null);
   const [viewingEntry, setViewingEntry] = useState<Entry | null>(null);
+  const [confirmDeleteEntry, setConfirmDeleteEntry] = useState<Entry | null>(null);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"expanded" | "collapsed">("expanded");
 
@@ -263,7 +264,7 @@ export function EntriesPage() {
             <EntryCard
               key={entry.id}
               entry={entry}
-              onRemove={removeEntry}
+              onRemove={(id) => setConfirmDeleteEntry(entries.find((e) => e.id === id) ?? null)}
               onEdit={setEditingEntry}
               onView={setViewingEntry}
             />
@@ -291,6 +292,35 @@ export function EntriesPage() {
 
       {/* Edit modal */}
       {editingEntry && <EditEntryModal entry={editingEntry} onClose={() => setEditingEntry(null)} />}
+
+      {/* Delete confirmation */}
+      {confirmDeleteEntry && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          onClick={() => setConfirmDeleteEntry(null)}>
+          <div
+            className="w-full max-w-sm bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 flex flex-col gap-4"
+            onClick={(e) => e.stopPropagation()}>
+            <div>
+              <p className="text-base font-semibold text-gray-900 dark:text-gray-100">Delete entry?</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <span className="font-medium text-gray-700 dark:text-gray-200">"{confirmDeleteEntry.word}"</span> will be permanently removed.
+              </p>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button variant="secondary" onClick={() => setConfirmDeleteEntry(null)}>Cancel</Button>
+              <Button
+                onClick={() => {
+                  removeEntry(confirmDeleteEntry.id);
+                  setConfirmDeleteEntry(null);
+                }}
+                className="bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600 text-white">
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
