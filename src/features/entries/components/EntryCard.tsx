@@ -1,4 +1,5 @@
 import { Entry } from "../types";
+import { MULTILINE_CATEGORIES } from "../constants";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { Button } from "@/shared/ui/Button";
 import { RatingStars } from "@/shared/ui/RatingStars";
@@ -21,6 +22,7 @@ interface EntryCardProps {
 
 export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
   const { updateEntry } = useEntryCrud();
+  const isMultiline = MULTILINE_CATEGORIES.has(entry.category);
 
   return (
     <div
@@ -30,7 +32,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">{entry.word}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 truncate">{entry.explanation}</p>
+          <p className={`text-sm text-gray-500 dark:text-gray-400 mt-0.5 ${isMultiline ? "line-clamp-2 break-words" : "truncate"}`}>{entry.explanation}</p>
           <p className="text-xs text-gray-300 dark:text-gray-600 mt-1">
             {new Date(entry.createdAt).toLocaleDateString("en-GB", {
               day: "numeric",
@@ -50,7 +52,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
 
       {/* Example */}
       {entry.example && (
-        <p className="text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">{entry.example}</p>
+        <p className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3${isMultiline ? " line-clamp-3 break-words" : ""}`}>{entry.example}</p>
       )}
 
       {/* Tags */}

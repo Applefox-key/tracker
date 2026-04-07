@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Entry } from "../types";
+import { MULTILINE_CATEGORIES } from "../constants";
 import { Button } from "@/shared/ui/Button";
 import { RatingStars } from "@/shared/ui/RatingStars";
 
@@ -18,6 +19,7 @@ interface EntryDetailModalProps {
 }
 
 export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalProps) {
+  const isMultiline = MULTILINE_CATEGORIES.has(entry.category);
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
@@ -33,10 +35,10 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/50 backdrop-blur-sm"
       onClick={onClose}>
       <div
-        className="w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-xl flex flex-col max-h-[90vh]"
+        className="w-full max-w-lg bg-white dark:bg-gray-800 sm:rounded-2xl rounded-t-2xl shadow-xl flex flex-col max-h-[92vh] sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-gray-100 dark:border-gray-700">
@@ -69,14 +71,16 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
           {entry.explanation && (
             <div>
               <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">Explanation</p>
-              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{entry.explanation}</p>
+              <p className={`text-sm text-gray-700 dark:text-gray-300 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
+                {entry.explanation}
+              </p>
             </div>
           )}
 
           {entry.example && (
             <div>
               <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">Example</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 leading-relaxed">
+              <p className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
                 {entry.example}
               </p>
             </div>

@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { EntryCategory } from "../types";
+import { MULTILINE_CATEGORIES } from "../constants";
 import { Button } from "@/shared/ui/Button";
 import { TagCombobox } from "@/shared/ui/TagCombobox";
 
@@ -78,7 +79,9 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
   }
 
   const isEdit = mode === "edit";
+  const isMultiline = MULTILINE_CATEGORIES.has(category);
   const inputCls = "border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500";
+  const textareaCls = inputCls + " resize-none leading-relaxed";
 
   return (
     <form
@@ -87,7 +90,7 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
       <p className="font-semibold text-emerald-800 dark:text-emerald-300">{isEdit ? "Edit Entry" : "New Entry"}</p>
 
       {/* Word & Explanation */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className={isMultiline ? "flex flex-col gap-3" : "grid grid-cols-1 sm:grid-cols-2 gap-3"}>
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Word / Phrase *</label>
           <input
@@ -100,25 +103,46 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Explanation *</label>
-          <input
-            required
-            value={explanation}
-            onChange={(e) => setExplanation(e.target.value)}
-            placeholder="e.g. щаслива випадковість"
-            className={inputCls}
-          />
+          {isMultiline ? (
+            <textarea
+              required
+              rows={4}
+              value={explanation}
+              onChange={(e) => setExplanation(e.target.value)}
+              placeholder="e.g. щаслива випадковість"
+              className={textareaCls}
+            />
+          ) : (
+            <input
+              required
+              value={explanation}
+              onChange={(e) => setExplanation(e.target.value)}
+              placeholder="e.g. щаслива випадковість"
+              className={inputCls}
+            />
+          )}
         </div>
       </div>
 
       {/* Example */}
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Example sentence</label>
-        <input
-          value={example}
-          onChange={(e) => setExample(e.target.value)}
-          placeholder="e.g. It was pure serendipity that we met."
-          className={inputCls}
-        />
+        {isMultiline ? (
+          <textarea
+            rows={3}
+            value={example}
+            onChange={(e) => setExample(e.target.value)}
+            placeholder="e.g. It was pure serendipity that we met."
+            className={textareaCls}
+          />
+        ) : (
+          <input
+            value={example}
+            onChange={(e) => setExample(e.target.value)}
+            placeholder="e.g. It was pure serendipity that we met."
+            className={inputCls}
+          />
+        )}
       </div>
 
       {/* Category */}
