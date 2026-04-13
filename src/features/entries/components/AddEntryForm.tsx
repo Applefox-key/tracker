@@ -3,6 +3,7 @@ import { EntryCategory } from "../types";
 import { MULTILINE_CATEGORIES } from "../constants";
 import { Button } from "@/shared/ui/Button";
 import { TagCombobox } from "@/shared/ui/TagCombobox";
+import { VoiceInputButton } from "@/shared/ui/VoiceInputButton";
 
 export interface EntryFormValues {
   word: string;
@@ -92,7 +93,10 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
       {/* Word & Explanation */}
       <div className={isMultiline ? "flex flex-col gap-3" : "grid grid-cols-1 sm:grid-cols-2 gap-3"}>
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Word / Phrase *</label>
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Word / Phrase *</label>
+            <VoiceInputButton onResult={(t) => setWord(t)} />
+          </div>
           <input
             required
             value={word}
@@ -102,7 +106,10 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Explanation *</label>
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Explanation *</label>
+            <VoiceInputButton onResult={(t) => setExplanation(t)} />
+          </div>
           {isMultiline ? (
             <textarea
               required
@@ -126,7 +133,10 @@ export function EntryForm({ mode, initialValues, onSubmit, onCancel }: EntryForm
 
       {/* Example */}
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Example sentence</label>
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Example sentence</label>
+          <VoiceInputButton onResult={(t) => setExample(t)} />
+        </div>
         {isMultiline ? (
           <textarea
             rows={3}

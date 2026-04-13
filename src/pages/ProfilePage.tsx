@@ -1,9 +1,12 @@
 import { useRef, useState } from "react";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { authApi } from "@/api/api";
+import { useUserSettings } from "@/hooks/useUserSettings";
+import { ALL_SPEECH_LANGS, type LangCode } from "@/lib/userSettings";
 
 export function ProfilePage() {
   const { user, updateUser, setUser } = useAuthStore();
+  const { speechLangs, saveSpeechLangs } = useUserSettings();
 
   const [name, setName] = useState(user?.name ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
@@ -59,6 +62,14 @@ export function ProfilePage() {
     } finally {
       setSaving(false);
     }
+  }
+
+  function toggleLang(code: LangCode) {
+    const next = speechLangs.includes(code)
+      ? speechLangs.filter((c) => c !== code)
+      : [...speechLangs, code]
+    if (next.length === 0) return // require at least one
+    saveSpeechLangs(next)
   }
 
   const inputCls = "border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100";
@@ -158,6 +169,40 @@ export function ProfilePage() {
           {saving ? "Saving…" : "Save changes"}
         </button>
       </form>
+
+      {/* Speech language settings */}
+      <div className="flex flex-col gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+        <div>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Speech languages</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+            Languages shown on the Speak and Voice Input buttons. Select at least one.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {ALL_SPEECH_LANGS.map(({ code, label, name: langName }) => {
+            const active = speechLangs.includes(code)
+            const isLast = active && speechLangs.length === 1
+            return (
+              <button
+                key={label}
+                type="button"
+                onClick={() => toggleLang(code)}
+                disabled={isLast}
+                title={langName}
+                className={[
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors disabled:opacity-40 disabled:cursor-not-allowed",
+                  active
+                    ? "bg-emerald-600 text-white border-emerald-600"
+                    : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400",
+                ].join(" ")}
+              >
+                <span className="font-mono text-xs">{label}</span>
+                <span className="text-xs opacity-75">{langName}</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
     </div>
   );
 }

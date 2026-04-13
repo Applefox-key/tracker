@@ -1,4 +1,5 @@
 import { Flashcard } from "../types";
+import { SpeakButton } from "@/shared/ui/SpeakButton";
 
 interface FlashCardProps {
   card: Flashcard;
@@ -24,26 +25,50 @@ export function FlashCard({ card, isFlipped, onFlip, reversed = false, flipAnima
           transition: flipAnimated ? "transform 500ms" : "none",
           minHeight: "260px",
         }}>
-        {/* Front */}
+        {/* ── Front ─────────────────────────────────────────────── */}
         <div
-          className="absolute inset-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg flex flex-col items-center justify-center gap-4 p-8"
+          className="absolute inset-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg flex flex-col"
           style={{ backfaceVisibility: "hidden" }}>
-          <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">{frontLabel}</span>
-          <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center">{frontText}</p>
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 pt-4 pb-2 shrink-0">
+            <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">{frontLabel}</span>
+            <SpeakButton text={frontText} />
+          </div>
 
-          <span className="text-xs text-gray-300 dark:text-gray-600 mt-2">tap to reveal</span>
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-y-auto flex items-center justify-center px-8 py-4">
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center">{frontText}</p>
+          </div>
+
+          {/* Footer */}
+          <div className="shrink-0 px-5 pb-4 pt-2 flex justify-center">
+            <span className="text-xs text-gray-300 dark:text-gray-600">tap to reveal</span>
+          </div>
         </div>
 
-        {/* Back */}
+        {/* ── Back ──────────────────────────────────────────────── */}
         <div
-          className="absolute inset-0 bg-emerald-600 border border-emerald-600 rounded-2xl shadow-lg flex flex-col items-center justify-center gap-4 p-8"
+          className="absolute inset-0 bg-emerald-600 border border-emerald-600 rounded-2xl shadow-lg flex flex-col"
           style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
-          <span className="text-xs font-medium text-emerald-200 uppercase tracking-widest">{backLabel}</span>
-          <p className="text-3xl font-bold text-white text-center">{backText}</p>
-          {card.hint && (
-            <p className="text-sm text-emerald-100 text-center italic opacity-90">"{card.hint}"</p>
-          )}
-          <span className="text-xs text-emerald-300 mt-2">tap to flip back</span>
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 pt-4 pb-2 shrink-0">
+            <span className="text-xs font-medium text-emerald-200 uppercase tracking-widest">{backLabel}</span>
+            <SpeakButton
+              text={backText}
+              className="[&_button]:text-emerald-400 [&_button]:hover:text-white [&_button]:hover:bg-emerald-500"
+            />
+          </div>
+
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center gap-3 px-8 py-4">
+            <p className="text-3xl font-bold text-white text-center">{backText}</p>
+            {card.hint && <p className="text-sm text-emerald-100 text-center italic opacity-90">"{card.hint}"</p>}
+          </div>
+
+          {/* Footer */}
+          <div className="shrink-0 px-5 pb-4 pt-2 flex justify-center">
+            <span className="text-xs text-emerald-300">tap to flip back</span>
+          </div>
         </div>
       </div>
     </div>

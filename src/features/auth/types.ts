@@ -5,6 +5,7 @@ export interface User {
   email: string
   name: string
   avatar: string | null
+  settings?: Record<string, unknown>
 }
 
 export interface LoginCredentials {
