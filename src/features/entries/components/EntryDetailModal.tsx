@@ -41,7 +41,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
         className="w-full max-w-lg bg-white dark:bg-gray-800 sm:rounded-2xl rounded-t-2xl shadow-xl flex flex-col max-h-[92vh] sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}>
         {/* Header */}
-        <div className="flex items-start justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+        <div className="flex items-start justify-between p-4 border-b border-gray-100 dark:border-gray-700">
           <div className="flex-1 min-w-0 pr-4">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 break-words">{entry.word}</h2>
             <span
@@ -67,71 +67,85 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
         </div>
 
         {/* Body */}
-        <div className="flex flex-col gap-5 p-6 overflow-y-auto">
+        <div className="flex flex-col gap-5 p-4 overflow-y-auto">
           {entry.explanation && (
             <div>
-              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">Explanation</p>
-              <p className={`text-sm text-gray-700 dark:text-gray-300 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
+              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
+                Explanation
+              </p>
+              <p
+                className={`text-sm text-gray-700 dark:text-gray-300 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
                 {entry.explanation}
               </p>
             </div>
           )}
-
           {entry.example && (
             <div>
-              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">Example</p>
-              <p className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
+              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
+                Example
+              </p>
+              <p
+                className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
                 {entry.example}
               </p>
             </div>
           )}
-
-          {entry.tags.length > 0 && (
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+            {/* Left column — Rating */}
             <div>
-              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1.5">Tags</p>
-              <div className="flex flex-wrap gap-1.5">
-                {entry.tags.map((tag) => (
-                  <span key={tag.id} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
-                    #{tag.name}
-                  </span>
-                ))}
-              </div>
+              <RatingStars value={entry.rating} readOnly />
             </div>
-          )}
 
-          <div>
-            <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1.5">Rating</p>
-            <RatingStars value={entry.rating} readOnly />
+            {/* Right column — Practice */}
+            <div className="flex items-center justify-end gap-2">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {entry.includeInPractice ? "In practice" : "Not in practice"}
+              </span>
+              <span
+                className={[
+                  "w-2 h-2 rounded-full shrink-0",
+                  entry.includeInPractice ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600",
+                ].join(" ")}
+              />
+            </div>
           </div>
-
-          <div className="flex items-center gap-2">
-            <span
-              className={[
-                "w-2 h-2 rounded-full shrink-0",
-                entry.includeInPractice ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600",
-              ].join(" ")}
-            />
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              {entry.includeInPractice ? "Included in practice" : "Not in practice"}
-            </span>
-          </div>
-
-          <p className="text-xs text-gray-300 dark:text-gray-600">
-            Added{" "}
-            {new Date(entry.createdAt).toLocaleDateString("en-GB", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </p>
         </div>
-
+        {/* TAGS */}
+        {entry.tags.length > 0 && (
+          <div className="flex items-start justify-between p-2 border-t border-gray-100 dark:border-gray-700">
+            {/* <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1.5">
+                Tags
+              </p> */}
+            <div className="flex flex-wrap gap-1.5">
+              {entry.tags.map((tag) => (
+                <span
+                  key={tag.id}
+                  className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
+                  #{tag.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
         {/* Footer */}
-        <div className="flex justify-end gap-2 px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-2xl">
-          <Button variant="secondary" onClick={onClose}>
-            Close
-          </Button>
-          <Button onClick={handleEdit}>Edit</Button>
+        <div className="flex justify-between gap-2 px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-2xl">
+          <div className="flex items-center">
+            <p className="text-xs text-gray-300 dark:text-gray-600">
+              Added{" "}
+              {new Date(entry.createdAt).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400"></p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="secondary" onClick={onClose}>
+              Close
+            </Button>
+            <Button onClick={handleEdit}>Edit</Button>
+          </div>
         </div>
       </div>
     </div>
