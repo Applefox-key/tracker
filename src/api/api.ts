@@ -16,6 +16,7 @@ interface RawEntry {
   rating: number
   includeInPractice: 0 | 1
   createdAt: string
+  img?: string | null
 }
 
 /** Shape sent to the server when creating or updating an entry (tags handled separately) */
@@ -46,7 +47,43 @@ function toEntry(raw: RawEntry): Entry {
     rating: raw.rating,
     includeInPractice: raw.includeInPractice === 1,
     createdAt: raw.createdAt,
+    img: raw.img ?? null,
   }
+}
+
+/**
+ * Build an authenticated URL for an entry image.
+ * The server accepts auth via ?token= query param, so this URL works in <img src>.
+ */
+export function getEntryImageUrl(filename: string): string {
+  const token = localStorage.getItem(TOKEN_KEY)
+  return `${BASE_URL}/img/entry?img=${encodeURIComponent(filename)}${token ? `&token=${encodeURIComponent(token)}` : ''}`
+}
+
+/**
+ * Send entry data (and optional image) as multipart/form-data.
+ * The POST /entries endpoint always expects JSON.parse(req.body.data),
+ * so we always use FormData for create. PATCH handles both, but we also
+ * use FormData when an image operation is involved.
+ */
+async function entryFormDataRequest<T>(
+  method: 'post' | 'patch',
+  url: string,
+  payload: object,
+  imgFile?: File | null,
+): Promise<T> {
+  const formData = new FormData()
+  formData.append('data', JSON.stringify(payload))
+  if (imgFile) formData.append('imgfile', imgFile)
+  const token = localStorage.getItem(TOKEN_KEY)
+  const res = await axios.request<T>({
+    method,
+    url: `${BASE_URL}${url}`,
+    data: formData,
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    withCredentials: true,
+  })
+  return res.data
 }
 
 function toPayload({ tags: _tags, ...entry }: Omit<Entry, 'id' | 'createdAt'>): EntryPayload {
@@ -129,13 +166,19 @@ export const entriesApi = {
     return toEntry(res.data)
   },
 
-  async createEntry(data: Omit<Entry, 'id' | 'createdAt'>): Promise<Entry> {
-    const res = await apiClient.post<RawEntry>('/entries', toPayload(data))
-    return toEntry(res.data)
+  async createEntry(data: Omit<Entry, 'id' | 'createdAt'>, imgFile?: File | null): Promise<Entry> {
+    // Server POST /entries always does JSON.parse(req.body.data) → must use FormData
+    const raw = await entryFormDataRequest<RawEntry>('post', '/entries', toPayload(data), imgFile)
+    return toEntry(raw)
   },
 
-  async updateEntry(id: number, data: Partial<Omit<Entry, 'id' | 'createdAt'>>): Promise<Entry> {
-    const partial: Partial<EntryPayload> = {}
+  async updateEntry(
+    id: number,
+    data: Partial<Omit<Entry, 'id' | 'createdAt'>>,
+    imgFile?: File | null,
+    removeImg?: boolean,
+  ): Promise<Entry> {
+    const partial: Partial<EntryPayload> & { img?: string | null } = {}
     if (data.word !== undefined) partial.word = data.word
     if (data.explanation !== undefined) partial.explanation = data.explanation
     if (data.example !== undefined) partial.example = data.example
@@ -143,6 +186,13 @@ export const entriesApi = {
     if (data.rating !== undefined) partial.rating = data.rating
     if (data.includeInPractice !== undefined)
       partial.includeInPractice = data.includeInPractice ? 1 : 0
+    if (removeImg) partial.img = null
+
+    if (imgFile || removeImg) {
+      // Need FormData so multer can read file / detect img=null removal
+      const raw = await entryFormDataRequest<RawEntry>('patch', `/entries/${id}`, partial, imgFile)
+      return toEntry(raw)
+    }
 
     const res = await apiClient.patch<RawEntry>(`/entries/${id}`, partial)
     return toEntry(res.data)

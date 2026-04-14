@@ -3,6 +3,8 @@ import { Entry } from "../types";
 import { MULTILINE_CATEGORIES } from "../constants";
 import { Button } from "@/shared/ui/Button";
 import { RatingStars } from "@/shared/ui/RatingStars";
+import { EntryImage } from "@/shared/ui/EntryImage";
+import { getEntryImageUrl } from "@/api/api";
 
 const categoryColors: Record<Entry["category"], string> = {
   word: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
@@ -20,6 +22,7 @@ interface EntryDetailModalProps {
 
 export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalProps) {
   const isMultiline = MULTILINE_CATEGORIES.has(entry.category);
+
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
@@ -68,35 +71,47 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
 
         {/* Body */}
         <div className="flex flex-col gap-5 p-4 overflow-y-auto">
-          {entry.explanation && (
-            <div>
-              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
-                Explanation
-              </p>
-              <p
-                className={`text-sm text-gray-700 dark:text-gray-300 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
-                {entry.explanation}
-              </p>
+          {/* Explanation + Example (left) / Image (right) */}
+          <div className="flex gap-4 flex-col sm:flex-row">
+            <div className="flex flex-col gap-5 flex-1 min-w-0">
+              {entry.explanation && (
+                <div>
+                  <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
+                    Explanation
+                  </p>
+                  <p
+                    className={`text-sm text-gray-700 dark:text-gray-300 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
+                    {entry.explanation}
+                  </p>
+                </div>
+              )}
+              {entry.example && (
+                <div>
+                  <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
+                    Example
+                  </p>
+                  <p
+                    className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
+                    {entry.example}
+                  </p>
+                </div>
+              )}
             </div>
-          )}
-          {entry.example && (
-            <div>
-              <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
-                Example
-              </p>
-              <p
-                className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
-                {entry.example}
-              </p>
-            </div>
-          )}
+            {entry.img && (
+              <EntryImage
+                src={getEntryImageUrl(entry.img)}
+                alt={entry.word}
+                style={{ width: 150, height: 150, objectFit: "cover" }}
+                className="shrink-0"
+              />
+            )}
+          </div>
+
+          {/* Rating & Practice */}
           <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-            {/* Left column — Rating */}
             <div>
               <RatingStars value={entry.rating} readOnly />
             </div>
-
-            {/* Right column — Practice */}
             <div className="flex items-center justify-end gap-2">
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 {entry.includeInPractice ? "In practice" : "Not in practice"}
@@ -110,12 +125,10 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
             </div>
           </div>
         </div>
-        {/* TAGS */}
+
+        {/* Tags */}
         {entry.tags.length > 0 && (
           <div className="flex items-start justify-between p-2 border-t border-gray-100 dark:border-gray-700">
-            {/* <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1.5">
-                Tags
-              </p> */}
             <div className="flex flex-wrap gap-1.5">
               {entry.tags.map((tag) => (
                 <span
@@ -127,6 +140,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
             </div>
           </div>
         )}
+
         {/* Footer */}
         <div className="flex justify-between gap-2 px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-2xl">
           <div className="flex items-center">
@@ -138,7 +152,6 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
                 year: "numeric",
               })}
             </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400"></p>
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={onClose}>

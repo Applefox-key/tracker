@@ -4,4 +4,5 @@ export interface Flashcard {
   back: string
   hint?: string
   rating: number
+  img?: string | null
 }

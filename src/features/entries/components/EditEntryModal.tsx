@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Entry } from '../types'
 import { EntryForm, EntryFormValues } from './AddEntryForm'
 import { useEntryCrud } from '@/hooks/useEntryCrud'
+import { getEntryImageUrl } from '@/api/api'
 
 interface EditEntryModalProps {
   entry: Entry
@@ -21,8 +22,8 @@ export function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
   }, [onClose])
 
   function handleSubmit(values: EntryFormValues) {
-    const { tagIds, ...entryData } = values
-    updateEntry(entry.id, { ...entryData, tags: [] }, tagIds)
+    const { tagIds, imgFile, removeImg, ...entryData } = values
+    updateEntry(entry.id, { ...entryData, tags: [] }, tagIds, imgFile ?? undefined, removeImg)
     onClose()
   }
 
@@ -48,6 +49,7 @@ export function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
         <EntryForm
           mode="edit"
           initialValues={initialValues}
+          currentImgUrl={entry.img ? getEntryImageUrl(entry.img) : null}
           onSubmit={handleSubmit}
           onCancel={onClose}
         />

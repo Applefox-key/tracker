@@ -69,7 +69,8 @@ export function FlashcardsPage() {
     setSelectedTag(null);
   }
 
-  const filterBtnInactive = "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600";
+  const filterBtnInactive =
+    "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600";
   const filterBtnActive = "bg-emerald-600 text-white border-emerald-600";
 
   return (
@@ -78,7 +79,7 @@ export function FlashcardsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 shrink-0">Flashcards</h1>
 
-        <div className="flex items-center gap-3 sm:ml-auto">
+        <div className="flex items-center gap-3 sm:ml-auto flex-wrap sm:flex-nowrap">
           <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />
 
           <div className="w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
@@ -90,7 +91,10 @@ export function FlashcardsPage() {
                 ? "Showing word first — click to show explanation first"
                 : "Showing explanation first — click to show word first"
             }
-            className={["flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors", filterBtnInactive].join(" ")}>
+            className={[
+              "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors",
+              filterBtnInactive,
+            ].join(" ")}>
             <span>{startSide === "word" ? "🔤" : "💬"}</span>
             <span className="hidden sm:inline">{startSide === "word" ? "Word first" : "Explanation first"}</span>
           </button>
@@ -122,14 +126,20 @@ export function FlashcardsPage() {
             <div className="flex gap-1.5 flex-wrap">
               <button
                 onClick={() => setSelectedCategory(null)}
-                className={["px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors", selectedCategory === null ? filterBtnActive : filterBtnInactive].join(" ")}>
+                className={[
+                  "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
+                  selectedCategory === null ? filterBtnActive : filterBtnInactive,
+                ].join(" ")}>
                 All
               </button>
               {CATEGORIES.map(({ key, label }) => (
                 <button
                   key={key}
                   onClick={() => setSelectedCategory(selectedCategory === key ? null : key)}
-                  className={["px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors", selectedCategory === key ? filterBtnActive : filterBtnInactive].join(" ")}>
+                  className={[
+                    "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
+                    selectedCategory === key ? filterBtnActive : filterBtnInactive,
+                  ].join(" ")}>
                   {label}
                 </button>
               ))}
@@ -176,7 +186,13 @@ export function FlashcardsPage() {
           <div
             className="transition-all duration-200"
             style={{ opacity: cardVisible ? 1 : 0, transform: cardVisible ? "translateY(0)" : "translateY(10px)" }}>
-            <FlashCard card={currentCard} isFlipped={isFlipped} onFlip={flip} reversed={startSide === "explanation"} flipAnimated={flipAnimated} />
+            <FlashCard
+              card={currentCard}
+              isFlipped={isFlipped}
+              onFlip={flip}
+              reversed={startSide === "explanation"}
+              flipAnimated={flipAnimated}
+            />
           </div>
 
           <div className="flex items-center justify-between px-1">
@@ -201,7 +217,9 @@ export function FlashcardsPage() {
             onNext={() => navigate(goNext)}
             onReset={reset}
           />
-          <p className="text-center text-xs text-gray-300 dark:text-gray-600">Tap the card to flip · use buttons to navigate</p>
+          <p className="text-center text-xs text-gray-300 dark:text-gray-600">
+            Tap the card to flip · use buttons to navigate
+          </p>
         </div>
       )}
     </div>

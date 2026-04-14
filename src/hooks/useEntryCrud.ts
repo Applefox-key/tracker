@@ -23,9 +23,9 @@ export function useEntryCrud() {
   const updateMutation = useUpdateEntry()
   const deleteMutation = useDeleteEntry()
 
-  async function addEntry(data: Omit<Entry, 'id' | 'createdAt'>, tagIds?: number[]) {
+  async function addEntry(data: Omit<Entry, 'id' | 'createdAt'>, tagIds?: number[], imgFile?: File | null) {
     if (mode === 'authenticated') {
-      const created = await createMutation.mutateAsync(data)
+      const created = await createMutation.mutateAsync({ data, imgFile })
       if (tagIds && tagIds.length > 0) {
         await entryTagsApi.setEntryTags(created.id, tagIds)
         await queryClient.invalidateQueries({ queryKey: ['entries'] })
@@ -39,9 +39,11 @@ export function useEntryCrud() {
     id: number,
     data: Partial<Omit<Entry, 'id' | 'createdAt'>>,
     tagIds?: number[],
+    imgFile?: File | null,
+    removeImg?: boolean,
   ) {
     if (mode === 'authenticated') {
-      await updateMutation.mutateAsync({ id, data })
+      await updateMutation.mutateAsync({ id, data, imgFile, removeImg })
       if (tagIds !== undefined) {
         await entryTagsApi.setEntryTags(id, tagIds)
         await queryClient.invalidateQueries({ queryKey: ['entries'] })

@@ -3,6 +3,7 @@ import { useEntriesStore } from '@/features/entries/store/entriesStore'
 import { useFlashcardsStore } from '../store/flashcardsStore'
 import { Flashcard } from '../types'
 import { EntryCategory, EntryTag } from '@/features/entries/types'
+import { getEntryImageUrl } from '@/api/api'
 
 export interface FlashcardFilters {
   selectedRatings: number[]
@@ -46,6 +47,7 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
         back: e.explanation,
         hint: e.example || undefined,
         rating: e.rating,
+        img: e.img ? getEntryImageUrl(e.img) : null,
       }))
   }, [entries, selectedRatings, selectedCategory, selectedTag])
 

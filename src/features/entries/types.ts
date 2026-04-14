@@ -15,4 +15,5 @@ export interface Entry {
   rating: number
   includeInPractice: boolean
   createdAt: string
+  img?: string | null
 }

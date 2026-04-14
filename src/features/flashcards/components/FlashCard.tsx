@@ -1,5 +1,6 @@
 import { Flashcard } from "../types";
 import { SpeakButton } from "@/shared/ui/SpeakButton";
+import { EntryImage } from "@/shared/ui/EntryImage";
 
 interface FlashCardProps {
   card: Flashcard;
@@ -60,9 +61,23 @@ export function FlashCard({ card, isFlipped, onFlip, reversed = false, flipAnima
           </div>
 
           {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center gap-3 px-8 py-4">
-            <p className="text-3xl font-bold text-white text-center">{backText}</p>
-            {card.hint && <p className="text-sm text-emerald-100 text-center italic opacity-90">"{card.hint}"</p>}
+          <div className="flex-1 overflow-y-auto px-6 py-4">
+            <div className="flex flex-col items-center gap-3 min-h-full justify-center">
+              <p className="text-2xl font-bold text-white text-center whitespace-pre-wrap break-words">{backText}</p>
+              {card.hint && (
+                <p className="text-sm text-emerald-100 text-center italic opacity-90 whitespace-pre-wrap break-words">
+                  "{card.hint}"
+                </p>
+              )}
+              {card.img && (
+                <EntryImage
+                  src={card.img}
+                  alt={backText}
+                  className="rounded-lg border border-emerald-500/40"
+                  style={{ maxWidth: "100%", maxHeight: 100, objectFit: "contain" }}
+                />
+              )}
+            </div>
           </div>
 
           {/* Footer */}

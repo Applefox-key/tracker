@@ -21,7 +21,8 @@ export function useCreateEntry() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: Omit<Entry, 'id' | 'createdAt'>) => entriesApi.createEntry(data),
+    mutationFn: ({ data, imgFile }: { data: Omit<Entry, 'id' | 'createdAt'>; imgFile?: File | null }) =>
+      entriesApi.createEntry(data, imgFile),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ENTRIES_KEY })
     },
@@ -33,8 +34,17 @@ export function useUpdateEntry() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<Omit<Entry, 'id' | 'createdAt'>> }) =>
-      entriesApi.updateEntry(id, data),
+    mutationFn: ({
+      id,
+      data,
+      imgFile,
+      removeImg,
+    }: {
+      id: number
+      data: Partial<Omit<Entry, 'id' | 'createdAt'>>
+      imgFile?: File | null
+      removeImg?: boolean
+    }) => entriesApi.updateEntry(id, data, imgFile, removeImg),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ENTRIES_KEY })
     },

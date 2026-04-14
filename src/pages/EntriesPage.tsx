@@ -64,8 +64,8 @@ export function EntriesPage() {
   ).length;
 
   function handleAdd(values: EntryFormValues) {
-    const { tagIds, ...entryData } = values;
-    addEntry({ ...entryData, tags: [] }, tagIds);
+    const { tagIds, imgFile, removeImg: _, ...entryData } = values;
+    addEntry({ ...entryData, tags: [] }, tagIds, imgFile ?? undefined);
     setShowForm(false);
   }
 
