@@ -20,9 +20,29 @@ const queryClient = new QueryClient({
 
 export function App() {
   useEffect(() => {
-    const token = localStorage.getItem(TOKEN_KEY)
     const { mode, setInitializing } = useAuthStore.getState()
 
+    // Google OAuth callback: server appends ?token=<jwt> to the redirect URL
+    const urlParams = new URLSearchParams(window.location.search)
+    const oauthToken = urlParams.get('token')
+    if (oauthToken) {
+      localStorage.setItem(TOKEN_KEY, oauthToken)
+      localStorage.setItem('Auth', 'true')
+      window.history.replaceState({}, '', window.location.pathname)
+      authApi.getUser()
+        .then((user) => {
+          useAuthStore.setState({ mode: 'authenticated', isAuthenticated: true, user })
+        })
+        .catch(() => {
+          localStorage.removeItem(TOKEN_KEY)
+          localStorage.setItem('Auth', 'false')
+        })
+        .finally(() => setInitializing(false))
+      return
+    }
+
+    // Existing logic — unchanged
+    const token = localStorage.getItem(TOKEN_KEY)
     if (token || mode !== 'unauthenticated') {
       // Already authenticated via localStorage — no cookie check needed
       setInitializing(false)

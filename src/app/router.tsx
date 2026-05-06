@@ -16,6 +16,8 @@ import { TagsPage } from '@/pages/TagsPage'
 
 function RootRedirect() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const isInitializing = useAuthStore((s) => s.isInitializing)
+  if (isInitializing) return null
   return <Navigate to={isAuthenticated ? '/dashboard' : '/about'} replace />
 }
 

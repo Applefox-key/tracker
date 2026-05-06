@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import { useNavigate, useLocation, Navigate, Link } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { authApi } from "@/api/api";
+import { WIN_LOCATION_HREF } from "@/api/client";
 
 type Mode = "login" | "register" | "forgot";
 
@@ -73,7 +74,9 @@ export function LoginPage() {
   const [regName, setRegName] = useState("");
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
-  const [regErrors, setRegErrors] = useState<{ name?: string; email?: string; password?: string; general?: string }>({});
+  const [regErrors, setRegErrors] = useState<{ name?: string; email?: string; password?: string; general?: string }>(
+    {},
+  );
   const [regLoading, setRegLoading] = useState(false);
 
   const [forgotEmail, setForgotEmail] = useState("");
@@ -94,7 +97,10 @@ export function LoginPage() {
     const errors: typeof loginErrors = {};
     if (!loginEmail.trim()) errors.email = "Email is required.";
     if (!loginPassword.trim()) errors.password = "Password is required.";
-    if (Object.keys(errors).length) { setLoginErrors(errors); return; }
+    if (Object.keys(errors).length) {
+      setLoginErrors(errors);
+      return;
+    }
     setLoginErrors({});
     try {
       await login({ email: loginEmail, password: loginPassword });
@@ -111,7 +117,10 @@ export function LoginPage() {
     if (!regEmail.trim()) errors.email = "Email is required.";
     if (!regPassword.trim()) errors.password = "Password is required.";
     else if (regPassword.length < 6) errors.password = "Password must be at least 6 characters.";
-    if (Object.keys(errors).length) { setRegErrors(errors); return; }
+    if (Object.keys(errors).length) {
+      setRegErrors(errors);
+      return;
+    }
     setRegErrors({});
     setRegLoading(true);
     try {
@@ -127,7 +136,10 @@ export function LoginPage() {
 
   async function handleForgot(e: FormEvent) {
     e.preventDefault();
-    if (!forgotEmail.trim()) { setForgotError("Email is required."); return; }
+    if (!forgotEmail.trim()) {
+      setForgotError("Email is required.");
+      return;
+    }
     setForgotError("");
     setForgotLoading(true);
     try {
@@ -146,6 +158,10 @@ export function LoginPage() {
     setRegErrors({});
     setForgotError("");
     setForgotSuccess(false);
+  }
+
+  function handleGoogleLogin() {
+    window.location.href = WIN_LOCATION_HREF;
   }
 
   const subtitles: Record<Mode, string> = {
@@ -233,6 +249,35 @@ export function LoginPage() {
                 <hr className="flex-1 border-gray-200 dark:border-gray-700" />
               </div>
 
+              <div className="flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={handleGoogleLogin}
+                  className="w-full flex items-center justify-center gap-2.5 border border-gray-300 dark:border-gray-600 hover:border-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg px-4 py-2.5 text-sm transition-colors">
+                  <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="none" fillRule="evenodd">
+                      <path
+                        d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"
+                        fill="#4285F4"
+                      />
+                      <path
+                        d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"
+                        fill="#34A853"
+                      />
+                      <path
+                        d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"
+                        fill="#FBBC05"
+                      />
+                      <path
+                        d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"
+                        fill="#EA4335"
+                      />
+                    </g>
+                  </svg>
+                  Sign in with Google
+                </button>
+              </div>
+
               <div className="flex flex-col gap-2 text-center">
                 <button
                   type="button"
@@ -255,15 +300,36 @@ export function LoginPage() {
 
               <form onSubmit={handleRegister} className="flex flex-col gap-4" noValidate>
                 <Field label="Name" htmlFor="reg-name" error={regErrors.name}>
-                  <input id="reg-name" type="text" autoComplete="name" value={regName} onChange={(e) => setRegName(e.target.value)} placeholder="Your name" className={inputCls} />
+                  <input
+                    id="reg-name"
+                    type="text"
+                    autoComplete="name"
+                    value={regName}
+                    onChange={(e) => setRegName(e.target.value)}
+                    placeholder="Your name"
+                    className={inputCls}
+                  />
                 </Field>
 
                 <Field label="Email" htmlFor="reg-email" error={regErrors.email}>
-                  <input id="reg-email" type="email" autoComplete="email" value={regEmail} onChange={(e) => setRegEmail(e.target.value)} placeholder="you@example.com" className={inputCls} />
+                  <input
+                    id="reg-email"
+                    type="email"
+                    autoComplete="email"
+                    value={regEmail}
+                    onChange={(e) => setRegEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className={inputCls}
+                  />
                 </Field>
 
                 <Field label="Password" htmlFor="reg-password" error={regErrors.password}>
-                  <PasswordInput id="reg-password" value={regPassword} onChange={setRegPassword} autoComplete="new-password" />
+                  <PasswordInput
+                    id="reg-password"
+                    value={regPassword}
+                    onChange={setRegPassword}
+                    autoComplete="new-password"
+                  />
                 </Field>
 
                 {regErrors.general && (
@@ -276,6 +342,39 @@ export function LoginPage() {
                   {regLoading ? "Creating account…" : "Create account"}
                 </button>
               </form>
+
+              <div className="flex items-center gap-3">
+                <hr className="flex-1 border-gray-200 dark:border-gray-700" />
+                <span className="text-xs text-gray-400 dark:text-gray-500">or</span>
+                <hr className="flex-1 border-gray-200 dark:border-gray-700" />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                className="w-full flex items-center justify-center gap-2.5 border border-gray-300 dark:border-gray-600 hover:border-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg px-4 py-2.5 text-sm transition-colors">
+                <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                  <g fill="none" fillRule="evenodd">
+                    <path
+                      d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"
+                      fill="#4285F4"
+                    />
+                    <path
+                      d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"
+                      fill="#34A853"
+                    />
+                    <path
+                      d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"
+                      fill="#FBBC05"
+                    />
+                    <path
+                      d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"
+                      fill="#EA4335"
+                    />
+                  </g>
+                </svg>
+                Sign up with Google
+              </button>
 
               <p className="text-sm text-center text-gray-500 dark:text-gray-400">
                 Already have an account?{" "}
