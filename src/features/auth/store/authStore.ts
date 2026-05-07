@@ -23,6 +23,9 @@ export const useAuthStore = create<AuthState>()(
         try {
           await authApi.login(credentials)
           const user = await authApi.getUser()
+          if (!user?.id && !user?.email) {
+            throw new Error('Invalid user data received.')
+          }
           set({ mode: 'authenticated', isAuthenticated: true, user, isLoading: false })
         } catch (err) {
           set({
