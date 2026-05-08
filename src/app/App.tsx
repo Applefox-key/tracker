@@ -47,28 +47,39 @@ export function App() {
       return;
     }
 
-    // Existing logic — unchanged
     const token = localStorage.getItem(TOKEN_KEY);
-    if (token || mode !== "unauthenticated") {
-      // Already authenticated via localStorage — no cookie check needed
+
+    if (mode === "demo") {
+      // Demo mode has no server session — nothing to fetch.
       setInitializing(false);
-    } else {
-      // No token — try cookie auth
+      return;
+    }
+
+    if (token && mode === "authenticated") {
+      // Already authenticated: let the app open immediately with cached data,
+      // then refresh user in the background so avatar/profile stay up to date.
+      setInitializing(false);
       authApi
         .getUser()
         .then((user) => {
           if (!user?.id && !user?.email) return;
-          useAuthStore.setState({
-            mode: "authenticated",
-            isAuthenticated: true,
-            user,
-          });
+          useAuthStore.setState({ user });
         })
-        .catch(() => {
-          // No valid cookie — stay unauthenticated
-        })
-        .finally(() => setInitializing(false));
+        .catch(() => {});
+      return;
     }
+
+    // No token or unauthenticated: try JWT or cookie session.
+    authApi
+      .getUser()
+      .then((user) => {
+        if (!user?.id && !user?.email) return;
+        useAuthStore.setState({ mode: "authenticated", isAuthenticated: true, user });
+      })
+      .catch(() => {
+        // No valid session — stay unauthenticated
+      })
+      .finally(() => setInitializing(false));
   }, []);
 
   return (

@@ -61,6 +61,17 @@ export function getEntryImageUrl(filename: string): string {
 }
 
 /**
+ * Build the URL for a user avatar.
+ * The endpoint is public (no auth required).
+ * If avatar is already an absolute URL (e.g. Google OAuth photo), return as-is.
+ */
+export function getAvatarUrl(avatar: string | null | undefined, userId: string): string | null {
+  if (!avatar) return null
+  if (avatar.startsWith('http')) return avatar
+  return `${BASE_URL}/img/avatars?img=${encodeURIComponent(avatar)}&userid=${encodeURIComponent(userId)}`
+}
+
+/**
  * Send entry data (and optional image) as multipart/form-data.
  * The POST /entries endpoint always expects JSON.parse(req.body.data),
  * so we always use FormData for create. PATCH handles both, but we also
@@ -122,10 +133,12 @@ export const authApi = {
     return res.data.data
   },
 
-  async uploadAvatar(file: File): Promise<User> {
-    // Uses raw axios to avoid the data-wrapper interceptor (FormData must not be wrapped)
+  async uploadAvatar(file: File, userId: string): Promise<User> {
+    // Uses raw axios to avoid the data-wrapper interceptor (FormData must not be wrapped).
+    // Server expects: field 'file' for the binary, field 'data' as JSON with { id: userId }.
     const formData = new FormData()
-    formData.append('avatar', file)
+    formData.append('data', JSON.stringify({ id: userId }))
+    formData.append('file', file)
     const token = localStorage.getItem(TOKEN_KEY)
     const res = await axios.patch<{ data: User }>(`${BASE_URL}/users`, formData, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},

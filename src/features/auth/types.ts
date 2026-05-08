@@ -4,7 +4,7 @@ export interface User {
   id: string
   email: string
   name: string
-  avatar: string | null
+  img: string | null
   settings?: Record<string, unknown>
 }
 
