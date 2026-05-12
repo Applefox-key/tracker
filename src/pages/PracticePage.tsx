@@ -57,7 +57,7 @@ export function PracticePage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
-      <div>
+      <div className="hidden sm:block">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Practice</h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Choose a study mode</p>
       </div>
@@ -70,11 +70,12 @@ export function PracticePage() {
           return (
             <div
               key={mode.key}
+              onClick={disabled ? undefined : () => navigate(mode.route)}
               className={[
-                "bg-white dark:bg-gray-800 rounded-2xl border p-2 sm:p-6 flex flex-col gap-4 transition-shadow",
+                "bg-white dark:bg-gray-800 rounded-2xl border p-2 sm:p-6 flex flex-col gap-4 transition-all",
                 disabled
                   ? "border-gray-100 dark:border-gray-700/50 opacity-60"
-                  : "border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md",
+                  : "border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50/40 dark:hover:bg-emerald-900/10 cursor-pointer",
               ].join(" ")}>
               <div className="flex items-start gap-3">
                 <span className="text-3xl leading-none">{mode.icon}</span>
@@ -90,7 +91,7 @@ export function PracticePage() {
                 {disabled ? (
                   <span className="text-xs text-gray-400 dark:text-gray-500 italic">Need at least {mode.min}</span>
                 ) : (
-                  <Button size="sm" onClick={() => navigate(mode.route)}>
+                  <Button size="sm" onClick={(e) => { e.stopPropagation(); navigate(mode.route); }}>
                     Start →
                   </Button>
                 )}

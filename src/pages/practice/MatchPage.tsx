@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 import { usePracticeEntries, usePracticeTags, shuffle } from "@/features/practice/hooks/usePracticeEntries";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
 import { Button } from "@/shared/ui/Button";
@@ -46,7 +47,9 @@ export function MatchPage() {
 
   const filteredEntries = usePracticeEntries("match", { selectedRatings, selectedCategory, selectedTag });
 
-  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(Boolean).length;
+  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(
+    Boolean,
+  ).length;
 
   const roundEntries = allEntries.slice(roundStart, roundStart + ROUND_SIZE);
   const roundSize = roundEntries.length;
@@ -120,10 +123,22 @@ export function MatchPage() {
     const isSelected = selectedId === card.id;
     const isWrong = wrongIds.has(card.id);
     const base = "w-full rounded-xl border px-3 py-2.5 text-left transition-all duration-150 select-none ";
-    if (isMatched) return base + "bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 cursor-default opacity-60";
-    if (isWrong) return base + "bg-red-50 dark:bg-red-900/20 border-red-400 text-red-700 dark:text-red-400 cursor-default";
-    if (isSelected) return base + "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 text-emerald-800 dark:text-emerald-300 shadow-sm cursor-pointer";
-    return base + "bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200 hover:border-emerald-300 hover:bg-emerald-50/50 dark:hover:border-emerald-600 dark:hover:bg-emerald-900/10 cursor-pointer";
+    if (isMatched)
+      return (
+        base +
+        "bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 cursor-default opacity-60"
+      );
+    if (isWrong)
+      return base + "bg-red-50 dark:bg-red-900/20 border-red-400 text-red-700 dark:text-red-400 cursor-default";
+    if (isSelected)
+      return (
+        base +
+        "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 text-emerald-800 dark:text-emerald-300 shadow-sm cursor-pointer"
+      );
+    return (
+      base +
+      "bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200 hover:border-emerald-300 hover:bg-emerald-50/50 dark:hover:border-emerald-600 dark:hover:bg-emerald-900/10 cursor-pointer"
+    );
   }
 
   if (!isPlaying) {
@@ -131,8 +146,10 @@ export function MatchPage() {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/practice")} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-            ← Back
+          <button
+            onClick={() => navigate("/practice")}
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+            <FaArrowLeft />
           </button>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Match</h1>
           <div className="flex items-center gap-2 ml-auto">
@@ -143,7 +160,9 @@ export function MatchPage() {
               <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
             </Button>
             {activeFilterCount > 0 && (
-              <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">Clear</button>
+              <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">
+                Clear
+              </button>
             )}
           </div>
         </div>
@@ -172,7 +191,9 @@ export function MatchPage() {
               Need at least 2 entries to start
             </p>
           )}
-          <Button onClick={startSession} disabled={!canStart} size="lg">Start Match →</Button>
+          <Button onClick={startSession} disabled={!canStart} size="lg">
+            Start Match →
+          </Button>
         </div>
       </div>
     );
@@ -183,7 +204,9 @@ export function MatchPage() {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/practice")} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+          <button
+            onClick={() => navigate("/practice")}
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             ← Practice
           </button>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Match — Done!</h1>
@@ -191,11 +214,15 @@ export function MatchPage() {
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">🎉</span>
           <div>
-            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{finalTotal} / {totalPairs}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              {finalTotal} / {totalPairs}
+            </p>
             <p className="text-gray-500 dark:text-gray-400 mt-1">pairs matched</p>
           </div>
           <div className="flex gap-3 flex-wrap justify-center">
-            <Button variant="secondary" onClick={startSession}>Play again</Button>
+            <Button variant="secondary" onClick={startSession}>
+              Play again
+            </Button>
             <Button onClick={() => navigate("/practice")}>Back to Practice</Button>
           </div>
         </div>
@@ -220,20 +247,29 @@ export function MatchPage() {
 
       <div className="flex flex-col gap-5 max-w-2xl mx-auto w-full">
         <div className="flex items-center gap-4">
-          <button onClick={() => setIsPlaying(false)} className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
+          <button
+            onClick={() => setIsPlaying(false)}
+            className="text-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
             ✕ Quit
           </button>
           <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
-            <div className="bg-emerald-500 h-2 rounded-full transition-all duration-300" style={{ width: `${overallProgress}%` }} />
+            <div
+              className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${overallProgress}%` }}
+            />
           </div>
-          <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0 tabular-nums">
+          <span className="text-lg text-gray-500 dark:text-gray-400 shrink-0 tabular-nums">
             {totalMatched + matched.size} / {totalPairs}
           </span>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center">Words</p>
-          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center">Explanations</p>
+          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center">
+            Words
+          </p>
+          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center">
+            Explanations
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -266,7 +302,12 @@ export function MatchPage() {
                     className="text-xs leading-snug block"
                     style={
                       !isSelected
-                        ? { display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }
+                        ? {
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }
                         : undefined
                     }>
                     {card.text}
@@ -279,7 +320,9 @@ export function MatchPage() {
         </div>
 
         {!roundComplete && (
-          <p className="text-xs text-gray-400 dark:text-gray-500 text-center">Select a word, then its explanation to match</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
+            Select a word, then its explanation to match
+          </p>
         )}
 
         {roundComplete && (

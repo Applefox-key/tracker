@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 import { usePracticeEntries, usePracticeTags, shuffle, wordCount } from "@/features/practice/hooks/usePracticeEntries";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
 import { Button } from "@/shared/ui/Button";
@@ -18,17 +19,31 @@ function randomLetter(): string {
 function buildTiles(entry: Entry): { tiles: Tile[]; mode: "letter" | "word" } {
   const wc = wordCount(entry.word);
   if (wc === 1) {
-    const letters = entry.word.toLowerCase().split("").map((c, i) => ({ id: `l${i}`, value: c }));
-    const extras = [{ id: "ex0", value: randomLetter() }, { id: "ex1", value: randomLetter() }];
+    const letters = entry.word
+      .toLowerCase()
+      .split("")
+      .map((c, i) => ({ id: `l${i}`, value: c }));
+    const extras = [
+      { id: "ex0", value: randomLetter() },
+      { id: "ex1", value: randomLetter() },
+    ];
     return { tiles: shuffle([...letters, ...extras]), mode: "letter" };
   }
-  const words = entry.word.trim().split(/\s+/).map((w, i) => ({ id: `w${i}`, value: w }));
+  const words = entry.word
+    .trim()
+    .split(/\s+/)
+    .map((w, i) => ({ id: `w${i}`, value: w }));
   return { tiles: shuffle(words), mode: "word" };
 }
 
 function checkAnswer(placed: Tile[], entry: Entry, mode: "letter" | "word"): boolean {
   if (mode === "letter") return placed.map((t) => t.value).join("") === entry.word.toLowerCase();
-  return placed.map((t) => t.value).join(" ").toLowerCase() === entry.word.toLowerCase();
+  return (
+    placed
+      .map((t) => t.value)
+      .join(" ")
+      .toLowerCase() === entry.word.toLowerCase()
+  );
 }
 
 function targetLength(entry: Entry): number {
@@ -57,7 +72,9 @@ export function PuzzlePage() {
 
   const filteredEntries = usePracticeEntries("puzzle", { selectedRatings, selectedCategory, selectedTag });
 
-  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(Boolean).length;
+  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(
+    Boolean,
+  ).length;
 
   const currentEntry = questions[currentIdx] ?? null;
 
@@ -76,8 +93,10 @@ export function PuzzlePage() {
     const tLen = targetLength(currentEntry);
     if (placed.length === tLen) {
       const correct = checkAnswer(placed, currentEntry, tileMode);
-      if (correct) { setScore((n) => n + 1); setAnswerPhase("correct"); }
-      else setAnswerPhase("wrong");
+      if (correct) {
+        setScore((n) => n + 1);
+        setAnswerPhase("correct");
+      } else setAnswerPhase("wrong");
     }
   }, [placed, currentEntry, tileMode, answerPhase]);
 
@@ -125,8 +144,10 @@ export function PuzzlePage() {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/practice")} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-            ← Back
+          <button
+            onClick={() => navigate("/practice")}
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+            <FaArrowLeft />
           </button>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Puzzle</h1>
           <div className="flex items-center gap-2 ml-auto">
@@ -137,7 +158,9 @@ export function PuzzlePage() {
               <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
             </Button>
             {activeFilterCount > 0 && (
-              <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">Clear</button>
+              <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">
+                Clear
+              </button>
             )}
           </div>
         </div>
@@ -158,7 +181,9 @@ export function PuzzlePage() {
           <span className="text-5xl">🧩</span>
           <div>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Puzzle Mode</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Arrange tiles to form the correct word or phrase</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">
+              Arrange tiles to form the correct word or phrase
+            </p>
           </div>
           <p className="text-sm text-gray-400 dark:text-gray-500">{filteredEntries.length} entries available</p>
           {filteredEntries.length === 0 && (
@@ -166,7 +191,9 @@ export function PuzzlePage() {
               No matching entries
             </p>
           )}
-          <Button onClick={startSession} disabled={filteredEntries.length === 0} size="lg">Start Puzzle →</Button>
+          <Button onClick={startSession} disabled={filteredEntries.length === 0} size="lg">
+            Start Puzzle →
+          </Button>
         </div>
       </div>
     );
@@ -177,7 +204,9 @@ export function PuzzlePage() {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/practice")} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+          <button
+            onClick={() => navigate("/practice")}
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             ← Practice
           </button>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Puzzle — Done!</h1>
@@ -185,14 +214,18 @@ export function PuzzlePage() {
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">{pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "💪"}</span>
           <div>
-            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{score} / {questions.length}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              {score} / {questions.length}
+            </p>
             <p className="text-gray-500 dark:text-gray-400 mt-1">{pct}% solved correctly</p>
           </div>
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
             <div className="bg-emerald-500 h-3 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
           </div>
           <div className="flex gap-3 flex-wrap justify-center">
-            <Button variant="secondary" onClick={startSession}>Try again</Button>
+            <Button variant="secondary" onClick={startSession}>
+              Try again
+            </Button>
             <Button onClick={() => navigate("/practice")}>Back to Practice</Button>
           </div>
         </div>
@@ -208,13 +241,18 @@ export function PuzzlePage() {
   return (
     <div className="flex flex-col gap-6 max-w-xl mx-auto w-full">
       <div className="flex items-center gap-4">
-        <button onClick={() => setIsPlaying(false)} className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
+        <button
+          onClick={() => setIsPlaying(false)}
+          className="text-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
           ✕ Quit
         </button>
         <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
-          <div className="bg-emerald-500 h-2 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+          <div
+            className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          />
         </div>
-        <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0 tabular-nums">
+        <span className="text-lg text-gray-500 dark:text-gray-400 shrink-0 tabular-nums">
           {currentIdx + 1} / {questions.length}
         </span>
       </div>
@@ -223,12 +261,21 @@ export function PuzzlePage() {
         <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">
           {tileMode === "letter" ? "Spell the word" : "Arrange the words"}
         </span>
-        <p className="text-base font-semibold text-gray-800 dark:text-gray-100 leading-relaxed">{currentEntry.explanation}</p>
-        {currentEntry.example && (
-          showExample
-            ? <p className="text-sm text-gray-500 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">{currentEntry.example}</p>
-            : <button onClick={() => setShowExample(true)} className="text-sm text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 text-left transition-colors">Show example…</button>
-        )}
+        <p className="text-base font-semibold text-gray-800 dark:text-gray-100 leading-relaxed">
+          {currentEntry.explanation}
+        </p>
+        {currentEntry.example &&
+          (showExample ? (
+            <p className="text-sm text-gray-500 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">
+              {currentEntry.example}
+            </p>
+          ) : (
+            <button
+              onClick={() => setShowExample(true)}
+              className="text-sm text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 text-left transition-colors">
+              Show example…
+            </button>
+          ))}
       </div>
 
       <div
@@ -241,7 +288,9 @@ export function PuzzlePage() {
               : "border-dashed border-emerald-300 dark:border-emerald-700 bg-emerald-50/40 dark:bg-emerald-900/10",
         ].join(" ")}>
         {placed.length === 0 && answerPhase === "thinking" && (
-          <span className="text-sm text-emerald-300 dark:text-emerald-700 italic">Click tiles below to place them here…</span>
+          <span className="text-sm text-emerald-300 dark:text-emerald-700 italic">
+            Click tiles below to place them here…
+          </span>
         )}
         {placed.map((tile) => (
           <button
@@ -251,8 +300,12 @@ export function PuzzlePage() {
             {tile.value}
           </button>
         ))}
-        {answerPhase === "correct" && <span className="ml-auto text-green-600 dark:text-green-400 font-semibold text-sm">✓ Correct!</span>}
-        {answerPhase === "wrong" && <span className="ml-auto text-red-600 dark:text-red-400 font-semibold text-sm">✗ Try again</span>}
+        {answerPhase === "correct" && (
+          <span className="ml-auto text-green-600 dark:text-green-400 font-semibold text-sm">✓ Correct!</span>
+        )}
+        {answerPhase === "wrong" && (
+          <span className="ml-auto text-red-600 dark:text-red-400 font-semibold text-sm">✗ Try again</span>
+        )}
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -276,7 +329,9 @@ export function PuzzlePage() {
 
       {answerPhase === "wrong" && (
         <div className="flex justify-end gap-3">
-          <Button variant="secondary" onClick={tryAgain}>Try again</Button>
+          <Button variant="secondary" onClick={tryAgain}>
+            Try again
+          </Button>
           <Button onClick={handleNext}>{currentIdx + 1 < questions.length ? "Skip →" : "Finish"}</Button>
         </div>
       )}

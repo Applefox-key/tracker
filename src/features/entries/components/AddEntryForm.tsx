@@ -5,6 +5,7 @@ import { Button } from "@/shared/ui/Button";
 import { TagCombobox } from "@/shared/ui/TagCombobox";
 import { VoiceInputButton } from "@/shared/ui/VoiceInputButton";
 import { EntryImage } from "@/shared/ui/EntryImage";
+import { FaArrowLeft } from "react-icons/fa6";
 
 export interface EntryFormValues {
   word: string;
@@ -124,7 +125,16 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
     <form
       onSubmit={handleSubmit}
       className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-5 flex flex-col gap-4">
-      <p className="font-semibold text-emerald-800 dark:text-emerald-300">{isEdit ? "Edit Entry" : "New Entry"}</p>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="sm:hidden -ml-1 p-1 rounded-lg text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-800/40"
+          aria-label="Cancel">
+          <FaArrowLeft />
+        </button>
+        <p className="font-semibold text-emerald-800 dark:text-emerald-300">{isEdit ? "Edit Entry" : "New Entry"}</p>
+      </div>
 
       {/* Word & Explanation */}
       <div className={isMultiline ? "flex flex-col gap-3" : "grid grid-cols-1 sm:grid-cols-2 gap-3"}>
@@ -201,7 +211,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
               type="button"
               onClick={() => setCategory(cat)}
               className={[
-                "px-3 py-1.5 rounded-lg text-sm font-medium border capitalize transition-colors",
+                "px-2 sm:px-3 py-1.5 rounded-lg text-sm font-medium border capitalize transition-colors",
                 category === cat
                   ? "bg-emerald-600 text-white border-emerald-600"
                   : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600",

@@ -23,17 +23,16 @@ export function ProfilePage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const currentAvatar =
-    avatarPreview ?? (user?.img && user?.id ? getAvatarUrl(user.img, user.id) : null);
+  const currentAvatar = avatarPreview ?? (user?.img && user?.id ? getAvatarUrl(user.img, user.id) : null);
   const initials = (user?.name?.[0] ?? "U").toUpperCase();
 
-  useEffect(() => { setAvatarImgError(false); }, [currentAvatar]);
+  useEffect(() => {
+    setAvatarImgError(false);
+  }, [currentAvatar]);
 
   const nameDirty = name.trim() !== (user?.name ?? "");
   const emailDirty = email.trim() !== (user?.email ?? "");
-  const langsDirty =
-    pendingLangs.length !== speechLangs.length ||
-    pendingLangs.some((l) => !speechLangs.includes(l));
+  const langsDirty = pendingLangs.length !== speechLangs.length || pendingLangs.some((l) => !speechLangs.includes(l));
   const isDirty = nameDirty || emailDirty || pendingFile !== null || langsDirty;
 
   function handleAvatarClick() {
@@ -100,7 +99,7 @@ export function ProfilePage() {
 
       {/* Avatar */}
       <div className="flex flex-col gap-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Photo</p>
+        <p className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">Photo</p>
         <div className="flex items-center gap-4">
           <div className="relative group">
             <button
@@ -120,7 +119,14 @@ export function ProfilePage() {
                 </div>
               )}
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
-                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  className="w-5 h-5 text-white"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round">
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
                   <polyline points="17 8 12 3 7 8" />
                   <line x1="12" y1="3" x2="12" y2="15" />
@@ -158,7 +164,10 @@ export function ProfilePage() {
             id="profile-name"
             type="text"
             value={name}
-            onChange={(e) => { setName(e.target.value); setSaved(false); }}
+            onChange={(e) => {
+              setName(e.target.value);
+              setSaved(false);
+            }}
             className={inputCls}
             required
           />
@@ -171,7 +180,10 @@ export function ProfilePage() {
             id="profile-email"
             type="email"
             value={email}
-            onChange={(e) => { setEmail(e.target.value); setSaved(false); }}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setSaved(false);
+            }}
             className={inputCls}
             readOnly
             tabIndex={-1}

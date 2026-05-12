@@ -1,4 +1,6 @@
 import { useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 const LS_START_SIDE = "flashcard_start_side";
 import { FlashCard } from "@/features/flashcards/components/FlashCard";
@@ -34,6 +36,7 @@ export function FlashcardsPage() {
     reset();
   }
 
+  const routerNavigate = useNavigate();
   const { updateEntry } = useEntryCrud();
 
   const { currentCard, currentIndex, total, progress, isFlipped, allTags, goNext, goPrev, flip, reset } = useFlashcards(
@@ -77,7 +80,14 @@ export function FlashcardsPage() {
     <div className="flex flex-col gap-4">
       {/* ── Compact header block ─────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 shrink-0">Flashcards</h1>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => routerNavigate("/practice")}
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+            <FaArrowLeft />
+          </button>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 shrink-0">Flashcards</h1>
+        </div>
 
         <div className="flex items-center gap-3 sm:ml-auto flex-wrap sm:flex-nowrap">
           <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />

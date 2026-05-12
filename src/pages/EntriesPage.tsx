@@ -77,14 +77,20 @@ export function EntriesPage() {
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Entries</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">{totalCount} words &amp; phrases saved</p>
+          <h1 className="hidden sm:block text-2xl font-bold text-gray-900 dark:text-gray-100">Entries</h1>
+          <p className="hidden sm:block text-gray-500 dark:text-gray-400 mt-1">{totalCount} words &amp; phrases saved</p>
         </div>
-        <Button onClick={() => setShowForm((v) => !v)}>{showForm ? "Cancel" : "+ Add Entry"}</Button>
+        <span className="hidden sm:inline-flex">
+          <Button onClick={() => setShowForm((v) => !v)}>{showForm ? "Cancel" : "+ Add Entry"}</Button>
+        </span>
       </div>
 
-      {/* Add form */}
-      {showForm && <EntryForm mode="create" onSubmit={handleAdd} onCancel={() => setShowForm(false)} />}
+      {/* Add form — mobile: full-screen modal; desktop: inline */}
+      {showForm && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-white dark:bg-gray-900 sm:static sm:inset-auto sm:z-auto sm:overflow-visible sm:bg-transparent dark:sm:bg-transparent">
+          <EntryForm mode="create" onSubmit={handleAdd} onCancel={() => setShowForm(false)} />
+        </div>
+      )}
 
       {/* ── Filter section ── */}
       <div className="flex flex-col gap-2 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
@@ -95,11 +101,11 @@ export function EntriesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search..."
-            className="sm:w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+            className="order-2 sm:order-1 sm:w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-emerald-400 shrink-0"
           />
           <div
-            className="flex gap-1.5 flex-1 overflow-x-auto [scrollbar-width:none]
+            className="order-1 sm:order-2 flex gap-1.5 flex-1 overflow-x-auto [scrollbar-width:none]
                           [&::-webkit-scrollbar]:hidden sm:flex-wrap items-center">
             {CATEGORIES.map(({ value, label }) => (
               <button
@@ -116,7 +122,7 @@ export function EntriesPage() {
           <button
             onClick={() => setIsFiltersOpen((v) => !v)}
             className={[
-              "shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
+              "order-3 shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
               isFiltersOpen || advancedFilterCount > 0 ? filterBtnActive : filterBtnInactive,
             ].join(" ")}>
             Filters{advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""} {isFiltersOpen ? "▲" : "▼"}
@@ -292,6 +298,25 @@ export function EntriesPage() {
 
       {/* Edit modal */}
       {editingEntry && <EditEntryModal entry={editingEntry} onClose={() => setEditingEntry(null)} />}
+
+      {/* FAB — mobile only, above bottom nav */}
+      <button
+        onClick={() => setShowForm((v) => !v)}
+        className="sm:hidden fixed bottom-[72px] right-5 z-20 w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-lg flex items-center justify-center transition-colors"
+        aria-label={showForm ? "Cancel" : "Add entry"}>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          style={{ transform: showForm ? "rotate(45deg)" : "none", transition: "transform 0.2s" }}>
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      </button>
 
       {/* Delete confirmation */}
       {confirmDeleteEntry && (

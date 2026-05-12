@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, CardHeader, CardTitle } from "@/shared/ui/Card";
 import { Button } from "@/shared/ui/Button";
 import { useEntriesStore } from "@/features/entries/store/entriesStore";
-import { EntryCategory } from "@/features/entries/types";
+import { Entry, EntryCategory } from "@/features/entries/types";
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -29,6 +29,73 @@ const CATEGORIES: Array<{ key: EntryCategory; label: string; color: string }> = 
   { key: "idiom", label: "Idioms", color: "bg-orange-500" },
   { key: "note", label: "Notes", color: "bg-teal-500" },
 ];
+
+// ── Weekly activity chip ──────────────────────────────────────────────────
+
+function WeeklyActivityChip({ entries }: { entries: Entry[] }) {
+  const { days, streak } = useMemo(() => {
+    const arr = Array.from({ length: 7 }, (_, i) => {
+      const from = daysAgo(6 - i);
+      const to = new Date(from);
+      to.setDate(to.getDate() + 1);
+      return entries.filter((e) => {
+        const t = new Date(e.createdAt).getTime();
+        return t >= from.getTime() && t < to.getTime();
+      }).length;
+    });
+
+    // consecutive days with entries ending at today;
+    // if today is empty we still let the streak survive until tomorrow
+    let s = 0;
+    for (let i = 6; i >= 0; i--) {
+      if (arr[i] > 0) s++;
+      else if (i === 6) continue;
+      else break;
+    }
+
+    return { days: arr, streak: s };
+  }, [entries]);
+
+  const max = Math.max(...days, 1);
+
+  const streakMsg =
+    streak === 0
+      ? null
+      : streak === 1
+        ? "🌱 1-day streak — great start!"
+        : streak >= 7
+          ? `🔥 ${streak}-day streak — legendary!`
+          : `🔥 ${streak}-day streak — keep it up!`;
+
+  return (
+    <div className="sm:max-w-[320px] flex items-center gap-3 sm:gap-4 px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-sm">
+      <div className="flex-1 min-w-0">
+        {streakMsg ? (
+          <p className="text-sm font-semibold text-amber-500 dark:text-amber-400 truncate">{streakMsg}</p>
+        ) : (
+          <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 truncate">
+            No streak yet — start today!
+          </p>
+        )}
+        <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
+          <span className="text-gray-900 dark:text-white font-bold">{entries.length}</span> total entries
+        </p>
+      </div>
+      <div className="flex items-end gap-[3px] h-8 shrink-0">
+        {days.map((count, i) => {
+          const heightPct = count > 0 ? Math.max((count / max) * 100, 22) : 14;
+          return (
+            <div
+              key={i}
+              className={`w-3 rounded-xl transition-all duration-300 ${count > 0 ? "bg-teal-500 dark:bg-teal-400" : "bg-gray-300 dark:bg-gray-600/40"}`}
+              style={{ height: `${heightPct}%` }}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 // ── Sub-components ────────────────────────────────────────────────────────
 
@@ -71,8 +138,9 @@ interface CategoryRowProps {
 
 function CategoryRow({ label, count, total, barColor }: CategoryRowProps) {
   const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+  // const borderColor=
   return (
-    <div className="flex flex-col gap-0.5 sm:gap-1.5">
+    <div className={`flex flex-col gap-0.5 sm:gap-1.5 max-sm:border rounded-xl max-sm:px-2 max-sm:py-1 `}>
       <div className="flex items-center justify-between text-xs sm:text-sm">
         <span className="font-medium text-gray-700 dark:text-gray-300">{label}</span>
         <span className="text-gray-400 dark:text-gray-500 tabular-nums">
@@ -121,7 +189,7 @@ export function DashboardPage() {
       {/* ── Title row ── */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+          <h1 className="hidden sm:block text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1 hidden sm:block">Your language learning at a glance</p>
         </div>
         {/* Quick actions — desktop */}
@@ -136,22 +204,9 @@ export function DashboardPage() {
             <Button variant="secondary">Practice</Button>
           </Link>
         </div>
-
-        {/* FAB — mobile */}
-
-        <Link
-          to="/entries"
-          state={{ openCreateForm: true }}
-          className="sm:hidden fixed top-[115px] right-4 z-50 w-11 h-11 rounded-full bg-emerald-600 flex items-center
-                     justify-center text-white hover:bg-emerald-700
-                     active:scale-95 transition-transform shadow-md"
-          style={{ right: 17 }}>
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-            <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2h6z" />
-          </svg>
-        </Link>
       </div>
-
+      {/* ── Weekly activity chip ── */}
+      <WeeklyActivityChip entries={entries} />
       {/* ── Stats — mobile (3-col grid) ── */}
       <div className="grid grid-cols-3 gap-2 sm:hidden">
         <StatCard label="Total Entries" value={entries.length} color="text-emerald-600" to="/entries" />
@@ -195,7 +250,7 @@ export function DashboardPage() {
       <div className="flex flex-col sm:flex-row gap-5 sm:gap-8 sm:items-start">
         {/* ── Category distribution ── */}
         <Card className="sm:flex-1">
-          <CardHeader className="mb-2 sm:mb-4">
+          <CardHeader className="hidden sm:block mb-2 sm:mb-4">
             <CardTitle className="text-sm sm:text-lg">Category Distribution</CardTitle>
           </CardHeader>
           {entries.length === 0 ? (
@@ -244,6 +299,25 @@ export function DashboardPage() {
           )}
         </Card>
       </div>
+
+      {/* FAB — mobile only, above bottom nav */}
+      <Link
+        to="/entries"
+        state={{ openCreateForm: true }}
+        className="sm:hidden fixed bottom-[72px] right-5 z-20 w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-lg flex items-center justify-center transition-colors"
+        aria-label="Add entry">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      </Link>
     </div>
   );
 }
