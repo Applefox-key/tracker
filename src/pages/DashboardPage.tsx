@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle } from "@/shared/ui/Card";
 import { Button } from "@/shared/ui/Button";
 import { useEntriesStore } from "@/features/entries/store/entriesStore";
 import { Entry, EntryCategory } from "@/features/entries/types";
+import { FaPlus } from "react-icons/fa6";
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -22,12 +23,48 @@ function daysAgo(n: number): Date {
 
 // ── Category config ───────────────────────────────────────────────────────
 
-const CATEGORIES: Array<{ key: EntryCategory; label: string; color: string }> = [
-  { key: "word", label: "Words", color: "bg-blue-500" },
-  { key: "phrase", label: "Phrases", color: "bg-green-500" },
-  { key: "grammar", label: "Grammar", color: "bg-purple-500" },
-  { key: "idiom", label: "Idioms", color: "bg-orange-500" },
-  { key: "note", label: "Notes", color: "bg-teal-500" },
+const CATEGORIES: Array<{
+  key: EntryCategory;
+  label: string;
+  color: string;
+  colorWrap: string;
+  mobileClasses: string;
+}> = [
+  {
+    key: "word",
+    label: "Words",
+    color: "bg-blue-500",
+    colorWrap: "bg-blue-200",
+    mobileClasses: "max-sm:bg-blue-200 max-sm:border-l-2 max-sm:border-blue-500",
+  },
+  {
+    key: "phrase",
+    label: "Phrases",
+    color: "bg-green-500",
+    colorWrap: "bg-green-200",
+    mobileClasses: "max-sm:bg-green-200 max-sm:border-l-2 max-sm:border-green-500",
+  },
+  {
+    key: "grammar",
+    label: "Grammar",
+    color: "bg-purple-500",
+    colorWrap: "bg-purple-200",
+    mobileClasses: "max-sm:bg-purple-200 max-sm:border-l-2 max-sm:border-purple-500",
+  },
+  {
+    key: "idiom",
+    label: "Idioms",
+    color: "bg-orange-500",
+    colorWrap: "bg-orange-200",
+    mobileClasses: "max-sm:bg-orange-200 max-sm:border-l-2 max-sm:border-orange-500",
+  },
+  {
+    key: "note",
+    label: "Notes",
+    color: "bg-teal-500",
+    colorWrap: "bg-teal-200",
+    mobileClasses: "max-sm:bg-teal-200 max-sm:border-l-2 max-sm:border-teal-500",
+  },
 ];
 
 // ── Weekly activity chip ──────────────────────────────────────────────────
@@ -81,17 +118,34 @@ function WeeklyActivityChip({ entries }: { entries: Entry[] }) {
           <span className="text-gray-900 dark:text-white font-bold">{entries.length}</span> total entries
         </p>
       </div>
-      <div className="flex items-end gap-[3px] h-8 shrink-0">
-        {days.map((count, i) => {
-          const heightPct = count > 0 ? Math.max((count / max) * 100, 22) : 14;
-          return (
-            <div
-              key={i}
-              className={`w-3 rounded-xl transition-all duration-300 ${count > 0 ? "bg-teal-500 dark:bg-teal-400" : "bg-gray-300 dark:bg-gray-600/40"}`}
-              style={{ height: `${heightPct}%` }}
-            />
-          );
-        })}
+      <div className="flex flex-col gap-[3px] shrink-0">
+        <div className="flex items-end gap-[3px] h-8">
+          {days.map((count, i) => {
+            const heightPct = count > 0 ? Math.max((count / max) * 100, 22) : 0;
+            return (
+              <div
+                key={i}
+                className={`w-3 rounded-lg transition-all duration-300 ${count > 0 ? "bg-emerald-400 dark:bg-emerald-400" : "bg-gray-300 dark:bg-gray-600/40"}`}
+                style={{ height: `${heightPct}%` }}
+              />
+            );
+          })}
+        </div>
+        <div className="flex gap-[3px]">
+          {days.map((count, i) => (
+            <div key={i} className="w-3 flex justify-center">
+              <div
+                className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
+                  i === 6
+                    ? "bg-emerald-500 dark:bg-emerald-400"
+                    : count > 0
+                      ? "bg-emerald-400 dark:bg-emerald-400"
+                      : "bg-gray-300 dark:bg-gray-600/40"
+                }`}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -112,7 +166,7 @@ function StatCard({ label, value, color, sub, to, toState }: StatCardProps) {
   const card = (
     <Card
       padding="sm"
-      className={` h-full p-2 sm:p-6 flex flex-col items-center gap-0.5 sm:gap-1 min-w-0${to ? " hover:shadow-md transition-shadow cursor-pointer" : ""}`}>
+      className={`max-sm:p-1 h-full sm:p-6 flex flex-col items-center gap-0.5 sm:gap-1 min-w-0${to ? " hover:shadow-md transition-shadow cursor-pointer" : ""}`}>
       <p className={`text-xl sm:text-3xl font-extrabold ${color} truncate`}>{value}</p>
       <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium leading-tight text-center">
         {label}
@@ -134,17 +188,19 @@ interface CategoryRowProps {
   count: number;
   total: number;
   barColor: string;
+  colorWrap: string;
+  mobileClasses: string;
 }
 
-function CategoryRow({ label, count, total, barColor }: CategoryRowProps) {
+function CategoryRow({ label, count, total, barColor, mobileClasses }: CategoryRowProps) {
   const pct = total > 0 ? Math.round((count / total) * 100) : 0;
-  // const borderColor=
   return (
-    <div className={`flex flex-col gap-0.5 sm:gap-1.5 max-sm:border rounded-xl max-sm:px-2 max-sm:py-1 `}>
-      <div className="flex items-center justify-between text-xs sm:text-sm">
-        <span className="font-medium text-gray-700 dark:text-gray-300">{label}</span>
-        <span className="text-gray-400 dark:text-gray-500 tabular-nums">
-          {count} <span className="text-gray-300 dark:text-gray-600">·</span> {pct}%
+    <div
+      className={`flex flex-col gap-0.5 sm:gap-1.5 rounded-xl max-sm:px-2 max-sm:py-1.5  max-sm:min-w-[60px] ${mobileClasses}`}>
+      <div className="flex items-center justify-between text-xs sm:text-sm flex-col sm:flex-row">
+        <span className="font-medium text-gray-700 dark:text-gray-300 max-sm:dark:text-gray-800">{label}</span>
+        <span className="text-gray-400 dark:text-gray-500 max-sm:dark:text-gray-700 tabular-nums">
+          {count} <span className="text-gray-300 dark:text-gray-600 max-sm:dark:text-gray-500">·</span> {pct}%
         </span>
       </div>
       <div className="h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -249,22 +305,29 @@ export function DashboardPage() {
 
       <div className="flex flex-col sm:flex-row gap-5 sm:gap-8 sm:items-start">
         {/* ── Category distribution ── */}
-        <Card className="sm:flex-1">
-          <CardHeader className="hidden sm:block mb-2 sm:mb-4">
+        <Card className="sm:flex-1 max-sm:px-1 max-sm:py-2">
+          <CardHeader className={`hidden sm:block mb-2 sm:mb-4`}>
             <CardTitle className="text-sm sm:text-lg">Category Distribution</CardTitle>
           </CardHeader>
           {entries.length === 0 ? (
             <p className="text-sm text-gray-400 dark:text-gray-500">No entries yet.</p>
           ) : (
-            <div className="flex flex-col gap-1 sm:gap-4">
-              {CATEGORIES.map(({ key, label, color }) => (
-                <CategoryRow
+            <div className="flex flex-row sm:flex-col gap-1 sm:gap-4 flex-wrap sm:flex-nowrap max-sm:justify-between">
+              {CATEGORIES.map(({ key, label, color, colorWrap, mobileClasses }) => (
+                <Link
                   key={key}
-                  label={label}
-                  count={categoryCounts[key] ?? 0}
-                  total={entries.length}
-                  barColor={color}
-                />
+                  to="/entries"
+                  state={{ categoryFilter: key }}
+                  className="block rounded-xl hover:opacity-80 transition-opacity">
+                  <CategoryRow
+                    label={label}
+                    count={categoryCounts[key] ?? 0}
+                    total={entries.length}
+                    barColor={color}
+                    colorWrap={colorWrap}
+                    mobileClasses={mobileClasses}
+                  />
+                </Link>
               ))}
             </div>
           )}
@@ -304,19 +367,10 @@ export function DashboardPage() {
       <Link
         to="/entries"
         state={{ openCreateForm: true }}
-        className="sm:hidden fixed bottom-[72px] right-5 z-20 w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-lg flex items-center justify-center transition-colors"
+        className="sm:hidden fixed bottom-[65px] opacity-70 right-5 z-20 w-10 h-10 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-lg flex items-center justify-center transition-colors
+        "
         aria-label="Add entry">
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round">
-          <line x1="12" y1="5" x2="12" y2="19" />
-          <line x1="5" y1="12" x2="19" y2="12" />
-        </svg>
+        <FaPlus className="text-xl" />
       </Link>
     </div>
   );

@@ -9,6 +9,7 @@ import { EditEntryModal } from "@/features/entries/components/EditEntryModal";
 import { EntryDetailModal } from "@/features/entries/components/EntryDetailModal";
 import { useEntries, DateFilter } from "@/features/entries/hooks/useEntries";
 import { Entry, EntryCategory } from "@/features/entries/types";
+import { FaPlus } from "react-icons/fa6";
 
 const CATEGORIES: Array<{ value: EntryCategory | "all"; label: string }> = [
   { value: "all", label: "All" },
@@ -31,6 +32,7 @@ export function EntriesPage() {
   const navigate = useNavigate();
 
   const initialDateFilter = (location.state?.dateFilter as DateFilter) ?? "all";
+  const initialCategoryFilter = (location.state?.categoryFilter as EntryCategory | "all") ?? "all";
 
   useEffect(() => {
     if (location.state?.openCreateForm) {
@@ -57,7 +59,7 @@ export function EntriesPage() {
     clearFilters,
     addEntry,
     removeEntry,
-  } = useEntries(initialDateFilter);
+  } = useEntries(initialDateFilter, initialCategoryFilter);
 
   const advancedFilterCount = [selectedTag !== null, selectedRatings.length > 0, dateFilter !== "all"].filter(
     Boolean,
@@ -69,7 +71,8 @@ export function EntriesPage() {
     setShowForm(false);
   }
 
-  const filterBtnInactive = "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600";
+  const filterBtnInactive =
+    "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600";
   const filterBtnActive = "bg-emerald-600 text-white border-emerald-600";
 
   return (
@@ -78,7 +81,9 @@ export function EntriesPage() {
       <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className="hidden sm:block text-2xl font-bold text-gray-900 dark:text-gray-100">Entries</h1>
-          <p className="hidden sm:block text-gray-500 dark:text-gray-400 mt-1">{totalCount} words &amp; phrases saved</p>
+          <p className="hidden sm:block text-gray-500 dark:text-gray-400 mt-1">
+            {totalCount} words &amp; phrases saved
+          </p>
         </div>
         <span className="hidden sm:inline-flex">
           <Button onClick={() => setShowForm((v) => !v)}>{showForm ? "Cancel" : "+ Add Entry"}</Button>
@@ -228,7 +233,16 @@ export function EntriesPage() {
                 ? "bg-white dark:bg-gray-600 shadow-sm text-gray-700 dark:text-gray-100"
                 : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300",
             ].join(" ")}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round">
               <rect x="3" y="3" width="7" height="7" />
               <rect x="14" y="3" width="7" height="7" />
               <rect x="3" y="14" width="7" height="7" />
@@ -244,7 +258,16 @@ export function EntriesPage() {
                 ? "bg-white dark:bg-gray-600 shadow-sm text-gray-700 dark:text-gray-100"
                 : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300",
             ].join(" ")}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round">
               <line x1="3" y1="6" x2="21" y2="6" />
               <line x1="3" y1="12" x2="21" y2="12" />
               <line x1="3" y1="18" x2="21" y2="18" />
@@ -302,20 +325,12 @@ export function EntriesPage() {
       {/* FAB — mobile only, above bottom nav */}
       <button
         onClick={() => setShowForm((v) => !v)}
-        className="sm:hidden fixed bottom-[72px] right-5 z-20 w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-lg flex items-center justify-center transition-colors"
+        className="sm:hidden fixed bottom-[65px] opacity-70 right-5 z-20 w-10 h-10 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-lg flex items-center justify-center transition-colors"
         aria-label={showForm ? "Cancel" : "Add entry"}>
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          style={{ transform: showForm ? "rotate(45deg)" : "none", transition: "transform 0.2s" }}>
-          <line x1="12" y1="5" x2="12" y2="19" />
-          <line x1="5" y1="12" x2="19" y2="12" />
-        </svg>
+        <FaPlus
+          className="text-xl"
+          style={{ transform: showForm ? "rotate(45deg)" : "none", transition: "transform 0.2s" }}
+        />
       </button>
 
       {/* Delete confirmation */}
@@ -329,11 +344,14 @@ export function EntriesPage() {
             <div>
               <p className="text-base font-semibold text-gray-900 dark:text-gray-100">Delete entry?</p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                <span className="font-medium text-gray-700 dark:text-gray-200">"{confirmDeleteEntry.word}"</span> will be permanently removed.
+                <span className="font-medium text-gray-700 dark:text-gray-200">"{confirmDeleteEntry.word}"</span> will
+                be permanently removed.
               </p>
             </div>
             <div className="flex gap-2 justify-end">
-              <Button variant="secondary" onClick={() => setConfirmDeleteEntry(null)}>Cancel</Button>
+              <Button variant="secondary" onClick={() => setConfirmDeleteEntry(null)}>
+                Cancel
+              </Button>
               <Button
                 onClick={() => {
                   removeEntry(confirmDeleteEntry.id);

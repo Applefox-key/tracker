@@ -18,12 +18,15 @@ function startOfWeek() {
   return d
 }
 
-export function useEntries(initialDateFilter: DateFilter = 'all') {
+export function useEntries(
+  initialDateFilter: DateFilter = 'all',
+  initialCategoryFilter: EntryCategory | 'all' = 'all',
+) {
   const entries = useEntriesStore((s) => s.entries)
   const { addEntry, removeEntry } = useEntryCrud()
 
   const [search, setSearch] = useState('')
-  const [filterCategory, setFilterCategory] = useState<EntryCategory | 'all'>('all')
+  const [filterCategory, setFilterCategory] = useState<EntryCategory | 'all'>(initialCategoryFilter)
   const [selectedTag, setSelectedTag] = useState<number | null>(null)
   const [selectedRatings, setSelectedRatings] = useState<number[]>([])
   const [dateFilter, setDateFilter] = useState<DateFilter>(initialDateFilter)
