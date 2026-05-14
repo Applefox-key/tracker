@@ -105,7 +105,7 @@ function WeeklyActivityChip({ entries }: { entries: Entry[] }) {
           : `🔥 ${streak}-day streak — keep it up!`;
 
   return (
-    <div className="sm:max-w-[320px] flex items-center gap-3 sm:gap-4 px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-sm">
+    <div className=" flex items-center gap-3 sm:gap-4 px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-sm">
       <div className="flex-1 min-w-0">
         {streakMsg ? (
           <p className="text-sm font-semibold text-amber-500 dark:text-amber-400 truncate">{streakMsg}</p>
