@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/shared/ui/Button";
 import { RatingMultiSelect } from "@/shared/ui/RatingMultiSelect";
 import { RatingStars } from "@/shared/ui/RatingStars";
+import { SideDrawer } from "@/shared/ui/SideDrawer";
 import { EntryCard } from "@/features/entries/components/EntryCard";
 import { EntryForm, EntryFormValues } from "@/features/entries/components/AddEntryForm";
 import { EditEntryModal } from "@/features/entries/components/EditEntryModal";
@@ -26,6 +27,7 @@ export function EntriesPage() {
   const [viewingEntry, setViewingEntry] = useState<Entry | null>(null);
   const [confirmDeleteEntry, setConfirmDeleteEntry] = useState<Entry | null>(null);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"expanded" | "collapsed">("expanded");
 
   const location = useLocation();
@@ -97,184 +99,153 @@ export function EntriesPage() {
         </div>
       )}
 
-      {/* ── Filter section ── */}
-      <div className="flex flex-col gap-2 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
-        {/* Row 1: search + category chips + filters toggle */}
-        <div className="flex flex-col sm:flex-row gap-2">
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search..."
-            className="order-2 sm:order-1 sm:w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+      {/* ── Sticky: filters + view toggle ── */}
+      <div className="sticky top-16 z-20 -mx-4 px-1 sm:px-4 sm:-mx-6 sm:px-6 bg-white dark:bg-gray-900 flex flex-col gap-2 pb-3">
+        {/* Filter section */}
+        <div className="flex flex-col gap-2 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
+          {/* Row 1: search + category chips + filters toggle */}
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search..."
+              className="order-2 sm:order-1 sm:w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                        focus:outline-none focus:ring-2 focus:ring-emerald-400 shrink-0"
-          />
-          <div
-            className="order-1 sm:order-2 flex gap-1.5 flex-1 overflow-x-auto [scrollbar-width:none]
+            />
+            <div
+              className="order-1 sm:order-2 flex gap-[4px] sm:gap-1.5 flex-1 overflow-x-auto [scrollbar-width:none]
                           [&::-webkit-scrollbar]:hidden sm:flex-wrap items-center">
-            {CATEGORIES.map(({ value, label }) => (
-              <button
-                key={value}
-                onClick={() => setFilterCategory(value)}
-                className={[
-                  "shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
-                  filterCategory === value ? filterBtnActive : filterBtnInactive,
-                ].join(" ")}>
-                {label}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={() => setIsFiltersOpen((v) => !v)}
-            className={[
-              "order-3 shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
-              isFiltersOpen || advancedFilterCount > 0 ? filterBtnActive : filterBtnInactive,
-            ].join(" ")}>
-            Filters{advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""} {isFiltersOpen ? "▲" : "▼"}
-          </button>
-        </div>
-
-        {/* Row 2: advanced filters */}
-        {isFiltersOpen && (
-          <div className="flex flex-col gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-            {allTags.length > 0 && (
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">Tag:</span>
-                {allTags.map((tag) => (
-                  <button
-                    key={tag.id}
-                    onClick={() => setSelectedTag(selectedTag === tag.id ? null : tag.id)}
-                    className={[
-                      "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
-                      selectedTag === tag.id
-                        ? filterBtnActive
-                        : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600 hover:border-emerald-400 hover:text-emerald-600",
-                    ].join(" ")}>
-                    #{tag.name}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">Date:</span>
-              {(
-                [
-                  { value: "today", label: "Today" },
-                  { value: "week", label: "This week" },
-                ] as const
-              ).map(({ value, label }) => (
+              {CATEGORIES.map(({ value, label }) => (
                 <button
                   key={value}
-                  onClick={() => setDateFilter(dateFilter === value ? "all" : value)}
+                  onClick={() => setFilterCategory(value)}
                   className={[
-                    "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
-                    dateFilter === value
-                      ? filterBtnActive
-                      : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600 hover:border-emerald-400 hover:text-emerald-600",
+                    "shrink-0 px-2 sm:px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
+                    filterCategory === value ? filterBtnActive : filterBtnInactive,
                   ].join(" ")}>
                   {label}
                 </button>
               ))}
             </div>
-
-            <div className="flex items-start gap-3 flex-wrap">
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0 pt-1.5">Rating:</span>
-              <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />
-            </div>
-          </div>
-        )}
-
-        {/* Active filters + clear */}
-        {hasActiveFilters && (
-          <div className="flex items-center gap-2 flex-wrap pt-1.5 border-t border-gray-200 dark:border-gray-700">
-            <span className="text-xs text-gray-400 dark:text-gray-500">Active:</span>
-            {filterCategory !== "all" && (
-              <ActiveChip label={filterCategory} onRemove={() => setFilterCategory("all")} />
-            )}
-            {selectedTag !== null && (
-              <ActiveChip
-                label={`#${allTags.find((t) => t.id === selectedTag)?.name ?? selectedTag}`}
-                onRemove={() => setSelectedTag(null)}
-              />
-            )}
-            {selectedRatings.length > 0 && (
-              <ActiveChip
-                label={`★ ${[...selectedRatings].sort((a, b) => a - b).join(", ")}`}
-                onRemove={() => setSelectedRatings([])}
-              />
-            )}
-            {dateFilter !== "all" && (
-              <ActiveChip
-                label={dateFilter === "today" ? "Today" : "This week"}
-                onRemove={() => setDateFilter("all")}
-              />
-            )}
-            {search !== "" && <ActiveChip label={`"${search}"`} onRemove={() => setSearch("")} />}
-            <button onClick={clearFilters} className="ml-auto text-xs text-red-500 hover:text-red-700 font-medium">
-              Clear all
+            <button
+              onClick={() => setIsFiltersOpen((v) => !v)}
+              className={[
+                "order-3 hidden sm:block shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
+                isFiltersOpen || advancedFilterCount > 0 ? filterBtnActive : filterBtnInactive,
+              ].join(" ")}>
+              Filters{advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""} {isFiltersOpen ? "▲" : "▼"}
             </button>
           </div>
-        )}
-      </div>
 
-      {/* Entry count + view toggle */}
-      <div className="flex items-center justify-between -mt-2">
-        <p className="text-sm text-gray-400 dark:text-gray-500">
-          Showing {entries.length} of {totalCount} entries
-        </p>
-        <div className="flex items-center gap-1 p-0.5 bg-gray-100 dark:bg-gray-700 rounded-lg">
-          <button
-            onClick={() => setViewMode("expanded")}
-            title="Expanded view"
-            className={[
-              "p-1.5 rounded-md transition-colors",
-              viewMode === "expanded"
-                ? "bg-white dark:bg-gray-600 shadow-sm text-gray-700 dark:text-gray-100"
-                : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300",
-            ].join(" ")}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round">
-              <rect x="3" y="3" width="7" height="7" />
-              <rect x="14" y="3" width="7" height="7" />
-              <rect x="3" y="14" width="7" height="7" />
-              <rect x="14" y="14" width="7" height="7" />
-            </svg>
-          </button>
-          <button
-            onClick={() => setViewMode("collapsed")}
-            title="Compact view"
-            className={[
-              "p-1.5 rounded-md transition-colors",
-              viewMode === "collapsed"
-                ? "bg-white dark:bg-gray-600 shadow-sm text-gray-700 dark:text-gray-100"
-                : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300",
-            ].join(" ")}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
+          {/* Row 2: advanced filters */}
+          {isFiltersOpen && (
+            <div className="flex flex-col gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
+              <AdvancedFiltersPanel
+                allTags={allTags}
+                selectedTag={selectedTag}
+                setSelectedTag={setSelectedTag}
+                dateFilter={dateFilter}
+                setDateFilter={setDateFilter}
+                selectedRatings={selectedRatings}
+                setSelectedRatings={setSelectedRatings}
+                filterBtnActive={filterBtnActive}
+              />
+            </div>
+          )}
+
+          {/* Active filters + clear */}
+          {hasActiveFilters && (
+            <div className="flex items-center gap-2 flex-wrap pt-1.5 border-t border-gray-200 dark:border-gray-700">
+              <span className="text-xs text-gray-400 dark:text-gray-500">Active:</span>
+              {filterCategory !== "all" && (
+                <ActiveChip label={filterCategory} onRemove={() => setFilterCategory("all")} />
+              )}
+              {selectedTag !== null && (
+                <ActiveChip
+                  label={`#${allTags.find((t) => t.id === selectedTag)?.name ?? selectedTag}`}
+                  onRemove={() => setSelectedTag(null)}
+                />
+              )}
+              {selectedRatings.length > 0 && (
+                <ActiveChip
+                  label={`★ ${[...selectedRatings].sort((a, b) => a - b).join(", ")}`}
+                  onRemove={() => setSelectedRatings([])}
+                />
+              )}
+              {dateFilter !== "all" && (
+                <ActiveChip
+                  label={dateFilter === "today" ? "Today" : "This week"}
+                  onRemove={() => setDateFilter("all")}
+                />
+              )}
+              {search !== "" && <ActiveChip label={`"${search}"`} onRemove={() => setSearch("")} />}
+              <button onClick={clearFilters} className="ml-auto text-xs text-red-500 hover:text-red-700 font-medium">
+                Clear all
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Entry count + view toggle */}
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-400 dark:text-gray-500">
+            Showing {entries.length} of {totalCount} entries
+          </p>
+          <div className="flex items-center gap-1 p-0.5 bg-gray-100 dark:bg-gray-700 rounded-lg">
+            <button
+              onClick={() => setViewMode("expanded")}
+              title="Expanded view"
+              className={[
+                "p-1.5 rounded-md transition-colors",
+                viewMode === "expanded"
+                  ? "bg-white dark:bg-gray-600 shadow-sm text-gray-700 dark:text-gray-100"
+                  : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300",
+              ].join(" ")}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setViewMode("collapsed")}
+              title="Compact view"
+              className={[
+                "p-1.5 rounded-md transition-colors",
+                viewMode === "collapsed"
+                  ? "bg-white dark:bg-gray-600 shadow-sm text-gray-700 dark:text-gray-100"
+                  : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300",
+              ].join(" ")}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
+      {/* end sticky wrapper */}
 
       {/* Entry list */}
       {entries.length === 0 ? (
@@ -332,6 +303,39 @@ export function EntriesPage() {
           style={{ transform: showForm ? "rotate(45deg)" : "none", transition: "transform 0.2s" }}
         />
       </button>
+
+      {/* Mobile filter sidebar */}
+      <SideDrawer
+        open={isMobileDrawerOpen}
+        onClose={() => setIsMobileDrawerOpen(false)}
+        onOpen={() => setIsMobileDrawerOpen(true)}
+        tabLabel="FILTERS"
+        title={`Filters${advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}`}
+        topline
+        hasActiveIndicator={advancedFilterCount > 0}>
+        <AdvancedFiltersPanel
+          allTags={allTags}
+          selectedTag={selectedTag}
+          setSelectedTag={setSelectedTag}
+          dateFilter={dateFilter}
+          setDateFilter={setDateFilter}
+          selectedRatings={selectedRatings}
+          setSelectedRatings={setSelectedRatings}
+          filterBtnActive={filterBtnActive}
+        />
+
+        {advancedFilterCount > 0 && (
+          <button
+            onClick={() => {
+              setSelectedTag(null);
+              setSelectedRatings([]);
+              setDateFilter("all");
+            }}
+            className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
+            Clear filters
+          </button>
+        )}
+      </SideDrawer>
 
       {/* Delete confirmation */}
       {confirmDeleteEntry && (
@@ -420,5 +424,80 @@ function ActiveChip({ label, onRemove }: { label: string; onRemove: () => void }
         ✕
       </button>
     </span>
+  );
+}
+
+const tagBtnInactive =
+  "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600 hover:border-emerald-400 hover:text-emerald-600";
+
+interface AdvancedFiltersPanelProps {
+  allTags: { id: number; name: string }[];
+  selectedTag: number | null;
+  setSelectedTag: (id: number | null) => void;
+  dateFilter: DateFilter;
+  setDateFilter: (f: DateFilter) => void;
+  selectedRatings: number[];
+  setSelectedRatings: (r: number[]) => void;
+  filterBtnActive: string;
+}
+
+function AdvancedFiltersPanel({
+  allTags,
+  selectedTag,
+  setSelectedTag,
+  dateFilter,
+  setDateFilter,
+  selectedRatings,
+  setSelectedRatings,
+  filterBtnActive,
+}: AdvancedFiltersPanelProps) {
+  return (
+    <>
+      <div className="flex flex-col gap-1.5">
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Date</span>
+        <div className="flex gap-1.5 flex-wrap">
+          {(
+            [
+              { value: "today", label: "Today" },
+              { value: "week", label: "This week" },
+            ] as const
+          ).map(({ value, label }) => (
+            <button
+              key={value}
+              onClick={() => setDateFilter(dateFilter === value ? "all" : value)}
+              className={[
+                "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
+                dateFilter === value ? filterBtnActive : tagBtnInactive,
+              ].join(" ")}>
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Rating</span>
+        <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />
+      </div>
+
+      {allTags.length > 0 && (
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Tag</span>
+          <div className="flex gap-1.5 flex-wrap">
+            {allTags.map((tag) => (
+              <button
+                key={tag.id}
+                onClick={() => setSelectedTag(selectedTag === tag.id ? null : tag.id)}
+                className={[
+                  "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
+                  selectedTag === tag.id ? filterBtnActive : tagBtnInactive,
+                ].join(" ")}>
+                #{tag.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

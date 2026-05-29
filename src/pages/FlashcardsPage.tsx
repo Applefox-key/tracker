@@ -9,6 +9,7 @@ import { useFlashcards } from "@/features/flashcards/hooks/useFlashcards";
 import { RatingMultiSelect } from "@/shared/ui/RatingMultiSelect";
 import { RatingStars } from "@/shared/ui/RatingStars";
 import { Button } from "@/shared/ui/Button";
+import { SideDrawer } from "@/shared/ui/SideDrawer";
 import { EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 
@@ -25,6 +26,7 @@ export function FlashcardsPage() {
   const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null);
   const [selectedTag, setSelectedTag] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [startSide, setStartSide] = useState<"word" | "explanation">(() =>
     localStorage.getItem(LS_START_SIDE) === "explanation" ? "explanation" : "word",
   );
@@ -90,9 +92,11 @@ export function FlashcardsPage() {
         </div>
 
         <div className="flex items-center gap-3 sm:ml-auto flex-wrap sm:flex-nowrap">
-          <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />
-
-          <div className="w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
+          {/* Rating + separator — desktop only */}
+          <div className="hidden sm:flex items-center gap-3">
+            <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />
+            <div className="w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
+          </div>
 
           <button
             onClick={toggleStartSide}
@@ -109,20 +113,20 @@ export function FlashcardsPage() {
             <span className="hidden sm:inline">{startSide === "word" ? "Word first" : "Explanation first"}</span>
           </button>
 
-          <div className="w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
-
-          <Button variant={showFilters ? "primary" : "secondary"} size="sm" onClick={() => setShowFilters((v) => !v)}>
-            <span className="hidden sm:inline">Filters</span>
-            <span className="sm:hidden">⚙</span>
-            {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
-            <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
-          </Button>
-
-          {activeFilterCount > 0 && (
-            <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium shrink-0">
-              Clear
-            </button>
-          )}
+          {/* Filters button + Clear — desktop only */}
+          <div className="hidden sm:flex items-center gap-3">
+            <div className="w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
+            <Button variant={showFilters ? "primary" : "secondary"} size="sm" onClick={() => setShowFilters((v) => !v)}>
+              Filters
+              {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
+              <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
+            </Button>
+            {activeFilterCount > 0 && (
+              <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium shrink-0">
+                Clear
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -130,7 +134,7 @@ export function FlashcardsPage() {
 
       {/* ── Collapsible filters panel ────────────────────────────── */}
       {showFilters && (
-        <div className="flex flex-col gap-3 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
+        <div className="hidden sm:flex flex-col gap-3 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
           <div className="flex items-start gap-2 flex-wrap">
             <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pt-1.5 shrink-0 w-16">Category:</span>
             <div className="flex gap-1.5 flex-wrap">
@@ -178,6 +182,75 @@ export function FlashcardsPage() {
           )}
         </div>
       )}
+
+      {/* Mobile filter sidebar */}
+      <SideDrawer
+        open={isMobileDrawerOpen}
+        onClose={() => setIsMobileDrawerOpen(false)}
+        onOpen={() => setIsMobileDrawerOpen(true)}
+        tabLabel="FILTERS"
+        title={`Filters${activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}`}
+        topline
+        hasActiveIndicator={activeFilterCount > 0}>
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Category</span>
+          <div className="flex gap-1.5 flex-wrap">
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className={[
+                "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
+                selectedCategory === null ? filterBtnActive : filterBtnInactive,
+              ].join(" ")}>
+              All
+            </button>
+            {CATEGORIES.map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setSelectedCategory(selectedCategory === key ? null : key)}
+                className={[
+                  "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
+                  selectedCategory === key ? filterBtnActive : filterBtnInactive,
+                ].join(" ")}>
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Rating</span>
+          <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />
+        </div>
+
+        {allTags.length > 0 && (
+          <div className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Tag</span>
+            <div className="flex gap-1.5 flex-wrap">
+              {allTags.map((tag) => (
+                <button
+                  key={tag.id}
+                  onClick={() => setSelectedTag(selectedTag === tag.id ? null : tag.id)}
+                  className={[
+                    "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
+                    selectedTag === tag.id
+                      ? filterBtnActive
+                      : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600 hover:border-emerald-400 hover:text-emerald-600",
+                  ].join(" ")}>
+                  #{tag.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeFilterCount > 0 && (
+          <button
+            onClick={clearFilters}
+            className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
+            Clear filters
+          </button>
+        )}
+      </SideDrawer>
 
       {/* ── Card area or empty state ─────────────────────────────── */}
       {!currentCard ? (

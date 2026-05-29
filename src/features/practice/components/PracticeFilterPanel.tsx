@@ -35,6 +35,11 @@ export function PracticeFilterPanel({
   return (
     <div className="flex flex-col gap-3 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
       <div className="flex items-start gap-2 flex-wrap">
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pt-1.5 shrink-0 w-16">Rating:</span>
+        <RatingMultiSelect selected={selectedRatings} onChange={onRatingsChange} />
+      </div>
+
+      <div className="flex items-start gap-2 flex-wrap">
         <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pt-1.5 shrink-0 w-16">Category:</span>
         <div className="flex gap-1.5 flex-wrap">
           <button
@@ -73,11 +78,6 @@ export function PracticeFilterPanel({
           </div>
         </div>
       )}
-
-      <div className="flex items-start gap-2 flex-wrap">
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pt-1.5 shrink-0 w-16">Rating:</span>
-        <RatingMultiSelect selected={selectedRatings} onChange={onRatingsChange} />
-      </div>
     </div>
   );
 }
