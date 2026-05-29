@@ -70,7 +70,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
         </div>
 
         {/* Body */}
-        <div className="flex flex-col gap-5 p-4 overflow-y-auto">
+        <div className="flex flex-col gap-5 p-4 overflow-y-auto min-h-[60vh] sm:min-h-fit">
           {/* Explanation + Example (left) / Image (right) */}
           <div className="flex gap-4 flex-col sm:flex-row">
             <div className="flex flex-col gap-5 flex-1 min-w-0">
