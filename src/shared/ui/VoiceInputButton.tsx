@@ -5,6 +5,10 @@ import { ALL_SPEECH_LANGS, type LangCode } from "@/lib/userSettings";
 interface Props {
   /** Called continuously with the current transcript while recording. */
   onResult: (text: string) => void;
+  /** Controlled selected language. If omitted, component manages its own state. */
+  lang?: LangCode;
+  /** Called when user switches language. Required when `lang` is provided. */
+  onLangChange?: (lang: LangCode) => void;
   className?: string;
 }
 
@@ -36,17 +40,26 @@ const supported = !!getSpeechRecognition();
  * Microphone button with an inline language selector driven by the user's profile settings.
  * Calls `onResult(transcript)` continuously while recording.
  */
-export function VoiceInputButton({ onResult, className = "" }: Props) {
+export function VoiceInputButton({ onResult, lang: controlledLang, onLangChange, className = "" }: Props) {
   const { speechLangs } = useUserSettings();
   const langs = ALL_SPEECH_LANGS.filter((l) => speechLangs.includes(l.code));
 
   const [recording, setRecording] = useState(false);
-  const [lang, setLang] = useState<LangCode>(speechLangs[0] ?? "");
+  const [internalLang, setInternalLang] = useState<LangCode>(speechLangs[0] ?? "");
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
 
-  // When user's lang list changes, reset active lang to first in the new list
+  const lang = controlledLang ?? internalLang;
+  function setLang(code: LangCode) {
+    if (controlledLang !== undefined) {
+      onLangChange?.(code);
+    } else {
+      setInternalLang(code);
+    }
+  }
+
+  // When user's lang list changes, reset active lang to first in the new list (uncontrolled only)
   useEffect(() => {
-    setLang(speechLangs[0] ?? "");
+    if (controlledLang === undefined) setInternalLang(speechLangs[0] ?? "");
   }, [speechLangs.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(

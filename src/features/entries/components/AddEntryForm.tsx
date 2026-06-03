@@ -6,6 +6,9 @@ import { TagCombobox } from "@/shared/ui/TagCombobox";
 import { VoiceInputButton } from "@/shared/ui/VoiceInputButton";
 import { EntryImage } from "@/shared/ui/EntryImage";
 import { FaArrowLeft } from "react-icons/fa6";
+import { useUserSettings } from "@/hooks/useUserSettings";
+import { translateText, getDefaultLangPair, langLabel } from "@/lib/translate";
+import type { LangCode } from "@/lib/userSettings";
 
 export interface EntryFormValues {
   word: string;
@@ -72,6 +75,28 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>(init.tagIds);
   const [rating, setRating] = useState(init.rating);
   const [includeInPractice, setIncludeInPractice] = useState(init.includeInPractice);
+
+  const { speechLangs } = useUserSettings();
+  const validLangs = speechLangs.filter((c) => c !== "") as LangCode[];
+  const defaultPair = getDefaultLangPair(validLangs);
+  const [wordLang, setWordLang] = useState<LangCode>(defaultPair?.from ?? validLangs[0] ?? "en-US");
+  const [explanationLang, setExplanationLang] = useState<LangCode>(defaultPair?.to ?? validLangs[1] ?? "uk-UA");
+  const [translatingExpl, setTranslatingExpl] = useState(false);
+  const [translateError, setTranslateError] = useState<string | null>(null);
+
+  async function handleTranslateExplanation() {
+    if (!word.trim()) return;
+    setTranslatingExpl(true);
+    setTranslateError(null);
+    try {
+      const result = await translateText(word.trim(), wordLang, explanationLang);
+      setExplanation(result);
+    } catch {
+      setTranslateError("Translation failed. Try again.");
+    } finally {
+      setTranslatingExpl(false);
+    }
+  }
 
   // Image state
   const [imgFile, setImgFile] = useState<File | null>(null);
@@ -141,7 +166,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
             <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Word / Phrase *</label>
-            <VoiceInputButton onResult={(t) => setWord(t)} />
+            <VoiceInputButton onResult={(t) => setWord(t)} lang={wordLang} onLangChange={setWordLang} />
           </div>
           <input
             required
@@ -154,7 +179,27 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
             <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Explanation *</label>
-            <VoiceInputButton onResult={(t) => setExplanation(t)} />
+            <div className="flex items-center gap-1.5">
+              {translateError && <span className="text-xs text-red-500 dark:text-red-400">{translateError}</span>}
+              {validLangs.length >= 2 && (
+                <button
+                  type="button"
+                  onClick={handleTranslateExplanation}
+                  disabled={translatingExpl || !word.trim() || wordLang === explanationLang}
+                  title={`Translate word → explanation (${langLabel(wordLang)}→${langLabel(explanationLang)})`}
+                  className="flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-800/60 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" />
+                  </svg>
+                  {translatingExpl ? "…" : `${langLabel(wordLang)}→${langLabel(explanationLang)}`}
+                </button>
+              )}
+              <VoiceInputButton
+                onResult={(t) => setExplanation(t)}
+                lang={explanationLang}
+                onLangChange={setExplanationLang}
+              />
+            </div>
           </div>
           {isMultiline ? (
             <textarea
