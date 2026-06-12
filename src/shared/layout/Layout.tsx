@@ -21,7 +21,7 @@ const APPS = [
   {
     name: "FlashMinds",
     desc: "Collections & flashcards",
-    href: "https://flashcards.learnapp.pro",
+    href: "https://flashcards.learnypie.com",
     current: false,
     iconBg: "#eef2ff",
     iconColor: "#4f46e5",
@@ -29,7 +29,7 @@ const APPS = [
   {
     name: "Phrasely",
     desc: "90-second method",
-    href: "https://phrasely.learnapp.pro",
+    href: "https://phrasely.learnypie.com",
     current: false,
     iconBg: "#faf5ff",
     iconColor: "#0d9488",
@@ -37,7 +37,7 @@ const APPS = [
   {
     name: "Tracker",
     desc: "Progress & vocabulary",
-    href: "https://tracker.learnapp.pro",
+    href: "https://tracker.learnypie.com",
     current: true,
     iconBg: "#f0fdf4",
     iconColor: "#16a34a",
@@ -48,7 +48,9 @@ export function Layout() {
   const { isAuthenticated, mode, user, logout } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const isGameRoute = ["/flashcards", "/practice/quiz", "/practice/match", "/practice/puzzle"].includes(location.pathname);
+  const isGameRoute = ["/flashcards", "/practice/quiz", "/practice/match", "/practice/puzzle"].includes(
+    location.pathname,
+  );
   const [appsOpen, setAppsOpen] = useState(false);
   const [burgerOpen, setBurgerOpen] = useState(false);
 
@@ -127,7 +129,8 @@ export function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className={`bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10${isGameRoute ? " hidden sm:block" : ""}`}>
+      <header
+        className={`bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10${isGameRoute ? " hidden sm:block" : ""}`}>
         {/* ── Row 1 ── */}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 relative flex items-center justify-between h-16">
           {/* Left: burger (mobile) | logo (desktop) */}
@@ -222,7 +225,7 @@ export function Layout() {
               {appsOpen && (
                 <div className="absolute right-0 top-10 z-50 w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-xl p-3">
                   <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2.5 px-1">
-                    learnapp.pro — all tools
+                    learnypie.com — all tools
                   </p>
                   <div className="grid grid-cols-2 gap-2">
                     {APPS.map((app) =>
@@ -352,7 +355,7 @@ export function Layout() {
               {/* Apps section */}
               <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                 <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2 px-1">
-                  learnapp.pro — all tools
+                  learnypie.com — all tools
                 </p>
                 <div className="flex flex-col gap-1.5">
                   {APPS.map((app) => (
@@ -393,7 +396,8 @@ export function Layout() {
 
       <DemoBanner />
 
-      <main className={`flex-1 py-2 max-w-5xl w-full mx-auto px-4 sm:px-6 sm:py-8 sm:pb-0${isGameRoute ? "" : " pb-20"}`}>
+      <main
+        className={`flex-1 py-2 max-w-5xl w-full mx-auto px-4 sm:px-6 sm:py-8 sm:pb-0${isGameRoute ? "" : " pb-20"}`}>
         <Outlet />
       </main>
 
@@ -403,7 +407,8 @@ export function Layout() {
       </footer>
 
       {/* ── Bottom navigation bar — mobile only ── */}
-      <nav className={`${isGameRoute ? "hidden" : "sm:hidden"} fixed bottom-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700`}>
+      <nav
+        className={`${isGameRoute ? "hidden" : "sm:hidden"} fixed bottom-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700`}>
         <div className="flex items-center justify-around h-14 px-1">
           {navItems
             .filter(({ to }) => to !== "/tags" && to !== "/about")

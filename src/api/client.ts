@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-export const BASE_URL = 'https://api.learnapp.pro'
+export const BASE_URL = 'https://api.learnypie.com'
 // export const BASE_URL = "http://localhost:8000";
 export const TOKEN_KEY = 'tokentracker'
-export const WIN_LOCATION_HREF = 'https://api.learnapp.pro/users/auth/google?redirect=https://tracker.learnapp.pro'
+export const WIN_LOCATION_HREF = 'https://api.learnypie.com/users/auth/google?redirect=https://tracker.learnypie.com'
 // export const WIN_LOCATION_HREF = = "http://localhost:8000/users/auth/google?redirect=http://localhost:5173";s
 
 export const apiClient = axios.create({
