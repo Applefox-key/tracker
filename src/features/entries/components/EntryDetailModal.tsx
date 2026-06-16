@@ -4,6 +4,7 @@ import { MULTILINE_CATEGORIES } from "../constants";
 import { Button } from "@/shared/ui/Button";
 import { RatingStars } from "@/shared/ui/RatingStars";
 import { EntryImage } from "@/shared/ui/EntryImage";
+import { SpeakButton } from "@/shared/ui/SpeakButton";
 import { getEntryImageUrl } from "@/api/api";
 
 const categoryColors: Record<Entry["category"], string> = {
@@ -47,13 +48,16 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
         <div className="flex items-start justify-between p-4 border-b border-gray-100 dark:border-gray-700">
           <div className="flex-1 min-w-0 pr-4">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 break-words">{entry.word}</h2>
-            <span
-              className={[
-                "inline-block mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
-                categoryColors[entry.category],
-              ].join(" ")}>
-              {entry.category}
-            </span>
+            <div className="flex items-center gap-2 mt-1.5">
+              <span
+                className={[
+                  "inline-block px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
+                  categoryColors[entry.category],
+                ].join(" ")}>
+                {entry.category}
+              </span>
+              <SpeakButton text={entry.word} />
+            </div>
           </div>
           <button
             onClick={onClose}

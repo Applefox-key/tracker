@@ -62,13 +62,15 @@ export function FlashCard({ card, isFlipped, onFlip, reversed = false, flipAnima
 
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto px-6 py-4">
-            <div className="flex flex-col items-center gap-3 min-h-full justify-center">
-              <p className="text-2xl font-bold text-white text-center whitespace-pre-wrap break-words">{backText}</p>
-              {card.hint && (
-                <p className="text-sm text-emerald-100 text-center italic opacity-90 whitespace-pre-wrap break-words">
-                  "{card.hint}"
-                </p>
-              )}
+            <div className="flex  items-center gap-3 min-h-full justify-center">
+              <div className="flex flex-col items-center gap-3 min-h-full justify-center">
+                <p className="text-2xl font-bold text-white text-center whitespace-pre-wrap break-words">{backText}</p>
+                {card.hint && (
+                  <p className="text-sm text-emerald-100 text-center italic opacity-90 whitespace-pre-wrap break-words">
+                    "{card.hint}"
+                  </p>
+                )}
+              </div>{" "}
               {card.img && (
                 <EntryImage
                   src={card.img}

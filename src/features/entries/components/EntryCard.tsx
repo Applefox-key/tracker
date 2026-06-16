@@ -4,6 +4,8 @@ import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { Button } from "@/shared/ui/Button";
 import { RatingStars } from "@/shared/ui/RatingStars";
 import { ToggleSwitch } from "@/shared/ui/ToggleSwitch";
+import { EntryImage } from "@/shared/ui/EntryImage";
+import { getEntryImageUrl } from "@/api/api";
 
 const categoryColors: Record<Entry["category"], string> = {
   word: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-auto",
@@ -54,30 +56,40 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
           {entry.category}
         </span>
       </div>{" "}
-      {/* Content row */}
-      <div className="flex flex-col items-start justify-between gap-3 h-full">
-        <p
-          className={`text-sm text-gray-500 dark:text-gray-400 mt-0.5 ${isMultiline ? "line-clamp-2  whitespace-pre-wrap" : "truncate"}`}>
-          {entry.explanation}
-        </p>
-        {/* Example */}
-        {entry.example && (
+      {/* Content row */}{" "}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
+        <div className={`flex flex-col items-start ${entry.img ? "justify-start" : "justify-between"} gap-3 h-full`}>
           <p
-            className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-gray-400 dark:border-gray-200 pl-3${isMultiline ? " line-clamp-3 break-words" : ""}`}>
-            {entry.example}
+            className={`text-sm text-gray-500 dark:text-gray-400 mt-0.5 ${isMultiline ? "line-clamp-2 break-words" : ""}`}>
+            {entry.explanation}
           </p>
-        )}{" "}
-        {/* Tags */}
-        {entry.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {entry.tags.map((tag) => (
-              <span
-                key={tag.id}
-                className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
-                #{tag.name}
-              </span>
-            ))}
-          </div>
+          {/* Example */}
+          {entry.example && (
+            <p
+              className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-gray-400 dark:border-gray-200 pl-3${isMultiline ? " line-clamp-3 break-words" : ""}`}>
+              {entry.example}
+            </p>
+          )}{" "}
+          {/* Tags */}
+          {entry.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {entry.tags.map((tag) => (
+                <span
+                  key={tag.id}
+                  className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
+                  #{tag.name}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+        {entry.img && (
+          <EntryImage
+            src={getEntryImageUrl(entry.img)}
+            alt={entry.word}
+            style={{ width: 150, height: 150, objectFit: "cover" }}
+            className="shrink-0"
+          />
         )}
       </div>
       {/* Footer row — stop propagation so clicks here don't open detail view */}

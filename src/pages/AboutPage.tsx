@@ -1,28 +1,32 @@
+import { Link } from "react-router-dom";
+import { useAuthStore } from "@/features/auth/store/authStore";
+
 const FEATURES = [
   {
-    icon: '📝',
-    title: 'Entries',
+    icon: "📝",
+    title: "Entries",
     description:
-      'Save words, phrases, grammar rules, idioms, and notes. Tag them, rate difficulty, and search instantly.',
+      "Save words, phrases, grammar rules, idioms, and notes. Tag them, rate difficulty, and search instantly.",
   },
   {
-    icon: '🎯',
-    title: 'Practice',
+    icon: "🎯",
+    title: "Practice",
     description:
-      'Study your entries with four interactive modes: flip cards, multiple choice quiz, match pairs, and word/letter puzzle.',
+      "Study your entries with four interactive modes: flip cards, multiple choice quiz, match pairs, and word/letter puzzle.",
   },
   {
-    icon: '📊',
-    title: 'Stats & Dashboard',
+    icon: "📊",
+    title: "Stats & Dashboard",
     description:
-      'See your progress at a glance — total entries, daily and weekly activity, average rating, and category breakdown.',
+      "See your progress at a glance — total entries, daily and weekly activity, average rating, and category breakdown.",
   },
-]
+];
 
 export function AboutPage() {
-  return (
-    <div className="flex flex-col gap-10 max-w-2xl mx-auto">
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
+  return (
+    <div className="flex flex-col gap-2 sm:gap-10 lg:gap-10 max-w-2xl mx-auto">
       {/* Hero */}
       <div className="text-center flex flex-col gap-3 pt-4">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Language Progress Tracker</h1>
@@ -30,6 +34,17 @@ export function AboutPage() {
           Track your learning progress, save entries, and practise with interactive study activities.
         </p>
       </div>
+
+      {!isAuthenticated && (
+        <div className="flex flex-col items-center gap-2 py-4 px-6 bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 rounded-2xl text-center">
+          <p className="text-sm text-emerald-700 dark:text-emerald-300">Ready to start tracking your progress?</p>
+          <Link
+            to="/login"
+            className="inline-block px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors">
+            Sign in to get started
+          </Link>
+        </div>
+      )}
 
       <hr className="border-gray-200 dark:border-gray-700" />
 
@@ -40,10 +55,11 @@ export function AboutPage() {
           {FEATURES.map(({ icon, title, description }) => (
             <div
               key={title}
-              className="flex flex-col gap-2 p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm"
-            >
-              <span className="text-2xl">{icon}</span>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
+              className="flex flex-col gap-2 p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm">
+              <span className="hidden sm:block text-2xl">{icon}</span>
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                <span className="inline-block sm:hidden text-2xl">{icon}</span> {title}
+              </h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{description}</p>
             </div>
           ))}
@@ -56,15 +72,12 @@ export function AboutPage() {
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">About</h2>
         <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-          Language Progress Tracker is a personal study companion built to help language learners
-          organise their vocabulary, grammar notes, and idioms in one place. Reinforce what you
-          learn through practice modes — flashcards, quizzes, matching pairs, and puzzles. It is
-          designed to be fast, distraction-free, and offline-friendly.
-        </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-          Built with React, TypeScript, Vite, Tailwind CSS, and Zustand.
+          Language Progress Tracker is a personal study companion built to help language learners organise their
+          vocabulary, grammar notes, and idioms in one place. Reinforce what you learn through practice modes —
+          flashcards, quizzes, matching pairs, and puzzles. It is designed to be fast, distraction-free, and
+          offline-friendly.
         </p>
       </section>
     </div>
-  )
+  );
 }

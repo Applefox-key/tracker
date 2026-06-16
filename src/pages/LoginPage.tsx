@@ -160,7 +160,7 @@ export function LoginPage() {
     setForgotSuccess(false);
   }
 
-const subtitles: Record<Mode, string> = {
+  const subtitles: Record<Mode, string> = {
     login: "Sign in to continue learning",
     register: "Create your account",
     forgot: "Reset your password",
@@ -176,7 +176,7 @@ const subtitles: Record<Mode, string> = {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         {/* Branding */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-4 sm:mb-8">
           <span className="text-3xl font-bold text-emerald-600 tracking-tight">Language Progress</span>
           <p className="text-gray-500 dark:text-gray-400 mt-2 text-sm">{subtitles[mode]}</p>
           <Link
@@ -187,11 +187,11 @@ const subtitles: Record<Mode, string> = {
         </div>
 
         {/* Card */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col gap-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-2 sm:p-8 flex flex-col gap-2 sm:gap-6">
           {/* ── Login ── */}
           {mode === "login" && (
             <>
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Sign in</h1>
+              <h1 className="hidden sm:block text-xl font-semibold text-gray-900 dark:text-gray-100">Sign in</h1>
 
               <form onSubmit={handleLogin} className="flex flex-col gap-4" noValidate>
                 <Field label="Email" htmlFor="login-email" error={loginErrors.email}>
@@ -267,7 +267,7 @@ const subtitles: Record<Mode, string> = {
           {/* ── Register ── */}
           {mode === "register" && (
             <>
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Create account</h1>
+              <h1 className="hidden sm:block text-xl font-semibold text-gray-900 dark:text-gray-100">Create account</h1>
 
               <form onSubmit={handleRegister} className="flex flex-col gap-4" noValidate>
                 <Field label="Name" htmlFor="reg-name" error={regErrors.name}>
