@@ -366,7 +366,7 @@ export function Layout() {
             </div>
 
             {isAuthenticated && (
-              <div className="px-3 pb-4 pt-2 border-t border-gray-200 dark:border-gray-700 shrink-0">
+              <div className="px-3 pt-2 border-t border-gray-200 dark:border-gray-700 shrink-0" style={{ paddingBottom: "calc(3.5rem + env(safe-area-inset-bottom))" }}>
                 <button
                   onClick={() => {
                     setBurgerOpen(false);

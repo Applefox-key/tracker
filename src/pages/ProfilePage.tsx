@@ -1,11 +1,13 @@
 import { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { authApi, getAvatarUrl } from "@/api/api";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { ALL_SPEECH_LANGS, type LangCode } from "@/lib/userSettings";
 
 export function ProfilePage() {
-  const { user, updateUser, setUser } = useAuthStore();
+  const { user, updateUser, setUser, logout, mode } = useAuthStore();
+  const navigate = useNavigate();
   const { speechLangs, saveSpeechLangs } = useUserSettings();
 
   const [name, setName] = useState(user?.name ?? "");
@@ -22,6 +24,11 @@ export function ProfilePage() {
   const [saved, setSaved] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function handleLogout() {
+    logout();
+    navigate("/login", { replace: true });
+  }
 
   const currentAvatar = avatarPreview ?? (user?.img && user?.id ? getAvatarUrl(user.img, user.id) : null);
   const initials = (user?.name?.[0] ?? "U").toUpperCase();
@@ -239,6 +246,29 @@ export function ProfilePage() {
           disabled={saving || !isDirty}
           className="shrink-0 px-6 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
           {saving ? "Saving…" : "Save"}
+        </button>
+      </div>
+
+      {/* Logout - mobile only */}
+      <div className="sm:hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-2">
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          {mode === "demo" ? "Exit demo" : "Logout"}
         </button>
       </div>
     </div>
