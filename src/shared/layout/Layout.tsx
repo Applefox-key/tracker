@@ -397,7 +397,8 @@ export function Layout() {
       <DemoBanner />
 
       <main
-        className={`flex-1 py-2 max-w-5xl w-full mx-auto px-4 sm:px-6 sm:py-8 sm:pb-0${isGameRoute ? "" : " pb-20"}`}>
+        className={`flex-1 py-2 max-w-5xl w-full mx-auto px-4 sm:px-6 sm:py-8 sm:pb-0${isGameRoute ? "" : " pb-24"}`}
+        style={!isGameRoute ? { paddingBottom: "calc(5rem + env(safe-area-inset-bottom))" } : undefined}>
         <Outlet />
       </main>
 
@@ -408,7 +409,8 @@ export function Layout() {
 
       {/* ── Bottom navigation bar — mobile only ── */}
       <nav
-        className={`${isGameRoute ? "hidden" : "sm:hidden"} fixed bottom-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700`}>
+        className={`${isGameRoute ? "hidden" : "sm:hidden"} fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700`}
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
         <div className="flex items-center justify-around h-14 px-1">
           {navItems
             .filter(({ to }) => to !== "/tags" && to !== "/about")

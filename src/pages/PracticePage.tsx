@@ -55,7 +55,7 @@ export function PracticePage() {
   }, [entries]);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 py-4 sm:py-auto lg:p-8">
       {/* Header */}
       <div className="hidden sm:block">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Practice</h1>
@@ -91,7 +91,13 @@ export function PracticePage() {
                 {disabled ? (
                   <span className="text-xs text-gray-400 dark:text-gray-500 italic">Need at least {mode.min}</span>
                 ) : (
-                  <Button size="sm" onClick={(e) => { e.stopPropagation(); navigate(mode.route); }}>
+                  <Button
+                    className="bg-emerald-400 text-white hover:bg-emerald-700 focus:ring-emerald-400 transition-colors"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(mode.route);
+                    }}>
                     Start →
                   </Button>
                 )}

@@ -39,18 +39,18 @@ export function SideDrawer({
     <>
       {/* Peek tab — mobile only */}
       <button
-        onClick={onOpen}
-        className={`sm:hidden fixed z-30 bg-emerald-600 text-white shadow-lg select-none flex flex-col items-center gap-1
-          ${topline ? "p-2 top-[68px] opacity-70 " : "top-1/2 -translate-y-1/2 px-1.5 py-3"}
-          ${isRight ? "right-0 rounded-l-xl" : "left-0 rounded-r-xl"}`}>
+        onClick={open ? onClose : onOpen}
+        className={`sm:hidden fixed z-[51] bg-emerald-600 text-white shadow-lg select-none flex flex-col items-center gap-1 p-2 opacity-70
+          transition-[transform,opacity] duration-300 ease-in-out
+          ${open ? "opacity-100" : "opacity-70"}
+          ${topline ? "top-[12px]" : "top-[126px]"}
+          ${isRight ? "right-0 rounded-l-xl" : "left-0 rounded-r-xl"}
+          ${isRight && open ? "-translate-x-72" : ""}
+          ${!isRight && open ? "translate-x-72" : ""}`}>
         {tabIcon}
         <span
           className="font-bold leading-none tracking-wide"
-          style={
-            topline
-              ? { fontSize: "10px" }
-              : { fontSize: "9px", writingMode: "vertical-rl", transform: "rotate(180deg)" }
-          }>
+          style={topline ? { fontSize: "10px" } : { fontSize: "9px" }}>
           {tabLabel}
         </span>
         {hasActiveIndicator && (
@@ -65,7 +65,7 @@ export function SideDrawer({
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className={`sm:hidden fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ${
+        className={`sm:hidden fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
           open ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       />

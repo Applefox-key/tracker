@@ -4,6 +4,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { usePracticeEntries, usePracticeTags, shuffle, wordCount } from "@/features/practice/hooks/usePracticeEntries";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
 import { Button } from "@/shared/ui/Button";
+import { SideDrawer } from "@/shared/ui/SideDrawer";
 import type { Entry, EntryCategory } from "@/features/entries/types";
 
 interface Tile {
@@ -58,6 +59,7 @@ export function PuzzlePage() {
   const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null);
   const [selectedTag, setSelectedTag] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [questions, setQuestions] = useState<Entry[]>([]);
@@ -150,10 +152,9 @@ export function PuzzlePage() {
             <FaArrowLeft />
           </button>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Puzzle</h1>
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="hidden sm:flex items-center gap-2 ml-auto">
             <Button variant={showFilters ? "primary" : "secondary"} size="sm" onClick={() => setShowFilters((v) => !v)}>
-              <span className="hidden sm:inline">Filters</span>
-              <span className="sm:hidden">⚙</span>
+              Filters
               {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
               <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
             </Button>
@@ -176,6 +177,30 @@ export function PuzzlePage() {
             onRatingsChange={setSelectedRatings}
           />
         )}
+
+        <SideDrawer
+          open={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+          onOpen={() => setIsMobileDrawerOpen(true)}
+          tabLabel="FILTERS"
+          title={`Filters${activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}`}
+          topline
+          hasActiveIndicator={activeFilterCount > 0}>
+          <PracticeFilterPanel
+            allTags={allTags}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            selectedTag={selectedTag}
+            onTagChange={setSelectedTag}
+            selectedRatings={selectedRatings}
+            onRatingsChange={setSelectedRatings}
+          />
+          {activeFilterCount > 0 && (
+            <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
+              Clear filters
+            </button>
+          )}
+        </SideDrawer>
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">🧩</span>
