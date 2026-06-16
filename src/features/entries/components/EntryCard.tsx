@@ -98,7 +98,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
         onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-3 justify-between">
           <RatingStars value={entry.rating} onChange={(v) => updateEntry(entry.id, { rating: v })} />
-          <div className="w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
+          <div className="hidden sm:block w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
           <ToggleSwitch
             checked={entry.includeInPractice}
             onChange={(v) => updateEntry(entry.id, { includeInPractice: v })}
@@ -106,7 +106,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
           />{" "}
         </div>
 
-        <div className="flex gap-1 ml-auto shrink-0">
+        <div className="justify-center flex gap-1 ml-0 sm:ml-auto shrink-0 border-t border-gray-100 dark:border-gray-700 sm:border-none">
           <Button
             variant="ghost"
             size="sm"
