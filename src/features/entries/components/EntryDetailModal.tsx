@@ -41,7 +41,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/50 backdrop-blur-sm"
       onClick={onClose}>
       <div
-        className="w-full max-w-lg flex justify-between sm:block bg-white dark:bg-gray-800 sm:rounded-2xl sm:rounded-t-2xl shadow-xl flex flex-col h-[100vh] sm:h-auto sm:max-h-[90vh]"
+        className="w-full max-w-lg flex justify-between sm:block bg-white dark:bg-gray-800 sm:rounded-2xl sm:rounded-t-2xl shadow-xl flex flex-col h-[90vh] sm:h-auto sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-start justify-between p-4 border-b border-gray-100 dark:border-gray-700">
