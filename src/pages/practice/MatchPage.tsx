@@ -45,6 +45,7 @@ export function MatchPage() {
   const [matched, setMatched] = useState<Set<number>>(new Set());
   const [wrongIds, setWrongIds] = useState<Set<string>>(new Set());
   const [totalMatched, setTotalMatched] = useState(0);
+  const [totalErrors, setTotalErrors] = useState(0);
   const [isDone, setIsDone] = useState(false);
 
   const filteredEntries = usePracticeEntries("match", { selectedRatings, selectedCategory, selectedTag });
@@ -78,6 +79,7 @@ export function MatchPage() {
       setSelectedWord(null);
       setSelectedExplanation(null);
     } else {
+      setTotalErrors((prev) => prev + 1);
       setWrongIds(new Set([selectedWord.id, selectedExplanation.id]));
       setTimeout(() => {
         setWrongIds(new Set());
@@ -98,6 +100,7 @@ export function MatchPage() {
     setAllEntries(shuffled);
     setRoundStart(0);
     setTotalMatched(0);
+    setTotalErrors(0);
     setIsDone(false);
     setIsPlaying(true);
   }
@@ -225,7 +228,6 @@ export function MatchPage() {
   }
 
   if (isDone) {
-    const finalTotal = totalMatched + roundSize;
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3">
@@ -238,11 +240,18 @@ export function MatchPage() {
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">🎉</span>
-          <div>
-            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              {finalTotal} / {totalPairs}
-            </p>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">pairs matched</p>
+          <div className="flex flex-col gap-3 w-full">
+            <div>
+              <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{totalPairs}</p>
+              <p className="text-gray-500 dark:text-gray-400 mt-1">pairs matched</p>
+            </div>
+            <div>
+              <p
+                className={`text-3xl font-bold ${totalErrors === 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>
+                {totalErrors}
+              </p>
+              <p className="text-gray-500 dark:text-gray-400 mt-1">mistakes</p>
+            </div>
           </div>
           <div className="flex gap-3 flex-wrap justify-center">
             <Button variant="secondary" onClick={startSession}>

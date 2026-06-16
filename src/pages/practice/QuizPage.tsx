@@ -7,14 +7,17 @@ import { Button } from "@/shared/ui/Button";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
 import type { Entry, EntryCategory } from "@/features/entries/types";
 
-type Phase = "setup" | "playing" | "done";
+const LS_QUIZ_MODE = "quiz_start_side";
 
-function buildOptions(correct: Entry, pool: Entry[]): string[] {
+type Phase = "setup" | "playing" | "done";
+type StartSide = "word" | "explanation";
+
+function buildOptions(correct: Entry, pool: Entry[], answerField: "word" | "explanation"): string[] {
   const others = shuffle(pool.filter((e) => e.id !== correct.id))
     .slice(0, 3)
-    .map((e) => e.word);
+    .map((e) => e[answerField]);
   while (others.length < 3) others.push(`—`);
-  return shuffle([correct.word, ...others]);
+  return shuffle([correct[answerField], ...others]);
 }
 
 function SessionHeader({ current, total, onQuit }: { current: number; total: number; onQuit: () => void }) {
@@ -45,6 +48,9 @@ export function QuizPage() {
   const [selectedTag, setSelectedTag] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [startSide, setStartSide] = useState<StartSide>(() =>
+    localStorage.getItem(LS_QUIZ_MODE) === "word" ? "word" : "explanation",
+  );
 
   const [phase, setPhase] = useState<Phase>("setup");
   const [questions, setQuestions] = useState<Entry[]>([]);
@@ -59,12 +65,20 @@ export function QuizPage() {
     Boolean,
   ).length;
 
+  const answerField: "word" | "explanation" = startSide === "word" ? "explanation" : "word";
+
   const currentQuestion = questions[currentIdx] ?? null;
   const options = useMemo(
-    () => (currentQuestion ? buildOptions(currentQuestion, questions) : []),
+    () => (currentQuestion ? buildOptions(currentQuestion, questions, answerField) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentIdx, questions],
+    [currentIdx, questions, answerField],
   );
+
+  function toggleStartSide() {
+    const next: StartSide = startSide === "word" ? "explanation" : "word";
+    setStartSide(next);
+    localStorage.setItem(LS_QUIZ_MODE, next);
+  }
 
   function clearFilters() {
     setSelectedRatings([]);
@@ -82,7 +96,7 @@ export function QuizPage() {
 
   function handleSelect(opt: string) {
     if (selected !== null) return;
-    if (opt === questions[currentIdx].word) setCorrectCount((n) => n + 1);
+    if (opt === questions[currentIdx][answerField]) setCorrectCount((n) => n + 1);
     setSelected(opt);
   }
 
@@ -99,15 +113,31 @@ export function QuizPage() {
     const canStart = filteredEntries.length >= 4;
     return (
       <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
           <button
             onClick={() => navigate("/practice")}
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             <FaArrowLeft />
           </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Quiz</h1>
-          <div className="hidden sm:flex items-center gap-2 ml-auto">
-            <Button variant={showFilters ? "primary" : "secondary"} size="sm" onClick={() => setShowFilters((v) => !v)}>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Quiz mode</h1>
+          <div className="flex items-center gap-2 ml-5 w-full sm:w-auto sm:ml-auto">
+            <button
+              onClick={toggleStartSide}
+              title={
+                startSide === "word"
+                  ? "Showing word — click to show explanation"
+                  : "Showing explanation — click to show word"
+              }
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600">
+              <span>{startSide === "word" ? "🔤" : "💬"}</span>
+              <span>{startSide === "word" ? "Choose Explanation" : "Choose Word"}</span>
+            </button>
+            <div className="hidden sm:block w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
+            <Button
+              variant={showFilters ? "primary" : "secondary"}
+              size="sm"
+              className="hidden sm:block"
+              onClick={() => setShowFilters((v) => !v)}>
               Filters
               {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
               <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
@@ -160,7 +190,7 @@ export function QuizPage() {
           <span className="text-5xl">🧠</span>
           <div>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Quiz Mode</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Choose the correct word from 4 options</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{`Choose the correct ${startSide === "word" ? "explanation" : "word"} from 4 options`}</p>
           </div>
           <p className="text-sm text-gray-400 dark:text-gray-500">{filteredEntries.length} entries available</p>
           {!canStart && (
@@ -215,9 +245,11 @@ export function QuizPage() {
     <div className="flex flex-col gap-6 max-w-xl mx-auto w-full">
       <SessionHeader current={currentIdx} total={questions.length} onQuit={() => setPhase("setup")} />
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col gap-4">
-        <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">What word is this?</span>
+        <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">
+          {startSide === "word" ? "What's the explanation?" : "What word is this?"}
+        </span>
         <p className="text-lg font-semibold text-gray-800 dark:text-gray-100 leading-relaxed">
-          {currentQuestion!.explanation}
+          {startSide === "word" ? currentQuestion!.word : currentQuestion!.explanation}
         </p>
         {currentQuestion!.example &&
           (showExample ? (
@@ -234,7 +266,7 @@ export function QuizPage() {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {options.map((opt) => {
-          const isCorrect = opt === currentQuestion!.word;
+          const isCorrect = opt === currentQuestion![answerField];
           const isSelected = opt === selected;
           let cls = "w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-colors ";
           if (!answered)

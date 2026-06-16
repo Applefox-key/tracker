@@ -9,6 +9,7 @@ export interface FlashcardFilters {
   selectedRatings: number[]
   selectedCategory: EntryCategory | null
   selectedTag: number | null
+  shuffleKey?: number
 }
 
 const EMPTY_FILTERS: FlashcardFilters = {
@@ -21,7 +22,7 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
   const entries = useEntriesStore((s) => s.entries)
   const { currentIndex, isFlipped, goNext, goPrev, flip, reset } = useFlashcardsStore()
 
-  const { selectedRatings, selectedCategory, selectedTag } = filters
+  const { selectedRatings, selectedCategory, selectedTag, shuffleKey } = filters
 
   // All tags available on flashcard-eligible entries (unaffected by other filters)
   const allTags = useMemo(() => {
@@ -33,7 +34,7 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
   }, [entries])
 
   const cards: Flashcard[] = useMemo(() => {
-    return entries
+    const filtered = entries
       .filter((e) => {
         if (!e.includeInPractice) return false
         if (selectedRatings.length > 0 && !selectedRatings.includes(e.rating)) return false
@@ -49,7 +50,15 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
         rating: e.rating,
         img: e.img ? getEntryImageUrl(e.img) : null,
       }))
-  }, [entries, selectedRatings, selectedCategory, selectedTag])
+    if (!shuffleKey) return filtered
+    const arr = [...filtered]
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]]
+    }
+    return arr
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entries, selectedRatings, selectedCategory, selectedTag, shuffleKey])
 
   // Reset to card 0 whenever the filtered deck changes
   const ratingsKey = selectedRatings.join(',')

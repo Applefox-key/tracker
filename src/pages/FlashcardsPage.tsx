@@ -12,6 +12,7 @@ import { Button } from "@/shared/ui/Button";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
 import { EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
+import { FaShuffle } from "react-icons/fa6";
 
 const CATEGORIES: Array<{ key: EntryCategory; label: string }> = [
   { key: "word", label: "Words" },
@@ -30,6 +31,8 @@ export function FlashcardsPage() {
   const [startSide, setStartSide] = useState<"word" | "explanation">(() =>
     localStorage.getItem(LS_START_SIDE) === "explanation" ? "explanation" : "word",
   );
+  const [shuffleKey, setShuffleKey] = useState(0);
+  const [shaking, setShaking] = useState(false);
 
   function toggleStartSide() {
     const next = startSide === "word" ? "explanation" : "word";
@@ -38,11 +41,18 @@ export function FlashcardsPage() {
     reset();
   }
 
+  function handleShuffle() {
+    setShuffleKey((k) => k + 1);
+    setShaking(true);
+    setTimeout(() => setShaking(false), 400);
+    reset();
+  }
+
   const routerNavigate = useNavigate();
   const { updateEntry } = useEntryCrud();
 
   const { currentCard, currentIndex, total, progress, isFlipped, allTags, goNext, goPrev, flip, reset } = useFlashcards(
-    { selectedRatings, selectedCategory, selectedTag },
+    { selectedRatings, selectedCategory, selectedTag, shuffleKey },
   );
 
   const [cardVisible, setCardVisible] = useState(true);
@@ -110,7 +120,20 @@ export function FlashcardsPage() {
               filterBtnInactive,
             ].join(" ")}>
             <span>{startSide === "word" ? "🔤" : "💬"}</span>
-            <span className="hidden sm:inline">{startSide === "word" ? "Word first" : "Explanation first"}</span>
+            <span>{startSide === "word" ? "Word first" : "Explanation first"}</span>
+          </button>
+
+          <button
+            onClick={handleShuffle}
+            title="Shuffle cards"
+            className={[
+              "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors",
+              filterBtnInactive,
+            ].join(" ")}>
+            <span className={shaking ? "animate-shake inline-block" : "inline-block"}>
+              <FaShuffle />
+            </span>
+            <span>Shuffle</span>
           </button>
 
           {/* Filters button + Clear — desktop only */}
@@ -244,9 +267,7 @@ export function FlashcardsPage() {
         )}
 
         {activeFilterCount > 0 && (
-          <button
-            onClick={clearFilters}
-            className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
+          <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
             Clear filters
           </button>
         )}
