@@ -41,7 +41,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/50 backdrop-blur-sm"
       onClick={onClose}>
       <div
-        className="w-full max-w-lg bg-white dark:bg-gray-800 sm:rounded-2xl rounded-t-2xl shadow-xl flex flex-col max-h-[92vh] sm:max-h-[90vh]"
+        className="w-full max-w-lg flex justify-between sm:block bg-white dark:bg-gray-800 sm:rounded-2xl sm:rounded-t-2xl shadow-xl flex flex-col h-[100vh] sm:h-auto sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-start justify-between p-4 border-b border-gray-100 dark:border-gray-700">
@@ -70,7 +70,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
         </div>
 
         {/* Body */}
-        <div className="flex flex-col gap-5 p-4 overflow-y-auto min-h-[60vh] sm:min-h-fit">
+        <div className="flex flex-col justify-between gap-5 p-4 overflow-y-auto min-h-[60vh] sm:min-h-fit">
           {/* Explanation + Example (left) / Image (right) */}
           <div className="flex gap-4 flex-col sm:flex-row">
             <div className="flex flex-col gap-5 flex-1 min-w-0">
@@ -142,7 +142,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
         )}
 
         {/* Footer */}
-        <div className="flex justify-between gap-2 px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-b-2xl">
+        <div className="flex justify-between gap-2 px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 sm:rounded-b-2xl">
           <div className="flex items-center">
             <p className="text-xs text-gray-300 dark:text-gray-600">
               Added{" "}

@@ -294,36 +294,38 @@ export function EntriesPage() {
       </button>
 
       {/* Mobile filter sidebar */}
-      <SideDrawer
-        open={isMobileDrawerOpen}
-        onClose={() => setIsMobileDrawerOpen(false)}
-        onOpen={() => setIsMobileDrawerOpen(true)}
-        tabLabel="FILTERS"
-        title={`Filters${advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}`}
-        hasActiveIndicator={advancedFilterCount > 0}>
-        <AdvancedFiltersPanel
-          allTags={allTags}
-          selectedTag={selectedTag}
-          setSelectedTag={setSelectedTag}
-          dateFilter={dateFilter}
-          setDateFilter={setDateFilter}
-          selectedRatings={selectedRatings}
-          setSelectedRatings={setSelectedRatings}
-          filterBtnActive={filterBtnActive}
-        />
+      {!viewingEntry && !editingEntry && (
+        <SideDrawer
+          open={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+          onOpen={() => setIsMobileDrawerOpen(true)}
+          tabLabel="FILTERS"
+          title={`Filters${advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}`}
+          hasActiveIndicator={advancedFilterCount > 0}>
+          <AdvancedFiltersPanel
+            allTags={allTags}
+            selectedTag={selectedTag}
+            setSelectedTag={setSelectedTag}
+            dateFilter={dateFilter}
+            setDateFilter={setDateFilter}
+            selectedRatings={selectedRatings}
+            setSelectedRatings={setSelectedRatings}
+            filterBtnActive={filterBtnActive}
+          />
 
-        {advancedFilterCount > 0 && (
-          <button
-            onClick={() => {
-              setSelectedTag(null);
-              setSelectedRatings([]);
-              setDateFilter("all");
-            }}
-            className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
-            Clear filters
-          </button>
-        )}
-      </SideDrawer>
+          {advancedFilterCount > 0 && (
+            <button
+              onClick={() => {
+                setSelectedTag(null);
+                setSelectedRatings([]);
+                setDateFilter("all");
+              }}
+              className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
+              Clear filters
+            </button>
+          )}
+        </SideDrawer>
+      )}
 
       {/* Delete confirmation */}
       {confirmDeleteEntry && (
@@ -369,11 +371,11 @@ const categoryColors: Record<EntryCategory, string> = {
 };
 
 const headerAccent: Record<EntryCategory, string> = {
-  word: "border-l-blue-400",
-  phrase: "border-l-green-400",
-  grammar: "border-l-purple-400",
-  idiom: "border-l-orange-400",
-  note: "border-l-teal-400",
+  word: "border-l-blue-400 dark:border-l-blue-500",
+  phrase: "border-l-green-400 dark:border-l-green-500",
+  grammar: "border-l-purple-400 dark:border-l-purple-500",
+  idiom: "border-l-orange-400 dark:border-l-orange-500",
+  note: "border-l-teal-400 dark:border-l-teal-500",
 };
 
 function EntryHeaderStrip({ entry, onView }: { entry: Entry; onView: (e: Entry) => void }) {
