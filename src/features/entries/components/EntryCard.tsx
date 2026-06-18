@@ -60,13 +60,13 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
         <div className={`flex flex-col items-start ${entry.img ? "justify-start" : "justify-between"} gap-3 h-full`}>
           <p
-            className={`text-sm text-gray-500 dark:text-gray-400 mt-0.5 ${isMultiline ? "line-clamp-2 break-words" : ""}`}>
+            className={`text-sm text-gray-500 dark:text-gray-400 mt-0.5 whitespace-pre-line ${isMultiline ? "line-clamp-2 break-words" : ""}`}>
             {entry.explanation}
           </p>
           {/* Example */}
           {entry.example && (
             <p
-              className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-gray-400 dark:border-gray-200 pl-3${isMultiline ? " line-clamp-3 break-words" : ""}`}>
+              className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-gray-400 dark:border-gray-200 whitespace-pre-line pl-3${isMultiline ? " line-clamp-3 break-words" : ""}`}>
               {entry.example}
             </p>
           )}{" "}
