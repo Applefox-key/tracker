@@ -43,8 +43,8 @@ export function SideDrawer({
         className={`sm:hidden fixed z-[51] bg-emerald-600 text-white shadow-lg select-none flex flex-col items-center gap-1 p-2 opacity-70
           transition-[transform,opacity] duration-300 ease-in-out
           ${open ? "opacity-100" : "opacity-70"}
-          ${topline ? "top-[12px]" : "top-[126px]"}
-          ${isRight ? "right-0 rounded-l-xl" : "left-0 rounded-r-xl"}
+          ${topline ? "top-[12px]" : "top-[90px]"}
+          ${isRight ? "right-0 rounded-l-md" : "left-0 rounded-r-md"}
           ${isRight && open ? "-translate-x-72" : ""}
           ${!isRight && open ? "translate-x-72" : ""}`}>
         {tabIcon}
