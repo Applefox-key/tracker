@@ -17,8 +17,14 @@ export type LangCode = (typeof ALL_SPEECH_LANGS)[number]["code"]
 /** Shown when the user hasn't configured anything */
 export const DEFAULT_SPEECH_LANGS: LangCode[] = ["en-US"]
 
+export interface TrackerSettings {
+  onboarded?: boolean
+}
+
 export interface UserSettings {
+  langUI?: string
   speechLangs?: LangCode[]
+  tracker?: TrackerSettings
 }
 
 /**

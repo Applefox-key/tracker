@@ -4,6 +4,7 @@ import {
   parseUserSettings,
   DEFAULT_SPEECH_LANGS,
   type LangCode,
+  type TrackerSettings,
   type UserSettings,
 } from '@/lib/userSettings'
 
@@ -31,26 +32,31 @@ export function useUserSettings() {
         : DEFAULT_SPEECH_LANGS
       : readLocalLangs()
 
-  async function saveSpeechLangs(langs: LangCode[]): Promise<void> {
-    if (!user) {
-      // Demo / unauthenticated: persist to localStorage only
-      localStorage.setItem(LS_SPEECH_LANGS, JSON.stringify(langs))
-      return
-    }
+  const tracker: TrackerSettings = settings.tracker ?? {}
 
-    const next: UserSettings = { ...settings, speechLangs: langs }
-
-    // Optimistic update — components see new langs immediately
+  async function saveSettings(patch: Partial<UserSettings>): Promise<void> {
+    if (!user) return
+    const next: UserSettings = { ...settings, ...patch }
     setUser({ ...user, settings: next as Record<string, unknown> })
-
     try {
       const updated = await authApi.updateUser({ settings: next as Record<string, unknown> })
       if (updated?.id) setUser(updated)
     } catch {
-      // Revert on error
       setUser(user)
     }
   }
 
-  return { settings, speechLangs, saveSpeechLangs }
+  async function saveSpeechLangs(langs: LangCode[]): Promise<void> {
+    if (!user) {
+      localStorage.setItem(LS_SPEECH_LANGS, JSON.stringify(langs))
+      return
+    }
+    await saveSettings({ speechLangs: langs })
+  }
+
+  async function saveTracker(patch: Partial<TrackerSettings>): Promise<void> {
+    await saveSettings({ tracker: { ...tracker, ...patch } })
+  }
+
+  return { settings, speechLangs, tracker, saveSpeechLangs, saveTracker }
 }
