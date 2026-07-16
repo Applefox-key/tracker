@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
 import { usePracticeEntries, usePracticeTags, shuffle } from "@/features/practice/hooks/usePracticeEntries";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
@@ -26,6 +27,7 @@ function buildColumns(entries: Entry[]): { words: MatchCard[]; explanations: Mat
 }
 
 export function MatchPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const allTags = usePracticeTags();
 
@@ -146,6 +148,8 @@ export function MatchPage() {
     );
   }
 
+  const filtersTitle = t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "");
+
   if (!isPlaying) {
     const canStart = filteredEntries.length >= 2;
     return (
@@ -156,16 +160,16 @@ export function MatchPage() {
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             <FaArrowLeft />
           </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Match</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.match.title")}</h1>
           <div className="hidden sm:flex items-center gap-2 ml-auto">
             <Button variant={showFilters ? "primary" : "secondary"} size="sm" onClick={() => setShowFilters((v) => !v)}>
-              Filters
+              {t("practice.filters")}
               {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
               <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
             </Button>
             {activeFilterCount > 0 && (
               <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">
-                Clear
+                {t("practice.clear")}
               </button>
             )}
           </div>
@@ -187,8 +191,8 @@ export function MatchPage() {
           open={isMobileDrawerOpen}
           onClose={() => setIsMobileDrawerOpen(false)}
           onOpen={() => setIsMobileDrawerOpen(true)}
-          tabLabel="FILTERS"
-          title={`Filters${activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}`}
+          tabLabel={t("practice.filters").toUpperCase()}
+          title={filtersTitle}
           topline
           hasActiveIndicator={activeFilterCount > 0}>
           <PracticeFilterPanel
@@ -202,7 +206,7 @@ export function MatchPage() {
           />
           {activeFilterCount > 0 && (
             <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
-              Clear filters
+              {t("practice.clearFilters")}
             </button>
           )}
         </SideDrawer>
@@ -210,17 +214,19 @@ export function MatchPage() {
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">🔗</span>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Match Mode</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Connect words with their explanations</p>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t("practice.match.modeName")}</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{t("practice.match.modeDesc")}</p>
           </div>
-          <p className="text-sm text-gray-400 dark:text-gray-500">{filteredEntries.length} entries available</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">
+            {t("practice.entriesAvailable", { count: filteredEntries.length })}
+          </p>
           {!canStart && (
             <p className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-2">
-              Need at least 2 entries to start
+              {t("practice.match.needAtLeast2")}
             </p>
           )}
           <Button onClick={startSession} disabled={!canStart} size="lg">
-            Start Match →
+            {t("practice.match.startMatch")}
           </Button>
         </div>
       </div>
@@ -234,30 +240,30 @@ export function MatchPage() {
           <button
             onClick={() => navigate("/practice")}
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-            ← Practice
+            {t("practice.backToPractice")}
           </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Match — Done!</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.match.resultsTitle")}</h1>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">🎉</span>
           <div className="flex flex-col gap-3 w-full">
             <div>
               <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{totalPairs}</p>
-              <p className="text-gray-500 dark:text-gray-400 mt-1">pairs matched</p>
+              <p className="text-gray-500 dark:text-gray-400 mt-1">{t("practice.match.pairsMatched")}</p>
             </div>
             <div>
               <p
                 className={`text-3xl font-bold ${totalErrors === 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>
                 {totalErrors}
               </p>
-              <p className="text-gray-500 dark:text-gray-400 mt-1">mistakes</p>
+              <p className="text-gray-500 dark:text-gray-400 mt-1">{t("practice.match.mistakes")}</p>
             </div>
           </div>
           <div className="flex gap-3 flex-wrap justify-center">
             <Button variant="secondary" onClick={startSession}>
-              Play again
+              {t("practice.match.playAgain")}
             </Button>
-            <Button onClick={() => navigate("/practice")}>Back to Practice</Button>
+            <Button onClick={() => navigate("/practice")}>{t("practice.match.backToPractice")}</Button>
           </div>
         </div>
       </div>
@@ -284,7 +290,7 @@ export function MatchPage() {
           <button
             onClick={() => setIsPlaying(false)}
             className="text-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
-            ✕ Quit
+            {t("practice.quit")}
           </button>
           <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
             <div
@@ -299,10 +305,10 @@ export function MatchPage() {
 
         <div className="grid grid-cols-2 gap-3">
           <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center">
-            Words
+            {t("practice.match.wordsCol")}
           </p>
           <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center">
-            Explanations
+            {t("practice.match.explanationsCol")}
           </p>
         </div>
 
@@ -355,17 +361,21 @@ export function MatchPage() {
 
         {!roundComplete && (
           <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
-            Select a word, then its explanation to match
+            {t("practice.match.selectHint")}
           </p>
         )}
 
         {roundComplete && (
           <div className="flex flex-col items-center gap-4 py-4">
             <p className="text-green-600 dark:text-green-400 font-semibold">
-              {roundStart + ROUND_SIZE >= allEntries.length ? "All pairs matched! 🎉" : "Round complete! 🎉"}
+              {roundStart + ROUND_SIZE >= allEntries.length
+                ? t("practice.match.allPairsMatched")
+                : t("practice.match.roundComplete")}
             </p>
             <Button onClick={advanceRound}>
-              {roundStart + ROUND_SIZE >= allEntries.length ? "See results" : "Next round →"}
+              {roundStart + ROUND_SIZE >= allEntries.length
+                ? t("practice.match.seeResults")
+                : t("practice.match.nextRound")}
             </Button>
           </div>
         )}

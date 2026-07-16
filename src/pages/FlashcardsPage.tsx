@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
 
 const LS_START_SIDE = "flashcard_start_side";
@@ -14,15 +15,10 @@ import { EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { FaShuffle } from "react-icons/fa6";
 
-const CATEGORIES: Array<{ key: EntryCategory; label: string }> = [
-  { key: "word", label: "Words" },
-  { key: "phrase", label: "Phrases" },
-  { key: "grammar", label: "Grammar" },
-  { key: "idiom", label: "Idioms" },
-  { key: "note", label: "Notes" },
-];
+const CATEGORY_KEYS: EntryCategory[] = ["word", "phrase", "grammar", "idiom", "note"];
 
 export function FlashcardsPage() {
+  const { t } = useTranslation();
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null);
   const [selectedTag, setSelectedTag] = useState<number | null>(null);
@@ -88,6 +84,8 @@ export function FlashcardsPage() {
     "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600";
   const filterBtnActive = "bg-emerald-600 text-white border-emerald-600";
 
+  const filtersTitle = t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "");
+
   return (
     <div className="flex flex-col gap-4">
       {/* ── Compact header block ─────────────────────────────── */}
@@ -98,7 +96,9 @@ export function FlashcardsPage() {
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             <FaArrowLeft />
           </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 shrink-0">Flashcards</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 shrink-0">
+            {t("practice.flashcards.title")}
+          </h1>
         </div>
 
         <div className="flex items-center gap-3 sm:ml-auto flex-wrap sm:flex-nowrap">
@@ -110,22 +110,18 @@ export function FlashcardsPage() {
 
           <button
             onClick={toggleStartSide}
-            title={
-              startSide === "word"
-                ? "Showing word first — click to show explanation first"
-                : "Showing explanation first — click to show word first"
-            }
+            title={startSide === "word" ? t("practice.flashcards.showingWordFirst") : t("practice.flashcards.showingExplanationFirst")}
             className={[
               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors",
               filterBtnInactive,
             ].join(" ")}>
             <span>{startSide === "word" ? "🔤" : "💬"}</span>
-            <span>{startSide === "word" ? "Word first" : "Explanation first"}</span>
+            <span>{startSide === "word" ? t("practice.flashcards.wordFirst") : t("practice.flashcards.explanationFirst")}</span>
           </button>
 
           <button
             onClick={handleShuffle}
-            title="Shuffle cards"
+            title={t("practice.flashcards.shuffle")}
             className={[
               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors",
               filterBtnInactive,
@@ -133,20 +129,20 @@ export function FlashcardsPage() {
             <span className={shaking ? "animate-shake inline-block" : "inline-block"}>
               <FaShuffle />
             </span>
-            <span>Shuffle</span>
+            <span>{t("practice.flashcards.shuffle")}</span>
           </button>
 
           {/* Filters button + Clear — desktop only */}
           <div className="hidden sm:flex items-center gap-3">
             <div className="w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
             <Button variant={showFilters ? "primary" : "secondary"} size="sm" onClick={() => setShowFilters((v) => !v)}>
-              Filters
+              {t("practice.filters")}
               {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
               <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
             </Button>
             {activeFilterCount > 0 && (
               <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium shrink-0">
-                Clear
+                {t("practice.clear")}
               </button>
             )}
           </div>
@@ -159,7 +155,9 @@ export function FlashcardsPage() {
       {showFilters && (
         <div className="hidden sm:flex flex-col gap-3 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
           <div className="flex items-start gap-2 flex-wrap">
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pt-1.5 shrink-0 w-16">Category:</span>
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pt-1.5 shrink-0 w-16">
+              {t("practice.filterPanel.category")}
+            </span>
             <div className="flex gap-1.5 flex-wrap">
               <button
                 onClick={() => setSelectedCategory(null)}
@@ -167,9 +165,9 @@ export function FlashcardsPage() {
                   "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
                   selectedCategory === null ? filterBtnActive : filterBtnInactive,
                 ].join(" ")}>
-                All
+                {t("practice.filterPanel.all")}
               </button>
-              {CATEGORIES.map(({ key, label }) => (
+              {CATEGORY_KEYS.map((key) => (
                 <button
                   key={key}
                   onClick={() => setSelectedCategory(selectedCategory === key ? null : key)}
@@ -177,7 +175,7 @@ export function FlashcardsPage() {
                     "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
                     selectedCategory === key ? filterBtnActive : filterBtnInactive,
                   ].join(" ")}>
-                  {label}
+                  {t(`dashboard.categories.${key}`)}
                 </button>
               ))}
             </div>
@@ -185,7 +183,9 @@ export function FlashcardsPage() {
 
           {allTags.length > 0 && (
             <div className="flex items-start gap-2 flex-wrap">
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pt-1 shrink-0 w-16">Tag:</span>
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pt-1 shrink-0 w-16">
+                {t("practice.filterPanel.tag")}
+              </span>
               <div className="flex gap-1.5 flex-wrap">
                 {allTags.map((tag) => (
                   <button
@@ -211,12 +211,14 @@ export function FlashcardsPage() {
         open={isMobileDrawerOpen}
         onClose={() => setIsMobileDrawerOpen(false)}
         onOpen={() => setIsMobileDrawerOpen(true)}
-        tabLabel="FILTERS"
-        title={`Filters${activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}`}
+        tabLabel={t("practice.filters").toUpperCase()}
+        title={filtersTitle}
         topline
         hasActiveIndicator={activeFilterCount > 0}>
         <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Category</span>
+          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+            {t("practice.filterPanel.category")}
+          </span>
           <div className="flex gap-1.5 flex-wrap">
             <button
               onClick={() => setSelectedCategory(null)}
@@ -224,9 +226,9 @@ export function FlashcardsPage() {
                 "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
                 selectedCategory === null ? filterBtnActive : filterBtnInactive,
               ].join(" ")}>
-              All
+              {t("practice.filterPanel.all")}
             </button>
-            {CATEGORIES.map(({ key, label }) => (
+            {CATEGORY_KEYS.map((key) => (
               <button
                 key={key}
                 onClick={() => setSelectedCategory(selectedCategory === key ? null : key)}
@@ -234,20 +236,24 @@ export function FlashcardsPage() {
                   "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
                   selectedCategory === key ? filterBtnActive : filterBtnInactive,
                 ].join(" ")}>
-                {label}
+                {t(`dashboard.categories.${key}`)}
               </button>
             ))}
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Rating</span>
+          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+            {t("practice.filterPanel.rating")}
+          </span>
           <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />
         </div>
 
         {allTags.length > 0 && (
           <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Tag</span>
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+              {t("practice.filterPanel.tag")}
+            </span>
             <div className="flex gap-1.5 flex-wrap">
               {allTags.map((tag) => (
                 <button
@@ -268,7 +274,7 @@ export function FlashcardsPage() {
 
         {activeFilterCount > 0 && (
           <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
-            Clear filters
+            {t("practice.clearFilters")}
           </button>
         )}
       </SideDrawer>
@@ -277,11 +283,11 @@ export function FlashcardsPage() {
       {!currentCard ? (
         <div className="flex flex-col items-center justify-center min-h-[30vh] gap-3 text-center">
           <p className="text-gray-400 dark:text-gray-500 text-lg">
-            {activeFilterCount > 0 ? "No flashcards match your filters." : "No flashcards available."}
+            {activeFilterCount > 0 ? t("practice.flashcards.noCardsFiltered") : t("practice.flashcards.noCards")}
           </p>
           {activeFilterCount > 0 && (
             <button onClick={clearFilters} className="text-sm text-emerald-500 hover:underline">
-              Clear filters
+              {t("practice.clearFilters")}
             </button>
           )}
         </div>
@@ -301,15 +307,17 @@ export function FlashcardsPage() {
 
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">Rating:</span>
+              <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">
+                {t("practice.flashcards.rating")}
+              </span>
               <RatingStars value={currentCard.rating} onChange={(v) => updateEntry(currentCard.id, { rating: v })} />
             </div>
             <button
               onClick={() => updateEntry(currentCard.id, { includeInPractice: false })}
               className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 active:text-red-700 transition-colors font-medium px-2 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 active:bg-red-100"
-              title="Remove from practice">
+              title={t("practice.flashcards.remove")}>
               <span>✕</span>
-              <span>Remove</span>
+              <span>{t("practice.flashcards.remove")}</span>
             </button>
           </div>
 
@@ -322,7 +330,7 @@ export function FlashcardsPage() {
             onReset={reset}
           />
           <p className="text-center text-xs text-gray-300 dark:text-gray-600">
-            Tap the card to flip · use buttons to navigate
+            {t("practice.flashcards.tapHint")}
           </p>
         </div>
       )}

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Flashcard } from "../types";
 import { SpeakButton } from "@/shared/ui/SpeakButton";
 import { EntryImage } from "@/shared/ui/EntryImage";
@@ -11,9 +12,10 @@ interface FlashCardProps {
 }
 
 export function FlashCard({ card, isFlipped, onFlip, reversed = false, flipAnimated = true }: FlashCardProps) {
-  const frontLabel = reversed ? "Explanation" : "Word";
+  const { t } = useTranslation();
+  const frontLabel = reversed ? t("practice.flashcards.explanationLabel") : t("practice.flashcards.wordLabel");
   const frontText = reversed ? card.back : card.front;
-  const backLabel = reversed ? "Word" : "Explanation";
+  const backLabel = reversed ? t("practice.flashcards.wordLabel") : t("practice.flashcards.explanationLabel");
   const backText = reversed ? card.front : card.back;
 
   return (
@@ -43,7 +45,7 @@ export function FlashCard({ card, isFlipped, onFlip, reversed = false, flipAnima
 
           {/* Footer */}
           <div className="shrink-0 px-5 pb-4 pt-2 flex justify-center">
-            <span className="text-xs text-gray-300 dark:text-gray-600">tap to reveal</span>
+            <span className="text-xs text-gray-300 dark:text-gray-600">{t("practice.flashcards.tapToReveal")}</span>
           </div>
         </div>
 
@@ -84,7 +86,7 @@ export function FlashCard({ card, isFlipped, onFlip, reversed = false, flipAnima
 
           {/* Footer */}
           <div className="shrink-0 px-5 pb-4 pt-2 flex justify-center">
-            <span className="text-xs text-emerald-300">tap to flip back</span>
+            <span className="text-xs text-emerald-300">{t("practice.flashcards.tapToFlipBack")}</span>
           </div>
         </div>
       </div>

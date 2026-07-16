@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Entry } from "../types";
 import { MULTILINE_CATEGORIES } from "../constants";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
@@ -29,6 +30,7 @@ interface EntryCardProps {
 }
 
 export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
+  const { t } = useTranslation();
   const { updateEntry } = useEntryCrud();
   const isMultiline = MULTILINE_CATEGORIES.has(entry.category);
 
@@ -50,10 +52,10 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
         </p>
         <span
           className={[
-            "shrink-0 inline-block px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
+            "shrink-0 inline-block px-2.5 py-0.5 rounded-full text-xs font-medium",
             categoryColors[entry.category],
           ].join(" ")}>
-          {entry.category}
+          {t(`dashboard.categories.${entry.category}`)}
         </span>
       </div>{" "}
       {/* Content row */}{" "}
@@ -102,7 +104,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
           <ToggleSwitch
             checked={entry.includeInPractice}
             onChange={(v) => updateEntry(entry.id, { includeInPractice: v })}
-            label="Practice"
+            label={t("entries.card.practice")}
           />{" "}
         </div>
 
@@ -112,14 +114,14 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
             size="sm"
             onClick={() => onEdit(entry)}
             className="text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
-            Edit
+            {t("entries.card.edit")}
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onRemove(entry.id)}
             className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
-            Remove
+            {t("entries.card.remove")}
           </Button>
         </div>
       </div>

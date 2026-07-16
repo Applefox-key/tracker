@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Entry } from "../types";
 import { MULTILINE_CATEGORIES } from "../constants";
 import { Button } from "@/shared/ui/Button";
@@ -22,6 +23,7 @@ interface EntryDetailModalProps {
 }
 
 export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalProps) {
+  const { t } = useTranslation();
   const isMultiline = MULTILINE_CATEGORIES.has(entry.category);
 
   useEffect(() => {
@@ -51,10 +53,10 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
             <div className="flex items-center gap-2 mt-1.5">
               <span
                 className={[
-                  "inline-block px-2.5 py-0.5 rounded-full text-xs font-medium capitalize",
+                  "inline-block px-2.5 py-0.5 rounded-full text-xs font-medium",
                   categoryColors[entry.category],
                 ].join(" ")}>
-                {entry.category}
+                {t(`dashboard.categories.${entry.category}`)}
               </span>
               <SpeakButton text={entry.word} />
             </div>
@@ -81,7 +83,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
               {entry.explanation && (
                 <div>
                   <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
-                    Explanation
+                    {t("entries.detail.explanation")}
                   </p>
                   <p
                     className={`text-sm text-gray-700 dark:text-gray-300 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
@@ -92,7 +94,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
               {entry.example && (
                 <div>
                   <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
-                    Example
+                    {t("entries.detail.example")}
                   </p>
                   <p
                     className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
@@ -118,7 +120,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
             </div>
             <div className="flex items-center justify-end gap-2">
               <span className="text-sm text-gray-600 dark:text-gray-400">
-                {entry.includeInPractice ? "In practice" : "Not in practice"}
+                {entry.includeInPractice ? t("entries.detail.inPractice") : t("entries.detail.notInPractice")}
               </span>
               <span
                 className={[
@@ -149,7 +151,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
         <div className="flex justify-between gap-2 px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 sm:rounded-b-2xl">
           <div className="flex items-center">
             <p className="text-xs text-gray-300 dark:text-gray-600">
-              Added{" "}
+              {t("entries.detail.added")}{" "}
               {new Date(entry.createdAt).toLocaleDateString("en-GB", {
                 day: "numeric",
                 month: "long",
@@ -159,9 +161,9 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={onClose}>
-              Close
+              {t("entries.detail.close")}
             </Button>
-            <Button onClick={handleEdit}>Edit</Button>
+            <Button onClick={handleEdit}>{t("entries.detail.edit")}</Button>
           </div>
         </div>
       </div>

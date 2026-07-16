@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { useEntriesStore } from "@/features/entries/store/entriesStore";
 import { useEntryTags, useDeleteEntryTag } from "@/hooks/useEntries";
@@ -17,6 +18,7 @@ function TagRow({
   onRename: (id: number, name: string) => Promise<void>;
   onDelete: (id: number) => void;
 }) {
+  const { t } = useTranslation();
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(tag.name);
   const [saving, setSaving] = useState(false);
@@ -52,7 +54,7 @@ function TagRow({
       )}
 
       <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">
-        {usageCount} {usageCount === 1 ? "entry" : "entries"}
+        {t("tags.entry", { count: usageCount })}
       </span>
 
       {editing ? (
@@ -61,33 +63,33 @@ function TagRow({
             onClick={save}
             disabled={saving}
             className="text-xs px-2.5 py-1 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 transition-colors">
-            {saving ? "…" : "Save"}
+            {saving ? "…" : t("tags.save")}
           </button>
           <button
             onClick={() => { setEditing(false); setValue(tag.name); }}
             className="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-            Cancel
+            {t("tags.cancel")}
           </button>
         </div>
       ) : confirmDelete ? (
         <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-xs text-red-500">Delete?</span>
+          <span className="text-xs text-red-500">{t("tags.deleteConfirm")}</span>
           <button
             onClick={() => onDelete(tag.id)}
             className="text-xs px-2.5 py-1 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors">
-            Yes
+            {t("tags.yes")}
           </button>
           <button
             onClick={() => setConfirmDelete(false)}
             className="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-            No
+            {t("tags.no")}
           </button>
         </div>
       ) : (
         <div className="flex gap-1 shrink-0">
           <button
             onClick={() => setEditing(true)}
-            title="Rename"
+            title={t("tags.rename")}
             className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -96,7 +98,7 @@ function TagRow({
           </button>
           <button
             onClick={() => setConfirmDelete(true)}
-            title="Delete"
+            title={t("tags.delete")}
             className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="3 6 5 6 21 6" />
@@ -112,6 +114,7 @@ function TagRow({
 }
 
 export function TagsPage() {
+  const { t } = useTranslation();
   const mode = useAuthStore((s) => s.mode);
   const entries = useEntriesStore((s) => s.entries);
   const updateEntry = useEntriesStore((s) => s.updateEntry);
@@ -165,14 +168,14 @@ export function TagsPage() {
   return (
     <div className="flex flex-col gap-6 max-w-xl mx-auto w-full">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Tags</h1>
-        <span className="text-sm text-gray-400 dark:text-gray-500">{tags.length} total</span>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("tags.title")}</h1>
+        <span className="text-sm text-gray-400 dark:text-gray-500">{t("tags.total", { count: tags.length })}</span>
       </div>
 
       {tags.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[20vh] gap-2 text-center">
-          <p className="text-gray-400 dark:text-gray-500">No tags yet.</p>
-          <p className="text-sm text-gray-300 dark:text-gray-600">Add tags to entries to manage them here.</p>
+          <p className="text-gray-400 dark:text-gray-500">{t("tags.noTagsYet")}</p>
+          <p className="text-sm text-gray-300 dark:text-gray-600">{t("tags.noTagsHint")}</p>
         </div>
       ) : (
         <div className="flex flex-col gap-2">

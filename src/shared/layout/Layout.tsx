@@ -1,21 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { DemoBanner } from "@/features/auth/components/DemoBanner";
 import { DarkModeToggle } from "@/shared/ui/DarkModeToggle";
+import { LanguageSwitcher } from "@/shared/ui/LanguageSwitcher";
 import { useEntriesData } from "@/hooks/useEntriesData";
 import { getAvatarUrl } from "@/api/api";
 import { ImStatsBars } from "react-icons/im";
 import { PiCardsThree } from "react-icons/pi";
 import { TbTargetArrow } from "react-icons/tb";
 import { IoPricetagsOutline } from "react-icons/io5";
-const navItems = [
-  { to: "/dashboard", label: "Dashboard", icon: <ImStatsBars /> },
-  { to: "/entries", label: "Entries", icon: <PiCardsThree /> },
-  { to: "/practice", label: "Practice", icon: <TbTargetArrow /> },
-  { to: "/tags", label: "Tags", icon: <IoPricetagsOutline /> },
-  { to: "/about", label: "About", icon: "ℹ️" },
-];
 
 const APPS = [
   {
@@ -45,6 +40,7 @@ const APPS = [
 ] as const;
 
 export function Layout() {
+  const { t } = useTranslation();
   const { isAuthenticated, mode, user, logout } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -53,6 +49,14 @@ export function Layout() {
   );
   const [appsOpen, setAppsOpen] = useState(false);
   const [burgerOpen, setBurgerOpen] = useState(false);
+
+  const navItems = [
+    { to: "/dashboard", labelKey: "nav.dashboard", icon: <ImStatsBars /> },
+    { to: "/entries", labelKey: "nav.entries", icon: <PiCardsThree /> },
+    { to: "/practice", labelKey: "nav.practice", icon: <TbTargetArrow /> },
+    { to: "/tags", labelKey: "nav.tags", icon: <IoPricetagsOutline /> },
+    { to: "/about", labelKey: "nav.about", icon: "ℹ️" },
+  ];
 
   useEffect(() => {
     if (!appsOpen) return;
@@ -73,7 +77,7 @@ export function Layout() {
 
   const navLinkCls = ({ isActive }: { isActive: boolean }) =>
     [
-      "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+      "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors min-w-fit",
       isActive
         ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
         : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
@@ -103,7 +107,7 @@ export function Layout() {
           <p className="text-xs text-green-500 leading-tight truncate">{app.desc}</p>
         </div>
         <span className="ml-auto text-xs bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 rounded px-1.5 py-0.5 shrink-0">
-          now
+          {t("layout.appNow")}
         </span>
       </div>
     ) : (
@@ -138,7 +142,7 @@ export function Layout() {
             <button
               onClick={() => setBurgerOpen((v) => !v)}
               className="sm:hidden flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              aria-label="Menu">
+              aria-label={t("layout.menu")}>
               {burgerOpen ? (
                 <svg
                   width="18"
@@ -168,23 +172,25 @@ export function Layout() {
             </button>
             {/* Logo - desktop only */}
             <span className="hidden sm:inline text-xl font-bold text-emerald-600 tracking-tight">
-              Language Progress
+              {t("layout.logo")}
             </span>
           </div>
 
           {/* Title - mobile only, absolutely centered */}
           <span className="sm:hidden absolute left-1/2 -translate-x-1/2 text-xl font-bold text-emerald-600 tracking-tight whitespace-nowrap pointer-events-none">
-            Language Progress
+            {t("layout.logo")}
           </span>
 
           {/* Desktop nav */}
           <nav className="hidden sm:flex items-center gap-1">
-            {navItems.map(({ to, label, icon }) => (
-              <NavLink key={to} to={to} end className={navLinkCls}>
-                <span>{icon}</span>
-                <span>{label}</span>
-              </NavLink>
-            ))}
+            {navItems
+              .filter(({ to }) => !(isAuthenticated && to === "/about"))
+              .map(({ to, labelKey, icon }) => (
+                <NavLink key={to} to={to} end className={navLinkCls}>
+                  <span>{icon}</span>
+                  <span>{t(labelKey)}</span>
+                </NavLink>
+              ))}
           </nav>
 
           {/* Right controls */}
@@ -192,6 +198,11 @@ export function Layout() {
             {/* Theme toggle - desktop only; on mobile it lives inside the burger menu */}
             <div className="hidden sm:block">
               <DarkModeToggle />
+            </div>
+
+            {/* Language switcher - desktop only; on mobile it lives inside the burger menu */}
+            <div className="hidden sm:block">
+              <LanguageSwitcher />
             </div>
 
             {/* Apps dropdown - desktop only */}
@@ -209,7 +220,7 @@ export function Layout() {
                   <rect x="1" y="10" width="5" height="5" rx="1.5" />
                   <rect x="10" y="10" width="5" height="5" rx="1.5" />
                 </svg>
-                <span>Apps</span>
+                <span>{t("layout.apps")}</span>
                 <svg
                   width="10"
                   height="10"
@@ -225,7 +236,7 @@ export function Layout() {
               {appsOpen && (
                 <div className="absolute right-0 top-10 z-50 w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-xl p-3">
                   <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2.5 px-1">
-                    learnypie.com — all tools
+                    {t("layout.appsLabel")}
                   </p>
                   <div className="grid grid-cols-2 gap-2">
                     {APPS.map((app) =>
@@ -244,7 +255,7 @@ export function Layout() {
                           <span className="text-xs font-semibold text-green-800 dark:text-green-400">{app.name}</span>
                           <span className="text-xs text-green-500 dark:text-green-500 leading-tight">{app.desc}</span>
                           <span className="text-xs bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 rounded px-1.5 py-0.5 w-fit mt-0.5">
-                            current
+                            {t("layout.appCurrent")}
                           </span>
                         </div>
                       ) : (
@@ -275,7 +286,7 @@ export function Layout() {
             {isAuthenticated && (
               <div className="flex items-center gap-1 ml-1">
                 {mode === "authenticated" && user?.name && (
-                  <Link to="/profile" title="Profile">
+                  <Link to="/profile" title={t("layout.profile")}>
                     {user?.img ? (
                       <img
                         src={getAvatarUrl(user.img, user.id) ?? undefined}
@@ -293,7 +304,7 @@ export function Layout() {
                 <button
                   onClick={handleLogout}
                   className="hidden sm:block text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors px-2 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20">
-                  {mode === "demo" ? "Exit demo" : "Logout"}
+                  {mode === "demo" ? t("layout.exitDemo") : t("layout.logout")}
                 </button>
               </div>
             )}
@@ -307,7 +318,7 @@ export function Layout() {
           <div className="sm:hidden fixed inset-0 z-20 bg-black/40" onClick={() => setBurgerOpen(false)} />
           <div className="sm:hidden fixed top-0 left-0 bottom-0 z-30 w-72 bg-white dark:bg-gray-800 shadow-xl flex flex-col">
             <div className="flex items-center justify-between px-4 h-16 border-b border-gray-200 dark:border-gray-700 shrink-0">
-              <span className="text-base font-bold text-emerald-600">Language Progress</span>
+              <span className="text-base font-bold text-emerald-600">{t("layout.logo")}</span>
               <button
                 onClick={() => setBurgerOpen(false)}
                 className="flex items-center justify-center w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
@@ -328,34 +339,42 @@ export function Layout() {
             <div className="flex-1 overflow-y-auto py-3 px-3 flex flex-col gap-1">
               {/* Theme toggle */}
               <div className="flex items-center justify-between px-3 py-2 mb-1 rounded-xl bg-gray-50 dark:bg-gray-700/50">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Theme</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("layout.theme")}</span>
                 <DarkModeToggle />
               </div>
 
+              {/* Language switcher */}
+              <div className="flex items-center justify-between px-3 py-2 mb-1 rounded-xl bg-gray-50 dark:bg-gray-700/50">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("layout.language")}</span>
+                <LanguageSwitcher />
+              </div>
+
               {/* Nav items */}
-              {navItems.map(({ to, label, icon }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  end
-                  onClick={() => setBurgerOpen(false)}
-                  className={({ isActive }) =>
-                    [
-                      "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
-                        : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700",
-                    ].join(" ")
-                  }>
-                  <span className="text-base">{icon}</span>
-                  <span>{label}</span>
-                </NavLink>
-              ))}
+              {navItems
+                .filter(({ to }) => !(isAuthenticated && to === "/about"))
+                .map(({ to, labelKey, icon }) => (
+                  <NavLink
+                    key={to}
+                    to={to}
+                    end
+                    onClick={() => setBurgerOpen(false)}
+                    className={({ isActive }) =>
+                      [
+                        "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
+                        isActive
+                          ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                          : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700",
+                      ].join(" ")
+                    }>
+                    <span className="text-base">{icon}</span>
+                    <span>{t(labelKey)}</span>
+                  </NavLink>
+                ))}
 
               {/* Apps section */}
               <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                 <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2 px-1">
-                  learnypie.com — all tools
+                  {t("layout.appsLabel")}
                 </p>
                 <div className="flex flex-col gap-1.5">
                   {APPS.map((app) => (
@@ -366,7 +385,9 @@ export function Layout() {
             </div>
 
             {isAuthenticated && (
-              <div className="px-3 pt-2 border-t border-gray-200 dark:border-gray-700 shrink-0" style={{ paddingBottom: "calc(3.5rem + env(safe-area-inset-bottom))" }}>
+              <div
+                className="px-3 pt-2 border-t border-gray-200 dark:border-gray-700 shrink-0"
+                style={{ paddingBottom: "calc(3.5rem + env(safe-area-inset-bottom))" }}>
                 <button
                   onClick={() => {
                     setBurgerOpen(false);
@@ -386,7 +407,7 @@ export function Layout() {
                     <polyline points="16 17 21 12 16 7" />
                     <line x1="21" y1="12" x2="9" y2="12" />
                   </svg>
-                  {mode === "demo" ? "Exit demo" : "Logout"}
+                  {mode === "demo" ? t("layout.exitDemo") : t("layout.logout")}
                 </button>
               </div>
             )}
@@ -404,7 +425,15 @@ export function Layout() {
 
       {/* Footer - desktop only */}
       <footer className="hidden sm:block border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 py-4 text-center text-xs text-gray-400 dark:text-gray-500">
-        Language Progress — keep learning every day
+        {t("layout.footer")}
+        {isAuthenticated && (
+          <>
+            {" · "}
+            <NavLink to="/about" className={({ isActive }) => isActive ? "text-emerald-600 dark:text-emerald-400" : "hover:text-gray-600 dark:hover:text-gray-300 transition-colors"}>
+              {t("nav.about")}
+            </NavLink>
+          </>
+        )}
       </footer>
 
       {/* ── Bottom navigation bar — mobile only ── */}
@@ -414,10 +443,10 @@ export function Layout() {
         <div className="flex items-center justify-around h-14 px-1">
           {navItems
             .filter(({ to }) => to !== "/tags" && to !== "/about")
-            .map(({ to, label, icon }) => (
+            .map(({ to, labelKey, icon }) => (
               <NavLink key={to} to={to} end className={bottomNavLinkCls}>
                 <span className="text-xl leading-none">{icon}</span>
-                <span>{label}</span>
+                <span>{t(labelKey)}</span>
               </NavLink>
             ))}
         </div>

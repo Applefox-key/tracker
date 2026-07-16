@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
 import { usePracticeEntries, usePracticeTags, shuffle, wordCount } from "@/features/practice/hooks/usePracticeEntries";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
@@ -52,6 +53,7 @@ function targetLength(entry: Entry): number {
 }
 
 export function PuzzlePage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const allTags = usePracticeTags();
 
@@ -142,6 +144,8 @@ export function PuzzlePage() {
     else setCurrentIdx((i) => i + 1);
   }
 
+  const filtersTitle = t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "");
+
   if (!isPlaying) {
     return (
       <div className="flex flex-col gap-6">
@@ -151,16 +155,16 @@ export function PuzzlePage() {
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             <FaArrowLeft />
           </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Puzzle</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.puzzle.title")}</h1>
           <div className="hidden sm:flex items-center gap-2 ml-auto">
             <Button variant={showFilters ? "primary" : "secondary"} size="sm" onClick={() => setShowFilters((v) => !v)}>
-              Filters
+              {t("practice.filters")}
               {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
               <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
             </Button>
             {activeFilterCount > 0 && (
               <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">
-                Clear
+                {t("practice.clear")}
               </button>
             )}
           </div>
@@ -182,8 +186,8 @@ export function PuzzlePage() {
           open={isMobileDrawerOpen}
           onClose={() => setIsMobileDrawerOpen(false)}
           onOpen={() => setIsMobileDrawerOpen(true)}
-          tabLabel="FILTERS"
-          title={`Filters${activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}`}
+          tabLabel={t("practice.filters").toUpperCase()}
+          title={filtersTitle}
           topline
           hasActiveIndicator={activeFilterCount > 0}>
           <PracticeFilterPanel
@@ -197,7 +201,7 @@ export function PuzzlePage() {
           />
           {activeFilterCount > 0 && (
             <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
-              Clear filters
+              {t("practice.clearFilters")}
             </button>
           )}
         </SideDrawer>
@@ -205,19 +209,19 @@ export function PuzzlePage() {
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">🧩</span>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Puzzle Mode</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">
-              Arrange tiles to form the correct word or phrase
-            </p>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t("practice.puzzle.modeName")}</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{t("practice.puzzle.modeDesc")}</p>
           </div>
-          <p className="text-sm text-gray-400 dark:text-gray-500">{filteredEntries.length} entries available</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">
+            {t("practice.entriesAvailable", { count: filteredEntries.length })}
+          </p>
           {filteredEntries.length === 0 && (
             <p className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-2">
-              No matching entries
+              {t("practice.puzzle.noMatchingEntries")}
             </p>
           )}
           <Button onClick={startSession} disabled={filteredEntries.length === 0} size="lg">
-            Start Puzzle →
+            {t("practice.puzzle.startPuzzle")}
           </Button>
         </div>
       </div>
@@ -232,9 +236,9 @@ export function PuzzlePage() {
           <button
             onClick={() => navigate("/practice")}
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-            ← Practice
+            {t("practice.backToPractice")}
           </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Puzzle — Done!</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.puzzle.resultsTitle")}</h1>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">{pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "💪"}</span>
@@ -242,16 +246,16 @@ export function PuzzlePage() {
             <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               {score} / {questions.length}
             </p>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">{pct}% solved correctly</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">{t("practice.puzzle.pctSolved", { pct })}</p>
           </div>
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
             <div className="bg-emerald-500 h-3 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
           </div>
           <div className="flex gap-3 flex-wrap justify-center">
             <Button variant="secondary" onClick={startSession}>
-              Try again
+              {t("practice.puzzle.tryAgain")}
             </Button>
-            <Button onClick={() => navigate("/practice")}>Back to Practice</Button>
+            <Button onClick={() => navigate("/practice")}>{t("practice.puzzle.backToPractice")}</Button>
           </div>
         </div>
       </div>
@@ -269,7 +273,7 @@ export function PuzzlePage() {
         <button
           onClick={() => setIsPlaying(false)}
           className="text-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
-          ✕ Quit
+          {t("practice.quit")}
         </button>
         <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
           <div
@@ -284,7 +288,7 @@ export function PuzzlePage() {
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 flex flex-col gap-3">
         <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">
-          {tileMode === "letter" ? "Spell the word" : "Arrange the words"}
+          {tileMode === "letter" ? t("practice.puzzle.spellWord") : t("practice.puzzle.arrangeWords")}
         </span>
         <p className="text-base font-semibold text-gray-800 dark:text-gray-100 leading-relaxed">
           {currentEntry.explanation}
@@ -298,7 +302,7 @@ export function PuzzlePage() {
             <button
               onClick={() => setShowExample(true)}
               className="text-sm text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 text-left transition-colors">
-              Show example…
+              {t("practice.puzzle.showExample")}
             </button>
           ))}
       </div>
@@ -314,7 +318,7 @@ export function PuzzlePage() {
         ].join(" ")}>
         {placed.length === 0 && answerPhase === "thinking" && (
           <span className="text-sm text-emerald-300 dark:text-emerald-700 italic">
-            Click tiles below to place them here…
+            {t("practice.puzzle.clickTiles")}
           </span>
         )}
         {placed.map((tile) => (
@@ -326,10 +330,14 @@ export function PuzzlePage() {
           </button>
         ))}
         {answerPhase === "correct" && (
-          <span className="ml-auto text-green-600 dark:text-green-400 font-semibold text-sm">✓ Correct!</span>
+          <span className="ml-auto text-green-600 dark:text-green-400 font-semibold text-sm">
+            {t("practice.puzzle.correct")}
+          </span>
         )}
         {answerPhase === "wrong" && (
-          <span className="ml-auto text-red-600 dark:text-red-400 font-semibold text-sm">✗ Try again</span>
+          <span className="ml-auto text-red-600 dark:text-red-400 font-semibold text-sm">
+            {t("practice.puzzle.wrongFeedback")}
+          </span>
         )}
       </div>
 
@@ -344,25 +352,31 @@ export function PuzzlePage() {
           </button>
         ))}
         {pool.length === 0 && answerPhase === "thinking" && (
-          <span className="text-xs text-gray-400 dark:text-gray-500 italic">All tiles placed — checking…</span>
+          <span className="text-xs text-gray-400 dark:text-gray-500 italic">
+            {t("practice.puzzle.allTilesPlaced")}
+          </span>
         )}
       </div>
 
       <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
-        {placed.length} / {tLen} tiles placed
+        {t("practice.puzzle.tilesPlaced", { placed: placed.length, total: tLen })}
       </p>
 
       {answerPhase === "wrong" && (
         <div className="flex justify-end gap-3">
           <Button variant="secondary" onClick={tryAgain}>
-            Try again
+            {t("practice.puzzle.tryAgain")}
           </Button>
-          <Button onClick={handleNext}>{currentIdx + 1 < questions.length ? "Skip →" : "Finish"}</Button>
+          <Button onClick={handleNext}>
+            {currentIdx + 1 < questions.length ? t("practice.puzzle.skip") : t("practice.puzzle.finish")}
+          </Button>
         </div>
       )}
       {answerPhase === "correct" && (
         <div className="flex justify-end">
-          <Button onClick={handleNext}>{currentIdx + 1 < questions.length ? "Next →" : "See results"}</Button>
+          <Button onClick={handleNext}>
+            {currentIdx + 1 < questions.length ? t("practice.puzzle.next") : t("practice.puzzle.seeResults")}
+          </Button>
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 import { FormEvent, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { EntryCategory } from "../types";
 import { MULTILINE_CATEGORIES } from "../constants";
 import { Button } from "@/shared/ui/Button";
@@ -66,6 +67,7 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
 }
 
 export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCancel }: EntryFormProps) {
+  const { t } = useTranslation();
   const init = initialValues ?? DEFAULT_VALUES;
 
   const [word, setWord] = useState(init.word);
@@ -80,7 +82,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
   const validLangs = speechLangs.filter((c) => c !== "") as LangCode[];
   const defaultPair = getDefaultLangPair(validLangs);
   const [wordLang, setWordLang] = useState<LangCode>(defaultPair?.from ?? validLangs[0] ?? "en-US");
-  const [explanationLang, setExplanationLang] = useState<LangCode>(defaultPair?.to ?? validLangs[1] ?? "uk-UA");
+  const [explanationLang, setExplanationLang] = useState<LangCode>(defaultPair?.to ?? validLangs[1] ?? "ua-UA");
   const [translatingExpl, setTranslatingExpl] = useState(false);
   const [translateError, setTranslateError] = useState<string | null>(null);
 
@@ -92,7 +94,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
       const result = await translateText(word.trim(), wordLang, explanationLang);
       setExplanation(result);
     } catch {
-      setTranslateError("Translation failed. Try again.");
+      setTranslateError(t("entries.form.translateError"));
     } finally {
       setTranslatingExpl(false);
     }
@@ -158,14 +160,14 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
           aria-label="Cancel">
           <FaArrowLeft />
         </button>
-        <p className="font-semibold text-emerald-800 dark:text-emerald-300">{isEdit ? "Edit Entry" : "New Entry"}</p>
+        <p className="font-semibold text-emerald-800 dark:text-emerald-300">{isEdit ? t("entries.form.editTitle") : t("entries.form.newTitle")}</p>
       </div>
 
       {/* Word & Explanation */}
       <div className={isMultiline ? "flex flex-col gap-3" : "grid grid-cols-1 sm:grid-cols-2 gap-3"}>
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Word / Phrase *</label>
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.wordPhrase")}</label>
             <VoiceInputButton onResult={(t) => setWord(t)} lang={wordLang} onLangChange={setWordLang} />
           </div>
           <input
@@ -178,7 +180,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
         </div>
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Explanation *</label>
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.explanation")}</label>
             <div className="flex items-center gap-1.5">
               {translateError && <span className="text-xs text-red-500 dark:text-red-400">{translateError}</span>}
               {validLangs.length >= 2 && (
@@ -225,7 +227,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
       {/* Example */}
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Example sentence</label>
+          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.example")}</label>
           <VoiceInputButton onResult={(t) => setExample(t)} />
         </div>
         {isMultiline ? (
@@ -248,7 +250,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
 
       {/* Category */}
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Category</label>
+        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.category")}</label>
         <div className="flex gap-2 flex-wrap">
           {CATEGORIES.map((cat) => (
             <button
@@ -256,12 +258,12 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
               type="button"
               onClick={() => setCategory(cat)}
               className={[
-                "px-2 sm:px-3 py-1.5 rounded-lg text-sm font-medium border capitalize transition-colors",
+                "px-2 sm:px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors",
                 category === cat
                   ? "bg-emerald-600 text-white border-emerald-600"
                   : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600",
               ].join(" ")}>
-              {cat}
+              {t(`dashboard.categories.${cat}`)}
             </button>
           ))}
         </div>
@@ -269,7 +271,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
 
       {/* Tags */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Tags</label>
+        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.tags")}</label>
         <TagCombobox selectedIds={selectedTagIds} onChange={setSelectedTagIds} />
       </div>
 
@@ -277,7 +279,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
       <div className="flex items-start justify-between gap-4">
         {/* Right: image upload */}
         <div className="flex flex-col gap-1.5 items-end">
-          <label className="text-xs font-medium text-gray-600 dark:text-gray-400 self-start">Image</label>
+          <label className="text-xs font-medium text-gray-600 dark:text-gray-400 self-start">{t("entries.form.image")}</label>
           {displayImgUrl ? (
             <div className="flex flex-row items-center gap-1">
               <EntryImage
@@ -290,13 +292,13 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline">
-                  Change
+                  {t("entries.form.changeImg")}
                 </button>
                 <button
                   type="button"
                   onClick={handleRemoveImg}
                   className="text-xs text-red-500 dark:text-red-400 hover:underline">
-                  Remove
+                  {t("entries.form.removeImg")}
                 </button>
               </div>
             </div>
@@ -312,7 +314,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="text-xs">Add</span>
+              <span className="text-xs">{t("entries.form.addImg")}</span>
             </button>
           )}
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
@@ -321,7 +323,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
         {/* Rating (top) + Practice (bottom) */}
         <div className="flex flex-col justify-between" style={{ minHeight: "100px" }}>
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">How well do you know it?</label>
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.ratingLabel")}</label>
             <StarRating value={rating} onChange={setRating} />
           </div>
           <div className="flex items-center gap-2">
@@ -335,7 +337,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
             <label
               htmlFor="flashcards-check"
               className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
-              Include in practice
+              {t("entries.form.practice")}
             </label>
           </div>
         </div>
@@ -344,9 +346,9 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
       {/* Actions */}
       <div className="flex gap-2 justify-end pt-1">
         <Button type="button" variant="secondary" onClick={onCancel}>
-          Cancel
+          {t("entries.form.cancel")}
         </Button>
-        <Button type="submit">{isEdit ? "Save Changes" : "Add Entry"}</Button>
+        <Button type="submit">{isEdit ? t("entries.form.saveChanges") : t("entries.form.addEntry")}</Button>
       </div>
     </form>
   );

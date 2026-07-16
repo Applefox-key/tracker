@@ -1,11 +1,13 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { authApi, getAvatarUrl } from "@/api/api";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { ALL_SPEECH_LANGS, type LangCode } from "@/lib/userSettings";
 
 export function ProfilePage() {
+  const { t } = useTranslation();
   const { user, updateUser, setUser, logout, mode } = useAuthStore();
   const navigate = useNavigate();
   const { speechLangs, saveSpeechLangs } = useUserSettings();
@@ -87,7 +89,7 @@ export function ProfilePage() {
       setAvatarPreview(null);
       setSaved(true);
     } catch {
-      setSaveError("Failed to save changes. Please try again.");
+      setSaveError(t("profile.saveError"));
     } finally {
       setSaving(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -100,13 +102,13 @@ export function ProfilePage() {
   return (
     <div className="max-w-lg mx-auto flex flex-col gap-6 py-4">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Profile</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Manage your account details</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("profile.title")}</h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{t("profile.subtitle")}</p>
       </div>
 
       {/* Avatar */}
       <div className="flex flex-col gap-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-        <p className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">Photo</p>
+        <p className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">{t("profile.photo")}</p>
         <div className="flex items-center gap-4">
           <div className="relative group">
             <button
@@ -149,23 +151,23 @@ export function ProfilePage() {
               type="button"
               onClick={handleAvatarClick}
               className="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 mt-0.5">
-              {pendingFile ? "Change again" : "Change photo"}
+              {pendingFile ? t("profile.changeAgain") : t("profile.changePhoto")}
             </button>
           </div>
         </div>
         {pendingFile && (
           <p className="text-xs text-emerald-600 dark:text-emerald-400">
-            New photo selected — will be saved when you click Save.
+            {t("profile.newPhotoSelected")}
           </p>
         )}
       </div>
 
       {/* Name & Email */}
       <div className="flex flex-col gap-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Account details</p>
+        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("profile.accountDetails")}</p>
         <div className="flex flex-col gap-1.5">
           <label htmlFor="profile-name" className="text-sm text-gray-600 dark:text-gray-400">
-            Name
+            {t("profile.name")}
           </label>
           <input
             id="profile-name"
@@ -181,7 +183,7 @@ export function ProfilePage() {
         </div>
         <div className="flex flex-col gap-1.5">
           <label htmlFor="profile-email" className="text-sm text-gray-600 dark:text-gray-400">
-            Email
+            {t("profile.email")}
           </label>
           <input
             id="profile-email"
@@ -201,9 +203,9 @@ export function ProfilePage() {
       {/* Speech languages */}
       <div className="flex flex-col gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
         <div>
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Speech languages</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("profile.speechLangs")}</p>
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-            Languages shown on the Speak and Voice Input buttons. Select at least one.
+            {t("profile.speechLangsHint")}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -235,9 +237,9 @@ export function ProfilePage() {
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 flex items-center justify-between gap-4">
         <div className="text-sm">
           {saveError && <p className="text-red-600 dark:text-red-400">{saveError}</p>}
-          {saved && <p className="text-emerald-600 dark:text-emerald-400">Changes saved.</p>}
+          {saved && <p className="text-emerald-600 dark:text-emerald-400">{t("profile.changesSaved")}</p>}
           {!saveError && !saved && isDirty && (
-            <p className="text-gray-400 dark:text-gray-500">You have unsaved changes.</p>
+            <p className="text-gray-400 dark:text-gray-500">{t("profile.unsavedChanges")}</p>
           )}
         </div>
         <button
@@ -245,7 +247,7 @@ export function ProfilePage() {
           onClick={handleSave}
           disabled={saving || !isDirty}
           className="shrink-0 px-6 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-          {saving ? "Saving…" : "Save"}
+          {saving ? t("profile.saving") : t("profile.save")}
         </button>
       </div>
 
@@ -268,7 +270,7 @@ export function ProfilePage() {
             <polyline points="16 17 21 12 16 7" />
             <line x1="21" y1="12" x2="9" y2="12" />
           </svg>
-          {mode === "demo" ? "Exit demo" : "Logout"}
+          {mode === "demo" ? t("layout.exitDemo") : t("layout.logout")}
         </button>
       </div>
     </div>

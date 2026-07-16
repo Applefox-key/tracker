@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
 import { usePracticeEntries, usePracticeTags, shuffle } from "@/features/practice/hooks/usePracticeEntries";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
@@ -20,14 +21,14 @@ function buildOptions(correct: Entry, pool: Entry[], answerField: "word" | "expl
   return shuffle([correct[answerField], ...others]);
 }
 
-function SessionHeader({ current, total, onQuit }: { current: number; total: number; onQuit: () => void }) {
+function SessionHeader({ current, total, onQuit, quitLabel }: { current: number; total: number; onQuit: () => void; quitLabel: string }) {
   const pct = total > 0 ? Math.round((current / total) * 100) : 0;
   return (
     <div className="flex items-center gap-4">
       <button
         onClick={onQuit}
         className="text-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
-        ✕ Quit
+        {quitLabel}
       </button>
       <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
         <div className="bg-emerald-500 h-2 rounded-full transition-all duration-300" style={{ width: `${pct}%` }} />
@@ -40,6 +41,7 @@ function SessionHeader({ current, total, onQuit }: { current: number; total: num
 }
 
 export function QuizPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const allTags = usePracticeTags();
 
@@ -109,6 +111,8 @@ export function QuizPage() {
     }
   }
 
+  const filtersTitle = t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "");
+
   if (phase === "setup") {
     const canStart = filteredEntries.length >= 4;
     return (
@@ -119,18 +123,18 @@ export function QuizPage() {
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             <FaArrowLeft />
           </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Quiz mode</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.quiz.title")}</h1>
           <div className="flex items-center gap-2 ml-5 w-full sm:w-auto sm:ml-auto">
             <button
               onClick={toggleStartSide}
               title={
                 startSide === "word"
-                  ? "Showing word — click to show explanation"
-                  : "Showing explanation — click to show word"
+                  ? t("practice.quiz.chooseExplanation")
+                  : t("practice.quiz.chooseWord")
               }
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600">
               <span>{startSide === "word" ? "🔤" : "💬"}</span>
-              <span>{startSide === "word" ? "Choose Explanation" : "Choose Word"}</span>
+              <span>{startSide === "word" ? t("practice.quiz.chooseExplanation") : t("practice.quiz.chooseWord")}</span>
             </button>
             <div className="hidden sm:block w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
             <Button
@@ -138,13 +142,13 @@ export function QuizPage() {
               size="sm"
               className="hidden sm:block"
               onClick={() => setShowFilters((v) => !v)}>
-              Filters
+              {t("practice.filters")}
               {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
               <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
             </Button>
             {activeFilterCount > 0 && (
               <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">
-                Clear
+                {t("practice.clear")}
               </button>
             )}
           </div>
@@ -166,8 +170,8 @@ export function QuizPage() {
           open={isMobileDrawerOpen}
           onClose={() => setIsMobileDrawerOpen(false)}
           onOpen={() => setIsMobileDrawerOpen(true)}
-          tabLabel="FILTERS"
-          title={`Filters${activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}`}
+          tabLabel={t("practice.filters").toUpperCase()}
+          title={filtersTitle}
           topline
           hasActiveIndicator={activeFilterCount > 0}>
           <PracticeFilterPanel
@@ -181,7 +185,7 @@ export function QuizPage() {
           />
           {activeFilterCount > 0 && (
             <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
-              Clear filters
+              {t("practice.clearFilters")}
             </button>
           )}
         </SideDrawer>
@@ -189,17 +193,21 @@ export function QuizPage() {
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">🧠</span>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Quiz Mode</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{`Choose the correct ${startSide === "word" ? "explanation" : "word"} from 4 options`}</p>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t("practice.quiz.modeName")}</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">
+              {startSide === "word" ? t("practice.quiz.descExplanation") : t("practice.quiz.descWord")}
+            </p>
           </div>
-          <p className="text-sm text-gray-400 dark:text-gray-500">{filteredEntries.length} entries available</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">
+            {t("practice.entriesAvailable", { count: filteredEntries.length })}
+          </p>
           {!canStart && (
             <p className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-2">
-              Need at least 4 entries to start
+              {t("practice.quiz.needAtLeast4")}
             </p>
           )}
           <Button onClick={startSession} disabled={!canStart} size="lg">
-            Start Quiz →
+            {t("practice.quiz.startQuiz")}
           </Button>
         </div>
       </div>
@@ -214,9 +222,9 @@ export function QuizPage() {
           <button
             onClick={() => navigate("/practice")}
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-            ← Practice
+            {t("practice.backToPractice")}
           </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Quiz — Results</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.quiz.resultsTitle")}</h1>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">{pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "💪"}</span>
@@ -224,16 +232,16 @@ export function QuizPage() {
             <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               {correctCount} / {questions.length}
             </p>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">{pct}% correct</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">{t("practice.quiz.pctCorrect", { pct })}</p>
           </div>
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
             <div className="bg-emerald-500 h-3 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
           </div>
           <div className="flex gap-3 flex-wrap justify-center">
             <Button variant="secondary" onClick={startSession}>
-              Try again
+              {t("practice.quiz.tryAgain")}
             </Button>
-            <Button onClick={() => navigate("/practice")}>Back to Practice</Button>
+            <Button onClick={() => navigate("/practice")}>{t("practice.quiz.backToPractice")}</Button>
           </div>
         </div>
       </div>
@@ -243,10 +251,15 @@ export function QuizPage() {
   const answered = selected !== null;
   return (
     <div className="flex flex-col gap-6 max-w-xl mx-auto w-full">
-      <SessionHeader current={currentIdx} total={questions.length} onQuit={() => setPhase("setup")} />
+      <SessionHeader
+        current={currentIdx}
+        total={questions.length}
+        onQuit={() => setPhase("setup")}
+        quitLabel={t("practice.quit")}
+      />
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col gap-4">
         <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">
-          {startSide === "word" ? "What's the explanation?" : "What word is this?"}
+          {startSide === "word" ? t("practice.quiz.promptExplanation") : t("practice.quiz.promptWord")}
         </span>
         <p className="text-lg font-semibold text-gray-800 dark:text-gray-100 leading-relaxed">
           {startSide === "word" ? currentQuestion!.word : currentQuestion!.explanation}
@@ -260,7 +273,7 @@ export function QuizPage() {
             <button
               onClick={() => setShowExample(true)}
               className="text-sm text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 text-left transition-colors">
-              Show example…
+              {t("practice.quiz.showExample")}
             </button>
           ))}
       </div>
@@ -287,7 +300,9 @@ export function QuizPage() {
       </div>
       {answered && (
         <div className="flex justify-end">
-          <Button onClick={handleNext}>{currentIdx + 1 < questions.length ? "Next →" : "See results"}</Button>
+          <Button onClick={handleNext}>
+            {currentIdx + 1 < questions.length ? t("practice.quiz.next") : t("practice.quiz.seeResults")}
+          </Button>
         </div>
       )}
     </div>

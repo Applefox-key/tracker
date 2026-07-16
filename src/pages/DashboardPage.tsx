@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Card, CardHeader, CardTitle } from "@/shared/ui/Card";
 import { Button } from "@/shared/ui/Button";
 import { useEntriesStore } from "@/features/entries/store/entriesStore";
@@ -23,44 +24,38 @@ function daysAgo(n: number): Date {
 
 // ── Category config ───────────────────────────────────────────────────────
 
-const CATEGORIES: Array<{
+const CATEGORY_STYLES: Array<{
   key: EntryCategory;
-  label: string;
   color: string;
   colorWrap: string;
   mobileClasses: string;
 }> = [
   {
     key: "word",
-    label: "Words",
     color: "bg-blue-500",
     colorWrap: "bg-blue-200",
     mobileClasses: "max-sm:bg-blue-200 max-sm:border-l-2 max-sm:border-blue-500",
   },
   {
     key: "phrase",
-    label: "Phrases",
     color: "bg-green-500",
     colorWrap: "bg-green-200",
     mobileClasses: "max-sm:bg-green-200 max-sm:border-l-2 max-sm:border-green-500",
   },
   {
     key: "grammar",
-    label: "Grammar",
     color: "bg-purple-500",
     colorWrap: "bg-purple-200",
     mobileClasses: "max-sm:bg-purple-200 max-sm:border-l-2 max-sm:border-purple-500",
   },
   {
     key: "idiom",
-    label: "Idioms",
     color: "bg-orange-500",
     colorWrap: "bg-orange-200",
     mobileClasses: "max-sm:bg-orange-200 max-sm:border-l-2 max-sm:border-orange-500",
   },
   {
     key: "note",
-    label: "Notes",
     color: "bg-teal-500",
     colorWrap: "bg-teal-200",
     mobileClasses: "max-sm:bg-teal-200 max-sm:border-l-2 max-sm:border-teal-500",
@@ -70,19 +65,19 @@ const CATEGORIES: Array<{
 // ── Weekly activity chip ──────────────────────────────────────────────────
 
 function WeeklyActivityChip({ entries }: { entries: Entry[] }) {
+  const { t } = useTranslation();
+
   const { days, streak } = useMemo(() => {
     const arr = Array.from({ length: 7 }, (_, i) => {
       const from = daysAgo(6 - i);
       const to = new Date(from);
       to.setDate(to.getDate() + 1);
       return entries.filter((e) => {
-        const t = new Date(e.createdAt).getTime();
-        return t >= from.getTime() && t < to.getTime();
+        const time = new Date(e.createdAt).getTime();
+        return time >= from.getTime() && time < to.getTime();
       }).length;
     });
 
-    // consecutive days with entries ending at today;
-    // if today is empty we still let the streak survive until tomorrow
     let s = 0;
     for (let i = 6; i >= 0; i--) {
       if (arr[i] > 0) s++;
@@ -99,10 +94,10 @@ function WeeklyActivityChip({ entries }: { entries: Entry[] }) {
     streak === 0
       ? null
       : streak === 1
-        ? "🌱 1-day streak — great start!"
+        ? t("dashboard.streak1")
         : streak >= 7
-          ? `🔥 ${streak}-day streak — legendary!`
-          : `🔥 ${streak}-day streak — keep it up!`;
+          ? t("dashboard.streakLegendary", { count: streak })
+          : t("dashboard.streakKeepUp", { count: streak });
 
   return (
     <div className=" flex items-center gap-3 sm:gap-4 px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-sm">
@@ -111,11 +106,12 @@ function WeeklyActivityChip({ entries }: { entries: Entry[] }) {
           <p className="text-sm font-semibold text-amber-500 dark:text-amber-400 truncate">{streakMsg}</p>
         ) : (
           <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 truncate">
-            No streak yet — start today!
+            {t("dashboard.noStreak")}
           </p>
         )}
         <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
-          <span className="text-gray-900 dark:text-white font-bold">{entries.length}</span> total entries
+          <span className="text-gray-900 dark:text-white font-bold">{entries.length}</span>{" "}
+          {t("dashboard.totalEntriesLabel", { count: entries.length })}
         </p>
       </div>
       <div className="flex flex-col gap-[3px] shrink-0">
@@ -213,6 +209,7 @@ function CategoryRow({ label, count, total, barColor, mobileClasses }: CategoryR
 // ── Page ──────────────────────────────────────────────────────────────────
 
 export function DashboardPage() {
+  const { t } = useTranslation();
   const entries = useEntriesStore((s) => s.entries);
 
   const stats = useMemo(() => {
@@ -245,19 +242,19 @@ export function DashboardPage() {
       {/* ── Title row ── */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="hidden sm:block text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1 hidden sm:block">Your language learning at a glance</p>
+          <h1 className="hidden sm:block text-2xl font-bold text-gray-900 dark:text-gray-100">{t("dashboard.title")}</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1 hidden sm:block">{t("dashboard.subtitle")}</p>
         </div>
         {/* Quick actions — desktop */}
         <div className="hidden sm:flex flex-wrap gap-2">
           <Link to="/entries" state={{ openCreateForm: true }}>
-            <Button>+ Add New Entry</Button>
+            <Button>{t("dashboard.addEntry")}</Button>
           </Link>
           <Link to="/entries">
-            <Button variant="secondary">Browse Entries</Button>
+            <Button variant="secondary">{t("dashboard.browseEntries")}</Button>
           </Link>
           <Link to="/practice">
-            <Button variant="secondary">Practice</Button>
+            <Button variant="secondary">{t("dashboard.practice")}</Button>
           </Link>
         </div>
       </div>
@@ -265,16 +262,16 @@ export function DashboardPage() {
       <WeeklyActivityChip entries={entries} />
       {/* ── Stats — mobile (3-col grid) ── */}
       <div className="grid grid-cols-3 gap-2 sm:hidden">
-        <StatCard label="Total Entries" value={entries.length} color="text-emerald-600" to="/entries" />
+        <StatCard label={t("dashboard.statTotal")} value={entries.length} color="text-emerald-600" to="/entries" />
         <StatCard
-          label="Added Today"
+          label={t("dashboard.statToday")}
           value={stats.todayCount}
           color="text-emerald-600"
           to="/entries"
           toState={{ dateFilter: "today" }}
         />
         <StatCard
-          label="This Week"
+          label={t("dashboard.statWeek")}
           value={stats.weekCount}
           color="text-cyan-600"
           to="/entries"
@@ -283,44 +280,44 @@ export function DashboardPage() {
       </div>
       {/* ── Stats — desktop grid ── */}
       <div className="hidden sm:grid grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
-        <StatCard label="Total Entries" value={entries.length} color="text-blue-600" to="/entries" />
+        <StatCard label={t("dashboard.statTotal")} value={entries.length} color="text-blue-600" to="/entries" />
         <StatCard
-          label="Added Today"
+          label={t("dashboard.statToday")}
           value={stats.todayCount}
           color="text-green-600"
           to="/entries"
           toState={{ dateFilter: "today" }}
         />
         <StatCard
-          label="This Week"
+          label={t("dashboard.statWeek")}
           value={stats.weekCount}
           color="text-cyan-600"
           to="/entries"
           toState={{ dateFilter: "week" }}
-          sub="last 7 days"
+          sub={t("dashboard.statWeekSub")}
         />
-        <StatCard label="Practice" value={stats.flashCount} color="text-violet-600" to="/practice" />
-        <StatCard label="Avg Rating" value={stats.avgRating} color="text-amber-500" to="/practice" sub="out of 5" />
+        <StatCard label={t("dashboard.statPractice")} value={stats.flashCount} color="text-violet-600" to="/practice" />
+        <StatCard label={t("dashboard.statAvgRating")} value={stats.avgRating} color="text-amber-500" to="/practice" sub={t("dashboard.statAvgRatingSub")} />
       </div>
 
       <div className="flex flex-col sm:flex-row gap-5 sm:gap-8 sm:items-start">
         {/* ── Category distribution ── */}
         <Card className="sm:flex-1 max-sm:px-1 max-sm:py-2">
           <CardHeader className={`hidden sm:block mb-2 sm:mb-4`}>
-            <CardTitle className="text-sm sm:text-lg">Category Distribution</CardTitle>
+            <CardTitle className="text-sm sm:text-lg">{t("dashboard.categoryDistribution")}</CardTitle>
           </CardHeader>
           {entries.length === 0 ? (
-            <p className="text-sm text-gray-400 dark:text-gray-500">No entries yet.</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500">{t("dashboard.noEntries")}</p>
           ) : (
             <div className="flex flex-row sm:flex-col gap-1 sm:gap-4 flex-wrap sm:flex-nowrap max-sm:justify-between">
-              {CATEGORIES.map(({ key, label, color, colorWrap, mobileClasses }) => (
+              {CATEGORY_STYLES.map(({ key, color, colorWrap, mobileClasses }) => (
                 <Link
                   key={key}
                   to="/entries"
                   state={{ categoryFilter: key }}
                   className="block rounded-xl hover:opacity-80 transition-opacity">
                   <CategoryRow
-                    label={label}
+                    label={t(`dashboard.categories.${key}`)}
                     count={categoryCounts[key] ?? 0}
                     total={entries.length}
                     barColor={color}
@@ -337,14 +334,14 @@ export function DashboardPage() {
         <Card className="sm:flex-1">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Recent Entries</CardTitle>
+              <CardTitle>{t("dashboard.recentEntries")}</CardTitle>
               <Link to="/entries" className="text-sm text-emerald-600 hover:text-emerald-800 font-medium">
-                View all →
+                {t("dashboard.viewAll")}
               </Link>
             </div>
           </CardHeader>
           {recentEntries.length === 0 ? (
-            <p className="text-sm text-gray-400 dark:text-gray-500">No entries yet.</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500">{t("dashboard.noEntries")}</p>
           ) : (
             <div className="flex flex-col divide-y divide-gray-100 dark:divide-gray-700">
               {recentEntries.map((entry) => (
@@ -369,7 +366,7 @@ export function DashboardPage() {
         state={{ openCreateForm: true }}
         className="sm:hidden fixed bottom-[65px] opacity-70 right-5 z-20 w-10 h-10 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-lg flex items-center justify-center transition-colors
         "
-        aria-label="Add entry">
+        aria-label={t("dashboard.addEntry")}>
         <FaPlus className="text-xl" />
       </Link>
     </div>

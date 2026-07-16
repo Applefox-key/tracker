@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/shared/ui/Button";
 import { RatingMultiSelect } from "@/shared/ui/RatingMultiSelect";
 import { RatingStars } from "@/shared/ui/RatingStars";
@@ -12,16 +13,18 @@ import { useEntries, DateFilter } from "@/features/entries/hooks/useEntries";
 import { Entry, EntryCategory } from "@/features/entries/types";
 import { FaPlus } from "react-icons/fa6";
 
-const CATEGORIES: Array<{ value: EntryCategory | "all"; label: string }> = [
-  { value: "all", label: "All" },
-  { value: "word", label: "Words" },
-  { value: "phrase", label: "Phrases" },
-  { value: "grammar", label: "Grammar" },
-  { value: "idiom", label: "Idioms" },
-  { value: "note", label: "Notes" },
-];
-
 export function EntriesPage() {
+  const { t } = useTranslation();
+
+  const CATEGORIES: Array<{ value: EntryCategory | "all"; label: string }> = [
+    { value: "all", label: t("entries.all") },
+    { value: "word", label: t("dashboard.categories.word") },
+    { value: "phrase", label: t("dashboard.categories.phrase") },
+    { value: "grammar", label: t("dashboard.categories.grammar") },
+    { value: "idiom", label: t("dashboard.categories.idiom") },
+    { value: "note", label: t("dashboard.categories.note") },
+  ];
+
   const [showForm, setShowForm] = useState(false);
   const [editingEntry, setEditingEntry] = useState<Entry | null>(null);
   const [viewingEntry, setViewingEntry] = useState<Entry | null>(null);
@@ -84,13 +87,13 @@ export function EntriesPage() {
         {/* Header */}
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="hidden sm:block text-2xl font-bold text-gray-900 dark:text-gray-100">Entries</h1>
+            <h1 className="hidden sm:block text-2xl font-bold text-gray-900 dark:text-gray-100">{t("entries.title")}</h1>
             <p className="hidden sm:block text-gray-500 dark:text-gray-400 mt-1">
-              {totalCount} words &amp; phrases saved
+              {t("entries.subtitle", { count: totalCount })}
             </p>
           </div>
           <span className="hidden sm:inline-flex">
-            <Button onClick={() => setShowForm((v) => !v)}>{showForm ? "Cancel" : "+ Add Entry"}</Button>
+            <Button onClick={() => setShowForm((v) => !v)}>{showForm ? t("entries.cancel") : t("entries.addEntry")}</Button>
           </span>
         </div>
         {/* ── Filters + view toggle ── */}
@@ -103,7 +106,7 @@ export function EntriesPage() {
                 type="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search..."
+                placeholder={t("entries.searchPlaceholder")}
                 className="order-2 sm:order-1 sm:w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                          focus:outline-none focus:ring-2 focus:ring-emerald-400 shrink-0 me-7 sm:me-0"
               />
@@ -128,7 +131,7 @@ export function EntriesPage() {
                   "order-3 hidden sm:block shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
                   isFiltersOpen || advancedFilterCount > 0 ? filterBtnActive : filterBtnInactive,
                 ].join(" ")}>
-                Filters{advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""} {isFiltersOpen ? "▲" : "▼"}
+                {t("entries.filters")}{advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""} {isFiltersOpen ? "▲" : "▼"}
               </button>
             </div>
             {/* Row 2: advanced filters */}
@@ -149,7 +152,7 @@ export function EntriesPage() {
             {/* Active filters + clear */}
             {hasActiveFilters && (
               <div className="flex items-center gap-2 flex-wrap pt-1.5 border-t border-gray-200 dark:border-gray-700">
-                <span className="text-xs text-gray-400 dark:text-gray-500">Active:</span>
+                <span className="text-xs text-gray-400 dark:text-gray-500">{t("entries.activeLabel")}</span>
                 {filterCategory !== "all" && (
                   <ActiveChip label={filterCategory} onRemove={() => setFilterCategory("all")} />
                 )}
@@ -167,13 +170,13 @@ export function EntriesPage() {
                 )}
                 {dateFilter !== "all" && (
                   <ActiveChip
-                    label={dateFilter === "today" ? "Today" : "This week"}
+                    label={dateFilter === "today" ? t("entries.today") : t("entries.thisWeek")}
                     onRemove={() => setDateFilter("all")}
                   />
                 )}
                 {search !== "" && <ActiveChip label={`"${search}"`} onRemove={() => setSearch("")} />}
                 <button onClick={clearFilters} className="ml-auto text-xs text-red-500 hover:text-red-700 font-medium">
-                  Clear all
+                  {t("entries.clearAll")}
                 </button>
               </div>
             )}
@@ -181,7 +184,7 @@ export function EntriesPage() {
           {/* Entry count + view toggle */}
           <div className="flex items-center justify-between px-4">
             <p className="text-sm text-gray-400 dark:text-gray-500">
-              Showing {entries.length} of {totalCount} entries
+              {t("entries.showing", { shown: entries.length, total: totalCount })}
             </p>
             <div className="flex items-center gap-1 p-0.5 bg-gray-100 dark:bg-gray-700 rounded-lg">
               <button
@@ -238,11 +241,11 @@ export function EntriesPage() {
       {/* Entry list */}
       {entries.length === 0 ? (
         <div className="text-center py-16 text-gray-400 dark:text-gray-500">
-          <p className="text-lg">No entries match your filters</p>
+          <p className="text-lg">{t("entries.noMatch")}</p>
           <p className="text-sm mt-1">
-            Try adjusting your filters or{" "}
+            {t("entries.noMatchHint")}{" "}
             <button className="text-emerald-500 hover:underline" onClick={clearFilters}>
-              clear all
+              {t("entries.noMatchClear")}
             </button>
           </p>
         </div>
@@ -286,7 +289,7 @@ export function EntriesPage() {
         onClick={() => setShowForm((v) => !v)}
         className="sm:hidden fixed opacity-70 right-5 z-20 w-10 h-10 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-lg flex items-center justify-center transition-colors"
         style={{ bottom: "calc(65px + 36px + env(safe-area-inset-bottom))" }}
-        aria-label={showForm ? "Cancel" : "Add entry"}>
+        aria-label={showForm ? t("entries.cancel") : t("entries.addEntry")}>
         <FaPlus
           className="text-xl"
           style={{ transform: showForm ? "rotate(45deg)" : "none", transition: "transform 0.2s" }}
@@ -299,8 +302,8 @@ export function EntriesPage() {
           open={isMobileDrawerOpen}
           onClose={() => setIsMobileDrawerOpen(false)}
           onOpen={() => setIsMobileDrawerOpen(true)}
-          tabLabel="FILTERS"
-          title={`Filters${advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}`}
+          tabLabel={t("entries.filters").toUpperCase()}
+          title={`${t("entries.filters")}${advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}`}
           hasActiveIndicator={advancedFilterCount > 0}>
           <AdvancedFiltersPanel
             allTags={allTags}
@@ -321,7 +324,7 @@ export function EntriesPage() {
                 setDateFilter("all");
               }}
               className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
-              Clear filters
+              {t("entries.clearFilters")}
             </button>
           )}
         </SideDrawer>
@@ -355,15 +358,15 @@ export function EntriesPage() {
             className="w-full max-w-sm bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 flex flex-col gap-4"
             onClick={(e) => e.stopPropagation()}>
             <div>
-              <p className="text-base font-semibold text-gray-900 dark:text-gray-100">Delete entry?</p>
+              <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{t("entries.deleteTitle")}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                <span className="font-medium text-gray-700 dark:text-gray-200">"{confirmDeleteEntry.word}"</span> will
-                be permanently removed.
+                <span className="font-medium text-gray-700 dark:text-gray-200">"{confirmDeleteEntry.word}"</span>{" "}
+                {t("entries.deletePermanent")}
               </p>
             </div>
             <div className="flex gap-2 justify-end">
               <Button variant="secondary" onClick={() => setConfirmDeleteEntry(null)}>
-                Cancel
+                {t("entries.cancel")}
               </Button>
               <Button
                 onClick={() => {
@@ -371,7 +374,7 @@ export function EntriesPage() {
                   setConfirmDeleteEntry(null);
                 }}
                 className="bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600 text-white">
-                Delete
+                {t("entries.delete")}
               </Button>
             </div>
           </div>
@@ -398,6 +401,7 @@ const headerAccent: Record<EntryCategory, string> = {
 };
 
 function EntryHeaderStrip({ entry, onView }: { entry: Entry; onView: (e: Entry) => void }) {
+  const { t } = useTranslation();
   return (
     <div
       className={[
@@ -409,10 +413,10 @@ function EntryHeaderStrip({ entry, onView }: { entry: Entry; onView: (e: Entry) 
       onClick={() => onView(entry)}>
       <span
         className={[
-          "shrink-0 px-2 py-0.5 rounded-full text-xs font-medium capitalize hidden sm:inline-block",
+          "shrink-0 px-2 py-0.5 rounded-full text-xs font-medium hidden sm:inline-block",
           categoryColors[entry.category],
         ].join(" ")}>
-        {entry.category}
+        {t(`dashboard.categories.${entry.category}`)}
       </span>
       <p className="flex-1 min-w-0 font-semibold text-gray-900 dark:text-gray-100 truncate">{entry.word}</p>
       <RatingStars value={entry.rating} readOnly />
@@ -467,15 +471,16 @@ function AdvancedFiltersPanel({
   setSelectedRatings,
   filterBtnActive,
 }: AdvancedFiltersPanelProps) {
+  const { t } = useTranslation();
   return (
     <>
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Date</span>
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{t("entries.dateLabel")}</span>
         <div className="flex gap-1.5 flex-wrap">
           {(
             [
-              { value: "today", label: "Today" },
-              { value: "week", label: "This week" },
+              { value: "today", label: t("entries.today") },
+              { value: "week", label: t("entries.thisWeek") },
             ] as const
           ).map(({ value, label }) => (
             <button
@@ -492,13 +497,13 @@ function AdvancedFiltersPanel({
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Rating</span>
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{t("entries.ratingLabel")}</span>
         <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />
       </div>
 
       {allTags.length > 0 && (
         <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Tag</span>
+          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{t("entries.tagLabel")}</span>
           <div className="flex gap-1.5 flex-wrap">
             {allTags.map((tag) => (
               <button
