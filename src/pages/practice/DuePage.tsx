@@ -110,7 +110,7 @@ function DueFlashcardItem({ entry, onNext }: { entry: Entry; onNext: () => void 
 
   return (
     <div className="flex flex-col gap-4">
-      <FlashCard card={entryToCard(entry)} isFlipped={isFlipped} onFlip={() => setIsFlipped((v) => !v)} />
+      <FlashCard card={entryToCard(entry)} isFlipped={isFlipped} onFlip={() => setIsFlipped((v) => !v)} reversed={true} />
       {isFlipped ? (
         <GradeButtons onGrade={handleGrade} />
       ) : (
@@ -130,14 +130,14 @@ function DueQuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onN
   const options = useMemo(() => {
     const others = shuffle(pool.filter((e) => e.id !== entry.id))
       .slice(0, 3)
-      .map((e) => e.explanation);
+      .map((e) => e.word);
     while (others.length < 3) others.push("—");
-    return shuffle([entry.explanation, ...others]);
+    return shuffle([entry.word, ...others]);
   }, [entry, pool]);
 
   function handleSelect(opt: string) {
     if (selected !== null) return;
-    const isCorrect = opt === entry.explanation;
+    const isCorrect = opt === entry.word;
     setSelected(opt);
     reviewEntry(entry.id, isCorrect ? 5 : 0, "quiz");
   }
@@ -148,9 +148,9 @@ function DueQuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onN
     <div className="flex flex-col gap-4">
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 flex flex-col gap-3">
         <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">
-          {t("practice.quiz.promptExplanation")}
+          {t("practice.quiz.promptWord")}
         </span>
-        <p className="text-xl font-semibold text-gray-800 dark:text-gray-100">{entry.word}</p>
+        <p className="text-xl font-semibold text-gray-800 dark:text-gray-100">{entry.explanation}</p>
         {entry.example && (
           <p className="text-sm text-gray-400 dark:text-gray-500 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">
             {entry.example}
@@ -159,7 +159,7 @@ function DueQuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onN
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {options.map((opt) => {
-          const isCorrect = opt === entry.explanation;
+          const isCorrect = opt === entry.word;
           const isSelected = opt === selected;
           let cls = "w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-colors ";
           if (!answered)
