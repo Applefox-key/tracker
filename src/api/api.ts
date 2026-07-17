@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { apiClient, TOKEN_KEY, BASE_URL } from './client'
-import type { Entry, EntryCategory, EntryTag } from '@/features/entries/types'
+import type { Entry, EntryCategory, EntryTag, SRGrade, PracticeMode } from '@/features/entries/types'
 import type { User, LoginCredentials } from '@/features/auth/types'
 
 // ── Raw server shapes ──────────────────────────────────────────────────────
@@ -17,6 +17,12 @@ interface RawEntry {
   includeInPractice: 0 | 1
   createdAt: string
   img?: string | null
+  ease_factor?: number
+  interval_days?: number
+  repetitions?: number
+  next_review_at?: string | null
+  last_reviewed_at?: string | null
+  mastery_level?: number
 }
 
 /** Shape sent to the server when creating or updating an entry (tags handled separately) */
@@ -48,6 +54,12 @@ function toEntry(raw: RawEntry): Entry {
     includeInPractice: raw.includeInPractice === 1,
     createdAt: raw.createdAt,
     img: raw.img ?? null,
+    ease_factor: raw.ease_factor,
+    interval_days: raw.interval_days,
+    repetitions: raw.repetitions,
+    next_review_at: raw.next_review_at,
+    last_reviewed_at: raw.last_reviewed_at,
+    mastery_level: raw.mastery_level,
   }
 }
 
@@ -213,6 +225,16 @@ export const entriesApi = {
 
   async deleteEntry(id: number): Promise<void> {
     await apiClient.delete(`/entries/${id}`)
+  },
+
+  async reviewEntry(id: number, grade: SRGrade, mode: PracticeMode): Promise<Entry> {
+    const res = await apiClient.post<RawEntry>(`/entries/${id}/review`, { grade, mode })
+    return toEntry(res.data)
+  },
+
+  async getDueEntries(): Promise<Entry[]> {
+    const res = await apiClient.get<RawEntry[]>('/entries/due')
+    return res.data.map(toEntry)
   },
 }
 

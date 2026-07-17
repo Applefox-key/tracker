@@ -7,6 +7,7 @@ import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilt
 import { Button } from "@/shared/ui/Button";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
 import type { Entry, EntryCategory } from "@/features/entries/types";
+import { useEntryCrud } from "@/hooks/useEntryCrud";
 
 interface MatchCard {
   id: string;
@@ -49,6 +50,9 @@ export function MatchPage() {
   const [totalMatched, setTotalMatched] = useState(0);
   const [totalErrors, setTotalErrors] = useState(0);
   const [isDone, setIsDone] = useState(false);
+  const [wrongEntryIds, setWrongEntryIds] = useState<Set<number>>(new Set());
+
+  const { reviewEntry } = useEntryCrud();
 
   const filteredEntries = usePracticeEntries("match", { selectedRatings, selectedCategory, selectedTag });
 
@@ -78,10 +82,12 @@ export function MatchPage() {
     if (selectedWord.entryId === selectedExplanation.entryId) {
       const id = selectedWord.entryId;
       setMatched((prev) => new Set([...prev, id]));
+      reviewEntry(id, wrongEntryIds.has(id) ? 3 : 5, 'match');
       setSelectedWord(null);
       setSelectedExplanation(null);
     } else {
       setTotalErrors((prev) => prev + 1);
+      setWrongEntryIds((prev) => new Set([...prev, selectedWord.entryId, selectedExplanation.entryId]));
       setWrongIds(new Set([selectedWord.id, selectedExplanation.id]));
       setTimeout(() => {
         setWrongIds(new Set());
@@ -104,6 +110,7 @@ export function MatchPage() {
     setTotalMatched(0);
     setTotalErrors(0);
     setIsDone(false);
+    setWrongEntryIds(new Set());
     setIsPlaying(true);
   }
 

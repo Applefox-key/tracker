@@ -1,9 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { useEntriesStore } from '@/features/entries/store/entriesStore'
-import { useCreateEntry, useUpdateEntry, useDeleteEntry } from '@/hooks/useEntries'
+import { useCreateEntry, useUpdateEntry, useDeleteEntry, useReviewEntry } from '@/hooks/useEntries'
 import { entryTagsApi } from '@/api/api'
-import type { Entry } from '@/features/entries/types'
+import type { Entry, SRGrade, PracticeMode } from '@/features/entries/types'
 
 /**
  * Returns mode-aware CRUD operations for entries.
@@ -22,6 +22,7 @@ export function useEntryCrud() {
   const createMutation = useCreateEntry()
   const updateMutation = useUpdateEntry()
   const deleteMutation = useDeleteEntry()
+  const reviewMutation = useReviewEntry()
 
   async function addEntry(data: Omit<Entry, 'id' | 'createdAt'>, tagIds?: number[], imgFile?: File | null) {
     if (mode === 'authenticated') {
@@ -61,5 +62,11 @@ export function useEntryCrud() {
     }
   }
 
-  return { addEntry, updateEntry, removeEntry }
+  function reviewEntry(id: number, grade: SRGrade, practiceMode: PracticeMode) {
+    if (mode === 'authenticated') {
+      reviewMutation.mutate({ id, grade, mode: practiceMode })
+    }
+  }
+
+  return { addEntry, updateEntry, removeEntry, reviewEntry }
 }

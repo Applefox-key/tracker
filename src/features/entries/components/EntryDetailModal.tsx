@@ -7,6 +7,7 @@ import { RatingStars } from "@/shared/ui/RatingStars";
 import { EntryImage } from "@/shared/ui/EntryImage";
 import { SpeakButton } from "@/shared/ui/SpeakButton";
 import { getEntryImageUrl } from "@/api/api";
+import { TbTargetArrow } from "react-icons/tb";
 
 const categoryColors: Record<Entry["category"], string> = {
   word: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
@@ -122,10 +123,10 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 {entry.includeInPractice ? t("entries.detail.inPractice") : t("entries.detail.notInPractice")}
               </span>
-              <span
+              <TbTargetArrow
                 className={[
-                  "w-2 h-2 rounded-full shrink-0",
-                  entry.includeInPractice ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600",
+                  "text-sm shrink-0",
+                  entry.includeInPractice ? "text-green-500" : "text-gray-300 dark:text-gray-600",
                 ].join(" ")}
               />
             </div>

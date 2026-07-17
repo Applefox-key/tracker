@@ -181,7 +181,24 @@
       "flashcards": { "label": "Tarjetas", "description": "Voltea las tarjetas para poner a prueba tu memoria" },
       "quiz": { "label": "Quiz", "description": "Elige la respuesta correcta de 4 opciones" },
       "match": { "label": "Emparejar", "description": "Conecta palabras con sus explicaciones" },
-      "puzzle": { "label": "Puzzle", "description": "Ordena letras o palabras en el orden correcto" }
+      "puzzle": { "label": "Puzzle", "description": "Ordena letras o palabras en el orden correcto" },
+      "due": { "label": "Para hoy", "description": "Repasa las tarjetas programadas para hoy" }
+    },
+    "due": {
+      "title": "Para hoy",
+      "noDue": "¡Nada programado para hoy!",
+      "noDueHint": "Sigue practicando para acumular tarjetas de repaso",
+      "cardsToReview": "{{count}} tarjeta para repasar",
+      "cardsToReview_other": "{{count}} tarjetas para repasar",
+      "selectModes": "Modos de práctica",
+      "start": "Comenzar repaso",
+      "done": "¡Sesión completada!",
+      "reviewed": "Repasadas {{count}} tarjetas",
+      "modes": {
+        "flashcard": "Tarjetas",
+        "quiz": "Quiz",
+        "puzzle": "Puzzle"
+      }
     },
     "flashcards": {
       "title": "Tarjetas",

@@ -8,6 +8,14 @@ import { ToggleSwitch } from "@/shared/ui/ToggleSwitch";
 import { EntryImage } from "@/shared/ui/EntryImage";
 import { getEntryImageUrl } from "@/api/api";
 
+const masteryColors: Record<number, string> = {
+  1: "bg-red-400",
+  2: "bg-orange-400",
+  3: "bg-yellow-400",
+  4: "bg-blue-400",
+  5: "bg-emerald-400",
+};
+
 const categoryColors: Record<Entry["category"], string> = {
   word: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-auto",
   phrase: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
@@ -38,6 +46,9 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
     <div
       className={`relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between ${categoryColorsCard[entry.category]}`}
       onClick={() => onView(entry)}>
+      <span
+        className={`absolute top-3 left-3 w-2.5 h-2.5 rounded-full ring-2 ring-white dark:ring-gray-800 ${entry.mastery_level != null ? masteryColors[entry.mastery_level] : "bg-gray-300 dark:bg-gray-600"}`}
+      />
       {/* Header row */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">

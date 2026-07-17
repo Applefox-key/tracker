@@ -7,6 +7,7 @@ import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilt
 import { Button } from "@/shared/ui/Button";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
 import type { Entry, EntryCategory } from "@/features/entries/types";
+import { useEntryCrud } from "@/hooks/useEntryCrud";
 
 const LS_QUIZ_MODE = "quiz_start_side";
 
@@ -62,6 +63,7 @@ export function QuizPage() {
   const [showExample, setShowExample] = useState(false);
 
   const filteredEntries = usePracticeEntries("quiz", { selectedRatings, selectedCategory, selectedTag });
+  const { reviewEntry } = useEntryCrud();
 
   const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(
     Boolean,
@@ -98,8 +100,10 @@ export function QuizPage() {
 
   function handleSelect(opt: string) {
     if (selected !== null) return;
-    if (opt === questions[currentIdx][answerField]) setCorrectCount((n) => n + 1);
+    const isCorrect = opt === questions[currentIdx][answerField];
+    if (isCorrect) setCorrectCount((n) => n + 1);
     setSelected(opt);
+    reviewEntry(questions[currentIdx].id, isCorrect ? 5 : 0, 'quiz');
   }
 
   function handleNext() {

@@ -189,7 +189,26 @@
       "flashcards": { "label": "Fiszki", "description": "Odwracaj fiszki, aby sprawdzić pamięć" },
       "quiz": { "label": "Quiz", "description": "Wybierz poprawną odpowiedź spośród 4 opcji" },
       "match": { "label": "Dopasuj", "description": "Połącz słowa z ich wyjaśnieniami" },
-      "puzzle": { "label": "Puzzle", "description": "Ułóż litery lub słowa w prawidłowej kolejności" }
+      "puzzle": { "label": "Puzzle", "description": "Ułóż litery lub słowa w prawidłowej kolejności" },
+      "due": { "label": "Na dziś", "description": "Powtórz fiszki zaplanowane na dzisiaj" }
+    },
+    "due": {
+      "title": "Na dziś",
+      "noDue": "Nic nie zaplanowano na dziś!",
+      "noDueHint": "Ćwicz dalej, aby gromadzić fiszki do powtórki",
+      "cardsToReview_one": "{{count}} fiszka do powtórki",
+      "cardsToReview_few": "{{count}} fiszki do powtórki",
+      "cardsToReview_many": "{{count}} fiszek do powtórki",
+      "cardsToReview_other": "{{count}} fiszek do powtórki",
+      "selectModes": "Tryby ćwiczeń",
+      "start": "Rozpocznij powtórkę",
+      "done": "Sesja zakończona!",
+      "reviewed": "Powtórzono {{count}} fiszek",
+      "modes": {
+        "flashcard": "Fiszki",
+        "quiz": "Quiz",
+        "puzzle": "Puzzle"
+      }
     },
     "flashcards": {
       "title": "Fiszki",

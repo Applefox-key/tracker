@@ -7,6 +7,7 @@ import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilt
 import { Button } from "@/shared/ui/Button";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
 import type { Entry, EntryCategory } from "@/features/entries/types";
+import { useEntryCrud } from "@/hooks/useEntryCrud";
 
 interface Tile {
   id: string;
@@ -73,6 +74,9 @@ export function PuzzlePage() {
   const [score, setScore] = useState(0);
   const [isDone, setIsDone] = useState(false);
   const [showExample, setShowExample] = useState(false);
+  const [hasRetried, setHasRetried] = useState(false);
+
+  const { reviewEntry } = useEntryCrud();
 
   const filteredEntries = usePracticeEntries("puzzle", { selectedRatings, selectedCategory, selectedTag });
 
@@ -100,6 +104,7 @@ export function PuzzlePage() {
       if (correct) {
         setScore((n) => n + 1);
         setAnswerPhase("correct");
+        reviewEntry(currentEntry.id, hasRetried ? 4 : 5, 'puzzle');
       } else setAnswerPhase("wrong");
     }
   }, [placed, currentEntry, tileMode, answerPhase]);
@@ -137,9 +142,14 @@ export function PuzzlePage() {
     setPlaced([]);
     setTileMode(mode);
     setAnswerPhase("thinking");
+    setHasRetried(true);
   }
 
   function handleNext() {
+    if (answerPhase === 'wrong' && currentEntry) {
+      reviewEntry(currentEntry.id, 0, 'puzzle');
+    }
+    setHasRetried(false);
     if (currentIdx + 1 >= questions.length) setIsDone(true);
     else setCurrentIdx((i) => i + 1);
   }

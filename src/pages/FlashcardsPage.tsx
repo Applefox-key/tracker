@@ -13,6 +13,7 @@ import { Button } from "@/shared/ui/Button";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
 import { EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
+import type { SRGrade } from "@/features/entries/types";
 import { FaShuffle } from "react-icons/fa6";
 
 const CATEGORY_KEYS: EntryCategory[] = ["word", "phrase", "grammar", "idiom", "note"];
@@ -45,7 +46,12 @@ export function FlashcardsPage() {
   }
 
   const routerNavigate = useNavigate();
-  const { updateEntry } = useEntryCrud();
+  const { updateEntry, reviewEntry } = useEntryCrud();
+
+  function handleGrade(grade: SRGrade) {
+    if (currentCard) reviewEntry(currentCard.id, grade, 'flashcard');
+    navigate(goNext);
+  }
 
   const { currentCard, currentIndex, total, progress, isFlipped, allTags, goNext, goPrev, flip, reset } = useFlashcards(
     { selectedRatings, selectedCategory, selectedTag, shuffleKey },
@@ -321,17 +327,44 @@ export function FlashcardsPage() {
             </button>
           </div>
 
-          <CardNavigation
-            currentIndex={currentIndex}
-            total={total}
-            progress={progress}
-            onPrev={() => navigate(goPrev)}
-            onNext={() => navigate(goNext)}
-            onReset={reset}
-          />
-          <p className="text-center text-xs text-gray-300 dark:text-gray-600">
-            {t("practice.flashcards.tapHint")}
-          </p>
+          {isFlipped ? (
+            <div className="flex flex-col gap-2">
+              <p className="text-center text-xs text-gray-400 dark:text-gray-500">
+                {t("practice.sr.rateKnowledge")}
+              </p>
+              <div className="grid grid-cols-4 gap-2">
+                {(
+                  [
+                    { grade: 0 as SRGrade, labelKey: "practice.sr.again", cls: "border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" },
+                    { grade: 3 as SRGrade, labelKey: "practice.sr.hard",  cls: "border-orange-300 dark:border-orange-700 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20" },
+                    { grade: 4 as SRGrade, labelKey: "practice.sr.good",  cls: "border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20" },
+                    { grade: 5 as SRGrade, labelKey: "practice.sr.easy",  cls: "border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20" },
+                  ] as const
+                ).map(({ grade, labelKey, cls }) => (
+                  <button
+                    key={grade}
+                    onClick={() => handleGrade(grade)}
+                    className={`py-2 rounded-xl border text-xs font-semibold transition-colors bg-white dark:bg-gray-800 ${cls}`}>
+                    {t(labelKey)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <CardNavigation
+              currentIndex={currentIndex}
+              total={total}
+              progress={progress}
+              onPrev={() => navigate(goPrev)}
+              onNext={() => navigate(goNext)}
+              onReset={reset}
+            />
+          )}
+          {!isFlipped && (
+            <p className="text-center text-xs text-gray-300 dark:text-gray-600">
+              {t("practice.flashcards.tapHint")}
+            </p>
+          )}
         </div>
       )}
     </div>

@@ -12,6 +12,7 @@ import { EntryDetailModal } from "@/features/entries/components/EntryDetailModal
 import { useEntries, DateFilter } from "@/features/entries/hooks/useEntries";
 import { Entry, EntryCategory } from "@/features/entries/types";
 import { FaPlus } from "react-icons/fa6";
+import { TbTargetArrow } from "react-icons/tb";
 
 export function EntriesPage() {
   const { t } = useTranslation();
@@ -87,13 +88,17 @@ export function EntriesPage() {
         {/* Header */}
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="hidden sm:block text-2xl font-bold text-gray-900 dark:text-gray-100">{t("entries.title")}</h1>
+            <h1 className="hidden sm:block text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {t("entries.title")}
+            </h1>
             <p className="hidden sm:block text-gray-500 dark:text-gray-400 mt-1">
               {t("entries.subtitle", { count: totalCount })}
             </p>
           </div>
           <span className="hidden sm:inline-flex">
-            <Button onClick={() => setShowForm((v) => !v)}>{showForm ? t("entries.cancel") : t("entries.addEntry")}</Button>
+            <Button onClick={() => setShowForm((v) => !v)}>
+              {showForm ? t("entries.cancel") : t("entries.addEntry")}
+            </Button>
           </span>
         </div>
         {/* ── Filters + view toggle ── */}
@@ -131,7 +136,8 @@ export function EntriesPage() {
                   "order-3 hidden sm:block shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
                   isFiltersOpen || advancedFilterCount > 0 ? filterBtnActive : filterBtnInactive,
                 ].join(" ")}>
-                {t("entries.filters")}{advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""} {isFiltersOpen ? "▲" : "▼"}
+                {t("entries.filters")}
+                {advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""} {isFiltersOpen ? "▲" : "▼"}
               </button>
             </div>
             {/* Row 2: advanced filters */}
@@ -400,6 +406,14 @@ const headerAccent: Record<EntryCategory, string> = {
   note: "border-l-teal-400 dark:border-l-teal-500",
 };
 
+const masteryColors: Record<number, string> = {
+  1: "bg-red-400",
+  2: "bg-orange-400",
+  3: "bg-yellow-400",
+  4: "bg-blue-400",
+  5: "bg-emerald-400",
+};
+
 function EntryHeaderStrip({ entry, onView }: { entry: Entry; onView: (e: Entry) => void }) {
   const { t } = useTranslation();
   return (
@@ -412,6 +426,9 @@ function EntryHeaderStrip({ entry, onView }: { entry: Entry; onView: (e: Entry) 
       ].join(" ")}
       onClick={() => onView(entry)}>
       <span
+        className={`shrink-0 w-2.5 h-2.5 rounded-full ring-2 ring-white dark:ring-gray-800 ${entry.mastery_level != null ? masteryColors[entry.mastery_level] : "bg-gray-300 dark:bg-gray-600"}`}
+      />
+      <span
         className={[
           "shrink-0 px-2 py-0.5 rounded-full text-xs font-medium hidden sm:inline-block",
           categoryColors[entry.category],
@@ -423,10 +440,10 @@ function EntryHeaderStrip({ entry, onView }: { entry: Entry; onView: (e: Entry) 
       <p className="shrink-0 text-xs text-gray-400 dark:text-gray-500 hidden sm:block tabular-nums">
         {new Date(entry.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
       </p>{" "}
-      <span
+      <TbTargetArrow
         className={[
-          "w-2 h-2 rounded-full shrink-0",
-          entry.includeInPractice ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600",
+          "text-sm shrink-0",
+          entry.includeInPractice ? "text-green-500" : "text-gray-300 dark:text-gray-600",
         ].join(" ")}
       />
     </div>

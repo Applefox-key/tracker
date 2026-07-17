@@ -180,7 +180,26 @@
       "flashcards": { "label": "Flashcards", "description": "Flip cards to test your memory" },
       "quiz": { "label": "Quiz", "description": "Choose the correct answer from 4 options" },
       "match": { "label": "Match", "description": "Connect words with their explanations" },
-      "puzzle": { "label": "Puzzle", "description": "Arrange letters or words in correct order" }
+      "puzzle": { "label": "Puzzle", "description": "Arrange letters or words in correct order" },
+      "due": { "label": "Due Today", "description": "Review cards scheduled for today" }
+    },
+    "due": {
+      "title": "Due Today",
+      "description": "Cards scheduled for today based on spaced repetition. The more you practice, the smarter your review schedule becomes.",
+      "noDue": "Nothing to review today!",
+      "noDueHint": "Keep practicing to build your review queue",
+      "cardsToReview": "{{count}} card to review",
+      "cardsToReview_other": "{{count}} cards to review",
+      "selectModes": "Practice modes",
+      "newCardsNote": "New cards are always shown as flashcards, regardless of your mode selection.",
+      "start": "Start review",
+      "done": "Session complete!",
+      "reviewed": "Reviewed {{count}} cards",
+      "modes": {
+        "flashcard": "Flashcard",
+        "quiz": "Quiz",
+        "puzzle": "Puzzle"
+      }
     },
     "flashcards": {
       "title": "Flashcards",
@@ -198,6 +217,13 @@
       "explanationLabel": "Explanation",
       "tapToReveal": "tap to reveal",
       "tapToFlipBack": "tap to flip back"
+    },
+    "sr": {
+      "rateKnowledge": "How well did you know this?",
+      "again": "Again",
+      "hard": "Hard",
+      "good": "Good",
+      "easy": "Easy"
     },
     "quiz": {
       "title": "Quiz mode",

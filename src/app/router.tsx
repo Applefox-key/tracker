@@ -9,6 +9,7 @@ import { PracticePage } from '@/pages/PracticePage'
 import { QuizPage } from '@/pages/practice/QuizPage'
 import { MatchPage } from '@/pages/practice/MatchPage'
 import { PuzzlePage } from '@/pages/practice/PuzzlePage'
+import { DuePage } from '@/pages/practice/DuePage'
 import { AboutPage } from '@/pages/AboutPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { ProfilePage } from '@/pages/ProfilePage'
@@ -42,6 +43,7 @@ export const router = createBrowserRouter([
           { path: 'practice/quiz', element: <QuizPage /> },
           { path: 'practice/match', element: <MatchPage /> },
           { path: 'practice/puzzle', element: <PuzzlePage /> },
+          { path: 'practice/due', element: <DuePage /> },
           { path: 'profile', element: <ProfilePage /> },
           { path: 'tags', element: <TagsPage /> },
         ],

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { entriesApi, entryTagsApi } from '@/api/api'
-import type { Entry } from '@/features/entries/types'
+import type { Entry, SRGrade, PracticeMode } from '@/features/entries/types'
 
 const ENTRIES_KEY = ['entries'] as const
 const ENTRY_TAGS_KEY = ['entry-tags'] as const
@@ -45,6 +45,19 @@ export function useUpdateEntry() {
       imgFile?: File | null
       removeImg?: boolean
     }) => entriesApi.updateEntry(id, data, imgFile, removeImg),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ENTRIES_KEY })
+    },
+  })
+}
+
+/** Submit a spaced-repetition review grade for an entry. */
+export function useReviewEntry() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, grade, mode }: { id: number; grade: SRGrade; mode: PracticeMode }) =>
+      entriesApi.reviewEntry(id, grade, mode),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ENTRIES_KEY })
     },
