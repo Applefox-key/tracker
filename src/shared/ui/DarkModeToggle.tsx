@@ -17,6 +17,8 @@ export function DarkModeToggle() {
       document.documentElement.classList.remove('dark')
       localStorage.setItem('tracker_theme', 'light')
     }
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+    if (meta) meta.content = dark ? '#111827' : '#f9fafb'
   }, [dark])
 
   return (
