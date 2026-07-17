@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Entry } from "../types";
 import { MULTILINE_CATEGORIES } from "../constants";
 import { Button } from "@/shared/ui/Button";
-import { RatingStars } from "@/shared/ui/RatingStars";
+import { DualRating } from "@/shared/ui/DualRating";
 import { EntryImage } from "@/shared/ui/EntryImage";
 import { SpeakButton } from "@/shared/ui/SpeakButton";
 import { getEntryImageUrl } from "@/api/api";
@@ -98,7 +98,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
                     {t("entries.detail.example")}
                   </p>
                   <p
-                    className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
+                    className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 bg-emerald-100 dark:bg-emerald-900/50 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
                     {entry.example}
                   </p>
                 </div>
@@ -109,17 +109,15 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
                 src={getEntryImageUrl(entry.img)}
                 alt={entry.word}
                 style={{ width: 150, height: 150, objectFit: "cover" }}
-                className="shrink-0"
+                className="shrink-0 m-auto"
               />
             )}
           </div>
 
-          {/* Rating & Practice */}
-          <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-            <div>
-              <RatingStars value={entry.rating} readOnly />
-            </div>
-            <div className="flex items-center justify-end gap-2">
+          {/* Desktop-only: DualRating + Practice */}
+          <div className="hidden sm:flex items-center justify-between gap-4">
+            <DualRating confidenceRating={entry.rating} masteryLevel={entry.mastery_level} />
+            <div className="flex items-center gap-2 shrink-0">
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 {entry.includeInPractice ? t("entries.detail.inPractice") : t("entries.detail.notInPractice")}
               </span>
@@ -130,6 +128,22 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
                 ].join(" ")}
               />
             </div>
+          </div>
+        </div>
+
+        {/* Mobile-only: DualRating + Practice above tags */}
+        <div className="sm:hidden flex items-center justify-between gap-4 px-4 py-3 border-t border-gray-100 dark:border-gray-700">
+          <DualRating confidenceRating={entry.rating} masteryLevel={entry.mastery_level} />
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              {entry.includeInPractice ? t("entries.detail.inPractice") : t("entries.detail.notInPractice")}
+            </span>
+            <TbTargetArrow
+              className={[
+                "text-sm shrink-0",
+                entry.includeInPractice ? "text-green-500" : "text-gray-300 dark:text-gray-600",
+              ].join(" ")}
+            />
           </div>
         </div>
 

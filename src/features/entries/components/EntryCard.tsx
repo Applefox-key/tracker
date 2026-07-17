@@ -3,18 +3,10 @@ import { Entry } from "../types";
 import { MULTILINE_CATEGORIES } from "../constants";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { Button } from "@/shared/ui/Button";
-import { RatingStars } from "@/shared/ui/RatingStars";
+import { DualRating } from "@/shared/ui/DualRating";
 import { ToggleSwitch } from "@/shared/ui/ToggleSwitch";
 import { EntryImage } from "@/shared/ui/EntryImage";
 import { getEntryImageUrl } from "@/api/api";
-
-const masteryColors: Record<number, string> = {
-  1: "bg-red-400",
-  2: "bg-orange-400",
-  3: "bg-yellow-400",
-  4: "bg-blue-400",
-  5: "bg-emerald-400",
-};
 
 const categoryColors: Record<Entry["category"], string> = {
   word: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-auto",
@@ -44,11 +36,8 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
 
   return (
     <div
-      className={`relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between ${categoryColorsCard[entry.category]}`}
+      className={`group relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between ${categoryColorsCard[entry.category]}`}
       onClick={() => onView(entry)}>
-      <span
-        className={`absolute top-3 left-3 w-2.5 h-2.5 rounded-full ring-2 ring-white dark:ring-gray-800 ${entry.mastery_level != null ? masteryColors[entry.mastery_level] : "bg-gray-300 dark:bg-gray-600"}`}
-      />
       {/* Header row */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
@@ -101,39 +90,55 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
             src={getEntryImageUrl(entry.img)}
             alt={entry.word}
             style={{ width: 150, height: 150, objectFit: "cover" }}
-            className="shrink-0"
+            className="shrink-0 m-auto"
           />
         )}
       </div>
       {/* Footer row — stop propagation so clicks here don't open detail view */}
       <div
-        className="flex flex-wrap flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:gap-3"
+        className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-start sm:justify-between"
         onClick={(e) => e.stopPropagation()}>
+        {/* DualRating + ToggleSwitch visible only on mobile */}
         <div className="flex items-center gap-3 justify-between">
-          <RatingStars value={entry.rating} onChange={(v) => updateEntry(entry.id, { rating: v })} />
-          <div className="hidden sm:block w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
-          <ToggleSwitch
-            checked={entry.includeInPractice}
-            onChange={(v) => updateEntry(entry.id, { includeInPractice: v })}
-            label={t("entries.card.practice")}
-          />{" "}
+          <DualRating
+            confidenceRating={entry.rating}
+            masteryLevel={entry.mastery_level}
+            onConfidenceChange={(v) => updateEntry(entry.id, { rating: v })}
+          />
+          <div className="sm:hidden">
+            <ToggleSwitch
+              checked={entry.includeInPractice}
+              onChange={(v) => updateEntry(entry.id, { includeInPractice: v })}
+              label={t("entries.card.practice")}
+            />
+          </div>
         </div>
 
-        <div className="justify-center flex gap-1 ml-0 sm:ml-auto shrink-0 border-t border-gray-100 dark:border-gray-700 sm:border-none">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onEdit(entry)}
-            className="text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
-            {t("entries.card.edit")}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onRemove(entry.id)}
-            className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
-            {t("entries.card.remove")}
-          </Button>
+        {/* Desktop: ToggleSwitch above Edit/Remove in a right-aligned column */}
+        <div className="flex flex-col items-end gap-1">
+          <div className="hidden sm:block">
+            <ToggleSwitch
+              checked={entry.includeInPractice}
+              onChange={(v) => updateEntry(entry.id, { includeInPractice: v })}
+              label={t("entries.card.practice")}
+            />
+          </div>
+          <div className="flex gap-1 justify-center sm:justify-end border-t border-gray-100 dark:border-gray-700 sm:border-none w-full sm:w-auto sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onEdit(entry)}
+              className="text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
+              {t("entries.card.edit")}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onRemove(entry.id)}
+              className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
+              {t("entries.card.remove")}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

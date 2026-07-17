@@ -110,7 +110,20 @@
       "notInPractice": "Poza ćwiczeniami",
       "close": "Zamknij",
       "edit": "Edytuj",
-      "added": "Dodano"
+      "added": "Dodano",
+      "mastery": "Poziom opanowania",
+      "masteryNone": "Jeszcze nie ćwiczone",
+      "masteryLevels": {
+        "1": "Początkujący",
+        "2": "Podstawowy",
+        "3": "Średni",
+        "4": "Zaawansowany",
+        "5": "Opanowane"
+      }
+    },
+    "rating": {
+      "you": "Ty",
+      "system": "System"
     }
   },
   "tags": {

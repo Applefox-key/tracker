@@ -106,7 +106,20 @@
       "notInPractice": "Fuera de práctica",
       "close": "Cerrar",
       "edit": "Editar",
-      "added": "Agregado"
+      "added": "Agregado",
+      "mastery": "Nivel de dominio",
+      "masteryNone": "Aún no practicado",
+      "masteryLevels": {
+        "1": "Principiante",
+        "2": "Elemental",
+        "3": "Intermedio",
+        "4": "Avanzado",
+        "5": "Dominado"
+      }
+    },
+    "rating": {
+      "you": "Tú",
+      "system": "Sistema"
     }
   },
   "tags": {
