@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <script>
       try {
-        if (localStorage.getItem('tracker_theme') === 'dark') {
+        var dark = localStorage.getItem('tracker_theme') === 'dark';
+        if (dark) {
           document.documentElement.classList.add('dark');
         }
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', dark ? '#111827' : '#f9fafb');
       } catch {}
     </script>
     <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
@@ -14,12 +17,12 @@
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#4f46e5" />
+    <meta name="theme-color" content="#f9fafb" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="LangProgress" />
     <title>Language Progress</title>
-    <script type="module" crossorigin src="/assets/index-BqOXIblo.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-Do_lxAsi.css">
+    <script type="module" crossorigin src="/assets/index-WX9x9rVe.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C_1OkYpt.css">
   </head>
   <body>
     <div id="root"></div>

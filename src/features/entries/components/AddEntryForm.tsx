@@ -236,22 +236,13 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
           <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.example")}</label>
           <VoiceInputButton onResult={(t) => setExample(t)} />
         </div>
-        {isMultiline ? (
-          <textarea
-            rows={3}
-            value={example}
-            onChange={(e) => setExample(e.target.value)}
-            placeholder="e.g. It was pure serendipity that we met."
-            className={textareaCls}
-          />
-        ) : (
-          <input
-            value={example}
-            onChange={(e) => setExample(e.target.value)}
-            placeholder="e.g. It was pure serendipity that we met."
-            className={inputCls}
-          />
-        )}
+        <textarea
+          rows={3}
+          value={example}
+          onChange={(e) => setExample(e.target.value)}
+          placeholder="e.g. It was pure serendipity that we met."
+          className={textareaCls}
+        />
       </div>
 
       {/* Hidden file input shared by both mobile and desktop */}
