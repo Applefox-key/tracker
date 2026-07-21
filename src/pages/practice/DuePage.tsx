@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
-import { entriesApi } from "@/api/api";
+import { entriesApi, getEntryImageUrl } from "@/api/api";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { FlashCard } from "@/features/flashcards/components/FlashCard";
@@ -28,7 +28,7 @@ function entryToCard(entry: Entry): Flashcard {
     back: entry.explanation,
     hint: entry.example || undefined,
     rating: entry.rating,
-    img: entry.img,
+    img: entry.img ? getEntryImageUrl(entry.img) : null,
   };
 }
 
