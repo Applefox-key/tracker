@@ -4,19 +4,18 @@ import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
 
 const LS_START_SIDE = "flashcard_start_side";
+const LS_SHOW_IMAGES = "flashcard_show_images";
 import { FlashCard } from "@/features/flashcards/components/FlashCard";
 import { CardNavigation } from "@/features/flashcards/components/CardNavigation";
 import { useFlashcards } from "@/features/flashcards/hooks/useFlashcards";
-import { RatingMultiSelect } from "@/shared/ui/RatingMultiSelect";
 import { RatingStars } from "@/shared/ui/RatingStars";
 import { Button } from "@/shared/ui/Button";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
+import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
 import { EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import type { SRGrade } from "@/features/entries/types";
 import { FaShuffle } from "react-icons/fa6";
-
-const CATEGORY_KEYS: EntryCategory[] = ["word", "phrase", "grammar", "idiom", "note"];
 
 export function FlashcardsPage() {
   const { t } = useTranslation();
@@ -30,6 +29,13 @@ export function FlashcardsPage() {
   );
   const [shuffleKey, setShuffleKey] = useState(0);
   const [shaking, setShaking] = useState(false);
+  const [showImages, setShowImages] = useState(() => localStorage.getItem(LS_SHOW_IMAGES) === "true");
+
+  function toggleShowImages() {
+    const next = !showImages;
+    setShowImages(next);
+    localStorage.setItem(LS_SHOW_IMAGES, String(next));
+  }
 
   function toggleStartSide() {
     const next = startSide === "word" ? "explanation" : "word";
@@ -108,12 +114,6 @@ export function FlashcardsPage() {
         </div>
 
         <div className="flex items-center gap-3 sm:ml-auto flex-wrap sm:flex-nowrap">
-          {/* Rating + separator — desktop only */}
-          <div className="hidden sm:flex items-center gap-3">
-            <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />
-            <div className="w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
-          </div>
-
           <button
             onClick={toggleStartSide}
             title={startSide === "word" ? t("practice.flashcards.showingWordFirst") : t("practice.flashcards.showingExplanationFirst")}
@@ -138,6 +138,15 @@ export function FlashcardsPage() {
             <span>{t("practice.flashcards.shuffle")}</span>
           </button>
 
+          <button
+            onClick={toggleShowImages}
+            className={[
+              "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors",
+              showImages ? filterBtnActive : filterBtnInactive,
+            ].join(" ")}>
+            🖼 {t("practice.showImages")}
+          </button>
+
           {/* Filters button + Clear — desktop only */}
           <div className="hidden sm:flex items-center gap-3">
             <div className="w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
@@ -159,56 +168,16 @@ export function FlashcardsPage() {
 
       {/* ── Collapsible filters panel ────────────────────────────── */}
       {showFilters && (
-        <div className="hidden sm:flex flex-col gap-3 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
-          <div className="flex items-start gap-2 flex-wrap">
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pt-1.5 shrink-0 w-16">
-              {t("practice.filterPanel.category")}
-            </span>
-            <div className="flex gap-1.5 flex-wrap">
-              <button
-                onClick={() => setSelectedCategory(null)}
-                className={[
-                  "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
-                  selectedCategory === null ? filterBtnActive : filterBtnInactive,
-                ].join(" ")}>
-                {t("practice.filterPanel.all")}
-              </button>
-              {CATEGORY_KEYS.map((key) => (
-                <button
-                  key={key}
-                  onClick={() => setSelectedCategory(selectedCategory === key ? null : key)}
-                  className={[
-                    "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
-                    selectedCategory === key ? filterBtnActive : filterBtnInactive,
-                  ].join(" ")}>
-                  {t(`dashboard.categories.${key}`)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {allTags.length > 0 && (
-            <div className="flex items-start gap-2 flex-wrap">
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pt-1 shrink-0 w-16">
-                {t("practice.filterPanel.tag")}
-              </span>
-              <div className="flex gap-1.5 flex-wrap">
-                {allTags.map((tag) => (
-                  <button
-                    key={tag.id}
-                    onClick={() => setSelectedTag(selectedTag === tag.id ? null : tag.id)}
-                    className={[
-                      "px-2.5 py-1 rounded-full text-xs font-medium border transition-colors",
-                      selectedTag === tag.id
-                        ? filterBtnActive
-                        : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600 hover:border-emerald-400 hover:text-emerald-600",
-                    ].join(" ")}>
-                    #{tag.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+        <div className="hidden sm:block">
+          <PracticeFilterPanel
+            allTags={allTags}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            selectedTag={selectedTag}
+            onTagChange={setSelectedTag}
+            selectedRatings={selectedRatings}
+            onRatingsChange={setSelectedRatings}
+          />
         </div>
       )}
 
@@ -221,63 +190,15 @@ export function FlashcardsPage() {
         title={filtersTitle}
         topline
         hasActiveIndicator={activeFilterCount > 0}>
-        <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-            {t("practice.filterPanel.category")}
-          </span>
-          <div className="flex gap-1.5 flex-wrap">
-            <button
-              onClick={() => setSelectedCategory(null)}
-              className={[
-                "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
-                selectedCategory === null ? filterBtnActive : filterBtnInactive,
-              ].join(" ")}>
-              {t("practice.filterPanel.all")}
-            </button>
-            {CATEGORY_KEYS.map((key) => (
-              <button
-                key={key}
-                onClick={() => setSelectedCategory(selectedCategory === key ? null : key)}
-                className={[
-                  "px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
-                  selectedCategory === key ? filterBtnActive : filterBtnInactive,
-                ].join(" ")}>
-                {t(`dashboard.categories.${key}`)}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-            {t("practice.filterPanel.rating")}
-          </span>
-          <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />
-        </div>
-
-        {allTags.length > 0 && (
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-              {t("practice.filterPanel.tag")}
-            </span>
-            <div className="flex gap-1.5 flex-wrap">
-              {allTags.map((tag) => (
-                <button
-                  key={tag.id}
-                  onClick={() => setSelectedTag(selectedTag === tag.id ? null : tag.id)}
-                  className={[
-                    "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
-                    selectedTag === tag.id
-                      ? filterBtnActive
-                      : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600 hover:border-emerald-400 hover:text-emerald-600",
-                  ].join(" ")}>
-                  #{tag.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
+        <PracticeFilterPanel
+          allTags={allTags}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+          selectedTag={selectedTag}
+          onTagChange={setSelectedTag}
+          selectedRatings={selectedRatings}
+          onRatingsChange={setSelectedRatings}
+        />
         {activeFilterCount > 0 && (
           <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
             {t("practice.clearFilters")}
@@ -308,6 +229,7 @@ export function FlashcardsPage() {
               onFlip={flip}
               reversed={startSide === "explanation"}
               flipAnimated={flipAnimated}
+              showImageOnFront={showImages}
             />
           </div>
 

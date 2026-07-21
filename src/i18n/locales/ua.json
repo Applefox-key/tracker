@@ -306,6 +306,7 @@
       "pctSolved": "{{pct}}% вирішено правильно",
       "backToPractice": "До практики"
     },
+    "showImages": "Зображення",
     "filterPanel": {
       "rating": "Оцінка:",
       "category": "Категорія:",

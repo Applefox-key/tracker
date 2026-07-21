@@ -301,6 +301,7 @@
       "pctSolved": "{{pct}}% rozwiązanych poprawnie",
       "backToPractice": "Powrót do ćwiczeń"
     },
+    "showImages": "Obrazki",
     "filterPanel": {
       "rating": "Ocena:",
       "category": "Kategoria:",

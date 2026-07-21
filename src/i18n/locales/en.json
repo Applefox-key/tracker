@@ -299,6 +299,7 @@
       "pctSolved": "{{pct}}% solved correctly",
       "backToPractice": "Back to Practice"
     },
+    "showImages": "Images",
     "filterPanel": {
       "rating": "Rating:",
       "category": "Category:",

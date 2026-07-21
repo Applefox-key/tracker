@@ -12,7 +12,7 @@ import type { Entry, SRGrade } from "@/features/entries/types";
 import type { Flashcard } from "@/features/flashcards/types";
 
 type DueMode = "flashcard" | "quiz" | "puzzle";
-type Phase = "loading" | "setup" | "playing" | "done";
+type Phase = "loading" | "idle" | "playing" | "done";
 
 interface QueueItem {
   entry: Entry;
@@ -39,7 +39,6 @@ function isPuzzleable(entry: Entry): boolean {
 
 function buildQueue(entries: Entry[], modes: DueMode[]): QueueItem[] {
   return entries.map((entry) => {
-    // First-time entries always start as flashcard regardless of selected modes
     if (!entry.last_reviewed_at) return { entry, mode: "flashcard" };
     const valid = modes.filter((m) => {
       if (m === "quiz") return entries.length >= 4;
@@ -52,7 +51,7 @@ function buildQueue(entries: Entry[], modes: DueMode[]): QueueItem[] {
   });
 }
 
-// ── SR grade buttons (shared) ─────────────────────────────────────────────────
+// ── SR grade buttons ──────────────────────────────────────────────────────────
 
 const GRADES = [
   {
@@ -96,7 +95,7 @@ function GradeButtons({ onGrade }: { onGrade: (g: SRGrade) => void }) {
   );
 }
 
-// ── DueFlashcardItem ─────────────────────────────────────────────────────────
+// ── DueFlashcardItem ──────────────────────────────────────────────────────────
 
 function DueFlashcardItem({ entry, onNext }: { entry: Entry; onNext: () => void }) {
   const { t } = useTranslation();
@@ -120,7 +119,7 @@ function DueFlashcardItem({ entry, onNext }: { entry: Entry; onNext: () => void 
   );
 }
 
-// ── DueQuizItem ──────────────────────────────────────────────────────────────
+// ── DueQuizItem ───────────────────────────────────────────────────────────────
 
 function DueQuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onNext: () => void }) {
   const { t } = useTranslation();
@@ -187,7 +186,7 @@ function DueQuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onN
   );
 }
 
-// ── DuePuzzleItem ────────────────────────────────────────────────────────────
+// ── DuePuzzleItem ─────────────────────────────────────────────────────────────
 
 interface Tile {
   id: string;
@@ -359,7 +358,7 @@ function DuePuzzleItem({ entry, onNext }: { entry: Entry; onNext: () => void }) 
   );
 }
 
-// ── DuePage ──────────────────────────────────────────────────────────────────
+// ── DuePage ───────────────────────────────────────────────────────────────────
 
 const MODE_OPTIONS: DueMode[] = ["flashcard", "quiz", "puzzle"];
 
@@ -376,16 +375,16 @@ export function DuePage() {
 
   useEffect(() => {
     if (authMode !== "authenticated") {
-      setPhase("setup");
+      setPhase("idle");
       return;
     }
     entriesApi
       .getDueEntries()
       .then((entries) => {
         setDueEntries(entries);
-        setPhase("setup");
+        setPhase("idle");
       })
-      .catch(() => setPhase("setup"));
+      .catch(() => setPhase("idle"));
   }, [authMode]);
 
   function toggleMode(m: DueMode) {
@@ -408,98 +407,111 @@ export function DuePage() {
 
   const current = queue[currentIdx];
   const progress = queue.length > 0 ? Math.round((currentIdx / queue.length) * 100) : 0;
+  const hasDue = dueEntries.length > 0;
 
-  // ── Loading ──
-  if (phase === "loading") {
-    return (
-      <div className="flex items-center justify-center min-h-[40vh]">
-        <p className="text-gray-400 dark:text-gray-500">{t("common.loading", "Loading…")}</p>
-      </div>
-    );
-  }
+  const btnInactive =
+    "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600";
 
-  // ── Setup ──
-  if (phase === "setup") {
-    const hasDue = dueEntries.length > 0;
-    return (
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-3">
+  return (
+    <div className="flex flex-col gap-4">
+      {/* ── Header (always visible) ─────────────────────────────── */}
+      <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+        <div className="flex items-start gap-3 min-w-0">
           <button
             onClick={() => navigate("/practice")}
-            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mt-1 shrink-0">
             <FaArrowLeft />
           </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.due.title")}</h1>
+          <div className="min-w-0">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.due.title")}</h1>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t("practice.due.description")}</p>
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
-          <span className="text-5xl">📅</span>
+        {/* Mode toggles — always visible once loaded */}
+        {phase !== "loading" && hasDue && (
+          <div className="flex items-center gap-2 sm:ml-auto flex-wrap">
+            {MODE_OPTIONS.map((m) => (
+              <button
+                key={m}
+                onClick={() => toggleMode(m)}
+                className={[
+                  "px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors",
+                  selectedModes.includes(m) ? "bg-emerald-600 text-white border-emerald-600" : btnInactive,
+                ].join(" ")}>
+                {t(`practice.due.modes.${m}`)}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <hr className="border-gray-200 dark:border-gray-700" />
+
+      {/* ── Loading ──────────────────────────────────────────────── */}
+      {phase === "loading" && (
+        <div className="flex items-center justify-center min-h-[30vh]">
+          <p className="text-gray-400 dark:text-gray-500">{t("common.loading", "Loading…")}</p>
+        </div>
+      )}
+
+      {/* ── Idle: start prompt ──────────────────────────────────── */}
+      {phase === "idle" && (
+        <div className="flex flex-col items-center gap-4 py-8 max-w-xl mx-auto w-full text-center">
           {hasDue ? (
             <>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {t("practice.due.description")}
-              </p>
-
               <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 {t("practice.due.cardsToReview", { count: dueEntries.length })}
               </p>
-
-              <div className="w-full flex flex-col gap-3 text-left">
-                <p className="text-xs font-medium text-gray-500 text-center dark:text-gray-400 uppercase tracking-wide">
-                  {t("practice.due.selectModes")}
-                </p>
-                <div className="flex gap-2 flex-wrap justify-center">
-                  {MODE_OPTIONS.map((m) => (
-                    <button
-                      key={m}
-                      onClick={() => toggleMode(m)}
-                      className={[
-                        "px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors",
-                        selectedModes.includes(m)
-                          ? "bg-emerald-600 text-white border-emerald-600"
-                          : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600",
-                      ].join(" ")}>
-                      {t(`practice.due.modes.${m}`)}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
-                  {t("practice.due.newCardsNote")}
-                </p>
-              </div>
-
+              <p className="text-xs text-gray-400 dark:text-gray-500">{t("practice.due.newCardsNote")}</p>
               <Button onClick={startSession} size="lg">
                 {t("practice.due.start")}
               </Button>
             </>
           ) : (
             <>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t("practice.due.noDue")}</h2>
-                <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{t("practice.due.noDueHint")}</p>
-              </div>
+              <p className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t("practice.due.noDue")}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t("practice.due.noDueHint")}</p>
               <Button variant="secondary" onClick={() => navigate("/practice")}>
                 {t("practice.backToPractice")}
               </Button>
             </>
           )}
         </div>
-      </div>
-    );
-  }
+      )}
 
-  // ── Done ──
-  if (phase === "done") {
-    return (
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate("/practice")}
-            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-            {t("practice.backToPractice")}
-          </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.due.title")}</h1>
+      {/* ── Playing ─────────────────────────────────────────────── */}
+      {phase === "playing" && (
+        <div className="flex flex-col gap-5 max-w-xl mx-auto w-full">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setPhase("idle")}
+              className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
+              {t("practice.quit")}
+            </button>
+            <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0 tabular-nums">
+              {currentIdx + 1} / {queue.length}
+            </span>
+          </div>
+
+          {current && (
+            <div key={`${current.entry.id}-${currentIdx}`}>
+              {current.mode === "flashcard" && <DueFlashcardItem entry={current.entry} onNext={handleNext} />}
+              {current.mode === "quiz" && <DueQuizItem entry={current.entry} pool={dueEntries} onNext={handleNext} />}
+              {current.mode === "puzzle" && <DuePuzzleItem entry={current.entry} onNext={handleNext} />}
+            </div>
+          )}
         </div>
+      )}
+
+      {/* ── Done: results ───────────────────────────────────────── */}
+      {phase === "done" && (
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
           <span className="text-5xl">🎉</span>
           <div>
@@ -514,36 +526,6 @@ export function DuePage() {
             </Button>
             <Button onClick={() => navigate("/practice")}>{t("practice.backToPractice")}</Button>
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── Playing ──
-  return (
-    <div className="flex flex-col gap-5 max-w-xl mx-auto w-full">
-      <div className="flex items-center gap-4">
-        <button
-          onClick={() => setPhase("setup")}
-          className="text-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
-          {t("practice.quit")}
-        </button>
-        <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
-          <div
-            className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0 tabular-nums">
-          {currentIdx + 1} / {queue.length}
-        </span>
-      </div>
-
-      {current && (
-        <div key={`${current.entry.id}-${currentIdx}`}>
-          {current.mode === "flashcard" && <DueFlashcardItem entry={current.entry} onNext={handleNext} />}
-          {current.mode === "quiz" && <DueQuizItem entry={current.entry} pool={dueEntries} onNext={handleNext} />}
-          {current.mode === "puzzle" && <DuePuzzleItem entry={current.entry} onNext={handleNext} />}
         </div>
       )}
     </div>

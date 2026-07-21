@@ -291,6 +291,7 @@
       "pctSolved": "{{pct}}% resuelto correctamente",
       "backToPractice": "Volver a práctica"
     },
+    "showImages": "Imágenes",
     "filterPanel": {
       "rating": "Puntuación:",
       "category": "Categoría:",

@@ -303,6 +303,7 @@
       "pctSolved": "{{pct}}% решено правильно",
       "backToPractice": "К практике"
     },
+    "showImages": "Картинки",
     "filterPanel": {
       "rating": "Оценка:",
       "category": "Категория:",

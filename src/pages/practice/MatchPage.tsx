@@ -27,6 +27,8 @@ function buildColumns(entries: Entry[]): { words: MatchCard[]; explanations: Mat
   };
 }
 
+type Phase = "idle" | "playing" | "done";
+
 export function MatchPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -38,7 +40,7 @@ export function MatchPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [phase, setPhase] = useState<Phase>("idle");
   const [allEntries, setAllEntries] = useState<Entry[]>([]);
   const [roundStart, setRoundStart] = useState(0);
   const [wordCards, setWordCards] = useState<MatchCard[]>([]);
@@ -49,12 +51,18 @@ export function MatchPage() {
   const [wrongIds, setWrongIds] = useState<Set<string>>(new Set());
   const [totalMatched, setTotalMatched] = useState(0);
   const [totalErrors, setTotalErrors] = useState(0);
-  const [isDone, setIsDone] = useState(false);
   const [wrongEntryIds, setWrongEntryIds] = useState<Set<number>>(new Set());
 
   const { reviewEntry } = useEntryCrud();
 
   const filteredEntries = usePracticeEntries("match", { selectedRatings, selectedCategory, selectedTag });
+
+  useEffect(() => {
+    if (phase !== "playing") return;
+    if (canStart) startSession();
+    else setPhase("idle");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedRatings, selectedCategory, selectedTag]);
 
   const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(
     Boolean,
@@ -64,9 +72,10 @@ export function MatchPage() {
   const roundSize = roundEntries.length;
   const roundComplete = matched.size === roundSize && roundSize > 0;
   const totalPairs = allEntries.length;
+  const overallProgress = totalPairs > 0 ? Math.round(((totalMatched + matched.size) / totalPairs) * 100) : 0;
 
   useEffect(() => {
-    if (!isPlaying || roundEntries.length === 0) return;
+    if (phase !== "playing" || roundEntries.length === 0) return;
     const { words, explanations } = buildColumns(roundEntries);
     setWordCards(words);
     setExplanationCards(explanations);
@@ -75,14 +84,14 @@ export function MatchPage() {
     setWrongIds(new Set());
     setMatched(new Set());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPlaying, roundStart, allEntries]);
+  }, [phase, roundStart, allEntries]);
 
   useEffect(() => {
     if (!selectedWord || !selectedExplanation) return;
     if (selectedWord.entryId === selectedExplanation.entryId) {
       const id = selectedWord.entryId;
       setMatched((prev) => new Set([...prev, id]));
-      reviewEntry(id, wrongEntryIds.has(id) ? 3 : 5, 'match');
+      reviewEntry(id, wrongEntryIds.has(id) ? 3 : 5, "match");
       setSelectedWord(null);
       setSelectedExplanation(null);
     } else {
@@ -109,9 +118,8 @@ export function MatchPage() {
     setRoundStart(0);
     setTotalMatched(0);
     setTotalErrors(0);
-    setIsDone(false);
     setWrongEntryIds(new Set());
-    setIsPlaying(true);
+    setPhase("playing");
   }
 
   function handleWordClick(card: MatchCard) {
@@ -128,7 +136,7 @@ export function MatchPage() {
     const nextTotalMatched = totalMatched + roundSize;
     setTotalMatched(nextTotalMatched);
     const nextRoundStart = roundStart + ROUND_SIZE;
-    if (nextRoundStart >= allEntries.length) setIsDone(true);
+    if (nextRoundStart >= allEntries.length) setPhase("done");
     else setRoundStart(nextRoundStart);
   }
 
@@ -156,20 +164,41 @@ export function MatchPage() {
   }
 
   const filtersTitle = t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "");
+  const canStart = filteredEntries.length >= 2;
 
-  if (!isPlaying) {
-    const canStart = filteredEntries.length >= 2;
-    return (
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate("/practice")}
-            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-            <FaArrowLeft />
-          </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.match.title")}</h1>
-          <div className="hidden sm:flex items-center gap-2 ml-auto">
-            <Button variant={showFilters ? "primary" : "secondary"} size="sm" onClick={() => setShowFilters((v) => !v)}>
+  return (
+    <>
+      <style>{`
+        @keyframes match-shake {
+          0%,100% { transform: translateX(0); }
+          20%     { transform: translateX(-7px); }
+          40%     { transform: translateX(7px); }
+          60%     { transform: translateX(-4px); }
+          80%     { transform: translateX(4px); }
+        }
+        .match-shake { animation: match-shake 0.5s ease; }
+      `}</style>
+
+      <div className="flex flex-col gap-4">
+        {/* ── Header (always visible) ─────────────────────────────── */}
+        <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+          <div className="flex items-start gap-3 min-w-0">
+            <button
+              onClick={() => navigate("/practice")}
+              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mt-1 shrink-0">
+              <FaArrowLeft />
+            </button>
+            <div className="min-w-0">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.match.title")}</h1>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t("practice.match.modeDesc")}</p>
+            </div>
+          </div>
+
+          <div className="hidden sm:flex items-center gap-2 sm:ml-auto">
+            <Button
+              variant={showFilters ? "primary" : "secondary"}
+              size="sm"
+              onClick={() => setShowFilters((v) => !v)}>
               {t("practice.filters")}
               {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
               <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
@@ -182,18 +211,24 @@ export function MatchPage() {
           </div>
         </div>
 
+        <hr className="border-gray-200 dark:border-gray-700" />
+
+        {/* ── Collapsible filters panel ───────────────────────────── */}
         {showFilters && (
-          <PracticeFilterPanel
-            allTags={allTags}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-            selectedTag={selectedTag}
-            onTagChange={setSelectedTag}
-            selectedRatings={selectedRatings}
-            onRatingsChange={setSelectedRatings}
-          />
+          <div className="hidden sm:block">
+            <PracticeFilterPanel
+              allTags={allTags}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+              selectedTag={selectedTag}
+              onTagChange={setSelectedTag}
+              selectedRatings={selectedRatings}
+              onRatingsChange={setSelectedRatings}
+            />
+          </div>
         )}
 
+        {/* Mobile filter sidebar */}
         <SideDrawer
           open={isMobileDrawerOpen}
           onClose={() => setIsMobileDrawerOpen(false)}
@@ -218,172 +253,150 @@ export function MatchPage() {
           )}
         </SideDrawer>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
-          <span className="text-5xl">🔗</span>
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t("practice.match.modeName")}</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{t("practice.match.modeDesc")}</p>
-          </div>
-          <p className="text-sm text-gray-400 dark:text-gray-500">
-            {t("practice.entriesAvailable", { count: filteredEntries.length })}
-          </p>
-          {!canStart && (
-            <p className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-2">
-              {t("practice.match.needAtLeast2")}
+        {/* ── Idle: start prompt ──────────────────────────────────── */}
+        {phase === "idle" && (
+          <div className="flex flex-col items-center gap-4 py-8 max-w-xl mx-auto w-full">
+            <p className="text-sm text-gray-400 dark:text-gray-500">
+              {t("practice.entriesAvailable", { count: filteredEntries.length })}
             </p>
-          )}
-          <Button onClick={startSession} disabled={!canStart} size="lg">
-            {t("practice.match.startMatch")}
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (isDone) {
-    return (
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate("/practice")}
-            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-            {t("practice.backToPractice")}
-          </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.match.resultsTitle")}</h1>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
-          <span className="text-5xl">🎉</span>
-          <div className="flex flex-col gap-3 w-full">
-            <div>
-              <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{totalPairs}</p>
-              <p className="text-gray-500 dark:text-gray-400 mt-1">{t("practice.match.pairsMatched")}</p>
-            </div>
-            <div>
-              <p
-                className={`text-3xl font-bold ${totalErrors === 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>
-                {totalErrors}
+            {filteredEntries.length === 0 && (
+              <p className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-2">
+                {t("practice.puzzle.noMatchingEntries")}
               </p>
-              <p className="text-gray-500 dark:text-gray-400 mt-1">{t("practice.match.mistakes")}</p>
-            </div>
+            )}
+            {filteredEntries.length > 0 && !canStart && (
+              <p className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-2">
+                {t("practice.match.needAtLeast2")}
+              </p>
+            )}
+            {canStart && (
+              <Button onClick={startSession} size="lg">
+                {t("practice.match.startMatch")}
+              </Button>
+            )}
           </div>
-          <div className="flex gap-3 flex-wrap justify-center">
-            <Button variant="secondary" onClick={startSession}>
-              {t("practice.match.playAgain")}
-            </Button>
-            <Button onClick={() => navigate("/practice")}>{t("practice.match.backToPractice")}</Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const overallProgress = totalPairs > 0 ? Math.round(((totalMatched + matched.size) / totalPairs) * 100) : 0;
-
-  return (
-    <>
-      <style>{`
-        @keyframes match-shake {
-          0%,100% { transform: translateX(0); }
-          20%     { transform: translateX(-7px); }
-          40%     { transform: translateX(7px); }
-          60%     { transform: translateX(-4px); }
-          80%     { transform: translateX(4px); }
-        }
-        .match-shake { animation: match-shake 0.5s ease; }
-      `}</style>
-
-      <div className="flex flex-col gap-5 max-w-2xl mx-auto w-full">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setIsPlaying(false)}
-            className="text-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
-            {t("practice.quit")}
-          </button>
-          <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
-            <div
-              className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${overallProgress}%` }}
-            />
-          </div>
-          <span className="text-lg text-gray-500 dark:text-gray-400 shrink-0 tabular-nums">
-            {totalMatched + matched.size} / {totalPairs}
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center">
-            {t("practice.match.wordsCol")}
-          </p>
-          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center">
-            {t("practice.match.explanationsCol")}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-2">
-            {wordCards.map((card) => {
-              const isWrong = wrongIds.has(card.id);
-              return (
-                <button
-                  key={card.id}
-                  onClick={() => handleWordClick(card)}
-                  disabled={matched.has(card.entryId) || wrongIds.size > 0}
-                  className={[cardCls(card, selectedWord?.id), isWrong ? "match-shake" : ""].join(" ")}>
-                  <span className="text-sm font-semibold leading-snug block">{card.text}</span>
-                  {matched.has(card.entryId) && <span className="text-green-500 text-xs ml-1">✓</span>}
-                </button>
-              );
-            })}
-          </div>
-          <div className="flex flex-col gap-2">
-            {explanationCards.map((card) => {
-              const isSelected = selectedExplanation?.id === card.id;
-              const isWrong = wrongIds.has(card.id);
-              return (
-                <button
-                  key={card.id}
-                  onClick={() => handleExplanationClick(card)}
-                  disabled={matched.has(card.entryId) || wrongIds.size > 0}
-                  className={[cardCls(card, selectedExplanation?.id), isWrong ? "match-shake" : ""].join(" ")}>
-                  <span
-                    className="text-xs leading-snug block"
-                    style={
-                      !isSelected
-                        ? {
-                            display: "-webkit-box",
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: "vertical",
-                            overflow: "hidden",
-                          }
-                        : undefined
-                    }>
-                    {card.text}
-                  </span>
-                  {matched.has(card.entryId) && <span className="text-green-500 text-xs ml-1">✓</span>}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {!roundComplete && (
-          <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
-            {t("practice.match.selectHint")}
-          </p>
         )}
 
-        {roundComplete && (
-          <div className="flex flex-col items-center gap-4 py-4">
-            <p className="text-green-600 dark:text-green-400 font-semibold">
-              {roundStart + ROUND_SIZE >= allEntries.length
-                ? t("practice.match.allPairsMatched")
-                : t("practice.match.roundComplete")}
-            </p>
-            <Button onClick={advanceRound}>
-              {roundStart + ROUND_SIZE >= allEntries.length
-                ? t("practice.match.seeResults")
-                : t("practice.match.nextRound")}
-            </Button>
+        {/* ── Playing ─────────────────────────────────────────────── */}
+        {phase === "playing" && (
+          <div className="flex flex-col gap-5 max-w-2xl mx-auto w-full">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setPhase("idle")}
+                className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
+                {t("practice.quit")}
+              </button>
+              <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${overallProgress}%` }}
+                />
+              </div>
+              <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0 tabular-nums">
+                {totalMatched + matched.size} / {totalPairs}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center">
+                {t("practice.match.wordsCol")}
+              </p>
+              <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide text-center">
+                {t("practice.match.explanationsCol")}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-2">
+                {wordCards.map((card) => {
+                  const isWrong = wrongIds.has(card.id);
+                  return (
+                    <button
+                      key={card.id}
+                      onClick={() => handleWordClick(card)}
+                      disabled={matched.has(card.entryId) || wrongIds.size > 0}
+                      className={[cardCls(card, selectedWord?.id), isWrong ? "match-shake" : ""].join(" ")}>
+                      <span className="text-sm font-semibold leading-snug block">{card.text}</span>
+                      {matched.has(card.entryId) && <span className="text-green-500 text-xs ml-1">✓</span>}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="flex flex-col gap-2">
+                {explanationCards.map((card) => {
+                  const isSelected = selectedExplanation?.id === card.id;
+                  const isWrong = wrongIds.has(card.id);
+                  return (
+                    <button
+                      key={card.id}
+                      onClick={() => handleExplanationClick(card)}
+                      disabled={matched.has(card.entryId) || wrongIds.size > 0}
+                      className={[cardCls(card, selectedExplanation?.id), isWrong ? "match-shake" : ""].join(" ")}>
+                      <span
+                        className="text-xs leading-snug block"
+                        style={
+                          !isSelected
+                            ? {
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                              }
+                            : undefined
+                        }>
+                        {card.text}
+                      </span>
+                      {matched.has(card.entryId) && <span className="text-green-500 text-xs ml-1">✓</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {!roundComplete && (
+              <p className="text-xs text-gray-400 dark:text-gray-500 text-center">{t("practice.match.selectHint")}</p>
+            )}
+
+            {roundComplete && (
+              <div className="flex flex-col items-center gap-4 py-4">
+                <p className="text-green-600 dark:text-green-400 font-semibold">
+                  {roundStart + ROUND_SIZE >= allEntries.length
+                    ? t("practice.match.allPairsMatched")
+                    : t("practice.match.roundComplete")}
+                </p>
+                <Button onClick={advanceRound}>
+                  {roundStart + ROUND_SIZE >= allEntries.length
+                    ? t("practice.match.seeResults")
+                    : t("practice.match.nextRound")}
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Done: results ───────────────────────────────────────── */}
+        {phase === "done" && (
+          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
+            <span className="text-5xl">🎉</span>
+            <div className="flex flex-col gap-3 w-full">
+              <div>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{totalPairs}</p>
+                <p className="text-gray-500 dark:text-gray-400 mt-1">{t("practice.match.pairsMatched")}</p>
+              </div>
+              <div>
+                <p
+                  className={`text-3xl font-bold ${totalErrors === 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}`}>
+                  {totalErrors}
+                </p>
+                <p className="text-gray-500 dark:text-gray-400 mt-1">{t("practice.match.mistakes")}</p>
+              </div>
+            </div>
+            <div className="flex gap-3 flex-wrap justify-center">
+              <Button variant="secondary" onClick={startSession}>
+                {t("practice.match.playAgain")}
+              </Button>
+              <Button onClick={() => navigate("/practice")}>{t("practice.match.backToPractice")}</Button>
+            </div>
           </div>
         )}
       </div>
