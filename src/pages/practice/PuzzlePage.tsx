@@ -174,8 +174,7 @@ export function PuzzlePage() {
   const filtersTitle = t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "");
   const canStart = filteredEntries.length > 0;
   const progress = questions.length > 0 ? Math.round((currentIdx / questions.length) * 100) : 0;
-  const resultPct =
-    phase === "done" && questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
+  const resultPct = phase === "done" && questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
   const tLen = currentEntry ? targetLength(currentEntry) : 0;
 
   const btnInactive =
@@ -376,7 +375,7 @@ export function PuzzlePage() {
                 key={tile.id}
                 onClick={() => placeTile(tile)}
                 disabled={answerPhase !== "thinking"}
-                className="px-3 py-1.5 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 active:bg-emerald-100 transition-colors disabled:opacity-40">
+                className="text-lg min-h-[3rem] min-w-[3rem] px-3 py-1.5 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 active:bg-emerald-100 transition-colors disabled:opacity-40">
                 {tile.value}
               </button>
             ))}
@@ -419,7 +418,9 @@ export function PuzzlePage() {
             <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               {score} / {questions.length}
             </p>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">{t("practice.puzzle.pctSolved", { pct: resultPct })}</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">
+              {t("practice.puzzle.pctSolved", { pct: resultPct })}
+            </p>
           </div>
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
             <div
