@@ -337,7 +337,7 @@ export function PuzzlePage() {
 
           <div
             className={[
-              "min-h-[56px] rounded-xl border-2 p-3 flex flex-wrap gap-2 items-center transition-colors",
+              "min-h-[64px] rounded-xl border-2 p-3 flex flex-wrap gap-2 items-center transition-colors",
               answerPhase === "correct"
                 ? "border-green-400 bg-green-50 dark:bg-green-900/20"
                 : answerPhase === "wrong"
@@ -353,7 +353,7 @@ export function PuzzlePage() {
               <button
                 key={tile.id}
                 onClick={() => removePlaced(tile)}
-                className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 active:bg-emerald-800 transition-colors">
+                className="min-h-[3rem] min-w-[3rem] px-4 py-2 rounded-lg bg-emerald-600 text-white text-base font-medium hover:bg-emerald-700 active:bg-emerald-800 transition-colors touch-manipulation">
                 {tile.value}
               </button>
             ))}
@@ -375,7 +375,7 @@ export function PuzzlePage() {
                 key={tile.id}
                 onClick={() => placeTile(tile)}
                 disabled={answerPhase !== "thinking"}
-                className="text-lg min-h-[3rem] min-w-[3rem] px-3 py-1.5 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 active:bg-emerald-100 transition-colors disabled:opacity-40">
+                className="text-xl min-h-[3.5rem] min-w-[3.5rem] px-4 py-2.5 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 font-medium text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 active:bg-emerald-100 transition-colors disabled:opacity-40 touch-manipulation">
                 {tile.value}
               </button>
             ))}
