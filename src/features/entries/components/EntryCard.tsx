@@ -64,7 +64,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
       <div className="flex flex-col sm:flex-row px-5 items-start sm:items-center gap-3 justify-between">
         <div className={`flex flex-col items-start ${entry.img ? "justify-start" : "justify-between"} gap-3 h-full`}>
           <p
-            className={`text-sm text-gray-500 dark:text-gray-400 mt-0.5 whitespace-pre-line ${isMultiline ? "line-clamp-2 break-words" : ""}`}>
+            className={`text-sm text-gray-500 dark:text-gray-400 mt-0.5 whitespace-pre-line font-bold ${isMultiline ? "line-clamp-2 break-words" : ""}`}>
             {entry.explanation}
           </p>
           {/* Example */}
