@@ -42,8 +42,8 @@ const DEFAULT_VALUES: EntryFormValues = {
   example: "",
   category: "word",
   tagIds: [],
-  rating: 3,
-  includeInPractice: false,
+  rating: 1,
+  includeInPractice: true,
 };
 
 function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
