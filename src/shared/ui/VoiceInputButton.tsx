@@ -37,8 +37,8 @@ function getSpeechRecognition(): SpeechRecognitionCtor | null {
 const supported = !!getSpeechRecognition();
 
 /**
- * Microphone button with an inline language selector driven by the user's profile settings.
- * Calls `onResult(transcript)` continuously while recording.
+ * Compound mic + language picker button.
+ * Left half triggers recording; right half opens a language dropdown.
  */
 export function VoiceInputButton({ onResult, lang: controlledLang, onLangChange, className = "" }: Props) {
   const { speechLangs } = useUserSettings();
@@ -46,9 +46,12 @@ export function VoiceInputButton({ onResult, lang: controlledLang, onLangChange,
 
   const [recording, setRecording] = useState(false);
   const [internalLang, setInternalLang] = useState<LangCode>(speechLangs[0] ?? "");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const lang = controlledLang ?? internalLang;
+
   function setLang(code: LangCode) {
     if (controlledLang !== undefined) {
       onLangChange?.(code);
@@ -62,12 +65,30 @@ export function VoiceInputButton({ onResult, lang: controlledLang, onLangChange,
     if (controlledLang === undefined) setInternalLang(speechLangs[0] ?? "");
   }, [speechLangs.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(
-    () => () => {
-      recognitionRef.current?.stop();
-    },
-    [],
-  );
+  // Stop recognition on unmount
+  useEffect(() => () => { recognitionRef.current?.stop(); }, []);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    function onPointerDown(e: PointerEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [dropdownOpen]);
+
+  // Close dropdown on Escape
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setDropdownOpen(false);
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [dropdownOpen]);
 
   if (!supported) return null;
 
@@ -103,52 +124,105 @@ export function VoiceInputButton({ onResult, lang: controlledLang, onLangChange,
 
   function handleMicClick(e: React.MouseEvent) {
     e.stopPropagation();
+    setDropdownOpen(false);
     if (recording) stop();
     else start();
   }
 
-  function handleLangClick(e: React.MouseEvent, code: LangCode) {
+  function handleLangButtonClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    setDropdownOpen((v) => !v);
+  }
+
+  function handleLangSelect(e: React.MouseEvent, code: LangCode) {
     e.stopPropagation();
     if (recording) stop();
     setLang(code);
+    setDropdownOpen(false);
   }
 
-  return (
-    <div className={`inline-flex items-center gap-1 sm:gap-0.5 ${className}`}>
-      {langs.map(({ code, label }) => (
-        <button
-          key={label}
-          type="button"
-          onClick={(e) => handleLangClick(e, code)}
-          title={code || "auto"}
-          className={`text-xs sm:text-[10px] px-2 sm:px-1.5 py-1.5 sm:py-0.5 rounded border transition-colors leading-none ${
-            lang === code
-              ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 font-semibold border-emerald-300 dark:border-emerald-700"
-              : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-gray-300"
-          }`}>
-          {label}
-        </button>
-      ))}
+  const currentLabel = langs.find((l) => l.code === lang)?.label ?? lang;
+  const hasMultipleLangs = langs.length > 1;
 
-      <button
-        type="button"
-        onClick={handleMicClick}
-        title={recording ? "Stop recording" : "Voice input"}
-        className={`inline-flex items-center justify-center w-9 h-9 sm:w-7 sm:h-7 rounded-full transition-colors shrink-0 ${
+  const micBg = recording
+    ? "bg-red-500 text-white animate-pulse"
+    : "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-800/60";
+
+  return (
+    <div ref={containerRef} className={`relative inline-flex items-center ${className}`}>
+      <div
+        className={`inline-flex items-center rounded-full border ${
           recording
-            ? "text-white bg-red-500 animate-pulse shadow-sm"
-            : "text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-        }`}>
-        {recording ? (
-          <svg className="w-4 h-4 sm:w-3.5 sm:h-3.5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM4.27 3 3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z" />
-          </svg>
-        ) : (
-          <svg className="w-4 h-4 sm:w-3.5 sm:h-3.5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
-          </svg>
+            ? "border-red-400 dark:border-red-500"
+            : "border-emerald-300 dark:border-emerald-700"
+        } overflow-visible`}
+      >
+        {/* Mic button — left half */}
+        <button
+          type="button"
+          onClick={handleMicClick}
+          title={recording ? "Stop recording" : "Voice input"}
+          className={`inline-flex items-center justify-center w-7 h-7 transition-colors shrink-0 ${micBg} ${
+            hasMultipleLangs ? "rounded-l-full" : "rounded-full"
+          }`}
+        >
+          {recording ? (
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM4.27 3 3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z" />
+            </svg>
+          ) : (
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
+            </svg>
+          )}
+        </button>
+
+        {/* Divider + lang button — right half */}
+        {hasMultipleLangs && (
+          <>
+            <div className={`w-px self-stretch ${recording ? "bg-red-300 dark:bg-red-600" : "bg-emerald-300 dark:bg-emerald-700"}`} />
+            <button
+              type="button"
+              onClick={handleLangButtonClick}
+              title="Change language"
+              className={`inline-flex items-center gap-0.5 pl-1.5 pr-2 h-7 text-xs font-semibold rounded-r-full transition-colors ${
+                recording
+                  ? "bg-red-500 text-white animate-pulse"
+                  : "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-800/60"
+              }`}
+            >
+              {currentLabel}
+              <svg
+                className={`w-2.5 h-2.5 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M7 10l5 5 5-5z" />
+              </svg>
+            </button>
+          </>
         )}
-      </button>
+      </div>
+
+      {/* Dropdown */}
+      {dropdownOpen && hasMultipleLangs && (
+        <div className="absolute right-0 top-full mt-1 z-50 min-w-[90px] rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-lg py-1">
+          {langs.map(({ code, label }) => (
+            <button
+              key={code}
+              type="button"
+              onClick={(e) => handleLangSelect(e, code)}
+              className={`w-full text-left px-3 py-1.5 text-xs transition-colors ${
+                code === lang
+                  ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-semibold"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
