@@ -22,6 +22,7 @@ const categoryColorsCard: Record<Entry["category"], string> = {
   idiom: "bg-orange-50 dark:bg-orange-900/30  border-orange-200 dark:border-orange-400",
   note: "bg-teal-50 dark:bg-teal-900/30  border-teal-200 dark:border-teal-400",
 };
+
 interface EntryCardProps {
   entry: Entry;
   onRemove: (id: number) => void;
@@ -36,10 +37,11 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
 
   return (
     <div
-      className={`group relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between ${categoryColorsCard[entry.category]}`}
+      className={`group relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm pb-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between ${categoryColorsCard[entry.category]}`}
       onClick={() => onView(entry)}>
       {/* Header row */}
-      <div className="flex items-start justify-between gap-3">
+      <div
+        className={`flex items-start justify-between p-5 pb-4 gap-3  rounded-t-xl ${categoryColors[entry.category]}`}>
         <div className="flex-1 min-w-0">
           <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">{entry.word}</p>
         </div>{" "}
@@ -59,7 +61,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
         </span>
       </div>{" "}
       {/* Content row */}{" "}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
+      <div className="flex flex-col sm:flex-row px-5 items-start sm:items-center gap-3 justify-between">
         <div className={`flex flex-col items-start ${entry.img ? "justify-start" : "justify-between"} gap-3 h-full`}>
           <p
             className={`text-sm text-gray-500 dark:text-gray-400 mt-0.5 whitespace-pre-line ${isMultiline ? "line-clamp-2 break-words" : ""}`}>
@@ -96,7 +98,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
       </div>
       {/* Footer row — stop propagation so clicks here don't open detail view */}
       <div
-        className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-start sm:justify-between"
+        className="flex flex-col gap-2 pt-1 px-5 sm:flex-row sm:items-start sm:justify-between"
         onClick={(e) => e.stopPropagation()}>
         {/* DualRating + ToggleSwitch visible only on mobile */}
         <div className="flex items-center gap-3 justify-between">

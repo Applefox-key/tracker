@@ -48,7 +48,8 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
         className="w-full max-w-lg flex justify-between sm:block bg-white dark:bg-gray-800 sm:rounded-2xl sm:rounded-t-2xl shadow-xl flex flex-col h-[100vh] sm:h-auto sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}>
         {/* Header */}
-        <div className="flex items-start justify-between p-4 border-b border-gray-100 dark:border-gray-700">
+        <div
+          className={`flex items-start justify-between p-4 border-b border-gray-100 dark:border-gray-700 rounded-t-2xl ${categoryColors[entry.category]}`}>
           <div className="flex-1 min-w-0 pr-4">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 break-words">{entry.word}</h2>
             <div className="flex items-center gap-2 mt-1.5">
