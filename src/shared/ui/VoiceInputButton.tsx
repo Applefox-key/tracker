@@ -114,17 +114,17 @@ export function VoiceInputButton({ onResult, lang: controlledLang, onLangChange,
   }
 
   return (
-    <div className={`inline-flex items-center gap-0.5 ${className}`}>
+    <div className={`inline-flex items-center gap-1 sm:gap-0.5 ${className}`}>
       {langs.map(({ code, label }) => (
         <button
           key={label}
           type="button"
           onClick={(e) => handleLangClick(e, code)}
           title={code || "auto"}
-          className={`text-[10px] px-1 py-0.5 rounded transition-colors leading-none ${
+          className={`text-xs sm:text-[10px] px-2 sm:px-1.5 py-1.5 sm:py-0.5 rounded border transition-colors leading-none ${
             lang === code
-              ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 font-semibold"
-              : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+              ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 font-semibold border-emerald-300 dark:border-emerald-700"
+              : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-gray-300"
           }`}>
           {label}
         </button>
@@ -134,17 +134,17 @@ export function VoiceInputButton({ onResult, lang: controlledLang, onLangChange,
         type="button"
         onClick={handleMicClick}
         title={recording ? "Stop recording" : "Voice input"}
-        className={`inline-flex items-center justify-center w-7 h-7 rounded-full transition-colors shrink-0 ${
+        className={`inline-flex items-center justify-center w-9 h-9 sm:w-7 sm:h-7 rounded-full transition-colors shrink-0 ${
           recording
             ? "text-white bg-red-500 animate-pulse shadow-sm"
             : "text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
         }`}>
         {recording ? (
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="w-4 h-4 sm:w-3.5 sm:h-3.5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM4.27 3 3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z" />
           </svg>
         ) : (
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="w-4 h-4 sm:w-3.5 sm:h-3.5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
           </svg>
         )}
