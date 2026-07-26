@@ -151,7 +151,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 sm:rounded-2xl p-5 flex flex-col gap-4">
+      className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 sm:rounded-2xl p-5 flex flex-col gap-4 min-h-screen sm:min-h-0">
       <div className="sticky top-0 z-10 flex items-center gap-2 -mx-5 -mt-5 px-5 py-3 rounded-t-xl bg-white dark:bg-gray-900 shadow-sm sm:static sm:z-auto sm:rounded-none sm:mx-0 sm:mt-0 sm:px-0 sm:py-0 sm:bg-transparent sm:dark:bg-transparent sm:shadow-none">
         <button
           type="button"
@@ -434,7 +434,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
       </div>
 
       {/* Actions */}
-      <div className="sticky bottom-0 -mx-5 -mb-5 px-5 py-3 rounded-b-xl flex gap-2 justify-end bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 sm:static sm:bg-transparent sm:dark:bg-transparent sm:border-0 sm:mx-0 sm:mb-0 sm:px-0 sm:pt-1 sm:pb-0 sm:rounded-none">
+      <div className="mt-auto sticky bottom-0 -mx-5 -mb-5 px-5 py-3 rounded-b-xl flex gap-2 justify-end bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 sm:static sm:mt-0 sm:bg-transparent sm:dark:bg-transparent sm:border-0 sm:mx-0 sm:mb-0 sm:px-0 sm:pt-1 sm:pb-0 sm:rounded-none">
         <Button type="button" variant="secondary" onClick={onCancel}>
           {t("entries.form.cancel")}
         </Button>

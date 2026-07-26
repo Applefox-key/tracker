@@ -163,7 +163,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
             />
           </div>
           <div
-            className={`flex gap-1 justify-center sm:justify-end border-t border-gray-100 dark:border-gray-700 sm:border-none w-full sm:w-auto transition-opacity sm:opacity-0 sm:group-hover:opacity-100 ${showActions ? "opacity-100" : "opacity-0"}`}>
+            className={`flex gap-1 justify-center sm:justify-end border-t border-gray-100 dark:border-gray-700 sm:border-none w-full sm:w-auto transition-opacity sm:opacity-0 sm:pointer-events-none sm:group-hover:opacity-100 sm:group-hover:pointer-events-auto ${showActions ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
             <Button
               variant="ghost"
               size="sm"
