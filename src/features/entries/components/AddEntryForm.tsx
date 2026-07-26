@@ -145,14 +145,14 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
   const isEdit = mode === "edit";
   const isMultiline = MULTILINE_CATEGORIES.has(category);
   const inputCls =
-    "border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500";
+    "border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500";
   const textareaCls = inputCls + " resize-none leading-relaxed";
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-5 flex flex-col gap-4">
-      <div className="flex items-center gap-2">
+      className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 sm:rounded-2xl p-5 flex flex-col gap-4">
+      <div className="sticky top-0 z-10 flex items-center gap-2 -mx-5 -mt-5 px-5 py-3 rounded-t-xl bg-white dark:bg-gray-900 shadow-sm sm:static sm:z-auto sm:rounded-none sm:mx-0 sm:mt-0 sm:px-0 sm:py-0 sm:bg-transparent sm:dark:bg-transparent sm:shadow-none">
         <button
           type="button"
           onClick={onCancel}
@@ -274,13 +274,12 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
         {/* Right: image, rating, practice stacked */}
         <div className="flex flex-col gap-3 flex-1 ps-[30px]">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.image")}</label>
             {displayImgUrl ? (
               <div className="flex flex-row items-center gap-1">
                 <EntryImage
                   src={displayImgUrl}
                   alt="Entry illustration"
-                  className="w-24 h-24 shrink-0 border border-gray-200 dark:border-gray-600"
+                  className="w-28 h-28 shrink-0 border border-gray-200 dark:border-gray-600"
                 />
                 <div className="flex gap-2 flex-col">
                   <button
@@ -301,7 +300,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-20 h-20 flex flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 hover:border-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
+                className="w-32 h-32 flex flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 hover:border-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                   <path
                     fillRule="evenodd"
@@ -341,15 +340,15 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
       {/* Desktop-only: Image + Rating / Practice */}
       <div className="hidden sm:flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1.5 items-end">
-          <label className="text-xs font-medium text-gray-600 dark:text-gray-400 self-start">
+          {/* <label className="text-xs font-medium text-gray-600 dark:text-gray-400 self-start">
             {t("entries.form.image")}
-          </label>
+          </label> */}
           {displayImgUrl ? (
-            <div className="flex flex-row items-center gap-1">
+            <div className="flex flex-row items-center gap-1 h-28">
               <EntryImage
                 src={displayImgUrl}
                 alt="Entry illustration"
-                className="w-20 h-20 shrink-0 border border-gray-200 dark:border-gray-600"
+                className="w-32 h-32 shrink-0 border border-gray-200 dark:border-gray-600"
               />
               <div className="flex gap-2 flex-col">
                 <button
@@ -370,7 +369,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="w-20 h-20 flex flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 hover:border-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
+              className="w-28 h-28 flex flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 hover:border-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
@@ -435,7 +434,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 justify-end pt-1">
+      <div className="sticky bottom-0 -mx-5 -mb-5 px-5 py-3 rounded-b-xl flex gap-2 justify-end bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 sm:static sm:bg-transparent sm:dark:bg-transparent sm:border-0 sm:mx-0 sm:mb-0 sm:px-0 sm:pt-1 sm:pb-0 sm:rounded-none">
         <Button type="button" variant="secondary" onClick={onCancel}>
           {t("entries.form.cancel")}
         </Button>
