@@ -1,11 +1,14 @@
+import React from "react";
+
 interface ToggleSwitchProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   label?: string;
+  icon?: React.ReactNode;
   id?: string;
 }
 
-export function ToggleSwitch({ checked, onChange, label, id }: ToggleSwitchProps) {
+export function ToggleSwitch({ checked, onChange, label, icon, id }: ToggleSwitchProps) {
   const inputId = id ?? `toggle-${Math.random().toString(36).slice(2)}`;
 
   return (
@@ -28,10 +31,16 @@ export function ToggleSwitch({ checked, onChange, label, id }: ToggleSwitchProps
         {/* Thumb */}
         <div
           className={[
-            "absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200",
+            "absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 flex items-center justify-center",
             checked ? "translate-x-4" : "translate-x-0",
           ].join(" ")}
-        />
+        >
+          {icon && (
+            <span className={["text-[9px] transition-colors duration-200", checked ? "text-emerald-600" : "text-gray-400"].join(" ")}>
+              {icon}
+            </span>
+          )}
+        </div>
       </div>
       {label && <span className="text-xs text-gray-600 dark:text-gray-400">{label}</span>}
     </label>

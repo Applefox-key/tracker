@@ -8,6 +8,7 @@ import { DualRating } from "@/shared/ui/DualRating";
 import { ToggleSwitch } from "@/shared/ui/ToggleSwitch";
 import { EntryImage } from "@/shared/ui/EntryImage";
 import { getEntryImageUrl } from "@/api/api";
+import { TbTargetArrow } from "react-icons/tb";
 
 const categoryColors: Record<Entry["category"], string> = {
   word: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-auto",
@@ -67,7 +68,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
 
   return (
     <div
-      className={`group relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm pb-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between select-none ${categoryColorsCard[entry.category]}`}
+      className={`group relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm pb-1 sm:pb-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between select-none ${categoryColorsCard[entry.category]}`}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
@@ -132,7 +133,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
       </div>
       {/* Footer row — stop propagation so clicks here don't open detail view */}
       <div
-        className="flex flex-col gap-2 pt-1 px-5 sm:flex-row sm:items-start sm:justify-between"
+        className="flex flex-col gap-1 sm:gap-2 pt-1 px-5 sm:flex-row sm:items-start sm:justify-between"
         onClick={(e) => e.stopPropagation()}>
         {/* DualRating + ToggleSwitch visible only on mobile */}
         <div className="flex items-center gap-3 justify-between">
@@ -146,6 +147,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
               checked={entry.includeInPractice}
               onChange={(v) => updateEntry(entry.id, { includeInPractice: v })}
               label={t("entries.card.practice")}
+              icon={<TbTargetArrow />}
             />
           </div>
         </div>
@@ -157,9 +159,11 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
               checked={entry.includeInPractice}
               onChange={(v) => updateEntry(entry.id, { includeInPractice: v })}
               label={t("entries.card.practice")}
+              icon={<TbTargetArrow />}
             />
           </div>
-          <div className={`flex gap-1 justify-center sm:justify-end border-t border-gray-100 dark:border-gray-700 sm:border-none w-full sm:w-auto transition-opacity sm:opacity-0 sm:group-hover:opacity-100 ${showActions ? "opacity-100" : "opacity-0"}`}>
+          <div
+            className={`flex gap-1 justify-center sm:justify-end border-t border-gray-100 dark:border-gray-700 sm:border-none w-full sm:w-auto transition-opacity sm:opacity-0 sm:group-hover:opacity-100 ${showActions ? "opacity-100" : "opacity-0"}`}>
             <Button
               variant="ghost"
               size="sm"

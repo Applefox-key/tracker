@@ -88,7 +88,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
                     {t("entries.detail.explanation")}
                   </p>
                   <p
-                    className={`text-sm text-gray-700 dark:text-gray-300 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
+                    className={`text-sm text-gray-700 dark:text-gray-300 font-bold leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
                     {entry.explanation}
                   </p>
                 </div>
