@@ -11,8 +11,8 @@ import { EditEntryModal } from "@/features/entries/components/EditEntryModal";
 import { EntryDetailModal } from "@/features/entries/components/EntryDetailModal";
 import { useEntries, DateFilter } from "@/features/entries/hooks/useEntries";
 import { Entry, EntryCategory } from "@/features/entries/types";
-import { FaPlus } from "react-icons/fa6";
 import { TbTargetArrow } from "react-icons/tb";
+import { AddEntryFab } from "@/features/entries/components/AddEntryFab";
 
 export function EntriesPage() {
   const { t } = useTranslation();
@@ -67,9 +67,12 @@ export function EntriesPage() {
     removeEntry,
   } = useEntries(initialDateFilter, initialCategoryFilter);
 
-  const advancedFilterCount = [selectedTag !== null, selectedRatings.length > 0, dateFilter !== "all"].filter(
-    Boolean,
-  ).length;
+  const advancedFilterCount = [
+    filterCategory !== "all",
+    selectedTag !== null,
+    selectedRatings.length > 0,
+    dateFilter !== "all",
+  ].filter(Boolean).length;
 
   function handleAdd(values: EntryFormValues) {
     const { tagIds, imgFile, removeImg: _, ...entryData } = values;
@@ -106,14 +109,14 @@ export function EntriesPage() {
           {/* Filter section */}
           <div className="flex flex-col gap-2 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
             {/* Row 1: search + category chips + filters toggle */}
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-col sm:flex-row gap-2 max-w-[80%] sm:max-w-unset">
               <input
                 type="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={t("entries.searchPlaceholder")}
                 className="order-2 sm:order-1 sm:w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
-                         focus:outline-none focus:ring-2 focus:ring-emerald-400 shrink-0 me-7 sm:me-0"
+                         focus:outline-none focus:ring-2 focus:ring-emerald-400 shrink-0"
               />
               <div
                 className="order-1 sm:order-2 hidden sm:flex gap-1.5 flex-1 overflow-x-auto [scrollbar-width:none]
@@ -290,18 +293,6 @@ export function EntriesPage() {
       {/* Edit modal */}
       {editingEntry && <EditEntryModal entry={editingEntry} onClose={() => setEditingEntry(null)} />}
 
-      {/* FAB — mobile only, above bottom nav */}
-      <button
-        onClick={() => setShowForm((v) => !v)}
-        className="sm:hidden fixed opacity-70 right-5 z-20 w-10 h-10 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-lg flex items-center justify-center transition-colors"
-        style={{ bottom: "calc(65px + 36px + env(safe-area-inset-bottom))" }}
-        aria-label={showForm ? t("entries.cancel") : t("entries.addEntry")}>
-        <FaPlus
-          className="text-xl"
-          style={{ transform: showForm ? "rotate(45deg)" : "none", transition: "transform 0.2s" }}
-        />
-      </button>
-
       {/* Mobile filter sidebar */}
       {!viewingEntry && !editingEntry && (
         <SideDrawer
@@ -311,6 +302,23 @@ export function EntriesPage() {
           tabLabel={t("entries.filters").toUpperCase()}
           title={`${t("entries.filters")}${advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}`}
           hasActiveIndicator={advancedFilterCount > 0}>
+          <div className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{t("entries.form.category")}</span>
+            <div className="flex gap-1.5 flex-wrap">
+              {CATEGORIES.map(({ value, label }) => (
+                <button
+                  key={value}
+                  onClick={() => setFilterCategory(value)}
+                  className={[
+                    "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
+                    filterCategory === value ? filterBtnActive : tagBtnInactive,
+                  ].join(" ")}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <AdvancedFiltersPanel
             allTags={allTags}
             selectedTag={selectedTag}
@@ -323,37 +331,19 @@ export function EntriesPage() {
           />
 
           {advancedFilterCount > 0 && (
-            <button
-              onClick={() => {
-                setSelectedTag(null);
-                setSelectedRatings([]);
-                setDateFilter("all");
-              }}
-              className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
+            <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
               {t("entries.clearFilters")}
             </button>
           )}
         </SideDrawer>
       )}
 
-      {/* Mobile category tab bar — fixed above bottom nav */}
-      <nav
-        className="sm:hidden fixed left-0 right-0 z-20 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={{ bottom: "calc(3.5rem + env(safe-area-inset-bottom))" }}>
-        {CATEGORIES.map(({ value, label }) => (
-          <button
-            key={value}
-            onClick={() => setFilterCategory(value)}
-            className={[
-              "flex-1 min-w-[60px] px-2 py-2 text-xs font-small transition-colors border-b-2 whitespace-nowrap",
-              filterCategory === value
-                ? "border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20"
-                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200",
-            ].join(" ")}>
-            {label.toUpperCase()}
-          </button>
-        ))}
-      </nav>
+      {/* FAB — mobile only, above bottom nav */}
+      <AddEntryFab
+        onClick={() => setShowForm((v) => !v)}
+        isOpen={showForm}
+        ariaLabel={showForm ? t("entries.cancel") : t("entries.addEntry")}
+      />
 
       {/* Delete confirmation */}
       {confirmDeleteEntry && (

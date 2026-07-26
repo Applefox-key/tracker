@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle } from "@/shared/ui/Card";
 import { Button } from "@/shared/ui/Button";
 import { useEntriesStore } from "@/features/entries/store/entriesStore";
 import { Entry, EntryCategory } from "@/features/entries/types";
-import { FaPlus } from "react-icons/fa6";
+import { AddEntryFab } from "@/features/entries/components/AddEntryFab";
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -105,9 +105,7 @@ function WeeklyActivityChip({ entries }: { entries: Entry[] }) {
         {streakMsg ? (
           <p className="text-sm font-semibold text-amber-500 dark:text-amber-400 truncate">{streakMsg}</p>
         ) : (
-          <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 truncate">
-            {t("dashboard.noStreak")}
-          </p>
+          <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 truncate">{t("dashboard.noStreak")}</p>
         )}
         <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
           <span className="text-gray-900 dark:text-white font-bold">{entries.length}</span>{" "}
@@ -242,7 +240,9 @@ export function DashboardPage() {
       {/* ── Title row ── */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="hidden sm:block text-2xl font-bold text-gray-900 dark:text-gray-100">{t("dashboard.title")}</h1>
+          <h1 className="hidden sm:block text-2xl font-bold text-gray-900 dark:text-gray-100">
+            {t("dashboard.title")}
+          </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1 hidden sm:block">{t("dashboard.subtitle")}</p>
         </div>
         {/* Quick actions — desktop */}
@@ -297,7 +297,13 @@ export function DashboardPage() {
           sub={t("dashboard.statWeekSub")}
         />
         <StatCard label={t("dashboard.statPractice")} value={stats.flashCount} color="text-violet-600" to="/practice" />
-        <StatCard label={t("dashboard.statAvgRating")} value={stats.avgRating} color="text-amber-500" to="/practice" sub={t("dashboard.statAvgRatingSub")} />
+        <StatCard
+          label={t("dashboard.statAvgRating")}
+          value={stats.avgRating}
+          color="text-amber-500"
+          to="/practice"
+          sub={t("dashboard.statAvgRatingSub")}
+        />
       </div>
 
       <div className="flex flex-col sm:flex-row gap-5 sm:gap-8 sm:items-start">
@@ -361,14 +367,7 @@ export function DashboardPage() {
       </div>
 
       {/* FAB — mobile only, above bottom nav */}
-      <Link
-        to="/entries"
-        state={{ openCreateForm: true }}
-        className="sm:hidden fixed bottom-[65px] opacity-70 right-5 z-20 w-10 h-10 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-lg flex items-center justify-center transition-colors
-        "
-        aria-label={t("dashboard.addEntry")}>
-        <FaPlus className="text-xl" />
-      </Link>
+      <AddEntryFab to="/entries" state={{ openCreateForm: true }} ariaLabel={t("dashboard.addEntry")} />
     </div>
   );
 }

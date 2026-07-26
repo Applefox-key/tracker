@@ -40,17 +40,17 @@ export function SideDrawer({
       {/* Peek tab — mobile only */}
       <button
         onClick={open ? onClose : onOpen}
-        className={`sm:hidden fixed z-[51] bg-emerald-600 text-white shadow-lg select-none flex flex-col items-center gap-1 p-2 opacity-70
+        className={`sm:hidden fixed z-[51] bg-emerald-600 text-white shadow-lg select-none flex flex-col items-center justify-center gap-1 p-2 opacity-70
           transition-[transform,opacity] duration-300 ease-in-out
           ${open ? "opacity-100" : "opacity-70"}
-          ${topline ? "top-[12px]" : "top-[90px]"}
+          ${topline ? "top-[12px]" : "top-[77px] h-12"}
           ${isRight ? "right-0 rounded-l-md" : "left-0 rounded-r-md"}
           ${isRight && open ? "-translate-x-72" : ""}
           ${!isRight && open ? "translate-x-72" : ""}`}>
         {tabIcon}
         <span
           className="font-bold leading-none tracking-wide"
-          style={topline ? { fontSize: "10px" } : { fontSize: "9px" }}>
+          style={topline ? { fontSize: "10px" } : { fontSize: "12px" }}>
           {tabLabel}
         </span>
         {hasActiveIndicator && (

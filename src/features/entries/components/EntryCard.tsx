@@ -1,3 +1,4 @@
+import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Entry } from "../types";
 import { MULTILINE_CATEGORIES } from "../constants";
@@ -34,11 +35,44 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
   const { t } = useTranslation();
   const { updateEntry } = useEntryCrud();
   const isMultiline = MULTILINE_CATEGORIES.has(entry.category);
+  const [showActions, setShowActions] = useState(false);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const didLongPress = useRef(false);
+
+  const handlePointerDown = () => {
+    longPressTimer.current = setTimeout(() => {
+      setShowActions(true);
+      didLongPress.current = true;
+    }, 500);
+  };
+
+  const handlePointerUp = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
+  const handleClick = () => {
+    if (didLongPress.current) {
+      didLongPress.current = false;
+      return;
+    }
+    if (showActions) {
+      setShowActions(false);
+      return;
+    }
+    onView(entry);
+  };
 
   return (
     <div
-      className={`group relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm pb-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between ${categoryColorsCard[entry.category]}`}
-      onClick={() => onView(entry)}>
+      className={`group relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm pb-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between select-none ${categoryColorsCard[entry.category]}`}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      onContextMenu={(e) => e.preventDefault()}
+      onClick={handleClick}>
       {/* Header row */}
       <div
         className={`flex items-start justify-between p-5 pb-4 gap-3  rounded-t-xl ${categoryColors[entry.category]}`}>
@@ -125,7 +159,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
               label={t("entries.card.practice")}
             />
           </div>
-          <div className="flex gap-1 justify-center sm:justify-end border-t border-gray-100 dark:border-gray-700 sm:border-none w-full sm:w-auto sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+          <div className={`flex gap-1 justify-center sm:justify-end border-t border-gray-100 dark:border-gray-700 sm:border-none w-full sm:w-auto transition-opacity sm:opacity-0 sm:group-hover:opacity-100 ${showActions ? "opacity-100" : "opacity-0"}`}>
             <Button
               variant="ghost"
               size="sm"
