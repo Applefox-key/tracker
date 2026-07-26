@@ -49,7 +49,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
         onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div
-          className={`flex items-start justify-between p-4 border-b border-gray-100 dark:border-gray-700 rounded-t-2xl ${categoryColors[entry.category]}`}>
+          className={`flex items-start justify-between p-4 border-b border-gray-100 dark:border-gray-700  shadow-sm  rounded-t-2xl bg-gray-100 dark:bg-gray-700/50 `}>
           <div className="flex-1 min-w-0 pr-4">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 break-words">{entry.word}</h2>
             <div className="flex items-center gap-2 mt-1.5">
@@ -84,22 +84,22 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
             <div className="flex flex-col gap-5 flex-1 min-w-0">
               {entry.explanation && (
                 <div>
-                  <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
+                  <p className="text-sm sm:text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
                     {t("entries.detail.explanation")}
                   </p>
                   <p
-                    className={`text-sm text-gray-700 dark:text-gray-300 font-bold leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
+                    className={`text-base sm:text-sm text-gray-700 dark:text-gray-300 font-bold leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
                     {entry.explanation}
                   </p>
                 </div>
               )}
               {entry.example && (
                 <div>
-                  <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
+                  <p className="text-sm sm:text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
                     {t("entries.detail.example")}
                   </p>
                   <p
-                    className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 bg-emerald-100 dark:bg-emerald-900/50 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
+                    className={`text-base sm:text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 bg-emerald-100 dark:bg-emerald-900/50 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
                     {entry.example}
                   </p>
                 </div>
@@ -136,12 +136,12 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
         <div className="sm:hidden flex items-center justify-between gap-4 px-4 py-3 border-t border-gray-100 dark:border-gray-700">
           <DualRating confidenceRating={entry.rating} masteryLevel={entry.mastery_level} />
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="text-base sm:text-sm text-gray-600 dark:text-gray-400">
               {entry.includeInPractice ? t("entries.detail.inPractice") : t("entries.detail.notInPractice")}
             </span>
             <TbTargetArrow
               className={[
-                "text-sm shrink-0",
+                "text-base sm:text-sm shrink-0",
                 entry.includeInPractice ? "text-green-500" : "text-gray-300 dark:text-gray-600",
               ].join(" ")}
             />
@@ -155,7 +155,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
               {entry.tags.map((tag) => (
                 <span
                   key={tag.id}
-                  className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
+                  className="text-sm sm:text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
                   #{tag.name}
                 </span>
               ))}
