@@ -5,9 +5,11 @@ interface RatingMultiSelectProps {
   onChange: (selected: number[]) => void;
   /** Compact mode: bare stars, no box or number labels */
   compact?: boolean;
+  /** Larger touch targets for mobile drawers */
+  large?: boolean;
 }
 
-export function RatingMultiSelect({ selected, onChange, compact = false }: RatingMultiSelectProps) {
+export function RatingMultiSelect({ selected, onChange, compact = false, large = false }: RatingMultiSelectProps) {
   const [hovered, setHovered] = useState<number | null>(null);
 
   function toggle(star: number) {
@@ -69,7 +71,9 @@ export function RatingMultiSelect({ selected, onChange, compact = false }: Ratin
             aria-pressed={isSelected}
             aria-label={`Toggle rating ${star}`}
             className={[
-              "flex items-center px-0.5 py-1  sm:px-2.5 sm:py-1.5 rounded-lg border",
+              large
+                ? "flex items-center px-2.5 py-1.5 rounded-lg border"
+                : "flex items-center px-0.5 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border",
               "cursor-pointer transition-all duration-150 focus:outline-none",
               "focus-visible:ring-2 focus-visible:ring-amber-400",
               isSelected
@@ -80,7 +84,7 @@ export function RatingMultiSelect({ selected, onChange, compact = false }: Ratin
                   ? "bg-gray-50 border-amber-300 text-amber-400 dark:bg-gray-700 dark:border-amber-600"
                   : "bg-white border-gray-200 text-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-500",
             ].join(" ")}>
-            <span className="text-sm leading-none tracking-tight">{"★".repeat(star)}</span>
+            <span className={`${large ? "text-base" : "text-sm"} leading-none tracking-tight`}>{"★".repeat(star)}</span>
           </button>
         );
       })}

@@ -302,15 +302,15 @@ export function EntriesPage() {
           tabLabel={t("entries.filters").toUpperCase()}
           title={`${t("entries.filters")}${advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}`}
           hasActiveIndicator={advancedFilterCount > 0}>
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{t("entries.form.category")}</span>
-            <div className="flex gap-1.5 flex-wrap">
+          <div className="flex flex-col gap-2">
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{t("entries.form.category")}</span>
+            <div className="flex gap-2 flex-wrap">
               {CATEGORIES.map(({ value, label }) => (
                 <button
                   key={value}
                   onClick={() => setFilterCategory(value)}
                   className={[
-                    "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
+                    "px-3 py-1.5 rounded-full text-sm font-medium border transition-colors",
                     filterCategory === value ? filterBtnActive : tagBtnInactive,
                   ].join(" ")}>
                   {label}
@@ -328,10 +328,11 @@ export function EntriesPage() {
             selectedRatings={selectedRatings}
             setSelectedRatings={setSelectedRatings}
             filterBtnActive={filterBtnActive}
+            inDrawer
           />
 
           {advancedFilterCount > 0 && (
-            <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
+            <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium text-left">
               {t("entries.clearFilters")}
             </button>
           )}
@@ -466,6 +467,7 @@ interface AdvancedFiltersPanelProps {
   selectedRatings: number[];
   setSelectedRatings: (r: number[]) => void;
   filterBtnActive: string;
+  inDrawer?: boolean;
 }
 
 function AdvancedFiltersPanel({
@@ -477,13 +479,22 @@ function AdvancedFiltersPanel({
   selectedRatings,
   setSelectedRatings,
   filterBtnActive,
+  inDrawer,
 }: AdvancedFiltersPanelProps) {
   const { t } = useTranslation();
+  const labelCls = inDrawer
+    ? "text-sm font-medium text-gray-500 dark:text-gray-400"
+    : "text-xs font-medium text-gray-500 dark:text-gray-400";
+  const btnCls = inDrawer
+    ? "px-3 py-1.5 rounded-full text-sm font-medium border transition-colors"
+    : "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors";
+  const gapCls = inDrawer ? "gap-2" : "gap-1.5";
+  const sectionGap = inDrawer ? "gap-2" : "gap-1.5";
   return (
     <>
-      <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{t("entries.dateLabel")}</span>
-        <div className="flex gap-1.5 flex-wrap">
+      <div className={`flex flex-col ${sectionGap}`}>
+        <span className={labelCls}>{t("entries.dateLabel")}</span>
+        <div className={`flex ${gapCls} flex-wrap`}>
           {(
             [
               { value: "today", label: t("entries.today") },
@@ -493,33 +504,27 @@ function AdvancedFiltersPanel({
             <button
               key={value}
               onClick={() => setDateFilter(dateFilter === value ? "all" : value)}
-              className={[
-                "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
-                dateFilter === value ? filterBtnActive : tagBtnInactive,
-              ].join(" ")}>
+              className={[btnCls, dateFilter === value ? filterBtnActive : tagBtnInactive].join(" ")}>
               {label}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{t("entries.ratingLabel")}</span>
-        <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} />
+      <div className={`flex flex-col ${sectionGap}`}>
+        <span className={labelCls}>{t("entries.ratingLabel")}</span>
+        <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} large={inDrawer} />
       </div>
 
       {allTags.length > 0 && (
-        <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{t("entries.tagLabel")}</span>
-          <div className="flex gap-1.5 flex-wrap">
+        <div className={`flex flex-col ${sectionGap}`}>
+          <span className={labelCls}>{t("entries.tagLabel")}</span>
+          <div className={`flex ${gapCls} flex-wrap`}>
             {allTags.map((tag) => (
               <button
                 key={tag.id}
                 onClick={() => setSelectedTag(selectedTag === tag.id ? null : tag.id)}
-                className={[
-                  "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors",
-                  selectedTag === tag.id ? filterBtnActive : tagBtnInactive,
-                ].join(" ")}>
+                className={[btnCls, selectedTag === tag.id ? filterBtnActive : tagBtnInactive].join(" ")}>
                 #{tag.name}
               </button>
             ))}

@@ -45,13 +45,14 @@ export function SideDrawer({
           ${open ? "opacity-100" : "opacity-70"}
           ${topline ? "top-[12px]" : "top-[77px] h-12"}
           ${isRight ? "right-0 rounded-l-md" : "left-0 rounded-r-md"}
-          ${isRight && open ? "-translate-x-72" : ""}
-          ${!isRight && open ? "translate-x-72" : ""}`}>
+          ${isRight && open ? "-translate-x-80" : ""}
+          ${!isRight && open ? "translate-x-80" : ""}`}>
         {tabIcon}
         <span
-          className="font-bold leading-none tracking-wide"
+          className="font-bold leading-none tracking-wide flex items-center gap-0.5"
           style={topline ? { fontSize: "10px" } : { fontSize: "12px" }}>
           {tabLabel}
+          <span className={`transition-transform duration-300 inline-block ${open ? "rotate-180" : ""}`}>{">"}</span>
         </span>
         {hasActiveIndicator && (
           <span
@@ -72,7 +73,8 @@ export function SideDrawer({
 
       {/* Drawer panel */}
       <div
-        className={`sm:hidden fixed inset-y-0 z-50 w-72 bg-white dark:bg-gray-900 shadow-2xl
+        // className={`sm:hidden fixed inset-y-0 z-50 w-72 bg-white dark:bg-gray-900 shadow-2xl
+        className={`sm:hidden fixed inset-y-0 z-50 w-80 bg-white dark:bg-gray-900 shadow-2xl
           flex flex-col transition-transform duration-300 ease-in-out
           ${isRight ? "right-0" : "left-0"}
           ${open ? "translate-x-0" : isRight ? "translate-x-full" : "-translate-x-full"}`}>
