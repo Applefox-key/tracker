@@ -7,6 +7,7 @@ import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { FlashCard } from "@/features/flashcards/components/FlashCard";
 import { Button } from "@/shared/ui/Button";
+import { PracticeHelpModal } from "@/features/practice/components/PracticeHelpModal";
 import { shuffle, wordCount } from "@/features/practice/hooks/usePracticeEntries";
 import type { Entry, SRGrade } from "@/features/entries/types";
 import type { Flashcard } from "@/features/flashcards/types";
@@ -372,6 +373,7 @@ export function DuePage() {
   const navigate = useNavigate();
   const authMode = useAuthStore((s) => s.mode);
 
+  const [showHelp, setShowHelp] = useState(false);
   const [phase, setPhase] = useState<Phase>("loading");
   const [dueEntries, setDueEntries] = useState<Entry[]>([]);
   const [selectedModes, setSelectedModes] = useState<DueMode[]>(["flashcard", "quiz", "puzzle"]);
@@ -417,19 +419,44 @@ export function DuePage() {
   const btnInactive =
     "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600";
 
+  const MODE_ICONS: Record<string, string> = { flashcard: "🃏", quiz: "🧠", puzzle: "🧩" };
+
   return (
     <div className="flex flex-col gap-4">
+      <PracticeHelpModal
+        open={showHelp}
+        onClose={() => setShowHelp(false)}
+        title={t("practice.due.title")}
+        howToPlayLabel={t("practice.helpModal.howToPlay")}
+        description={t("practice.due.description")}
+        settingsLabel={t("practice.helpModal.settings")}
+        closeLabel={t("practice.helpModal.close")}
+        settings={MODE_OPTIONS.map((m) => ({
+          icon: MODE_ICONS[m],
+          label: t(`practice.due.modes.${m}`),
+          desc: t(`practice.due.help${m.charAt(0).toUpperCase() + m.slice(1)}`),
+        }))}
+      />
+
       {/* ── Header (always visible) ─────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
-        <div className="flex items-start gap-3 min-w-0 ">
+        <div className="flex items-start gap-3 min-w-0 pb-2">
           <button
             onClick={() => navigate("/practice")}
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mt-1 shrink-0 text-2xl">
             <FaArrowLeft />
           </button>
           <div className="min-w-0">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.due.title")}</h1>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t("practice.due.description")}</p>
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.due.title")}</h1>
+              {phase !== "idle" && phase !== "loading" && (
+                <button
+                  onClick={() => setShowHelp(true)}
+                  className="text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 border border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500 rounded-full text-sm sm:text-xs font-bold w-6 h-6 sm:w-5 sm:h-5 flex items-center justify-center shrink-0 transition-colors mt-0.5">
+                  ?
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -465,13 +492,36 @@ export function DuePage() {
         <div className="flex flex-col items-center gap-4 py-8 max-w-xl mx-auto w-full text-center">
           {hasDue ? (
             <>
-              <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                {t("practice.due.cardsToReview", { count: dueEntries.length })}
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed max-w-sm">
+                {t("practice.due.description")}
               </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500">{t("practice.due.newCardsNote")}</p>
-              <Button onClick={startSession} size="lg">
-                {t("practice.due.start")}
-              </Button>
+
+              <ul className="text-left flex flex-col gap-2 w-full max-w-xs">
+                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest self-start">
+                  {t("practice.due.selectModes")}
+                </p>
+                {MODE_OPTIONS.map((m) => (
+                  <li key={m} className="flex items-start gap-2">
+                    <span className="text-base shrink-0 leading-none mt-0.5">{MODE_ICONS[m]}</span>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                      <span className="font-semibold text-gray-700 dark:text-gray-300">
+                        {t(`practice.due.modes.${m}`)}
+                      </span>
+                      {" — "}
+                      {t(`practice.due.help${m.charAt(0).toUpperCase() + m.slice(1)}`)}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+              <div className="w-full max-w-xs border-t border-gray-100 dark:border-gray-800 pt-2 flex flex-col items-center gap-3">
+                <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                  {t("practice.due.cardsToReview", { count: dueEntries.length })}
+                </p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">{t("practice.due.newCardsNote")}</p>
+                <Button onClick={startSession} size="lg">
+                  {t("practice.due.start")}
+                </Button>
+              </div>
             </>
           ) : (
             <>

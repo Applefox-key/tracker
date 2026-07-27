@@ -211,7 +211,15 @@
         "flashcard": "Tarjetas",
         "quiz": "Quiz",
         "puzzle": "Puzzle"
-      }
+      },
+      "helpFlashcard": "Voltea la tarjeta para ver la respuesta y valora qué tan bien la recordaste.",
+      "helpQuiz": "Elige la palabra correcta entre 4 opciones según la explicación mostrada.",
+      "helpPuzzle": "Construye la palabra o frase correcta haciendo clic en las piezas."
+    },
+    "helpModal": {
+      "howToPlay": "Cómo jugar",
+      "settings": "Ajustes",
+      "close": "Entendido"
     },
     "flashcards": {
       "title": "Tarjetas",
@@ -231,7 +239,11 @@
       "tapToFlipBack": "toca para voltear de vuelta",
       "prev": "← Anterior",
       "next": "Siguiente →",
-      "reset": "Reiniciar"
+      "reset": "Reiniciar",
+      "helpDesc": "Voltea cada tarjeta para ver el otro lado y valora qué tan bien la recordaste. Tus valoraciones configuran el calendario de repaso espaciado.",
+      "helpStartSide": "Elige qué aparece en el anverso de la tarjeta: la palabra o la explicación.",
+      "helpShuffle": "Mezcla las tarjetas en orden aleatorio.",
+      "helpShowImages": "Muestra imágenes en las tarjetas (si están disponibles)."
     },
     "sr": {
       "rateKnowledge": "¿Qué tan fácil fue recordarlo?",
@@ -257,7 +269,10 @@
       "seeResults": "Ver resultados",
       "tryAgain": "Intentar de nuevo",
       "backToPractice": "Volver a práctica",
-      "pctCorrect": "{{pct}}% correcto"
+      "pctCorrect": "{{pct}}% correcto",
+      "helpDesc": "Se muestra una palabra o explicación — elige la respuesta correcta entre 4 opciones. Cambia el lado inicial para modificar qué aparece como pregunta.",
+      "helpStartSide": "Cambia qué se muestra como pregunta: la palabra o la explicación.",
+      "helpShowImages": "Muestra imágenes junto a la pregunta (si están disponibles)."
     },
     "match": {
       "title": "Emparejar",
@@ -276,7 +291,8 @@
       "nextRound": "Siguiente ronda →",
       "seeResults": "Ver resultados",
       "playAgain": "Jugar de nuevo",
-      "backToPractice": "Volver a práctica"
+      "backToPractice": "Volver a práctica",
+      "helpDesc": "Selecciona una tarjeta de la columna Palabras y luego su explicación correspondiente en la columna derecha. Empareja todos los pares para completar la ronda."
     },
     "puzzle": {
       "title": "Puzzle",
@@ -299,7 +315,9 @@
       "next": "Siguiente →",
       "seeResults": "Ver resultados",
       "pctSolved": "{{pct}}% resuelto correctamente",
-      "backToPractice": "Volver a práctica"
+      "backToPractice": "Volver a práctica",
+      "helpDesc": "Lee la explicación y construye la palabra o frase haciendo clic en las piezas. Usa la oración de ejemplo como pista.",
+      "helpShowImages": "Muestra la imagen de la entrada como pista visual adicional (si está disponible)."
     },
     "showImages": "Imágenes",
     "filterPanel": {

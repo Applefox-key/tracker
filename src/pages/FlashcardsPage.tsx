@@ -11,6 +11,7 @@ import { useFlashcards } from "@/features/flashcards/hooks/useFlashcards";
 import { Button } from "@/shared/ui/Button";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
+import { PracticeHelpModal } from "@/features/practice/components/PracticeHelpModal";
 import { EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import type { SRGrade } from "@/features/entries/types";
@@ -55,6 +56,7 @@ export function FlashcardsPage() {
   const [shuffleKey, setShuffleKey] = useState(0);
   const [shaking, setShaking] = useState(false);
   const [showImages, setShowImages] = useState(() => localStorage.getItem(LS_SHOW_IMAGES) === "true");
+  const [showHelp, setShowHelp] = useState(false);
 
   function toggleShowImages() {
     const next = !showImages;
@@ -125,18 +127,44 @@ export function FlashcardsPage() {
 
   return (
     <div className="flex flex-col gap-4">
+      <PracticeHelpModal
+        open={showHelp}
+        onClose={() => setShowHelp(false)}
+        title={t("practice.flashcards.title")}
+        howToPlayLabel={t("practice.helpModal.howToPlay")}
+        description={t("practice.flashcards.helpDesc")}
+        settingsLabel={t("practice.helpModal.settings")}
+        closeLabel={t("practice.helpModal.close")}
+        settings={[
+          {
+            icon: startSide === "word" ? "🔤" : "💬",
+            label: startSide === "word" ? t("practice.flashcards.wordFirst") : t("practice.flashcards.explanationFirst"),
+            desc: t("practice.flashcards.helpStartSide"),
+          },
+          { icon: "🔀", label: t("practice.flashcards.shuffle"), desc: t("practice.flashcards.helpShuffle") },
+          { icon: "🖼", label: t("practice.showImages"), desc: t("practice.flashcards.helpShowImages") },
+        ]}
+      />
+
       {/* ── Header with white bg on mobile ─────────────────────────── */}
       <div className="-mx-4 px-4 pb-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm sm:mx-0 sm:px-0 sm:pb-0 sm:bg-transparent sm:border-0 sm:shadow-none">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <div className="flex items-center gap-3 pb-[1rem]">
+          <div className="flex items-center gap-3 pb-2">
             <button
               onClick={() => routerNavigate("/practice")}
               className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-2xl">
               <FaArrowLeft />
             </button>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 shrink-0">
-              {t("practice.flashcards.title")}
-            </h1>
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 shrink-0">
+                {t("practice.flashcards.title")}
+              </h1>
+              <button
+                onClick={() => setShowHelp(true)}
+                className="text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 border border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500 rounded-full text-sm sm:text-xs font-bold w-6 h-6 sm:w-5 sm:h-5 flex items-center justify-center shrink-0 transition-colors">
+                ?
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center gap-3 sm:ml-auto flex-wrap sm:flex-nowrap">

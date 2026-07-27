@@ -221,7 +221,15 @@
         "flashcard": "Fiszki",
         "quiz": "Quiz",
         "puzzle": "Puzzle"
-      }
+      },
+      "helpFlashcard": "Odwróć fiszkę, aby zobaczyć odpowiedź, a następnie oceń, jak dobrze ją pamiętałeś.",
+      "helpQuiz": "Wybierz poprawne słowo spośród 4 opcji na podstawie wyświetlonego wyjaśnienia.",
+      "helpPuzzle": "Ułóż poprawne słowo lub wyrażenie, klikając kafelki."
+    },
+    "helpModal": {
+      "howToPlay": "Jak grać",
+      "settings": "Ustawienia",
+      "close": "Rozumiem"
     },
     "flashcards": {
       "title": "Fiszki",
@@ -241,7 +249,11 @@
       "tapToFlipBack": "stuknij, aby odwrócić z powrotem",
       "prev": "← Poprzednia",
       "next": "Następna →",
-      "reset": "Resetuj"
+      "reset": "Resetuj",
+      "helpDesc": "Odwracaj fiszki i oceń, jak łatwo było Ci przypomnieć odpowiedź. Oceny kształtują harmonogram powtórek z interwałami.",
+      "helpStartSide": "Wybierz, co jest wyświetlane na przedniej stronie fiszki — słowo lub wyjaśnienie.",
+      "helpShuffle": "Przetasuj fiszki w losowej kolejności.",
+      "helpShowImages": "Wyświetlaj obrazki na fiszkach (jeśli są dostępne)."
     },
     "sr": {
       "rateKnowledge": "Jak łatwo było to przypomnieć?",
@@ -267,7 +279,10 @@
       "seeResults": "Wyniki",
       "tryAgain": "Spróbuj ponownie",
       "backToPractice": "Powrót do ćwiczeń",
-      "pctCorrect": "{{pct}}% poprawnych"
+      "pctCorrect": "{{pct}}% poprawnych",
+      "helpDesc": "Widzisz słowo lub wyjaśnienie — wybierz poprawną odpowiedź spośród 4 opcji. Zmień stronę startową, aby zmienić, co jest pytaniem.",
+      "helpStartSide": "Przełącz, co jest wyświetlane jako pytanie — słowo lub wyjaśnienie.",
+      "helpShowImages": "Wyświetlaj obrazki obok pytania (jeśli są dostępne)."
     },
     "match": {
       "title": "Dopasuj",
@@ -286,7 +301,8 @@
       "nextRound": "Następna runda →",
       "seeResults": "Wyniki",
       "playAgain": "Graj ponownie",
-      "backToPractice": "Powrót do ćwiczeń"
+      "backToPractice": "Powrót do ćwiczeń",
+      "helpDesc": "Wybierz kartę z kolumny Słowa, a następnie pasujące wyjaśnienie z prawej kolumny. Dopasuj wszystkie pary, aby ukończyć rundę."
     },
     "puzzle": {
       "title": "Puzzle",
@@ -309,7 +325,9 @@
       "next": "Dalej →",
       "seeResults": "Wyniki",
       "pctSolved": "{{pct}}% rozwiązanych poprawnie",
-      "backToPractice": "Powrót do ćwiczeń"
+      "backToPractice": "Powrót do ćwiczeń",
+      "helpDesc": "Przeczytaj wyjaśnienie i ułóż słowo lub wyrażenie, klikając kafelki. Użyj przykładowego zdania jako wskazówki.",
+      "helpShowImages": "Wyświetlaj obrazek wpisu jako dodatkową wskazówkę (jeśli jest dostępny)."
     },
     "showImages": "Obrazki",
     "filterPanel": {

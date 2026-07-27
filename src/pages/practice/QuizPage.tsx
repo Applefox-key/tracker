@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
 import { usePracticeEntries, usePracticeTags, shuffle } from "@/features/practice/hooks/usePracticeEntries";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
+import { PracticeHelpModal } from "@/features/practice/components/PracticeHelpModal";
 import { Button } from "@/shared/ui/Button";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
 import { EntryImage } from "@/shared/ui/EntryImage";
@@ -39,6 +40,7 @@ export function QuizPage() {
     localStorage.getItem(LS_QUIZ_MODE) === "word" ? "word" : "explanation",
   );
   const [showImages, setShowImages] = useState(() => localStorage.getItem(LS_QUIZ_SHOW_IMAGES) === "true");
+  const [showHelp, setShowHelp] = useState(false);
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [questions, setQuestions] = useState<Entry[]>([]);
@@ -123,19 +125,43 @@ export function QuizPage() {
 
   return (
     <div className="flex flex-col gap-4">
+      <PracticeHelpModal
+        open={showHelp}
+        onClose={() => setShowHelp(false)}
+        title={t("practice.quiz.title")}
+        howToPlayLabel={t("practice.helpModal.howToPlay")}
+        description={t("practice.quiz.helpDesc")}
+        settingsLabel={t("practice.helpModal.settings")}
+        closeLabel={t("practice.helpModal.close")}
+        settings={[
+          {
+            icon: startSide === "word" ? "🔤" : "💬",
+            label: startSide === "word" ? t("practice.quiz.chooseExplanation") : t("practice.quiz.chooseWord"),
+            desc: t("practice.quiz.helpStartSide"),
+          },
+          { icon: "🖼", label: t("practice.showImages"), desc: t("practice.quiz.helpShowImages") },
+        ]}
+      />
+
       {/* ── Header (always visible) ─────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
-        <div className="flex items-start gap-3 min-w-0 pb-[1rem]">
+        <div className="flex items-start gap-3 min-w-0 pb-2">
           <button
             onClick={() => navigate("/practice")}
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mt-1 shrink-0 text-2xl">
             <FaArrowLeft />
           </button>
           <div className="min-w-0">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.quiz.title")}</h1>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-              {startSide === "word" ? t("practice.quiz.descExplanation") : t("practice.quiz.descWord")}
-            </p>
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.quiz.title")}</h1>
+              {phase !== "idle" && (
+                <button
+                  onClick={() => setShowHelp(true)}
+                  className="text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 border border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500 rounded-full text-sm sm:text-xs font-bold w-6 h-6 sm:w-5 sm:h-5 flex items-center justify-center shrink-0 transition-colors mt-0.5">
+                  ?
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -219,6 +245,9 @@ export function QuizPage() {
       {/* ── Idle: start prompt ──────────────────────────────────── */}
       {phase === "idle" && (
         <div className="flex flex-col items-center gap-4 py-8 max-w-xl mx-auto w-full">
+          <p className="text-sm text-gray-600 dark:text-gray-400 text-center leading-relaxed max-w-sm">
+            {t("practice.quiz.helpDesc")}
+          </p>
           <p className="text-sm text-gray-400 dark:text-gray-500">
             {t("practice.entriesAvailable", { count: filteredEntries.length })}
           </p>
