@@ -418,7 +418,7 @@ export function Layout() {
       <DemoBanner />
 
       <main
-        className={`flex-1 py-2 sm:py-8 pt-0 sm:pt-8 max-w-5xl w-full mx-auto px-4 sm:px-6  sm:pb-0${isGameRoute ? "" : " pb-24"}`}
+        className={`flex-1 py-2 sm:py-8 pt-0 sm:pt-8 max-w-5xl w-full mx-auto px-4 sm:px-6  sm:pb-0${isGameRoute ? " pt-8" : " pb-24"}`}
         style={!isGameRoute ? { paddingBottom: "calc(5rem + env(safe-area-inset-bottom))" } : undefined}>
         <Outlet />
       </main>

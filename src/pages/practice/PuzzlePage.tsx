@@ -375,7 +375,7 @@ export function PuzzlePage() {
                 key={tile.id}
                 onClick={() => placeTile(tile)}
                 disabled={answerPhase !== "thinking"}
-                className="text-xl min-h-[3.5rem] min-w-[3.5rem] px-4 py-2.5 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 font-medium text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 active:bg-emerald-100 transition-colors disabled:opacity-40 touch-manipulation">
+                className="text-3xl min-h-[3.5rem] min-w-[3.5rem] px-4 py-2.5 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 font-medium text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 active:bg-emerald-100 transition-colors disabled:opacity-40 touch-manipulation">
                 {tile.value}
               </button>
             ))}
