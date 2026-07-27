@@ -44,9 +44,13 @@ export function Layout() {
   const { isAuthenticated, mode, user, logout } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const isGameRoute = ["/flashcards", "/practice/quiz", "/practice/match", "/practice/puzzle", "/practice/due"].includes(
-    location.pathname,
-  );
+  const isGameRoute = [
+    "/flashcards",
+    "/practice/quiz",
+    "/practice/match",
+    "/practice/puzzle",
+    "/practice/due",
+  ].includes(location.pathname);
   const [appsOpen, setAppsOpen] = useState(false);
   const [burgerOpen, setBurgerOpen] = useState(false);
 
@@ -418,7 +422,7 @@ export function Layout() {
       <DemoBanner />
 
       <main
-        className={`flex-1 py-2 sm:py-8 pt-0 sm:pt-8 max-w-5xl w-full mx-auto px-4 sm:px-6  sm:pb-0${isGameRoute ? " pt-[1rem]" : " pb-24"}`}
+        className={`flex-1 py-2 sm:py-8 pt-0 sm:pt-8 max-w-5xl w-full mx-auto px-4 sm:px-6  sm:pb-0${isGameRoute ? "" : " pb-24"}`}
         style={!isGameRoute ? { paddingBottom: "calc(5rem + env(safe-area-inset-bottom))" } : undefined}>
         <Outlet />
       </main>

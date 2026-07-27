@@ -138,7 +138,8 @@ export function FlashcardsPage() {
         settings={[
           {
             icon: startSide === "word" ? "🔤" : "💬",
-            label: startSide === "word" ? t("practice.flashcards.wordFirst") : t("practice.flashcards.explanationFirst"),
+            label:
+              startSide === "word" ? t("practice.flashcards.wordFirst") : t("practice.flashcards.explanationFirst"),
             desc: t("practice.flashcards.helpStartSide"),
           },
           { icon: "🔀", label: t("practice.flashcards.shuffle"), desc: t("practice.flashcards.helpShuffle") },
@@ -149,7 +150,7 @@ export function FlashcardsPage() {
       {/* ── Header with white bg on mobile ─────────────────────────── */}
       <div className="-mx-4 px-4 pb-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm sm:mx-0 sm:px-0 sm:pb-0 sm:bg-transparent sm:border-0 sm:shadow-none">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <div className="flex items-center gap-3 pb-2">
+          <div className="flex items-center gap-3 pb-2 pt-[1rem]">
             <button
               onClick={() => routerNavigate("/practice")}
               className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-2xl">

@@ -192,14 +192,12 @@ export function PuzzlePage() {
         description={t("practice.puzzle.helpDesc")}
         settingsLabel={t("practice.helpModal.settings")}
         closeLabel={t("practice.helpModal.close")}
-        settings={[
-          { icon: "🖼", label: t("practice.showImages"), desc: t("practice.puzzle.helpShowImages") },
-        ]}
+        settings={[{ icon: "🖼", label: t("practice.showImages"), desc: t("practice.puzzle.helpShowImages") }]}
       />
 
       {/* ── Header (always visible) ─────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
-        <div className="flex items-start gap-3 min-w-0">
+        <div className="flex items-start gap-3 min-w-0 pt-[1rem]">
           <button
             onClick={() => navigate("/practice")}
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mt-1 shrink-0 text-2xl">
@@ -207,9 +205,7 @@ export function PuzzlePage() {
           </button>
           <div className="min-w-0 pb-2">
             <div className="flex items-center gap-1.5">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {t("practice.puzzle.title")}
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.puzzle.title")}</h1>
               {phase !== "idle" && (
                 <button
                   onClick={() => setShowHelp(true)}
