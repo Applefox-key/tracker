@@ -109,7 +109,12 @@ function DueFlashcardItem({ entry, onNext }: { entry: Entry; onNext: () => void 
 
   return (
     <div className="flex flex-col gap-4">
-      <FlashCard card={entryToCard(entry)} isFlipped={isFlipped} onFlip={() => setIsFlipped((v) => !v)} reversed={true} />
+      <FlashCard
+        card={entryToCard(entry)}
+        isFlipped={isFlipped}
+        onFlip={() => setIsFlipped((v) => !v)}
+        reversed={true}
+      />
       {isFlipped ? (
         <GradeButtons onGrade={handleGrade} />
       ) : (
@@ -416,10 +421,10 @@ export function DuePage() {
     <div className="flex flex-col gap-4">
       {/* ── Header (always visible) ─────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
-        <div className="flex items-start gap-3 min-w-0">
+        <div className="flex items-start gap-3 min-w-0 ">
           <button
             onClick={() => navigate("/practice")}
-            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mt-1 shrink-0">
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mt-1 shrink-0 text-2xl">
             <FaArrowLeft />
           </button>
           <div className="min-w-0">

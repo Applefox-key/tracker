@@ -41,16 +41,14 @@ export function SideDrawer({
       <button
         onClick={open ? onClose : onOpen}
         className={`sm:hidden fixed z-[51] bg-emerald-600 text-white shadow-lg select-none flex flex-col items-center justify-center gap-1 p-2 opacity-70
-          transition-[transform,opacity] duration-300 ease-in-out
+          transition-[transform,opacity] duration-300 ease-in-out h-14
           ${open ? "opacity-100" : "opacity-70"}
-          ${topline ? "top-[12px]" : "top-[77px] h-12"}
+          ${topline ? "top-0" : "top-[77px]"}
           ${isRight ? "right-0 rounded-l-md" : "left-0 rounded-r-md"}
-          ${isRight && open ? "-translate-x-80" : ""}
-          ${!isRight && open ? "translate-x-80" : ""}`}>
+          ${isRight && open ? "-translate-x-[22rem]" : ""}
+          ${!isRight && open ? "translate-x-[22rem]" : ""}`}>
         {tabIcon}
-        <span
-          className="font-bold leading-none tracking-wide flex items-center gap-0.5"
-          style={topline ? { fontSize: "10px" } : { fontSize: "12px" }}>
+        <span className="font-bold leading-none tracking-wide flex items-center gap-0.5" style={{ fontSize: "12px" }}>
           {tabLabel}
           <span className={`transition-transform duration-300 inline-block ${open ? "rotate-180" : ""}`}>{">"}</span>
         </span>
@@ -73,22 +71,21 @@ export function SideDrawer({
 
       {/* Drawer panel */}
       <div
-        // className={`sm:hidden fixed inset-y-0 z-50 w-72 bg-white dark:bg-gray-900 shadow-2xl
-        className={`sm:hidden fixed inset-y-0 z-50 w-80 bg-white dark:bg-gray-900 shadow-2xl
+        className={`sm:hidden fixed inset-y-0 z-50 w-[22rem] bg-white dark:bg-gray-900 shadow-2xl
           flex flex-col transition-transform duration-300 ease-in-out
           ${isRight ? "right-0" : "left-0"}
           ${open ? "translate-x-0" : isRight ? "translate-x-full" : "-translate-x-full"}`}>
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 shrink-0">
-          <span className="font-semibold text-sm text-gray-800 dark:text-gray-100">{title}</span>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
+          <span className="font-semibold text-base text-gray-800 dark:text-gray-100">{title}</span>
           <button
             onClick={onClose}
-            className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors rounded-md">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors rounded-md">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
               <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-5">{children}</div>
+        <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-5">{children}</div>
       </div>
     </>
   );

@@ -185,7 +185,7 @@ export function MatchPage() {
           <div className="flex items-start gap-3 min-w-0">
             <button
               onClick={() => navigate("/practice")}
-              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mt-1 shrink-0">
+              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mt-1 shrink-0 text-2xl">
               <FaArrowLeft />
             </button>
             <div className="min-w-0">
@@ -195,10 +195,7 @@ export function MatchPage() {
           </div>
 
           <div className="hidden sm:flex items-center gap-2 sm:ml-auto">
-            <Button
-              variant={showFilters ? "primary" : "secondary"}
-              size="sm"
-              onClick={() => setShowFilters((v) => !v)}>
+            <Button variant={showFilters ? "primary" : "secondary"} size="sm" onClick={() => setShowFilters((v) => !v)}>
               {t("practice.filters")}
               {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
               <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
@@ -245,9 +242,10 @@ export function MatchPage() {
             onTagChange={setSelectedTag}
             selectedRatings={selectedRatings}
             onRatingsChange={setSelectedRatings}
+            inDrawer
           />
           {activeFilterCount > 0 && (
-            <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
+            <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium text-left">
               {t("practice.clearFilters")}
             </button>
           )}

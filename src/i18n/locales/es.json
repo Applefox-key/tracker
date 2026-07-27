@@ -228,7 +228,17 @@
       "wordLabel": "Palabra",
       "explanationLabel": "Explicación",
       "tapToReveal": "toca para revelar",
-      "tapToFlipBack": "toca para voltear de vuelta"
+      "tapToFlipBack": "toca para voltear de vuelta",
+      "prev": "← Anterior",
+      "next": "Siguiente →",
+      "reset": "Reiniciar"
+    },
+    "sr": {
+      "rateKnowledge": "¿Qué tan fácil fue recordarlo?",
+      "again": "Olvidé",
+      "hard": "Difícil",
+      "good": "Bien",
+      "easy": "Fácil"
     },
     "quiz": {
       "title": "Modo quiz",

@@ -228,12 +228,15 @@
       "noCardsFiltered": "No flashcards match your filters.",
       "wordLabel": "Word",
       "explanationLabel": "Explanation",
-      "tapToReveal": "tap to reveal",
-      "tapToFlipBack": "tap to flip back"
+      "tapToReveal": "tap to flip",
+      "tapToFlipBack": "tap to flip back",
+      "prev": "← Previous",
+      "next": "Next →",
+      "reset": "Reset"
     },
     "sr": {
-      "rateKnowledge": "How well did you know this?",
-      "again": "Again",
+      "rateKnowledge": "How easy was it to recall?",
+      "again": "Forgot",
       "hard": "Hard",
       "good": "Good",
       "easy": "Easy"

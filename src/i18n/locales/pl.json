@@ -237,8 +237,18 @@
       "noCardsFiltered": "Żadna fiszka nie pasuje do filtrów.",
       "wordLabel": "Słowo",
       "explanationLabel": "Wyjaśnienie",
-      "tapToReveal": "stuknij, aby odkryć",
-      "tapToFlipBack": "stuknij, aby odwrócić z powrotem"
+      "tapToReveal": "stuknij, aby odwrócić",
+      "tapToFlipBack": "stuknij, aby odwrócić z powrotem",
+      "prev": "← Poprzednia",
+      "next": "Następna →",
+      "reset": "Resetuj"
+    },
+    "sr": {
+      "rateKnowledge": "Jak łatwo było to przypomnieć?",
+      "again": "Nie wiem",
+      "hard": "Trudne",
+      "good": "Dobrze",
+      "easy": "Łatwe"
     },
     "quiz": {
       "title": "Tryb quizu",

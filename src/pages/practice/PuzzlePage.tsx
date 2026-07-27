@@ -187,11 +187,13 @@ export function PuzzlePage() {
         <div className="flex items-start gap-3 min-w-0">
           <button
             onClick={() => navigate("/practice")}
-            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mt-1 shrink-0">
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mt-1 shrink-0 text-2xl">
             <FaArrowLeft />
           </button>
           <div className="min-w-0">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.puzzle.title")}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 pb-[1rem]">
+              {t("practice.puzzle.title")}
+            </h1>
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t("practice.puzzle.modeDesc")}</p>
           </div>
         </div>
@@ -257,9 +259,10 @@ export function PuzzlePage() {
           onTagChange={setSelectedTag}
           selectedRatings={selectedRatings}
           onRatingsChange={setSelectedRatings}
+          inDrawer
         />
         {activeFilterCount > 0 && (
-          <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium text-left">
+          <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium text-left">
             {t("practice.clearFilters")}
           </button>
         )}

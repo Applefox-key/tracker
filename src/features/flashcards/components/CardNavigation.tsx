@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Button } from "@/shared/ui/Button";
 
 interface CardNavigationProps {
@@ -10,6 +11,8 @@ interface CardNavigationProps {
 }
 
 export function CardNavigation({ currentIndex, total, progress, onPrev, onNext, onReset }: CardNavigationProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col gap-4">
       {/* Progress bar */}
@@ -28,12 +31,14 @@ export function CardNavigation({ currentIndex, total, progress, onPrev, onNext, 
       {/* Controls */}
       <div className="flex items-center justify-between">
         <Button variant="secondary" onClick={onPrev}>
-          ← Previous
+          {t("practice.flashcards.prev")}
         </Button>
-        <Button variant="ghost" size="sm" onClick={onReset} className="text-gray-400">
-          Reset
+        <Button variant="secondary" size="sm" onClick={onReset}>
+          {t("practice.flashcards.reset")}
         </Button>
-        <Button onClick={onNext}>Next →</Button>
+        <Button onClick={onNext}>
+          {t("practice.flashcards.next")}
+        </Button>
       </div>
     </div>
   );

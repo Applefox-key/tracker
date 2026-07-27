@@ -4,9 +4,10 @@ interface RatingStarsProps {
   value: number
   onChange?: (value: number) => void
   readOnly?: boolean
+  starClassName?: string
 }
 
-export function RatingStars({ value, onChange, readOnly = false }: RatingStarsProps) {
+export function RatingStars({ value, onChange, readOnly = false, starClassName }: RatingStarsProps) {
   const [hovered, setHovered] = useState(0)
 
   return (
@@ -20,7 +21,8 @@ export function RatingStars({ value, onChange, readOnly = false }: RatingStarsPr
           onMouseEnter={() => !readOnly && setHovered(star)}
           onMouseLeave={() => !readOnly && setHovered(0)}
           className={[
-            'text-lg leading-none focus:outline-none transition-transform',
+            'leading-none focus:outline-none transition-transform',
+            starClassName ?? 'text-lg',
             !readOnly && onChange ? 'cursor-pointer hover:scale-125' : 'cursor-default',
           ].join(' ')}
           aria-label={`Rate ${star}`}

@@ -12,7 +12,14 @@ interface FlashCardProps {
   showImageOnFront?: boolean;
 }
 
-export function FlashCard({ card, isFlipped, onFlip, reversed = false, flipAnimated = true, showImageOnFront = false }: FlashCardProps) {
+export function FlashCard({
+  card,
+  isFlipped,
+  onFlip,
+  reversed = false,
+  flipAnimated = true,
+  showImageOnFront = false,
+}: FlashCardProps) {
   const { t } = useTranslation();
   const frontLabel = reversed ? t("practice.flashcards.explanationLabel") : t("practice.flashcards.wordLabel");
   const frontText = reversed ? card.back : card.front;
@@ -22,12 +29,11 @@ export function FlashCard({ card, isFlipped, onFlip, reversed = false, flipAnima
   return (
     <div className="cursor-pointer select-none" style={{ perspective: "1200px" }} onClick={onFlip}>
       <div
-        className="relative w-full"
+        className="relative w-full min-h-[calc(100svh-370px)] sm:min-h-[260px]"
         style={{
           transformStyle: "preserve-3d",
           transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
           transition: flipAnimated ? "transform 500ms" : "none",
-          minHeight: "260px",
         }}>
         {/* ── Front ─────────────────────────────────────────────── */}
         <div
@@ -39,20 +45,32 @@ export function FlashCard({ card, isFlipped, onFlip, reversed = false, flipAnima
             <SpeakButton text={frontText} />
           </div>
 
-          {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto flex items-center justify-center px-8 py-4">
+          {/* Content: text + desktop image inline */}
+          <div className="flex-1 min-h-0 overflow-y-auto flex items-center justify-center px-8 py-4">
             <div className="flex items-center gap-4">
               {showImageOnFront && card.img && (
                 <EntryImage
                   src={card.img}
                   alt={frontText}
-                  className="rounded-lg border border-gray-200 dark:border-gray-600 shrink-0"
-                  style={{ maxWidth: 100, maxHeight: 80, objectFit: "contain" }}
+                  className="hidden sm:block rounded-lg border border-gray-200 dark:border-gray-600 shrink-0"
+                  style={{ maxWidth: "100%", maxHeight: 100, objectFit: "contain" }}
                 />
               )}
               <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center">{frontText}</p>
             </div>
           </div>
+
+          {/* Mobile image — bottom of card, full width, max 50% of card height */}
+          {showImageOnFront && card.img && (
+            <div className="sm:hidden shrink-0 overflow-hidden px-4 pb-2" style={{ maxHeight: "50%" }}>
+              <EntryImage
+                src={card.img}
+                alt={frontText}
+                className="w-full max-h-full rounded-lg border border-gray-200 dark:border-gray-600"
+                style={{ objectFit: "contain" }}
+              />
+            </div>
+          )}
 
           {/* Footer */}
           <div className="shrink-0 px-5 pb-4 pt-2 flex justify-center">
@@ -73,14 +91,14 @@ export function FlashCard({ card, isFlipped, onFlip, reversed = false, flipAnima
             />
           </div>
 
-          {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto px-6 py-4">
+          {/* Content: text + desktop image inline */}
+          <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4">
             <div className="flex items-center gap-3 min-h-full justify-center">
               {card.img && (
                 <EntryImage
                   src={card.img}
                   alt={backText}
-                  className="rounded-lg border border-emerald-500/40"
+                  className="hidden sm:block rounded-lg border border-emerald-500/40 shrink-0"
                   style={{ maxWidth: "100%", maxHeight: 100, objectFit: "contain" }}
                 />
               )}
@@ -94,6 +112,18 @@ export function FlashCard({ card, isFlipped, onFlip, reversed = false, flipAnima
               </div>
             </div>
           </div>
+
+          {/* Mobile image — bottom of card, full width, max 50% of card height */}
+          {card.img && (
+            <div className="sm:hidden shrink-0 overflow-hidden px-4 pb-2" style={{ maxHeight: "50%" }}>
+              <EntryImage
+                src={card.img}
+                alt={backText}
+                className="w-full max-h-full rounded-lg border border-emerald-500/40"
+                style={{ objectFit: "contain" }}
+              />
+            </div>
+          )}
 
           {/* Footer */}
           <div className="shrink-0 px-5 pb-4 pt-2 flex justify-center">
