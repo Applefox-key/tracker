@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Entry } from "../types";
 import { EntryForm, EntryFormValues } from "./AddEntryForm";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
@@ -11,15 +10,6 @@ interface EditEntryModalProps {
 
 export function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
   const { updateEntry } = useEntryCrud();
-
-  // Close on Escape key
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [onClose]);
 
   function handleSubmit(values: EntryFormValues) {
     const { tagIds, imgFile, removeImg, ...entryData } = values;
@@ -39,11 +29,9 @@ export function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-white dark:bg-gray-900 sm:overflow-hidden sm:bg-black/50 sm:backdrop-blur-sm sm:flex sm:items-center sm:justify-center sm:p-4"
-      onClick={onClose}>
+      className="fixed inset-0 z-50 overflow-y-auto bg-white dark:bg-gray-900 sm:overflow-hidden sm:bg-black/50 sm:backdrop-blur-sm sm:flex sm:items-center sm:justify-center sm:p-4">
       <div
-        className="w-full sm:max-w-xl h-[100vh] sm:h-auto sm:max-h-[90vh] sm:overflow-y-auto sm:rounded-2xl"
-        onClick={(e) => e.stopPropagation()}>
+        className="w-full sm:max-w-xl h-[100vh] sm:h-auto sm:max-h-[90vh] sm:overflow-y-auto sm:rounded-2xl">
         <EntryForm
           mode="edit"
           initialValues={initialValues}

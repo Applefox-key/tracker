@@ -11,7 +11,7 @@ import es from "./locales/es.json";
 export const SUPPORTED_LANGUAGES = [
   { code: "en", label: "EN", name: "English", flag: "🇬🇧" },
   { code: "ru", label: "RU", name: "Русский", flag: "🇷🇺" },
-  { code: "ua", label: "UA", name: "Українська", flag: "🇺🇦" },
+  { code: "uk", label: "UA", name: "Українська", flag: "🇺🇦" },
   { code: "pl", label: "PL", name: "Polski", flag: "🇵🇱" },
   { code: "es", label: "ES", name: "Español", flag: "🇪🇸" },
 ] as const;
@@ -22,13 +22,14 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources: { en: { translation: en }, ru: { translation: ru }, ua: { translation: ua }, pl: { translation: pl }, es: { translation: es } },
+    resources: { en: { translation: en }, ru: { translation: ru }, uk: { translation: ua }, pl: { translation: pl }, es: { translation: es } },
     fallbackLng: "en",
-    supportedLngs: ["en", "ru", "ua", "pl", "es"],
+    supportedLngs: ["en", "ru", "uk", "pl", "es"],
     detection: {
       order: ["localStorage", "navigator"],
       lookupLocalStorage: "i18n_lang",
       caches: ["localStorage"],
+      convertDetectedLanguage: (lng: string) => (lng === "ua" ? "uk" : lng),
     },
     interpolation: { escapeValue: false },
   });
