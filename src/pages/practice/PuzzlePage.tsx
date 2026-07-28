@@ -153,7 +153,11 @@ export function PuzzlePage() {
   function removePlaced(tile: Tile) {
     if (answerPhase !== "thinking") return;
     setPlaced((p) => p.filter((t) => t.id !== tile.id));
-    setUsedTileIds((s) => { const next = new Set(s); next.delete(tile.id); return next; });
+    setUsedTileIds((s) => {
+      const next = new Set(s);
+      next.delete(tile.id);
+      return next;
+    });
   }
 
   function tryAgain() {
@@ -269,10 +273,17 @@ export function PuzzlePage() {
         open={isMobileDrawerOpen}
         onClose={() => setIsMobileDrawerOpen(false)}
         onOpen={() => setIsMobileDrawerOpen(true)}
-        tabLabel={t("practice.filters").toUpperCase()}
+        tabLabel={t("practice.filters")}
         title={filtersTitle}
         topline
-        hasActiveIndicator={activeFilterCount > 0}>
+        hasActiveIndicator={activeFilterCount > 0}
+        headerAction={
+          activeFilterCount > 0 ? (
+            <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">
+              {t("practice.clearFilters")}
+            </button>
+          ) : undefined
+        }>
         <PracticeFilterPanel
           allTags={allTags}
           selectedCategory={selectedCategory}
@@ -283,11 +294,6 @@ export function PuzzlePage() {
           onRatingsChange={setSelectedRatings}
           inDrawer
         />
-        {activeFilterCount > 0 && (
-          <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium text-left">
-            {t("practice.clearFilters")}
-          </button>
-        )}
       </SideDrawer>
 
       {/* ── Idle: start prompt ──────────────────────────────────── */}

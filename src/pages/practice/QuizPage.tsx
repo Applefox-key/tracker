@@ -11,6 +11,7 @@ import { EntryImage } from "@/shared/ui/EntryImage";
 import { getEntryImageUrl } from "@/api/api";
 import type { Entry, EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
+import { TfiPanel } from "react-icons/tfi";
 
 const LS_QUIZ_MODE = "quiz_start_side";
 const LS_QUIZ_SHOW_IMAGES = "quiz_show_images";
@@ -221,10 +222,18 @@ export function QuizPage() {
         open={isMobileDrawerOpen}
         onClose={() => setIsMobileDrawerOpen(false)}
         onOpen={() => setIsMobileDrawerOpen(true)}
-        tabLabel={t("practice.filters").toUpperCase()}
+        tabLabel={t("practice.filters")}
+        tabIcon={<TfiPanel className="text-xl" />}
         title={filtersTitle}
         topline
-        hasActiveIndicator={activeFilterCount > 0}>
+        hasActiveIndicator={activeFilterCount > 0}
+        headerAction={
+          activeFilterCount > 0 ? (
+            <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">
+              {t("practice.clearFilters")}
+            </button>
+          ) : undefined
+        }>
         <PracticeFilterPanel
           allTags={allTags}
           selectedCategory={selectedCategory}
@@ -235,11 +244,6 @@ export function QuizPage() {
           onRatingsChange={setSelectedRatings}
           inDrawer
         />
-        {activeFilterCount > 0 && (
-          <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium text-left">
-            {t("practice.clearFilters")}
-          </button>
-        )}
       </SideDrawer>
 
       {/* ── Idle: start prompt ──────────────────────────────────── */}
@@ -272,16 +276,21 @@ export function QuizPage() {
       {/* ── Playing ─────────────────────────────────────────────── */}
       {phase === "playing" && (
         <div className="flex flex-col gap-6 max-w-xl mx-auto w-full">
-          <div className="flex flex-col gap-1">
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {t("practice.quiz.progressLabel", { current: currentIdx + 1, total: questions.length })}
-            </span>
-            <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setPhase("idle")}
+              className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
+              {t("practice.quit")}
+            </button>
+            <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
               <div
                 className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
+            <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0 tabular-nums">
+              {currentIdx + 1} / {questions.length}
+            </span>
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col gap-4">

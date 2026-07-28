@@ -13,6 +13,7 @@ import { useEntries, DateFilter } from "@/features/entries/hooks/useEntries";
 import { Entry, EntryCategory } from "@/features/entries/types";
 import { TbTargetArrow } from "react-icons/tb";
 import { AddEntryFab } from "@/features/entries/components/AddEntryFab";
+import { TfiPanel } from "react-icons/tfi";
 
 export function EntriesPage() {
   const { t } = useTranslation();
@@ -299,9 +300,17 @@ export function EntriesPage() {
           open={isMobileDrawerOpen}
           onClose={() => setIsMobileDrawerOpen(false)}
           onOpen={() => setIsMobileDrawerOpen(true)}
-          tabLabel={t("entries.filters").toUpperCase()}
+          tabLabel={t("entries.filters")}
+          tabIcon={<TfiPanel className="text-xl" />}
           title={`${t("entries.filters")}${advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}`}
-          hasActiveIndicator={advancedFilterCount > 0}>
+          hasActiveIndicator={advancedFilterCount > 0}
+          headerAction={
+            advancedFilterCount > 0 ? (
+              <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">
+                {t("entries.clearFilters")}
+              </button>
+            ) : undefined
+          }>
           <div className="flex flex-col gap-2">
             <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{t("entries.form.category")}</span>
             <div className="flex gap-2 flex-wrap">
@@ -331,11 +340,6 @@ export function EntriesPage() {
             inDrawer
           />
 
-          {advancedFilterCount > 0 && (
-            <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium text-left">
-              {t("entries.clearFilters")}
-            </button>
-          )}
         </SideDrawer>
       )}
 

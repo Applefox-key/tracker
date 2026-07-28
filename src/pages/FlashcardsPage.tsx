@@ -16,6 +16,7 @@ import { EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import type { SRGrade } from "@/features/entries/types";
 import { FaShuffle } from "react-icons/fa6";
+import { TfiPanel } from "react-icons/tfi";
 
 const SR_GRADES = [
   {
@@ -84,9 +85,8 @@ export function FlashcardsPage() {
     navigate(goNext);
   }
 
-  const { currentCard, currentIndex, total, progress, isFlipped, allTags, goNext, goPrev, flip, reset, shuffleOnce } = useFlashcards(
-    { selectedRatings, selectedCategory, selectedTag },
-  );
+  const { currentCard, currentIndex, total, progress, isFlipped, allTags, goNext, goPrev, flip, reset, shuffleOnce } =
+    useFlashcards({ selectedRatings, selectedCategory, selectedTag });
 
   const [cardVisible, setCardVisible] = useState(true);
   const [flipAnimated, setFlipAnimated] = useState(true);
@@ -246,10 +246,18 @@ export function FlashcardsPage() {
         open={isMobileDrawerOpen}
         onClose={() => setIsMobileDrawerOpen(false)}
         onOpen={() => setIsMobileDrawerOpen(true)}
-        tabLabel={t("practice.filters").toUpperCase()}
+        tabLabel={t("practice.filters")}
+        tabIcon={<TfiPanel className="text-xl" />}
         title={filtersTitle}
         topline
-        hasActiveIndicator={activeFilterCount > 0}>
+        hasActiveIndicator={activeFilterCount > 0}
+        headerAction={
+          activeFilterCount > 0 ? (
+            <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">
+              {t("practice.clearFilters")}
+            </button>
+          ) : undefined
+        }>
         <PracticeFilterPanel
           allTags={allTags}
           selectedCategory={selectedCategory}
@@ -260,11 +268,6 @@ export function FlashcardsPage() {
           onRatingsChange={setSelectedRatings}
           inDrawer
         />
-        {activeFilterCount > 0 && (
-          <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium text-left">
-            {t("practice.clearFilters")}
-          </button>
-        )}
       </SideDrawer>
 
       {/* ── Card area or empty state ─────────────────────────────── */}
