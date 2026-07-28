@@ -271,6 +271,7 @@
       "tryAgain": "Try again",
       "backToPractice": "Back to Practice",
       "pctCorrect": "{{pct}}% correct",
+      "progressLabel": "Question {{current}} of {{total}}",
       "helpDesc": "A word or explanation is shown — pick the correct match from 4 options. Toggle the start side to change what appears as the question.",
       "helpStartSide": "Toggle what is shown as the question — word or explanation.",
       "helpShowImages": "Show entry images alongside the question (if available)."
@@ -293,6 +294,7 @@
       "seeResults": "See results",
       "playAgain": "Play again",
       "backToPractice": "Back to Practice",
+      "progressLabel": "Matched {{matched}} of {{total}}",
       "helpDesc": "Select a card from the Words column, then its matching Explanation from the right. Match all pairs to complete the round."
     },
     "puzzle": {
@@ -317,6 +319,7 @@
       "seeResults": "See results",
       "pctSolved": "{{pct}}% solved correctly",
       "backToPractice": "Back to Practice",
+      "progressLabel": "Puzzle {{current}} of {{total}}",
       "helpDesc": "Read the explanation and assemble the word or phrase by clicking the tiles below. Use the example sentence as a hint.",
       "helpShowImages": "Show the entry image as an additional visual hint (if available)."
     },

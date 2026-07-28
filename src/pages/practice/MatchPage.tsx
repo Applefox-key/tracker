@@ -300,21 +300,16 @@ export function MatchPage() {
         {/* ── Playing ─────────────────────────────────────────────── */}
         {phase === "playing" && (
           <div className="flex flex-col gap-5 max-w-2xl mx-auto w-full">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setPhase("idle")}
-                className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
-                {t("practice.quit")}
-              </button>
-              <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {t("practice.match.progressLabel", { matched: totalMatched + matched.size, total: totalPairs })}
+              </span>
+              <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
                 <div
                   className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${overallProgress}%` }}
                 />
               </div>
-              <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0 tabular-nums">
-                {totalMatched + matched.size} / {totalPairs}
-              </span>
             </div>
 
             <div className="grid grid-cols-2 gap-3">

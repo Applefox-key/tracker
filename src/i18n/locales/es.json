@@ -270,6 +270,7 @@
       "tryAgain": "Intentar de nuevo",
       "backToPractice": "Volver a práctica",
       "pctCorrect": "{{pct}}% correcto",
+      "progressLabel": "Pregunta {{current}} de {{total}}",
       "helpDesc": "Se muestra una palabra o explicación — elige la respuesta correcta entre 4 opciones. Cambia el lado inicial para modificar qué aparece como pregunta.",
       "helpStartSide": "Cambia qué se muestra como pregunta: la palabra o la explicación.",
       "helpShowImages": "Muestra imágenes junto a la pregunta (si están disponibles)."
@@ -292,6 +293,7 @@
       "seeResults": "Ver resultados",
       "playAgain": "Jugar de nuevo",
       "backToPractice": "Volver a práctica",
+      "progressLabel": "Emparejadas {{matched}} de {{total}}",
       "helpDesc": "Selecciona una tarjeta de la columna Palabras y luego su explicación correspondiente en la columna derecha. Empareja todos los pares para completar la ronda."
     },
     "puzzle": {
@@ -316,6 +318,7 @@
       "seeResults": "Ver resultados",
       "pctSolved": "{{pct}}% resuelto correctamente",
       "backToPractice": "Volver a práctica",
+      "progressLabel": "Puzzle {{current}} de {{total}}",
       "helpDesc": "Lee la explicación y construye la palabra o frase haciendo clic en las piezas. Usa la oración de ejemplo como pista.",
       "helpShowImages": "Muestra la imagen de la entrada como pista visual adicional (si está disponible)."
     },

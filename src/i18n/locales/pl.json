@@ -280,6 +280,7 @@
       "tryAgain": "Spróbuj ponownie",
       "backToPractice": "Powrót do ćwiczeń",
       "pctCorrect": "{{pct}}% poprawnych",
+      "progressLabel": "Pytanie {{current}} z {{total}}",
       "helpDesc": "Widzisz słowo lub wyjaśnienie — wybierz poprawną odpowiedź spośród 4 opcji. Zmień stronę startową, aby zmienić, co jest pytaniem.",
       "helpStartSide": "Przełącz, co jest wyświetlane jako pytanie — słowo lub wyjaśnienie.",
       "helpShowImages": "Wyświetlaj obrazki obok pytania (jeśli są dostępne)."
@@ -302,6 +303,7 @@
       "seeResults": "Wyniki",
       "playAgain": "Graj ponownie",
       "backToPractice": "Powrót do ćwiczeń",
+      "progressLabel": "Dopasowano {{matched}} z {{total}}",
       "helpDesc": "Wybierz kartę z kolumny Słowa, a następnie pasujące wyjaśnienie z prawej kolumny. Dopasuj wszystkie pary, aby ukończyć rundę."
     },
     "puzzle": {
@@ -326,6 +328,7 @@
       "seeResults": "Wyniki",
       "pctSolved": "{{pct}}% rozwiązanych poprawnie",
       "backToPractice": "Powrót do ćwiczeń",
+      "progressLabel": "Zagadka {{current}} z {{total}}",
       "helpDesc": "Przeczytaj wyjaśnienie i ułóż słowo lub wyrażenie, klikając kafelki. Użyj przykładowego zdania jako wskazówki.",
       "helpShowImages": "Wyświetlaj obrazek wpisu jako dodatkową wskazówkę (jeśli jest dostępny)."
     },
