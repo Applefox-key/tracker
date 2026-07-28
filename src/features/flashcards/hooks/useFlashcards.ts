@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useEntriesStore } from '@/features/entries/store/entriesStore'
 import { useFlashcardsStore } from '../store/flashcardsStore'
 import { Flashcard } from '../types'
@@ -9,7 +9,6 @@ export interface FlashcardFilters {
   selectedRatings: number[]
   selectedCategory: EntryCategory | null
   selectedTag: number | null
-  shuffleKey?: number
 }
 
 const EMPTY_FILTERS: FlashcardFilters = {
@@ -22,7 +21,9 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
   const entries = useEntriesStore((s) => s.entries)
   const { currentIndex, isFlipped, goNext, goPrev, flip, reset } = useFlashcardsStore()
 
-  const { selectedRatings, selectedCategory, selectedTag, shuffleKey } = filters
+  const { selectedRatings, selectedCategory, selectedTag } = filters
+
+  const [shuffledIds, setShuffledIds] = useState<number[] | null>(null)
 
   // All tags available on flashcard-eligible entries (unaffected by other filters)
   const allTags = useMemo(() => {
@@ -33,8 +34,8 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
     return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name))
   }, [entries])
 
-  const cards: Flashcard[] = useMemo(() => {
-    const filtered = entries
+  const filteredCards: Flashcard[] = useMemo(() => {
+    return entries
       .filter((e) => {
         if (!e.includeInPractice) return false
         if (selectedRatings.length > 0 && !selectedRatings.includes(e.rating)) return false
@@ -50,21 +51,37 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
         rating: e.rating,
         img: e.img ? getEntryImageUrl(e.img) : null,
       }))
-    if (!shuffleKey) return filtered
-    const arr = [...filtered]
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]]
-    }
-    return arr
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entries, selectedRatings, selectedCategory, selectedTag, shuffleKey])
+  }, [entries, selectedRatings, selectedCategory, selectedTag])
 
-  // Reset to card 0 whenever the filtered deck changes
+  // Apply stored shuffle order to current filtered cards (handles entries being updated mid-session)
+  const cards: Flashcard[] = useMemo(() => {
+    if (!shuffledIds) return filteredCards
+    const cardMap = new Map(filteredCards.map((c) => [c.id, c]))
+    const ordered = shuffledIds.flatMap((id) => {
+      const card = cardMap.get(id)
+      return card ? [card] : []
+    })
+    const orderedSet = new Set(shuffledIds)
+    const newCards = filteredCards.filter((c) => !orderedSet.has(c.id))
+    return [...ordered, ...newCards]
+  }, [filteredCards, shuffledIds])
+
+  // Reset to card 0 and clear shuffle when filters change
   const ratingsKey = selectedRatings.join(',')
   useEffect(() => {
+    setShuffledIds(null)
     reset()
   }, [ratingsKey, selectedCategory, selectedTag, reset])
+
+  function shuffleOnce() {
+    const arr = [...filteredCards]
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[arr[i], arr[j]] = [arr[j], arr[i]]
+    }
+    setShuffledIds(arr.map((c) => c.id))
+    reset()
+  }
 
   const total = cards.length
   const safeIndex = total > 0 ? Math.min(currentIndex, total - 1) : 0
@@ -82,5 +99,6 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
     goPrev: () => goPrev(total),
     flip,
     reset,
+    shuffleOnce,
   }
 }

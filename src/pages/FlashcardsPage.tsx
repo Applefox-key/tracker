@@ -53,7 +53,6 @@ export function FlashcardsPage() {
   const [startSide, setStartSide] = useState<"word" | "explanation">(() =>
     localStorage.getItem(LS_START_SIDE) === "explanation" ? "explanation" : "word",
   );
-  const [shuffleKey, setShuffleKey] = useState(0);
   const [shaking, setShaking] = useState(false);
   const [showImages, setShowImages] = useState(() => localStorage.getItem(LS_SHOW_IMAGES) === "true");
   const [showHelp, setShowHelp] = useState(false);
@@ -72,10 +71,9 @@ export function FlashcardsPage() {
   }
 
   function handleShuffle() {
-    setShuffleKey((k) => k + 1);
+    shuffleOnce();
     setShaking(true);
     setTimeout(() => setShaking(false), 400);
-    reset();
   }
 
   const routerNavigate = useNavigate();
@@ -86,8 +84,8 @@ export function FlashcardsPage() {
     navigate(goNext);
   }
 
-  const { currentCard, currentIndex, total, progress, isFlipped, allTags, goNext, goPrev, flip, reset } = useFlashcards(
-    { selectedRatings, selectedCategory, selectedTag, shuffleKey },
+  const { currentCard, currentIndex, total, progress, isFlipped, allTags, goNext, goPrev, flip, reset, shuffleOnce } = useFlashcards(
+    { selectedRatings, selectedCategory, selectedTag },
   );
 
   const [cardVisible, setCardVisible] = useState(true);

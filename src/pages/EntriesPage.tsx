@@ -242,7 +242,7 @@ export function EntriesPage() {
       </div>
       {/* Add form — mobile: full-screen modal; desktop: inline */}
       {showForm && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-white dark:bg-gray-900 sm:static sm:inset-auto sm:z-auto sm:overflow-visible sm:bg-transparent dark:sm:bg-transparent">
+        <div className="fixed inset-0 z-[52] overflow-y-auto bg-white dark:bg-gray-900 sm:static sm:inset-auto sm:z-auto sm:overflow-visible sm:bg-transparent dark:sm:bg-transparent">
           <EntryForm mode="create" onSubmit={handleAdd} onCancel={() => setShowForm(false)} />
         </div>
       )}
