@@ -54,6 +54,11 @@ export function Layout() {
   const [appsOpen, setAppsOpen] = useState(false);
   const [burgerOpen, setBurgerOpen] = useState(false);
 
+  const isDashboard = location.pathname === "/dashboard";
+  const hour = new Date().getHours();
+  const motivationKey =
+    hour < 12 ? "layout.motivateMorning" : hour < 18 ? "layout.motivateAfternoon" : "layout.motivateEvening";
+
   const navItems = [
     { to: "/dashboard", labelKey: "nav.dashboard", icon: <ImStatsBars /> },
     { to: "/entries", labelKey: "nav.entries", icon: <PiCardsThree /> },
@@ -180,10 +185,23 @@ export function Layout() {
             </span>
           </div>
 
-          {/* Title - mobile only, absolutely centered */}
-          <span className="sm:hidden absolute left-1/2 -translate-x-1/2 text-xl font-bold text-emerald-600 tracking-tight whitespace-nowrap pointer-events-none">
-            {t("layout.logo")}
-          </span>
+          {/* Title / Greeting - mobile only, absolutely centered */}
+          {isDashboard ? (
+            <div className="sm:hidden absolute left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none">
+              <span className="text-sm font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                {user?.name
+                  ? t("layout.greeting", { name: user.name.split(" ")[0] })
+                  : t("layout.greetingAnon")}
+              </span>
+              <span className="text-[11px] text-gray-400 dark:text-gray-500 whitespace-nowrap">
+                {t(motivationKey)}
+              </span>
+            </div>
+          ) : (
+            <span className="sm:hidden absolute left-1/2 -translate-x-1/2 text-xl font-bold text-emerald-600 tracking-tight whitespace-nowrap pointer-events-none">
+              {t("layout.logo")}
+            </span>
+          )}
 
           {/* Desktop nav */}
           <nav className="hidden sm:flex items-center gap-1">

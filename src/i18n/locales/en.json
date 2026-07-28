@@ -18,7 +18,12 @@
     "exitDemo": "Exit demo",
     "footer": "Language Progress — keep learning every day",
     "menu": "Menu",
-    "profile": "Profile"
+    "profile": "Profile",
+    "greeting": "Hey, {{name}}! 👋",
+    "greetingAnon": "Hey there! 👋",
+    "motivateMorning": "Ready to learn today?",
+    "motivateAfternoon": "Keep the momentum going!",
+    "motivateEvening": "End the day with something new!"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -33,9 +38,12 @@
     "totalEntriesLabel_one": "total entry",
     "totalEntriesLabel_other": "total entries",
     "statTotal": "Total Entries",
+    "statTotalSub": "All time",
     "statToday": "Added Today",
+    "statTodaySub": "Keep it up!",
     "statWeek": "This Week",
     "statWeekSub": "last 7 days",
+    "statWeekMotivation": "You're building!",
     "statPractice": "Practice",
     "statAvgRating": "Avg Rating",
     "statAvgRatingSub": "out of 5",
@@ -43,6 +51,11 @@
     "noEntries": "No entries yet.",
     "recentEntries": "Recent Entries",
     "viewAll": "View all →",
+    "rapidReview": {
+      "title": "Rapid Review",
+      "tapToFlip": "tap to flip",
+      "noEntries": "Add words or phrases to start reviewing"
+    },
     "categories": {
       "word": "Words",
       "phrase": "Phrases",

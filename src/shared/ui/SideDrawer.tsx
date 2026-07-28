@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { TfiPanel } from "react-icons/tfi";
 
 interface SideDrawerProps {
   open: boolean;

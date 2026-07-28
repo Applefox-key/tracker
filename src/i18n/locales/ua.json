@@ -18,7 +18,12 @@
     "exitDemo": "Вийти з демо",
     "footer": "Language Progress — навчайся щодня",
     "menu": "Меню",
-    "profile": "Профіль"
+    "profile": "Профіль",
+    "greeting": "Привіт, {{name}}! 👋",
+    "greetingAnon": "Привіт! 👋",
+    "motivateMorning": "Починаємо день з нового?",
+    "motivateAfternoon": "Продовжуємо навчатися!",
+    "motivateEvening": "Завершуємо день продуктивно!"
   },
   "dashboard": {
     "title": "Мій прогрес",
@@ -35,9 +40,12 @@
     "totalEntriesLabel_many": "записів",
     "totalEntriesLabel_other": "записів",
     "statTotal": "Всього записів",
+    "statTotalSub": "За весь час",
     "statToday": "Додано сьогодні",
+    "statTodaySub": "Продовжуй!",
     "statWeek": "Цього тижня",
     "statWeekSub": "останні 7 днів",
+    "statWeekMotivation": "Ти зростаєш!",
     "statPractice": "Практика",
     "statAvgRating": "Середня оцінка",
     "statAvgRatingSub": "з 5",
@@ -45,6 +53,11 @@
     "noEntries": "Записів поки немає.",
     "recentEntries": "Останні записи",
     "viewAll": "Всі →",
+    "rapidReview": {
+      "title": "Швидке повторення",
+      "tapToFlip": "натисни щоб перегорнути",
+      "noEntries": "Додай слова або фрази для повторення"
+    },
     "categories": {
       "word": "Слова",
       "phrase": "Фрази",

@@ -18,7 +18,12 @@
     "exitDemo": "Salir del demo",
     "footer": "Language Progress — aprende cada día",
     "menu": "Menú",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "greeting": "¡Hola, {{name}}! 👋",
+    "greetingAnon": "¡Hola! 👋",
+    "motivateMorning": "¿Listo para aprender hoy?",
+    "motivateAfternoon": "¡Sigue adelante!",
+    "motivateEvening": "¡Termina el día aprendiendo algo nuevo!"
   },
   "dashboard": {
     "title": "Mi progreso",
@@ -33,9 +38,12 @@
     "totalEntriesLabel_one": "entrada en total",
     "totalEntriesLabel_other": "entradas en total",
     "statTotal": "Total entradas",
+    "statTotalSub": "En total",
     "statToday": "Añadido hoy",
+    "statTodaySub": "¡Sigue así!",
     "statWeek": "Esta semana",
     "statWeekSub": "últimos 7 días",
+    "statWeekMotivation": "¡Vas creciendo!",
     "statPractice": "Práctica",
     "statAvgRating": "Puntuación media",
     "statAvgRatingSub": "de 5",
@@ -43,6 +51,11 @@
     "noEntries": "Sin entradas todavía.",
     "recentEntries": "Entradas recientes",
     "viewAll": "Ver todo →",
+    "rapidReview": {
+      "title": "Repaso rápido",
+      "tapToFlip": "toca para voltear",
+      "noEntries": "Añade palabras o frases para empezar a repasar"
+    },
     "categories": {
       "word": "Palabras",
       "phrase": "Frases",
