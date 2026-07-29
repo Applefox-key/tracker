@@ -55,6 +55,10 @@
     "noEntries": "No entries yet.",
     "recentEntries": "Recent Entries",
     "viewAll": "View all →",
+    "weeklyActivity": "Weekly Activity",
+    "days": "days",
+    "badgesComingSoon": "Badges — coming soon",
+    "badgesComingSoonSub": "Achievement system is on the way",
     "rapidReview": {
       "title": "Rapid Review",
       "tapToFlip": "tap to flip",
@@ -211,7 +215,8 @@
       "quiz": { "label": "Quiz", "description": "Choose the correct answer from 4 options" },
       "match": { "label": "Match", "description": "Connect words with their explanations" },
       "puzzle": { "label": "Puzzle", "description": "Arrange letters or words in correct order" },
-      "due": { "label": "Due Today", "description": "Review cards scheduled for today" }
+      "due": { "label": "Due Today", "description": "Review cards scheduled for today" },
+      "write": { "label": "Write It", "description": "Type the correct word from its explanation" }
     },
     "due": {
       "title": "Due Today",
@@ -339,6 +344,25 @@
       "progressLabel": "Puzzle {{current}} of {{total}}",
       "helpDesc": "Read the explanation and assemble the word or phrase by clicking the tiles below. Use the example sentence as a hint.",
       "helpShowImages": "Show the entry image as an additional visual hint (if available)."
+    },
+    "write": {
+      "title": "Write the Word",
+      "helpDesc": "Read the explanation and type the correct word or phrase in the foreign language. Available for words, phrases and idioms only.",
+      "onlyCategories": "Words, phrases and idioms only",
+      "promptLabel": "What word is this?",
+      "typeAnswer": "Type your answer…",
+      "checkAnswer": "Check →",
+      "correct": "Correct!",
+      "wrong": "Incorrect",
+      "correctAnswer": "Correct answer:",
+      "showExample": "Show example…",
+      "startWrite": "Start →",
+      "next": "Next →",
+      "seeResults": "See results",
+      "tryAgain": "Try again",
+      "backToPractice": "Back to Practice",
+      "pctCorrect": "{{pct}}% correct",
+      "noMatchingEntries": "No matching entries for this mode"
     },
     "showImages": "Images",
     "filterPanel": {

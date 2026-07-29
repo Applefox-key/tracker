@@ -12,6 +12,7 @@ const MODES = [
   { key: "quiz" as const, icon: "🧠", route: "/practice/quiz", min: 4 },
   { key: "match" as const, icon: "🔗", route: "/practice/match", min: 2 },
   { key: "puzzle" as const, icon: "🧩", route: "/practice/puzzle", min: 1 },
+  { key: "write" as const, icon: "✍️", route: "/practice/write", min: 1 },
 ];
 
 export function PracticePage() {
@@ -23,7 +24,8 @@ export function PracticePage() {
 
   useEffect(() => {
     if (authMode !== "authenticated") return;
-    entriesApi.getDueEntries()
+    entriesApi
+      .getDueEntries()
       .then((due) => setDueCount(due.length))
       .catch(() => setDueCount(0));
   }, [authMode]);
@@ -36,11 +38,12 @@ export function PracticePage() {
       match: base.filter((e) => e.category !== "note").length,
       puzzle: base.filter((e) => !["note", "grammar"].includes(e.category)).filter((e) => wordCount(e.word) <= 10)
         .length,
+      write: base.filter((e) => ["word", "phrase", "idiom"].includes(e.category)).length,
     };
   }, [entries]);
 
   return (
-    <div className="flex flex-col gap-6 py-4 sm:py-auto lg:p-8">
+    <div className="flex flex-col gap-6 py-4 sm:py-auto lg:p-8 max-w-5xl m-auto">
       {/* Header */}
       <div className="hidden sm:block">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.title")}</h1>
@@ -58,14 +61,15 @@ export function PracticePage() {
         </div>
         <div className="flex flex-col items-end gap-2 shrink-0">
           {dueCount !== null && dueCount > 0 && (
-            <span className="bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">
-              {dueCount}
-            </span>
+            <span className="bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">{dueCount}</span>
           )}
           <Button
             size="sm"
             className="bg-emerald-500 hover:bg-emerald-600 text-white border-0"
-            onClick={(e) => { e.stopPropagation(); navigate("/practice/due"); }}>
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate("/practice/due");
+            }}>
             {t("practice.start")}
           </Button>
         </div>

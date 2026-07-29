@@ -57,6 +57,10 @@
     "noEntries": "Brak wpisów.",
     "recentEntries": "Ostatnie wpisy",
     "viewAll": "Wszystkie →",
+    "weeklyActivity": "Aktywność tygodniowa",
+    "days": "dni",
+    "badgesComingSoon": "Odznaki — wkrótce",
+    "badgesComingSoonSub": "System osiągnięć w drodze",
     "rapidReview": {
       "title": "Szybka powtórka",
       "tapToFlip": "dotknij, aby obrócić",
@@ -220,7 +224,8 @@
       "quiz": { "label": "Quiz", "description": "Wybierz poprawną odpowiedź spośród 4 opcji" },
       "match": { "label": "Dopasuj", "description": "Połącz słowa z ich wyjaśnieniami" },
       "puzzle": { "label": "Puzzle", "description": "Ułóż litery lub słowa w prawidłowej kolejności" },
-      "due": { "label": "Na dziś", "description": "Powtórz fiszki zaplanowane na dzisiaj" }
+      "due": { "label": "Na dziś", "description": "Powtórz fiszki zaplanowane na dzisiaj" },
+      "write": { "label": "Napisz słowo", "description": "Wpisz poprawne słowo na podstawie jego wyjaśnienia" }
     },
     "due": {
       "title": "Na dziś",
@@ -348,6 +353,25 @@
       "progressLabel": "Zagadka {{current}} z {{total}}",
       "helpDesc": "Przeczytaj wyjaśnienie i ułóż słowo lub wyrażenie, klikając kafelki. Użyj przykładowego zdania jako wskazówki.",
       "helpShowImages": "Wyświetlaj obrazek wpisu jako dodatkową wskazówkę (jeśli jest dostępny)."
+    },
+    "write": {
+      "title": "Napisz słowo",
+      "helpDesc": "Przeczytaj wyjaśnienie i wpisz poprawne słowo lub wyrażenie w języku obcym. Dostępne tylko dla słów, wyrażeń i idiomów.",
+      "onlyCategories": "Tylko słowa, wyrażenia i idiomy",
+      "promptLabel": "Jakie to słowo?",
+      "typeAnswer": "Wpisz odpowiedź…",
+      "checkAnswer": "Sprawdź →",
+      "correct": "Poprawnie!",
+      "wrong": "Niepoprawnie",
+      "correctAnswer": "Poprawna odpowiedź:",
+      "showExample": "Pokaż przykład…",
+      "startWrite": "Zacznij →",
+      "next": "Dalej →",
+      "seeResults": "Wyniki",
+      "tryAgain": "Spróbuj ponownie",
+      "backToPractice": "Powrót do ćwiczeń",
+      "pctCorrect": "{{pct}}% poprawnych",
+      "noMatchingEntries": "Brak pasujących wpisów dla tego trybu"
     },
     "showImages": "Obrazki",
     "filterPanel": {

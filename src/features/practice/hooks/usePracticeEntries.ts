@@ -14,7 +14,7 @@ export const EMPTY_FILTERS: PracticeFilters = {
   selectedTag: null,
 }
 
-export type PracticeMode = 'flashcards' | 'quiz' | 'match' | 'puzzle'
+export type PracticeMode = 'flashcards' | 'quiz' | 'match' | 'puzzle' | 'write'
 
 export function wordCount(s: string): number {
   return s.trim().split(/\s+/).filter(Boolean).length
@@ -48,6 +48,7 @@ export function usePracticeEntries(mode: PracticeMode, filters: PracticeFilters)
     const base = applyFilters(entries, { selectedRatings, selectedCategory, selectedTag })
     if (mode === 'flashcards') return base
     if (mode === 'quiz' || mode === 'match') return base.filter((e) => e.category !== 'note')
+    if (mode === 'write') return base.filter((e) => ['word', 'phrase', 'idiom'].includes(e.category))
     return base
       .filter((e) => !['note', 'grammar'].includes(e.category))
       .filter((e) => wordCount(e.word) <= 10)

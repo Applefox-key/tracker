@@ -189,13 +189,9 @@ export function Layout() {
           {isDashboard ? (
             <div className="sm:hidden absolute left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none">
               <span className="text-sm font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">
-                {user?.name
-                  ? t("layout.greeting", { name: user.name.split(" ")[0] })
-                  : t("layout.greetingAnon")}
+                {user?.name ? t("layout.greeting", { name: user.name.split(" ")[0] }) : t("layout.greetingAnon")}
               </span>
-              <span className="text-[11px] text-gray-400 dark:text-gray-500 whitespace-nowrap">
-                {t(motivationKey)}
-              </span>
+              <span className="text-[11px] text-gray-400 dark:text-gray-500 whitespace-nowrap">{t(motivationKey)}</span>
             </div>
           ) : (
             <span className="sm:hidden absolute left-1/2 -translate-x-1/2 text-xl font-bold text-emerald-600 tracking-tight whitespace-nowrap pointer-events-none">
@@ -440,7 +436,7 @@ export function Layout() {
       <DemoBanner />
 
       <main
-        className={`flex-1 py-2 sm:py-8 pt-0 sm:pt-8 max-w-5xl w-full mx-auto px-4 sm:px-6  sm:pb-0${isGameRoute ? "" : " pb-24"}`}
+        className={`flex-1 py-2 sm:py-8 pt-0 sm:pt-8 max-w-7xl w-full mx-auto px-4 sm:px-6  sm:pb-0${isGameRoute ? "" : " pb-24"}`}
         style={!isGameRoute ? { paddingBottom: "calc(5rem + env(safe-area-inset-bottom))" } : undefined}>
         <Outlet />
       </main>

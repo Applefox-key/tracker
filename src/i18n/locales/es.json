@@ -55,6 +55,10 @@
     "noEntries": "Sin entradas todavía.",
     "recentEntries": "Entradas recientes",
     "viewAll": "Ver todo →",
+    "weeklyActivity": "Actividad semanal",
+    "days": "días",
+    "badgesComingSoon": "Insignias — próximamente",
+    "badgesComingSoonSub": "El sistema de logros está en camino",
     "rapidReview": {
       "title": "Repaso rápido",
       "tapToFlip": "toca para voltear",
@@ -212,7 +216,8 @@
       "quiz": { "label": "Quiz", "description": "Elige la respuesta correcta de 4 opciones" },
       "match": { "label": "Emparejar", "description": "Conecta palabras con sus explicaciones" },
       "puzzle": { "label": "Puzzle", "description": "Ordena letras o palabras en el orden correcto" },
-      "due": { "label": "Para hoy", "description": "Repasa las tarjetas programadas para hoy" }
+      "due": { "label": "Para hoy", "description": "Repasa las tarjetas programadas para hoy" },
+      "write": { "label": "Escribe la palabra", "description": "Escribe la palabra correcta a partir de su explicación" }
     },
     "due": {
       "title": "Para hoy",
@@ -338,6 +343,25 @@
       "progressLabel": "Puzzle {{current}} de {{total}}",
       "helpDesc": "Lee la explicación y construye la palabra o frase haciendo clic en las piezas. Usa la oración de ejemplo como pista.",
       "helpShowImages": "Muestra la imagen de la entrada como pista visual adicional (si está disponible)."
+    },
+    "write": {
+      "title": "Escribe la palabra",
+      "helpDesc": "Lee la explicación y escribe la palabra o frase correcta en el idioma extranjero. Solo disponible para palabras, frases e idioms.",
+      "onlyCategories": "Solo palabras, frases e idioms",
+      "promptLabel": "¿Qué palabra es esta?",
+      "typeAnswer": "Escribe tu respuesta…",
+      "checkAnswer": "Comprobar →",
+      "correct": "¡Correcto!",
+      "wrong": "Incorrecto",
+      "correctAnswer": "Respuesta correcta:",
+      "showExample": "Mostrar ejemplo…",
+      "startWrite": "Empezar →",
+      "next": "Siguiente →",
+      "seeResults": "Ver resultados",
+      "tryAgain": "Intentar de nuevo",
+      "backToPractice": "Volver a práctica",
+      "pctCorrect": "{{pct}}% correctas",
+      "noMatchingEntries": "No hay entradas para este modo"
     },
     "showImages": "Imágenes",
     "filterPanel": {

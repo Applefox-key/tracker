@@ -1,7 +1,7 @@
 export type EntryCategory = 'word' | 'phrase' | 'grammar' | 'idiom' | 'note'
 
 export type SRGrade = 0 | 3 | 4 | 5
-export type PracticeMode = 'flashcard' | 'quiz' | 'match' | 'puzzle'
+export type PracticeMode = 'flashcard' | 'quiz' | 'match' | 'puzzle' | 'write'
 
 export interface EntryTag {
   id: number

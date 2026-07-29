@@ -1,7 +1,17 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FiBookOpen, FiPlusCircle, FiRefreshCw, FiTrendingUp } from "react-icons/fi";
+import {
+  FiBookOpen,
+  FiPlusCircle,
+  FiRefreshCw,
+  FiTrendingUp,
+  FiTarget,
+  FiStar,
+  FiAward,
+  FiPieChart,
+  FiList,
+} from "react-icons/fi";
 import { Card, CardHeader, CardTitle } from "@/shared/ui/Card";
 import { Button } from "@/shared/ui/Button";
 import { useEntriesStore } from "@/features/entries/store/entriesStore";
@@ -83,6 +93,9 @@ const CATEGORY_STYLES: Array<{
   },
 ];
 
+// ── Badge milestones ──────────────────────────────────────────────────────
+
+
 // ── Streak 2.5D cake ─────────────────────────────────────────────────────────
 
 function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number }) {
@@ -119,11 +132,8 @@ function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number })
 
   return (
     <svg viewBox="0 0 120 80" className="w-20 h-14" aria-hidden>
-      {/* drop shadow */}
       <ellipse cx={cx} cy={cy + depth + ry + 2} rx={rx - 4} ry={4} fill="rgba(0,0,0,0.12)" />
-      {/* bottom cap */}
       <ellipse cx={cx} cy={cy + depth} rx={rx} ry={ry} className="fill-gray-200 dark:fill-gray-600" />
-      {/* side walls back-to-front */}
       {sideSectors.map((s) => (
         <polygon
           key={`w${s.i}`}
@@ -131,7 +141,6 @@ function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number })
           className={s.filled ? "fill-amber-600 dark:fill-amber-700" : "fill-gray-300 dark:fill-gray-500"}
         />
       ))}
-      {/* top sectors */}
       {sectors.map((s) => (
         <path
           key={`t${s.i}`}
@@ -141,13 +150,11 @@ function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number })
           className={s.filled ? "fill-amber-400 dark:fill-amber-500" : "fill-gray-200 dark:fill-gray-600"}
         />
       ))}
-      {/* gloss highlight */}
-      {/* <ellipse cx={cx - 10} cy={cy - 7} rx={16} ry={5} fill="rgba(255,255,255,0.28)" /> */}
     </svg>
   );
 }
 
-// ── Weekly activity chip ──────────────────────────────────────────────────
+// ── Weekly activity chip — mobile ─────────────────────────────────────────
 
 function WeeklyActivityChip({ entries }: { entries: Entry[] }) {
   const { t, i18n } = useTranslation();
@@ -244,6 +251,190 @@ function WeeklyActivityChip({ entries }: { entries: Entry[] }) {
       </div>
     </div>
   );
+}
+
+// ── Desktop streak block ──────────────────────────────────────────────────
+
+function DesktopStreakBlock({
+  streak,
+  todayCount,
+  flashCount,
+}: {
+  streak: number;
+  todayCount: number;
+  flashCount: number;
+}) {
+  const { t } = useTranslation();
+
+  const streakMain =
+    streak === 0
+      ? t("dashboard.noStreak")
+      : streak === 1
+        ? t("dashboard.streak1")
+        : streak >= 7
+          ? t("dashboard.streakLegendary", { count: streak })
+          : t("dashboard.streakKeepUp", { count: streak });
+
+  const streakSub =
+    streak === 0
+      ? t("dashboard.noStreakSub")
+      : streak === 1
+        ? t("dashboard.streak1Sub")
+        : streak >= 7
+          ? t("dashboard.streakLegendarySub")
+          : t("dashboard.streakKeepUpSub");
+
+  return (
+    <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-5 flex flex-col gap-4 shadow-sm">
+      <div className="flex items-center gap-4">
+        <StreakCake3D streak={streak} />
+        <div className="flex-1 min-w-0">
+          <p
+            className={`text-base font-bold leading-snug ${streak > 0 ? "text-amber-500 dark:text-amber-400" : "text-gray-500 dark:text-gray-400"}`}>
+            {streakMain}
+          </p>
+          <p
+            className={`text-sm leading-snug ${streak > 0 ? "text-amber-400 dark:text-amber-300" : "text-gray-400 dark:text-gray-500"}`}>
+            {streakSub}
+          </p>
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <div className="flex-1 bg-white dark:bg-gray-700 rounded-xl p-3 flex items-center gap-2.5 shadow-sm">
+          <div className="w-8 h-8 rounded-lg bg-orange-400 flex items-center justify-center text-white shrink-0">
+            <FiPlusCircle size={16} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">{todayCount}</p>
+            <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight truncate">
+              {t("dashboard.statToday")}
+            </p>
+          </div>
+        </div>
+        <div className="flex-1 bg-white dark:bg-gray-700 rounded-xl p-3 flex items-center gap-2.5 shadow-sm">
+          <div className="w-8 h-8 rounded-lg bg-violet-500 flex items-center justify-center text-white shrink-0">
+            <FiTarget size={16} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">{flashCount}</p>
+            <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight truncate">
+              {t("dashboard.statPractice")}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Desktop weekly activity bar ───────────────────────────────────────────
+
+function DesktopWeeklyActivity({ entries }: { entries: Entry[] }) {
+  const { t, i18n } = useTranslation();
+
+  const days = useMemo(() => {
+    return Array.from({ length: 7 }, (_, i) => {
+      const from = daysAgo(6 - i);
+      const to = new Date(from);
+      to.setDate(to.getDate() + 1);
+      const count = entries.filter((e) => {
+        const time = new Date(e.createdAt).getTime();
+        return time >= from.getTime() && time < to.getTime();
+      }).length;
+      const letter = from.toLocaleDateString(i18n.language, { weekday: "narrow" });
+      return { count, letter, isToday: i === 6 };
+    });
+  }, [entries, i18n.language]);
+
+  const max = Math.max(...days.map((d) => d.count), 1);
+
+  return (
+    <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-5 flex flex-col gap-3 shadow-sm">
+      <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">{t("dashboard.weeklyActivity")}</p>
+      <div className="flex items-end gap-2 flex-1" style={{ minHeight: "80px" }}>
+        {days.map((d, i) => (
+          <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
+            <div className="w-full flex items-end justify-center" style={{ height: "64px" }}>
+              <div
+                className={`w-full rounded-t-lg transition-all duration-300 ${
+                  d.count > 0
+                    ? d.isToday
+                      ? "bg-emerald-500 dark:bg-emerald-400"
+                      : "bg-emerald-400 dark:bg-emerald-500"
+                    : "bg-gray-200 dark:bg-gray-600"
+                }`}
+                style={{ height: d.count > 0 ? `${Math.max((d.count / max) * 100, 15)}%` : "4px" }}
+              />
+            </div>
+            <span
+              className={`text-[10px] font-medium select-none ${
+                d.isToday
+                  ? "text-emerald-500 dark:text-emerald-400 font-bold"
+                  : d.count > 0
+                    ? "text-gray-600 dark:text-gray-400"
+                    : "text-gray-400 dark:text-gray-600"
+              }`}>
+              {d.letter}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Desktop badge placeholder ─────────────────────────────────────────────
+
+function DesktopBadgePlaceholder() {
+  const { t } = useTranslation();
+
+  return (
+    <div className="bg-gray-50 dark:bg-gray-800/40 border border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-5 flex flex-col items-center justify-center gap-3 shadow-sm min-h-[110px]">
+      <div className="w-11 h-11 bg-gray-100 dark:bg-gray-700/60 rounded-xl flex items-center justify-center">
+        <FiAward size={22} className="text-gray-400 dark:text-gray-500" />
+      </div>
+      <div className="text-center">
+        <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">{t("dashboard.badgesComingSoon")}</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t("dashboard.badgesComingSoonSub")}</p>
+      </div>
+    </div>
+  );
+}
+
+// ── Desktop stat card with icon ───────────────────────────────────────────
+
+interface DesktopStatCardProps {
+  label: string;
+  value: string | number;
+  sub?: string;
+  icon: React.ReactNode;
+  iconBg: string;
+  to?: string;
+  toState?: object;
+}
+
+function DesktopStatCard({ label, value, sub, icon, iconBg, to, toState }: DesktopStatCardProps) {
+  const card = (
+    <Card
+      padding="sm"
+      className={`flex items-center gap-4 p-5 h-full${to ? " hover:shadow-md transition-shadow cursor-pointer" : ""}`}>
+      <div className={`w-12 h-12 shrink-0 rounded-xl ${iconBg} flex items-center justify-center text-white`}>
+        {icon}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-2xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">{value}</p>
+        <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-0.5 truncate">{label}</p>
+        {sub && <p className="text-xs text-gray-400 dark:text-gray-500">{sub}</p>}
+      </div>
+    </Card>
+  );
+  if (to)
+    return (
+      <Link to={to} state={toState} className="block">
+        {card}
+      </Link>
+    );
+  return card;
 }
 
 // ── Rapid Review Card ─────────────────────────────────────────────────────
@@ -346,38 +537,6 @@ function RapidReviewCard({ entries }: { entries: Entry[] }) {
   );
 }
 
-// ── Desktop stat card ──────────────────────────────────────────────────────
-
-interface StatCardProps {
-  label: string;
-  value: string | number;
-  color: string;
-  sub?: string;
-  to?: string;
-  toState?: object;
-}
-
-function StatCard({ label, value, color, sub, to, toState }: StatCardProps) {
-  const card = (
-    <Card
-      padding="sm"
-      className={`h-full sm:p-6 flex flex-col items-center gap-0.5 sm:gap-1 min-w-0${to ? " hover:shadow-md transition-shadow cursor-pointer" : ""}`}>
-      <p className={`text-xl sm:text-3xl font-extrabold ${color} truncate`}>{value}</p>
-      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium leading-tight text-center">
-        {label}
-      </p>
-      {sub && <p className="text-xs text-gray-400 dark:text-gray-500 hidden sm:block">{sub}</p>}
-    </Card>
-  );
-  if (to)
-    return (
-      <Link to={to} state={toState} className="block">
-        {card}
-      </Link>
-    );
-  return card;
-}
-
 // ── Mobile stat card with icon ─────────────────────────────────────────────
 
 interface MobileStatCardProps {
@@ -432,7 +591,6 @@ function MobileStatCard({ label, value, sub, icon, iconBg, to, toState, onIconCl
 // ── Circular SVG progress ring ─────────────────────────────────────────────
 
 function CircularRing({ pct, hexColor }: { pct: number; hexColor: string }) {
-  // r=15.9155 → circumference ≈ 100, so dasharray maps directly to percentage
   return (
     <svg viewBox="0 0 36 36" className="w-14 h-14" style={{ transform: "rotate(-90deg)" }}>
       <circle
@@ -459,9 +617,9 @@ function CircularRing({ pct, hexColor }: { pct: number; hexColor: string }) {
   );
 }
 
-// ── Mobile category card with circular ring ────────────────────────────────
+// ── Category card with circular ring ──────────────────────────────────────
 
-interface MobileCategoryCardProps {
+interface CategoryRingCardProps {
   label: string;
   count: number;
   total: number;
@@ -472,16 +630,7 @@ interface MobileCategoryCardProps {
   toState: object;
 }
 
-function MobileCategoryCard({
-  label,
-  count,
-  total,
-  hexColor,
-  mobileBg,
-  mobileText,
-  to,
-  toState,
-}: MobileCategoryCardProps) {
+function CategoryRingCard({ label, count, total, hexColor, mobileBg, mobileText, to, toState }: CategoryRingCardProps) {
   const pct = total > 0 ? Math.round((count / total) * 100) : 0;
   return (
     <Link to={to} state={toState} className="flex-1 min-w-0">
@@ -499,34 +648,6 @@ function MobileCategoryCard({
   );
 }
 
-// ── Desktop category row ───────────────────────────────────────────────────
-
-interface CategoryRowProps {
-  label: string;
-  count: number;
-  total: number;
-  barColor: string;
-  colorWrap: string;
-  mobileClasses: string;
-}
-
-function CategoryRow({ label, count, total, barColor }: CategoryRowProps) {
-  const pct = total > 0 ? Math.round((count / total) * 100) : 0;
-  return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-center justify-between text-sm">
-        <span className="font-medium text-gray-700 dark:text-gray-300">{label}</span>
-        <span className="text-gray-400 dark:text-gray-500 tabular-nums">
-          {count} <span className="text-gray-300 dark:text-gray-600">·</span> {pct}%
-        </span>
-      </div>
-      <div className="h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-        <div className={`h-full rounded-full transition-all duration-500 ${barColor}`} style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  );
-}
-
 // ── Page ──────────────────────────────────────────────────────────────────
 
 export function DashboardPage() {
@@ -540,6 +661,25 @@ export function DashboardPage() {
     await addEntry({ ...entryData, tags: [] }, tagIds, imgFile ?? undefined);
     setShowAddForm(false);
   }
+
+  const streak = useMemo(() => {
+    const dayCounts = Array.from({ length: 7 }, (_, i) => {
+      const from = daysAgo(6 - i);
+      const to = new Date(from);
+      to.setDate(to.getDate() + 1);
+      return entries.filter((e) => {
+        const time = new Date(e.createdAt).getTime();
+        return time >= from.getTime() && time < to.getTime();
+      }).length;
+    });
+    let s = 0;
+    for (let i = 6; i >= 0; i--) {
+      if (dayCounts[i] > 0) s++;
+      else if (i === 6) continue;
+      else break;
+    }
+    return s;
+  }, [entries]);
 
   const stats = useMemo(() => {
     const today = startOfToday();
@@ -567,7 +707,7 @@ export function DashboardPage() {
   );
 
   return (
-    <div className="flex flex-col gap-4 sm:gap-8">
+    <div className="flex flex-col gap-4 sm:gap-6">
       {/* ── Title row ── */}
       <div className="flex items-center justify-between">
         <div>
@@ -576,7 +716,6 @@ export function DashboardPage() {
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1 hidden sm:block">{t("dashboard.subtitle")}</p>
         </div>
-        {/* Quick actions — desktop */}
         <div className="hidden sm:flex flex-wrap gap-2">
           <Link to="/entries" state={{ openCreateForm: true }}>
             <Button>{t("dashboard.addEntry")}</Button>
@@ -590,8 +729,17 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Weekly activity chip ── */}
-      <WeeklyActivityChip entries={entries} />
+      {/* ── Desktop row 1: streak + weekly activity + next badge ── */}
+      <div className="hidden sm:grid grid-cols-3 gap-4">
+        <DesktopStreakBlock streak={streak} todayCount={stats.todayCount} flashCount={stats.flashCount} />
+        <DesktopWeeklyActivity entries={entries} />
+        <DesktopBadgePlaceholder />
+      </div>
+
+      {/* ── Weekly activity chip — mobile only ── */}
+      <div className="sm:hidden">
+        <WeeklyActivityChip entries={entries} />
+      </div>
 
       {/* ── Stats — mobile (3 icon cards) ── */}
       <div className="flex gap-2.5 sm:hidden">
@@ -624,41 +772,59 @@ export function DashboardPage() {
         />
       </div>
 
-      {/* ── Stats — desktop grid ── */}
-      <div className="hidden sm:grid grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
-        <StatCard label={t("dashboard.statTotal")} value={entries.length} color="text-blue-600" to="/entries" />
-        <StatCard
+      {/* ── Desktop row 2: stat cards with icons ── */}
+      <div className="hidden sm:grid grid-cols-5 gap-4">
+        <DesktopStatCard
+          label={t("dashboard.statTotal")}
+          value={entries.length}
+          sub={t("dashboard.statTotalSub")}
+          icon={<FiBookOpen size={22} />}
+          iconBg="bg-emerald-500"
+          to="/entries"
+        />
+        <DesktopStatCard
           label={t("dashboard.statToday")}
           value={stats.todayCount}
-          color="text-green-600"
+          sub={t("dashboard.statTodaySub")}
+          icon={<FiPlusCircle size={22} />}
+          iconBg="bg-orange-400"
           to="/entries"
           toState={{ dateFilter: "today" }}
         />
-        <StatCard
+        <DesktopStatCard
           label={t("dashboard.statWeek")}
           value={stats.weekCount}
-          color="text-cyan-600"
+          sub={t("dashboard.statWeekSub")}
+          icon={<FiTrendingUp size={22} />}
+          iconBg="bg-blue-500"
           to="/entries"
           toState={{ dateFilter: "week" }}
-          sub={t("dashboard.statWeekSub")}
         />
-        <StatCard label={t("dashboard.statPractice")} value={stats.flashCount} color="text-violet-600" to="/practice" />
-        <StatCard
+        <DesktopStatCard
+          label={t("dashboard.statPractice")}
+          value={stats.flashCount}
+          sub={t("dashboard.statWeekMotivation")}
+          icon={<FiTarget size={22} />}
+          iconBg="bg-violet-500"
+          to="/practice"
+        />
+        <DesktopStatCard
           label={t("dashboard.statAvgRating")}
           value={stats.avgRating}
-          color="text-amber-500"
-          to="/practice"
           sub={t("dashboard.statAvgRatingSub")}
+          icon={<FiStar size={22} />}
+          iconBg="bg-amber-400"
+          to="/practice"
         />
       </div>
 
-      {/* ── Category rings — mobile (5 circular cards) ── */}
+      {/* ── Category rings — mobile ── */}
       <div className="flex gap-1 sm:hidden mb-8">
         {entries.length === 0 ? (
           <p className="text-sm text-gray-400 dark:text-gray-500 px-1">{t("dashboard.noEntries")}</p>
         ) : (
           CATEGORY_STYLES.map(({ key, hexColor, mobileBg, mobileText }) => (
-            <MobileCategoryCard
+            <CategoryRingCard
               key={key}
               label={t(`dashboard.categories.${key}`)}
               count={categoryCounts[key] ?? 0}
@@ -673,45 +839,60 @@ export function DashboardPage() {
         )}
       </div>
 
-      {/* ── Rapid review ── */}
-      <RapidReviewCard entries={entries} />
+      {/* ── Rapid review — mobile only ── */}
+      <div className="sm:hidden">
+        <RapidReviewCard entries={entries} />
+      </div>
 
-      {/* ── Desktop: category distribution + recent entries ── */}
-      <div className="hidden sm:flex flex-row gap-8 items-start">
+      {/* ── Desktop row 3: category rings + rapid review + recent entries ── */}
+      <div className="hidden sm:grid grid-cols-3 gap-4">
         {/* Category distribution */}
-        <Card className="flex-1">
+        <Card>
           <CardHeader className="mb-4">
-            <CardTitle>{t("dashboard.categoryDistribution")}</CardTitle>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FiPieChart size={16} className="text-gray-400 dark:text-gray-500" />
+                <CardTitle className="text-base">{t("dashboard.categoryDistribution")}</CardTitle>
+              </div>
+              <Link to="/entries" className="text-sm text-emerald-600 hover:text-emerald-800 font-medium">
+                {t("dashboard.viewAll")}
+              </Link>
+            </div>
           </CardHeader>
           {entries.length === 0 ? (
             <p className="text-sm text-gray-400 dark:text-gray-500">{t("dashboard.noEntries")}</p>
           ) : (
-            <div className="flex flex-col gap-4">
-              {CATEGORY_STYLES.map(({ key, color, colorWrap, mobileClasses }) => (
-                <Link
+            <div className="flex gap-1">
+              {CATEGORY_STYLES.map(({ key, hexColor, mobileBg, mobileText }) => (
+                <CategoryRingCard
                   key={key}
+                  label={t(`dashboard.categories.${key}`)}
+                  count={categoryCounts[key] ?? 0}
+                  total={entries.length}
+                  hexColor={hexColor}
+                  mobileBg={mobileBg}
+                  mobileText={mobileText}
                   to="/entries"
-                  state={{ categoryFilter: key }}
-                  className="block rounded-xl hover:opacity-80 transition-opacity">
-                  <CategoryRow
-                    label={t(`dashboard.categories.${key}`)}
-                    count={categoryCounts[key] ?? 0}
-                    total={entries.length}
-                    barColor={color}
-                    colorWrap={colorWrap}
-                    mobileClasses={mobileClasses}
-                  />
-                </Link>
+                  toState={{ categoryFilter: key }}
+                />
               ))}
             </div>
           )}
         </Card>
 
+        {/* Rapid review */}
+        <Card>
+          <RapidReviewCard entries={entries} />
+        </Card>
+
         {/* Recent entries */}
-        <Card className="flex-1">
+        <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>{t("dashboard.recentEntries")}</CardTitle>
+              <div className="flex items-center gap-2">
+                <FiList size={16} className="text-gray-400 dark:text-gray-500" />
+                <CardTitle className="text-base">{t("dashboard.recentEntries")}</CardTitle>
+              </div>
               <Link to="/entries" className="text-sm text-emerald-600 hover:text-emerald-800 font-medium">
                 {t("dashboard.viewAll")}
               </Link>
@@ -721,17 +902,25 @@ export function DashboardPage() {
             <p className="text-sm text-gray-400 dark:text-gray-500">{t("dashboard.noEntries")}</p>
           ) : (
             <div className="flex flex-col divide-y divide-gray-100 dark:divide-gray-700">
-              {recentEntries.map((entry) => (
-                <div key={entry.id} className="py-3 flex items-start justify-between gap-4">
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-gray-100">{entry.word}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{entry.explanation}</p>
+              {recentEntries.map((entry) => {
+                const catStyle = CATEGORY_STYLES.find((c) => c.key === entry.category);
+                return (
+                  <div key={entry.id} className="py-3 flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-gray-900 dark:text-gray-100 text-sm truncate">{entry.word}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-0.5">
+                        {entry.explanation}
+                      </p>
+                    </div>
+                    {catStyle && (
+                      <span
+                        className={`shrink-0 text-xs font-medium capitalize px-2 py-0.5 rounded-full ${catStyle.mobileBg} ${catStyle.mobileText}`}>
+                        {t(`dashboard.categories.${entry.category}`)}
+                      </span>
+                    )}
                   </div>
-                  <span className="shrink-0 text-xs text-gray-400 dark:text-gray-500 capitalize bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
-                    {entry.category}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </Card>
@@ -769,7 +958,6 @@ export function DashboardPage() {
       {/* FAB — mobile only, above bottom nav */}
       <AddEntryFab to="/entries" state={{ openCreateForm: true }} ariaLabel={t("dashboard.addEntry")} />
 
-      {/* Add entry overlay — mobile, opened via FiPlusCircle icon tap */}
       {showAddForm && (
         <div className="fixed inset-0 z-50 overflow-y-auto sm:hidden">
           <EntryForm mode="create" onSubmit={handleAdd} onCancel={() => setShowAddForm(false)} />

@@ -16,6 +16,7 @@ interface Props {
   onTagChange: (t: number | null) => void;
   selectedRatings: number[];
   onRatingsChange: (r: number[]) => void;
+  allowedCategories?: EntryCategory[];
   inDrawer?: boolean;
 }
 
@@ -27,6 +28,7 @@ export function PracticeFilterPanel({
   onTagChange,
   selectedRatings,
   onRatingsChange,
+  allowedCategories,
   inDrawer = false,
 }: Props) {
   const { t } = useTranslation();
@@ -43,6 +45,10 @@ export function PracticeFilterPanel({
   const sectionCls = inDrawer ? "flex flex-col gap-2" : "flex items-start gap-2 flex-wrap";
   const groupCls = inDrawer ? "flex gap-2 flex-wrap" : "flex gap-1.5 flex-wrap";
 
+  const visibleCategories = allowedCategories
+    ? CATEGORY_KEYS.filter((k) => allowedCategories.includes(k))
+    : CATEGORY_KEYS;
+
   const content = (
     <>
       <div className={sectionCls}>
@@ -58,7 +64,7 @@ export function PracticeFilterPanel({
             className={[btnBase, selectedCategory === null ? active : inactive].join(" ")}>
             {t("practice.filterPanel.all")}
           </button>
-          {CATEGORY_KEYS.map((key) => (
+          {visibleCategories.map((key) => (
             <button
               key={key}
               onClick={() => onCategoryChange(selectedCategory === key ? null : key)}

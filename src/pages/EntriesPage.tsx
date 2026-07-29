@@ -86,7 +86,7 @@ export function EntriesPage() {
   const filterBtnActive = "bg-emerald-600 text-white border-emerald-600";
 
   return (
-    <div className="flex flex-col gap-6 pb-10 sm:pb-0">
+    <div className="flex flex-col gap-6 pb-10 sm:pb-0 max-w-5xl m-auto">
       {/* Sticky: header + filters + view toggle */}
       <div className="sticky top-16 z-20 -mx-4 px-4 sm:-mx-6 sm:px-6 bg-white dark:bg-gray-900 flex flex-col gap-2 pb-3">
         {/* Header */}
@@ -108,7 +108,7 @@ export function EntriesPage() {
         {/* ── Filters + view toggle ── */}
         <div className="flex flex-col gap-2">
           {/* Filter section */}
-          <div className="flex flex-col gap-2 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl max-w-[80%] sm:max-w-unset">
+          <div className="flex flex-col gap-2 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl sm:max-w-unset">
             {/* Row 1: search + category chips + filters toggle */}
             <div className="flex flex-col sm:flex-row gap-2 ">
               <input
@@ -339,7 +339,6 @@ export function EntriesPage() {
             filterBtnActive={filterBtnActive}
             inDrawer
           />
-
         </SideDrawer>
       )}
 
