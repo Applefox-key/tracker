@@ -204,7 +204,7 @@ function randomLetter() {
   return String.fromCharCode(97 + Math.floor(Math.random() * 26));
 }
 
-function buildTiles(entry: Entry): { tiles: Tile[]; mode: "letter" | "word" } {
+function buildTiles(entry: Entry, allEntries: Entry[] = []): { tiles: Tile[]; mode: "letter" | "word" } {
   const wc = wordCount(entry.word);
   if (wc === 1) {
     const letters = entry.word
@@ -221,7 +221,18 @@ function buildTiles(entry: Entry): { tiles: Tile[]; mode: "letter" | "word" } {
     .trim()
     .split(/\s+/)
     .map((w, i) => ({ id: `w${i}`, value: w }));
-  return { tiles: shuffle(words), mode: "word" };
+  const correctSet = new Set(words.map((t) => t.value.toLowerCase()));
+  const candidates: string[] = [];
+  for (const other of allEntries) {
+    if (other.id === entry.id) continue;
+    for (const w of other.word.trim().split(/\s+/)) {
+      if (!correctSet.has(w.toLowerCase())) candidates.push(w);
+    }
+  }
+  const distractors = shuffle(candidates)
+    .slice(0, 3)
+    .map((w, i) => ({ id: `d${i}`, value: w }));
+  return { tiles: shuffle([...words, ...distractors]), mode: "word" };
 }
 
 function checkAnswer(placed: Tile[], entry: Entry, mode: "letter" | "word"): boolean {
@@ -234,7 +245,7 @@ function checkAnswer(placed: Tile[], entry: Entry, mode: "letter" | "word"): boo
   );
 }
 
-function DuePuzzleItem({ entry, onNext }: { entry: Entry; onNext: () => void }) {
+function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: Entry[]; onNext: () => void }) {
   const { t } = useTranslation();
   const { reviewEntry } = useEntryCrud();
   const [pool, setPool] = useState<Tile[]>([]);
@@ -244,13 +255,13 @@ function DuePuzzleItem({ entry, onNext }: { entry: Entry; onNext: () => void }) 
   const [hasRetried, setHasRetried] = useState(false);
 
   useEffect(() => {
-    const { tiles, mode } = buildTiles(entry);
+    const { tiles, mode } = buildTiles(entry, allEntries);
     setPool(tiles);
     setPlaced([]);
     setTileMode(mode);
     setPhase("thinking");
     setHasRetried(false);
-  }, [entry]);
+  }, [entry, allEntries]);
 
   useEffect(() => {
     if (phase !== "thinking" || placed.length === 0) return;
@@ -559,7 +570,7 @@ export function DuePage() {
             <div key={`${current.entry.id}-${currentIdx}`}>
               {current.mode === "flashcard" && <DueFlashcardItem entry={current.entry} onNext={handleNext} />}
               {current.mode === "quiz" && <DueQuizItem entry={current.entry} pool={dueEntries} onNext={handleNext} />}
-              {current.mode === "puzzle" && <DuePuzzleItem entry={current.entry} onNext={handleNext} />}
+              {current.mode === "puzzle" && <DuePuzzleItem entry={current.entry} allEntries={dueEntries} onNext={handleNext} />}
             </div>
           )}
         </div>

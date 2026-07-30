@@ -25,7 +25,7 @@ function randomLetter(): string {
   return String.fromCharCode(97 + Math.floor(Math.random() * 26));
 }
 
-function buildTiles(entry: Entry): { tiles: Tile[]; mode: "letter" | "word" } {
+function buildTiles(entry: Entry, allEntries: Entry[] = []): { tiles: Tile[]; mode: "letter" | "word" } {
   const wc = wordCount(entry.word);
   if (wc === 1) {
     const letters = entry.word
@@ -42,7 +42,18 @@ function buildTiles(entry: Entry): { tiles: Tile[]; mode: "letter" | "word" } {
     .trim()
     .split(/\s+/)
     .map((w, i) => ({ id: `w${i}`, value: w }));
-  return { tiles: shuffle(words), mode: "word" };
+  const correctSet = new Set(words.map((t) => t.value.toLowerCase()));
+  const candidates: string[] = [];
+  for (const other of allEntries) {
+    if (other.id === entry.id) continue;
+    for (const w of other.word.trim().split(/\s+/)) {
+      if (!correctSet.has(w.toLowerCase())) candidates.push(w);
+    }
+  }
+  const distractors = shuffle(candidates)
+    .slice(0, 3)
+    .map((w, i) => ({ id: `d${i}`, value: w }));
+  return { tiles: shuffle([...words, ...distractors]), mode: "word" };
 }
 
 function checkAnswer(placed: Tile[], entry: Entry, mode: "letter" | "word"): boolean {
@@ -109,7 +120,7 @@ export function PuzzlePage() {
 
   useEffect(() => {
     if (!currentEntry) return;
-    const { tiles, mode } = buildTiles(currentEntry);
+    const { tiles, mode } = buildTiles(currentEntry, filteredEntries);
     setPool(tiles);
     setPlaced([]);
     setUsedTileIds(new Set());
@@ -162,7 +173,7 @@ export function PuzzlePage() {
 
   function tryAgain() {
     if (!currentEntry) return;
-    const { tiles, mode } = buildTiles(currentEntry);
+    const { tiles, mode } = buildTiles(currentEntry, filteredEntries);
     setPool(tiles);
     setPlaced([]);
     setUsedTileIds(new Set());
