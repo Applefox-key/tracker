@@ -95,6 +95,8 @@
     "dateLabel": "Fecha",
     "ratingLabel": "Calificación",
     "tagLabel": "Etiqueta",
+    "masteredLabel": "Dominado",
+    "masteredOnly": "Solo dominadas",
     "all": "Todas",
     "form": {
       "editTitle": "Editar entrada",
@@ -368,7 +370,9 @@
       "rating": "Puntuación:",
       "category": "Categoría:",
       "tag": "Etiqueta:",
-      "all": "Todas"
+      "all": "Todas",
+      "unmastered": "Sin dominar:",
+      "unmasteredOnly": "Solo sin dominar"
     }
   }
 }

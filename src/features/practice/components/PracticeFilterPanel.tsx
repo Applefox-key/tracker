@@ -16,6 +16,8 @@ interface Props {
   onTagChange: (t: number | null) => void;
   selectedRatings: number[];
   onRatingsChange: (r: number[]) => void;
+  unmasteredOnly?: boolean;
+  onUnmasteredOnlyChange?: (v: boolean) => void;
   allowedCategories?: EntryCategory[];
   inDrawer?: boolean;
 }
@@ -28,6 +30,8 @@ export function PracticeFilterPanel({
   onTagChange,
   selectedRatings,
   onRatingsChange,
+  unmasteredOnly = false,
+  onUnmasteredOnlyChange,
   allowedCategories,
   inDrawer = false,
 }: Props) {
@@ -74,6 +78,17 @@ export function PracticeFilterPanel({
           ))}
         </div>
       </div>
+
+      {onUnmasteredOnlyChange && (
+        <div className={sectionCls}>
+          <span className={labelCls}>{t("practice.filterPanel.unmastered")}</span>
+          <button
+            onClick={() => onUnmasteredOnlyChange(!unmasteredOnly)}
+            className={[btnBase, unmasteredOnly ? active : inactive].join(" ")}>
+            {t("practice.filterPanel.unmasteredOnly")}
+          </button>
+        </div>
+      )}
 
       {allTags.length > 0 && (
         <div className={sectionCls}>

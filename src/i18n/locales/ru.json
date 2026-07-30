@@ -107,6 +107,8 @@
     "dateLabel": "Дата",
     "ratingLabel": "Оценка",
     "tagLabel": "Тег",
+    "masteredLabel": "Освоено",
+    "masteredOnly": "Только освоенные",
     "all": "Все",
     "form": {
       "editTitle": "Редактировать запись",
@@ -388,7 +390,9 @@
       "rating": "Оценка:",
       "category": "Категория:",
       "tag": "Тег:",
-      "all": "Все"
+      "all": "Все",
+      "unmastered": "Неосвоенные:",
+      "unmasteredOnly": "Только неосвоенные"
     }
   }
 }

@@ -99,6 +99,8 @@
     "dateLabel": "Data",
     "ratingLabel": "Ocena",
     "tagLabel": "Tag",
+    "masteredLabel": "Opanowane",
+    "masteredOnly": "Tylko opanowane",
     "all": "Wszystkie",
     "form": {
       "editTitle": "Edytuj wpis",
@@ -378,7 +380,9 @@
       "rating": "Ocena:",
       "category": "Kategoria:",
       "tag": "Tag:",
-      "all": "Wszystkie"
+      "all": "Wszystkie",
+      "unmastered": "Nieopanowane:",
+      "unmasteredOnly": "Tylko nieopanowane"
     }
   }
 }

@@ -49,6 +49,7 @@ export function FlashcardsPage() {
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null);
   const [selectedTag, setSelectedTag] = useState<number | null>(null);
+  const [unmasteredOnly, setUnmasteredOnly] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [startSide, setStartSide] = useState<"word" | "explanation">(() =>
@@ -86,7 +87,7 @@ export function FlashcardsPage() {
   }
 
   const { currentCard, currentIndex, total, progress, isFlipped, allTags, goNext, goPrev, flip, reset, shuffleOnce } =
-    useFlashcards({ selectedRatings, selectedCategory, selectedTag });
+    useFlashcards({ selectedRatings, selectedCategory, selectedTag, unmasteredOnly });
 
   const [cardVisible, setCardVisible] = useState(true);
   const [flipAnimated, setFlipAnimated] = useState(true);
@@ -107,7 +108,7 @@ export function FlashcardsPage() {
     }, 200);
   }, []);
 
-  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(
+  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null, unmasteredOnly].filter(
     Boolean,
   ).length;
 
@@ -115,6 +116,7 @@ export function FlashcardsPage() {
     setSelectedRatings([]);
     setSelectedCategory(null);
     setSelectedTag(null);
+    setUnmasteredOnly(false);
   }
 
   const filterBtnInactive =
@@ -238,6 +240,8 @@ export function FlashcardsPage() {
             onTagChange={setSelectedTag}
             selectedRatings={selectedRatings}
             onRatingsChange={setSelectedRatings}
+            unmasteredOnly={unmasteredOnly}
+            onUnmasteredOnlyChange={setUnmasteredOnly}
           />
         </div>
       )}
@@ -266,6 +270,8 @@ export function FlashcardsPage() {
           onTagChange={setSelectedTag}
           selectedRatings={selectedRatings}
           onRatingsChange={setSelectedRatings}
+          unmasteredOnly={unmasteredOnly}
+          onUnmasteredOnlyChange={setUnmasteredOnly}
           inDrawer
         />
       </SideDrawer>

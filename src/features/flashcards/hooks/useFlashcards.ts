@@ -9,19 +9,21 @@ export interface FlashcardFilters {
   selectedRatings: number[]
   selectedCategory: EntryCategory | null
   selectedTag: number | null
+  unmasteredOnly: boolean
 }
 
 const EMPTY_FILTERS: FlashcardFilters = {
   selectedRatings: [],
   selectedCategory: null,
   selectedTag: null,
+  unmasteredOnly: false,
 }
 
 export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
   const entries = useEntriesStore((s) => s.entries)
   const { currentIndex, isFlipped, goNext, goPrev, flip, reset } = useFlashcardsStore()
 
-  const { selectedRatings, selectedCategory, selectedTag } = filters
+  const { selectedRatings, selectedCategory, selectedTag, unmasteredOnly } = filters
 
   const [shuffledIds, setShuffledIds] = useState<number[] | null>(null)
 
@@ -41,6 +43,7 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
         if (selectedRatings.length > 0 && !selectedRatings.includes(e.rating)) return false
         if (selectedCategory !== null && e.category !== selectedCategory) return false
         if (selectedTag !== null && !e.tags.some((t) => t.id === selectedTag)) return false
+        if (unmasteredOnly && (e.mastery_level ?? 0) >= 4) return false
         return true
       })
       .map((e) => ({
@@ -51,7 +54,7 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
         rating: e.rating,
         img: e.img ? getEntryImageUrl(e.img) : null,
       }))
-  }, [entries, selectedRatings, selectedCategory, selectedTag])
+  }, [entries, selectedRatings, selectedCategory, selectedTag, unmasteredOnly])
 
   // Apply stored shuffle order to current filtered cards (handles entries being updated mid-session)
   const cards: Flashcard[] = useMemo(() => {
@@ -71,7 +74,7 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
   useEffect(() => {
     setShuffledIds(null)
     reset()
-  }, [ratingsKey, selectedCategory, selectedTag, reset])
+  }, [ratingsKey, selectedCategory, selectedTag, unmasteredOnly, reset])
 
   function shuffleOnce() {
     const arr = [...filteredCards]

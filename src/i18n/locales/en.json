@@ -94,6 +94,8 @@
     "dateLabel": "Date",
     "ratingLabel": "Rating",
     "tagLabel": "Tag",
+    "masteredLabel": "Mastered",
+    "masteredOnly": "Mastered only",
     "all": "All",
     "form": {
       "editTitle": "Edit Entry",
@@ -369,7 +371,9 @@
       "rating": "Rating:",
       "category": "Category:",
       "tag": "Tag:",
-      "all": "All"
+      "all": "All",
+      "unmastered": "Unmastered:",
+      "unmasteredOnly": "Unmastered only"
     }
   }
 }

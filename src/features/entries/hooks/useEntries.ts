@@ -30,6 +30,7 @@ export function useEntries(
   const [selectedTag, setSelectedTag] = useState<number | null>(null)
   const [selectedRatings, setSelectedRatings] = useState<number[]>([])
   const [dateFilter, setDateFilter] = useState<DateFilter>(initialDateFilter)
+  const [masteredOnly, setMasteredOnly] = useState(false)
 
   const allTags = useMemo(() => {
     const seen = new Map<number, EntryTag>()
@@ -53,13 +54,14 @@ export function useEntries(
         dateFilter === 'all' ? true :
         dateFilter === 'today' ? new Date(e.createdAt) >= today :
         new Date(e.createdAt) >= week
-      return matchesSearch && matchesCategory && matchesTag && matchesRating && matchesDate
+      const matchesMastered = !masteredOnly || (e.mastery_level ?? 0) >= 4
+      return matchesSearch && matchesCategory && matchesTag && matchesRating && matchesDate && matchesMastered
     })
-  }, [entries, search, filterCategory, selectedTag, selectedRatings, dateFilter])
+  }, [entries, search, filterCategory, selectedTag, selectedRatings, dateFilter, masteredOnly])
 
   const hasActiveFilters =
     search !== '' || filterCategory !== 'all' || selectedTag !== null ||
-    selectedRatings.length > 0 || dateFilter !== 'all'
+    selectedRatings.length > 0 || dateFilter !== 'all' || masteredOnly
 
   function clearFilters() {
     setSearch('')
@@ -67,6 +69,7 @@ export function useEntries(
     setSelectedTag(null)
     setSelectedRatings([])
     setDateFilter('all')
+    setMasteredOnly(false)
   }
 
   return {
@@ -83,6 +86,8 @@ export function useEntries(
     setSelectedRatings,
     dateFilter,
     setDateFilter,
+    masteredOnly,
+    setMasteredOnly,
     hasActiveFilters,
     clearFilters,
     addEntry,

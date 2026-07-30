@@ -107,6 +107,8 @@
     "dateLabel": "Дата",
     "ratingLabel": "Оцінка",
     "tagLabel": "Тег",
+    "masteredLabel": "Засвоєно",
+    "masteredOnly": "Тільки засвоєні",
     "all": "Всі",
     "form": {
       "editTitle": "Редагувати запис",
@@ -384,7 +386,9 @@
       "rating": "Оцінка:",
       "category": "Категорія:",
       "tag": "Тег:",
-      "all": "Всі"
+      "all": "Всі",
+      "unmastered": "Незасвоєні:",
+      "unmasteredOnly": "Тільки незасвоєні"
     }
   }
 }

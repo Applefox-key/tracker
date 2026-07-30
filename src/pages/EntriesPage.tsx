@@ -62,6 +62,8 @@ export function EntriesPage() {
     setSelectedRatings,
     dateFilter,
     setDateFilter,
+    masteredOnly,
+    setMasteredOnly,
     hasActiveFilters,
     clearFilters,
     addEntry,
@@ -73,6 +75,7 @@ export function EntriesPage() {
     selectedTag !== null,
     selectedRatings.length > 0,
     dateFilter !== "all",
+    masteredOnly,
   ].filter(Boolean).length;
 
   function handleAdd(values: EntryFormValues) {
@@ -155,6 +158,8 @@ export function EntriesPage() {
                   setDateFilter={setDateFilter}
                   selectedRatings={selectedRatings}
                   setSelectedRatings={setSelectedRatings}
+                  masteredOnly={masteredOnly}
+                  setMasteredOnly={setMasteredOnly}
                   filterBtnActive={filterBtnActive}
                 />
               </div>
@@ -183,6 +188,9 @@ export function EntriesPage() {
                     label={dateFilter === "today" ? t("entries.today") : t("entries.thisWeek")}
                     onRemove={() => setDateFilter("all")}
                   />
+                )}
+                {masteredOnly && (
+                  <ActiveChip label={t("entries.masteredOnly")} onRemove={() => setMasteredOnly(false)} />
                 )}
                 {search !== "" && <ActiveChip label={`"${search}"`} onRemove={() => setSearch("")} />}
                 <button onClick={clearFilters} className="ml-auto text-xs text-red-500 hover:text-red-700 font-medium">
@@ -336,6 +344,8 @@ export function EntriesPage() {
             setDateFilter={setDateFilter}
             selectedRatings={selectedRatings}
             setSelectedRatings={setSelectedRatings}
+            masteredOnly={masteredOnly}
+            setMasteredOnly={setMasteredOnly}
             filterBtnActive={filterBtnActive}
             inDrawer
           />
@@ -469,6 +479,8 @@ interface AdvancedFiltersPanelProps {
   setDateFilter: (f: DateFilter) => void;
   selectedRatings: number[];
   setSelectedRatings: (r: number[]) => void;
+  masteredOnly: boolean;
+  setMasteredOnly: (v: boolean) => void;
   filterBtnActive: string;
   inDrawer?: boolean;
 }
@@ -481,6 +493,8 @@ function AdvancedFiltersPanel({
   setDateFilter,
   selectedRatings,
   setSelectedRatings,
+  masteredOnly,
+  setMasteredOnly,
   filterBtnActive,
   inDrawer,
 }: AdvancedFiltersPanelProps) {
@@ -517,6 +531,17 @@ function AdvancedFiltersPanel({
       <div className={`flex flex-col ${sectionGap}`}>
         <span className={labelCls}>{t("entries.ratingLabel")}</span>
         <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} large={inDrawer} />
+      </div>
+
+      <div className={`flex flex-col ${sectionGap}`}>
+        <span className={labelCls}>{t("entries.masteredLabel")}</span>
+        <div className={`flex ${gapCls} flex-wrap`}>
+          <button
+            onClick={() => setMasteredOnly(!masteredOnly)}
+            className={[btnCls, masteredOnly ? filterBtnActive : tagBtnInactive].join(" ")}>
+            {t("entries.masteredOnly")}
+          </button>
+        </div>
       </div>
 
       {allTags.length > 0 && (
