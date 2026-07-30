@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Entry } from "../types";
 import { EntryForm, EntryFormValues } from "./AddEntryForm";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
@@ -9,12 +10,18 @@ interface EditEntryModalProps {
 }
 
 export function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
-  const { updateEntry } = useEntryCrud();
+  const { updateEntry, resetMastery } = useEntryCrud();
+  const [masteryReset, setMasteryReset] = useState(false);
 
   function handleSubmit(values: EntryFormValues) {
     const { tagIds, imgFile, removeImg, ...entryData } = values;
     updateEntry(entry.id, { ...entryData, tags: [] }, tagIds, imgFile ?? undefined, removeImg);
     onClose();
+  }
+
+  async function handleResetMastery() {
+    await resetMastery(entry.id);
+    setMasteryReset(true);
   }
 
   const initialValues: EntryFormValues = {
@@ -36,6 +43,8 @@ export function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
           mode="edit"
           initialValues={initialValues}
           currentImgUrl={entry.img ? getEntryImageUrl(entry.img) : null}
+          masteryLevel={masteryReset ? null : entry.mastery_level}
+          onResetMastery={handleResetMastery}
           onSubmit={handleSubmit}
           onCancel={onClose}
         />

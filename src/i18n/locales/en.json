@@ -114,7 +114,11 @@
       "translateError": "Translation failed. Try again.",
       "changeImg": "Change",
       "removeImg": "Remove",
-      "addImg": "Add image"
+      "addImg": "Add image",
+      "resetMastery": "Reset",
+      "resetConfirm": "Sure?",
+      "resetYes": "Yes",
+      "resetNo": "No"
     },
     "card": {
       "edit": "Edit",

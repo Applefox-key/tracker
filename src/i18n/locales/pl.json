@@ -119,7 +119,11 @@
       "translateError": "Błąd tłumaczenia. Spróbuj ponownie.",
       "changeImg": "Zmień",
       "removeImg": "Usuń",
-      "addImg": "Dodaj obraz"
+      "addImg": "Dodaj obraz",
+      "resetMastery": "Resetuj",
+      "resetConfirm": "Na pewno?",
+      "resetYes": "Tak",
+      "resetNo": "Nie"
     },
     "card": {
       "edit": "Edytuj",

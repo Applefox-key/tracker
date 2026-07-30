@@ -232,6 +232,17 @@ export const entriesApi = {
     return toEntry(res.data)
   },
 
+  async resetMastery(id: number): Promise<Entry> {
+    const res = await apiClient.patch<RawEntry>(`/entries/${id}`, {
+      ease_factor: 2.5,
+      interval_days: 1,
+      repetitions: 0,
+      next_review_at: null,
+      last_reviewed_at: null,
+    })
+    return toEntry(res.data)
+  },
+
   async getDueEntries(): Promise<Entry[]> {
     const res = await apiClient.get<RawEntry[]>('/entries/due')
     return res.data.map(toEntry)

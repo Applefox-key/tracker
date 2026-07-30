@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/features/auth/store/authStore'
 import { useEntriesStore } from '@/features/entries/store/entriesStore'
 import { useCreateEntry, useUpdateEntry, useDeleteEntry, useReviewEntry } from '@/hooks/useEntries'
-import { entryTagsApi } from '@/api/api'
+import { entryTagsApi, entriesApi } from '@/api/api'
 import type { Entry, SRGrade, PracticeMode } from '@/features/entries/types'
 
 /**
@@ -68,5 +68,12 @@ export function useEntryCrud() {
     }
   }
 
-  return { addEntry, updateEntry, removeEntry, reviewEntry }
+  async function resetMastery(id: number) {
+    if (mode === 'authenticated') {
+      await entriesApi.resetMastery(id)
+      await queryClient.invalidateQueries({ queryKey: ['entries'] })
+    }
+  }
+
+  return { addEntry, updateEntry, removeEntry, reviewEntry, resetMastery }
 }

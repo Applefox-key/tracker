@@ -30,6 +30,10 @@ interface EntryFormProps {
   initialValues?: EntryFormValues;
   /** Authenticated URL of the currently saved image (edit mode only) */
   currentImgUrl?: string | null;
+  /** Current mastery level (1-5) or null if not practiced yet (edit mode only) */
+  masteryLevel?: number | null;
+  /** Called when user clicks "Reset mastery" (edit mode only) */
+  onResetMastery?: () => void;
   onSubmit: (values: EntryFormValues) => void;
   onCancel: () => void;
 }
@@ -66,7 +70,7 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
   );
 }
 
-export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCancel }: EntryFormProps) {
+export function EntryForm({ mode, initialValues, currentImgUrl, masteryLevel, onResetMastery, onSubmit, onCancel }: EntryFormProps) {
   const { t } = useTranslation();
   const init = initialValues ?? DEFAULT_VALUES;
 
@@ -77,6 +81,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>(init.tagIds);
   const [rating, setRating] = useState(init.rating);
   const [includeInPractice, setIncludeInPractice] = useState(init.includeInPractice);
+  const [confirmingReset, setConfirmingReset] = useState(false);
 
   const { speechLangs } = useUserSettings();
   const validLangs = speechLangs.filter((c) => c !== "") as LangCode[];
@@ -434,11 +439,55 @@ export function EntryForm({ mode, initialValues, currentImgUrl, onSubmit, onCanc
       </div>
 
       {/* Actions */}
-      <div className="mt-auto sticky bottom-0 -mx-5 -mb-5 px-5 py-3 rounded-b-xl flex gap-2 justify-end bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 sm:static sm:mt-0 sm:bg-transparent sm:dark:bg-transparent sm:border-0 sm:mx-0 sm:mb-0 sm:px-0 sm:pt-1 sm:pb-0 sm:rounded-none">
-        <Button type="button" variant="secondary" onClick={onCancel}>
-          {t("entries.form.cancel")}
-        </Button>
-        <Button type="submit">{isEdit ? t("entries.form.saveChanges") : t("entries.form.addEntry")}</Button>
+      <div className="mt-auto sticky bottom-0 -mx-5 -mb-5 px-5 py-3 rounded-b-xl flex gap-2 items-center justify-between bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 sm:static sm:mt-0 sm:bg-transparent sm:dark:bg-transparent sm:border-0 sm:mx-0 sm:mb-0 sm:px-0 sm:pt-1 sm:pb-0 sm:rounded-none">
+        {isEdit && onResetMastery ? (
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">{t("entries.detail.mastery")}:</span>
+            {masteryLevel ? (
+              <>
+                <div className="flex text-sm leading-none">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <span key={s} className={masteryLevel >= s ? "text-amber-400" : "text-gray-300 dark:text-gray-600"}>★</span>
+                  ))}
+                </div>
+                {confirmingReset ? (
+                  <span className="flex items-center gap-1">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">{t("entries.form.resetConfirm")}</span>
+                    <button
+                      type="button"
+                      onClick={() => { onResetMastery(); setConfirmingReset(false); }}
+                      className="text-xs font-medium text-red-500 hover:text-red-700 dark:hover:text-red-300 hover:underline shrink-0">
+                      {t("entries.form.resetYes")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmingReset(false)}
+                      className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:underline shrink-0">
+                      {t("entries.form.resetNo")}
+                    </button>
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingReset(true)}
+                    className="text-xs text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:underline shrink-0">
+                    {t("entries.form.resetMastery")}
+                  </button>
+                )}
+              </>
+            ) : (
+              <span className="text-xs text-gray-400 dark:text-gray-500">{t("entries.detail.masteryNone")}</span>
+            )}
+          </div>
+        ) : (
+          <div />
+        )}
+        <div className="flex gap-2">
+          <Button type="button" variant="secondary" onClick={onCancel}>
+            {t("entries.form.cancel")}
+          </Button>
+          <Button type="submit">{isEdit ? t("entries.form.saveChanges") : t("entries.form.addEntry")}</Button>
+        </div>
       </div>
     </form>
   );

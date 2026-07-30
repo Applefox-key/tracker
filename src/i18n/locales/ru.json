@@ -127,7 +127,11 @@
       "translateError": "Ошибка перевода. Попробуйте снова.",
       "changeImg": "Изменить",
       "removeImg": "Удалить",
-      "addImg": "Добавить изображение"
+      "addImg": "Добавить изображение",
+      "resetMastery": "Сбросить",
+      "resetConfirm": "Уверены?",
+      "resetYes": "Да",
+      "resetNo": "Нет"
     },
     "card": {
       "edit": "Изменить",
