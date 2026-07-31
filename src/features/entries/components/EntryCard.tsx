@@ -9,6 +9,7 @@ import { ToggleSwitch } from "@/shared/ui/ToggleSwitch";
 import { EntryImage } from "@/shared/ui/EntryImage";
 import { getEntryImageUrl } from "@/api/api";
 import { TbTargetArrow } from "react-icons/tb";
+import { FaCrown } from "react-icons/fa6";
 
 const categoryColors: Record<Entry["category"], string> = {
   word: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-auto",
@@ -68,15 +69,35 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
 
   return (
     <div
-      className={`group relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm pb-1 sm:pb-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between select-none ${categoryColorsCard[entry.category]}`}
+      // className={`group relative dark:bg-gray-800 rounded-xl border pb-1 sm:pb-5 flex flex-col gap-3 transition-shadow cursor-pointer justify-between select-none ${categoryColorsCard[entry.category]} `}
+      className={`group relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm pb-1 sm:pb-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between select-none ${categoryColorsCard[entry.category]} `}
+      style={
+        entry.mastery_level === 5
+          ? { boxShadow: "0 0 0 0 transparent, 0 4px 16px 0 rgba(251,191,36,0.18), 0 1px 3px 0 rgba(0,0,0,0.07)" }
+          : undefined
+      }
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
-      onContextMenu={(e) => e.preventDefault()}
+      // onContextMenu={(e) => e.preventDefault()}
       onClick={handleClick}>
+      {/* Mastered corner fold */}
+      {entry.mastery_level === 5 && (
+        <>
+          <div className="absolute top-[-1px] left-[-1px] w-12 h-12 rounded-tl-md z-10 pointer-events-none">
+            <div className="absolute inset-0 bg-amber-400  rounded-tl-md [clip-path:polygon(0_0,100%_0,0_100%)]" />
+            <div className="absolute inset-0  border-t-[1px] border-l-[1px] border-amber-400  rounded-tl-md bg-gradient-to-bl from-amber-100 to-amber-400 [clip-path:polygon(0_0,calc(100%_-_1px)_0,0_calc(100%_-_1px))]" />
+          </div>
+          <FaCrown
+            className="absolute top-2 left-1.5 z-10 text-[0.9rem] text-amber-400 pointer-events-none"
+            stroke="#89651d"
+            strokeWidth="30"
+          />
+        </>
+      )}
       {/* Header row */}
       <div
-        className={`flex items-start justify-between p-5 pb-4 gap-3  rounded-t-xl ${categoryColors[entry.category]}`}>
+        className={`flex items-start justify-between p-5 pb-4 gap-3  rounded-t-xl ${categoryColors[entry.category]} ${entry.mastery_level === 5 ? "ps-7" : ""}`}>
         <div className="flex-1 min-w-0">
           <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">{entry.word}</p>
         </div>{" "}

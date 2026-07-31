@@ -12,7 +12,7 @@ import { EntryDetailModal } from "@/features/entries/components/EntryDetailModal
 import { ImportBundleModal } from "@/features/entries/components/ImportBundleModal";
 import { useEntries, DateFilter } from "@/features/entries/hooks/useEntries";
 import { Entry, EntryCategory } from "@/features/entries/types";
-import { TbTargetArrow } from "react-icons/tb";
+import { TbTargetArrow, TbCrown } from "react-icons/tb";
 import { AddEntryFab } from "@/features/entries/components/AddEntryFab";
 import { TfiPanel } from "react-icons/tfi";
 
@@ -483,6 +483,9 @@ function EntryHeaderStrip({ entry, onView }: { entry: Entry; onView: (e: Entry) 
         {t(`dashboard.categories.${entry.category}`)}
       </span>
       <p className="flex-1 min-w-0 font-semibold text-gray-900 dark:text-gray-100 truncate">{entry.word}</p>
+      {entry.mastery_level === 5 && (
+        <TbCrown className="shrink-0 text-emerald-400 text-base" title="Mastered" />
+      )}
       <RatingStars value={entry.rating} readOnly />
       <p className="shrink-0 text-xs text-gray-400 dark:text-gray-500 hidden sm:block tabular-nums">
         {new Date(entry.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
