@@ -3,7 +3,16 @@ import { useAuthStore } from '@/features/auth/store/authStore'
 import { useEntriesStore } from '@/features/entries/store/entriesStore'
 import { useCreateEntry, useUpdateEntry, useDeleteEntry, useReviewEntry } from '@/hooks/useEntries'
 import { entryTagsApi, entriesApi } from '@/api/api'
-import type { Entry, SRGrade, PracticeMode } from '@/features/entries/types'
+import type { Entry, EntryCategory, SRGrade, PracticeMode } from '@/features/entries/types'
+
+export interface BatchEntryInput {
+  word: string
+  explanation: string
+  example: string
+  category: EntryCategory
+  rating: number
+  includeInPractice: boolean
+}
 
 /**
  * Returns mode-aware CRUD operations for entries.
@@ -75,5 +84,16 @@ export function useEntryCrud() {
     }
   }
 
-  return { addEntry, updateEntry, removeEntry, reviewEntry, resetMastery }
+  async function addBatchEntries(entries: BatchEntryInput[], tagIds: number[]): Promise<{ count: number }> {
+    if (mode === 'authenticated') {
+      const result = await entriesApi.batchCreateEntries(entries, tagIds)
+      await queryClient.invalidateQueries({ queryKey: ['entries'] })
+      return { count: result.count }
+    } else {
+      for (const e of entries) storeAdd({ ...e, tags: [] })
+      return { count: entries.length }
+    }
+  }
+
+  return { addEntry, updateEntry, removeEntry, reviewEntry, resetMastery, addBatchEntries }
 }

@@ -151,6 +151,35 @@
     "rating": {
       "you": "Ty",
       "system": "System"
+    },
+    "addBundle": "Dodaj pakiet",
+    "importBundle": {
+      "title": "Importuj pakiet",
+      "menuAriaLabel": "Więcej opcji",
+      "file": "Plik tekstowy",
+      "chooseFile": "Wybierz plik",
+      "noFile": "Nie wybrano pliku",
+      "fileHint": "Jeden wpis w wierszu. Użyj /n wewnątrz pola, aby wstawić znak nowej linii.",
+      "delimiter": "Separator",
+      "columns": "Mapowanie kolumn",
+      "col": "Kol",
+      "addCol": "+ kolumna",
+      "category": "Kategoria (dla wszystkich wpisów)",
+      "tags": "Tagi (dla wszystkich wpisów)",
+      "preview": "Podgląd ({{count}} wpisów)",
+      "more": "+{{count}} więcej wpisów…",
+      "skipped": "{{count}} pominięto (brak słowa lub wyjaśnienia)",
+      "import": "Importuj",
+      "importCount": "Importuj ({{count}})",
+      "importing": "Importowanie…",
+      "success": "Zaimportowano {{count}} wpisów!",
+      "errorOn": "Błąd podczas importu",
+      "fields": {
+        "word": "Słowo",
+        "explanation": "Wyjaśnienie",
+        "example": "Przykład",
+        "skip": "Pomiń"
+      }
     }
   },
   "tags": {

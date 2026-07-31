@@ -147,6 +147,35 @@
     "rating": {
       "you": "Tú",
       "system": "Sistema"
+    },
+    "addBundle": "Agregar paquete",
+    "importBundle": {
+      "title": "Importar paquete",
+      "menuAriaLabel": "Más opciones",
+      "file": "Archivo de texto",
+      "chooseFile": "Elegir archivo",
+      "noFile": "Ningún archivo seleccionado",
+      "fileHint": "Una entrada por línea. Usa /n dentro de un campo para insertar un salto de línea.",
+      "delimiter": "Delimitador",
+      "columns": "Mapeo de columnas",
+      "col": "Col",
+      "addCol": "+ columna",
+      "category": "Categoría (para todas las entradas)",
+      "tags": "Etiquetas (para todas las entradas)",
+      "preview": "Vista previa ({{count}} entradas)",
+      "more": "+{{count}} entradas más…",
+      "skipped": "{{count}} omitidas (falta palabra o explicación)",
+      "import": "Importar",
+      "importCount": "Importar ({{count}})",
+      "importing": "Importando…",
+      "success": "¡{{count}} entradas importadas!",
+      "errorOn": "Error al importar",
+      "fields": {
+        "word": "Palabra",
+        "explanation": "Explicación",
+        "example": "Ejemplo",
+        "skip": "Omitir"
+      }
     }
   },
   "tags": {

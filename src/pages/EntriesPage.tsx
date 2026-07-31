@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/shared/ui/Button";
@@ -9,6 +9,7 @@ import { EntryCard } from "@/features/entries/components/EntryCard";
 import { EntryForm, EntryFormValues } from "@/features/entries/components/AddEntryForm";
 import { EditEntryModal } from "@/features/entries/components/EditEntryModal";
 import { EntryDetailModal } from "@/features/entries/components/EntryDetailModal";
+import { ImportBundleModal } from "@/features/entries/components/ImportBundleModal";
 import { useEntries, DateFilter } from "@/features/entries/hooks/useEntries";
 import { Entry, EntryCategory } from "@/features/entries/types";
 import { TbTargetArrow } from "react-icons/tb";
@@ -34,6 +35,19 @@ export function EntriesPage() {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"expanded" | "collapsed">("expanded");
+  const [showAddMenu, setShowAddMenu] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const addMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (addMenuRef.current && !addMenuRef.current.contains(e.target as Node)) {
+        setShowAddMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -102,11 +116,37 @@ export function EntriesPage() {
               {t("entries.subtitle", { count: totalCount })}
             </p>
           </div>
-          <span className="hidden sm:inline-flex">
-            <Button onClick={() => setShowForm((v) => !v)}>
+          {/* Desktop split button: left = Add Entry, right = dropdown */}
+          <div className="hidden sm:flex relative" ref={addMenuRef}>
+            <button
+              onClick={() => { setShowForm((v) => !v); setShowAddMenu(false); }}
+              className="inline-flex items-center justify-center gap-2 rounded-l-lg font-medium px-4 py-2 text-sm bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500">
               {showForm ? t("entries.cancel") : t("entries.addEntry")}
-            </Button>
-          </span>
+            </button>
+            <button
+              onClick={() => setShowAddMenu((v) => !v)}
+              aria-label={t("entries.importBundle.menuAriaLabel")}
+              className="inline-flex items-center justify-center px-2 py-2 text-sm bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 transition-colors rounded-r-lg border-l border-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 10l5 5 5-5z" />
+              </svg>
+            </button>
+            {showAddMenu && (
+              <div className="absolute right-0 top-full mt-1.5 z-30 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden min-w-[160px]">
+                <button
+                  onClick={() => { setShowAddMenu(false); setShowImportModal(true); }}
+                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors text-left">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="12" y1="18" x2="12" y2="12" />
+                    <line x1="9" y1="15" x2="15" y2="15" />
+                  </svg>
+                  {t("entries.addBundle")}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         {/* ── Filters + view toggle ── */}
         <div className="flex flex-col gap-2">
@@ -358,6 +398,9 @@ export function EntriesPage() {
         isOpen={showForm}
         ariaLabel={showForm ? t("entries.cancel") : t("entries.addEntry")}
       />
+
+      {/* Import bundle modal */}
+      {showImportModal && <ImportBundleModal onClose={() => setShowImportModal(false)} />}
 
       {/* Delete confirmation */}
       {confirmDeleteEntry && (

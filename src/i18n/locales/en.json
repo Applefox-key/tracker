@@ -146,6 +146,35 @@
     "rating": {
       "you": "You",
       "system": "System"
+    },
+    "addBundle": "Add Bundle",
+    "importBundle": {
+      "title": "Import Bundle",
+      "menuAriaLabel": "More options",
+      "file": "Text file",
+      "chooseFile": "Choose file",
+      "noFile": "No file chosen",
+      "fileHint": "One entry per line. Use /n inside a field to insert a line break.",
+      "delimiter": "Delimiter",
+      "columns": "Column mapping",
+      "col": "Col",
+      "addCol": "+ col",
+      "category": "Category (for all entries)",
+      "tags": "Tags (for all entries)",
+      "preview": "Preview ({{count}} entries)",
+      "more": "+{{count}} more entries…",
+      "skipped": "{{count}} skipped (missing word or explanation)",
+      "import": "Import",
+      "importCount": "Import ({{count}})",
+      "importing": "Importing…",
+      "success": "{{count}} entries imported!",
+      "errorOn": "Import failed on",
+      "fields": {
+        "word": "Word",
+        "explanation": "Explanation",
+        "example": "Example",
+        "skip": "Skip"
+      }
     }
   },
   "tags": {

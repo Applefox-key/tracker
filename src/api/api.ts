@@ -247,6 +247,18 @@ export const entriesApi = {
     const res = await apiClient.get<RawEntry[]>('/entries/due')
     return res.data.map(toEntry)
   },
+
+  async batchCreateEntries(
+    entries: Array<Pick<Entry, 'word' | 'explanation' | 'example' | 'category' | 'rating' | 'includeInPractice'>>,
+    tagIds: number[],
+  ): Promise<{ count: number; ids: number[] }> {
+    const payload = {
+      entries: entries.map((e) => ({ ...e, includeInPractice: e.includeInPractice ? 1 : 0 })),
+      tagIds,
+    }
+    const res = await apiClient.post<{ count: number; ids: number[] }>('/entries/batch', { data: payload })
+    return res.data
+  },
 }
 
 // ── Entry Tags API ─────────────────────────────────────────────────────────
