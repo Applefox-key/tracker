@@ -75,8 +75,8 @@ export function ImportBundleModal({ onClose }: ImportBundleModalProps) {
   function setColumn(i: number, field: ColumnField) {
     const next = [...columns];
     if (field !== "skip") {
-      const prev = next.findIndex((f, idx) => idx !== i && f === field);
-      if (prev !== -1) next[prev] = "skip";
+      const conflict = next.findIndex((f, idx) => idx !== i && f === field);
+      if (conflict !== -1) next[conflict] = next[i];
     }
     next[i] = field;
     setColumns(next);
@@ -172,10 +172,9 @@ export function ImportBundleModal({ onClose }: ImportBundleModalProps) {
               />
             </div>
           </div>
-
-          {/* Preview */}
-          {parsed.length > 0 && (
+          {fileInputRef.current && (
             <>
+              {" "}
               <hr className="border-gray-200 dark:border-gray-700" />
               {/* Files columns */}
               <div className="flex flex-wrap gap-6 items-start">
@@ -218,6 +217,11 @@ export function ImportBundleModal({ onClose }: ImportBundleModalProps) {
                   </div>
                 </div>
               </div>{" "}
+            </>
+          )}
+          {/* Preview */}
+          {parsed.length > 0 && (
+            <>
               <hr className="border-gray-200 dark:border-gray-700" />
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3 flex-wrap ">
