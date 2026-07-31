@@ -25,7 +25,18 @@ const categoryColorsCard: Record<Entry["category"], string> = {
   idiom: "bg-orange-50 dark:bg-orange-900/30  border-orange-200 dark:border-orange-400",
   note: "bg-teal-50 dark:bg-teal-900/30  border-teal-200 dark:border-teal-400",
 };
-
+const masteryColorsBadge: Record<string, Record<string, string>> = {
+  "4": {
+    back: "bg-slate-300",
+    top: "border-slate-300  bg-gradient-to-bl from-slate-100 to-slate-400",
+    svg: "text-[#dae1df] stroke-[#696969] stroke-[30]",
+  },
+  "5": {
+    back: "bg-amber-300",
+    top: "border-amber-300  bg-gradient-to-bl from-amber-100 to-amber-400",
+    svg: "text-amber-400 stroke-[#89651d] stroke-[30]",
+  },
+};
 interface EntryCardProps {
   entry: Entry;
   onRemove: (id: number) => void;
@@ -71,27 +82,25 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
     <div
       // className={`group relative dark:bg-gray-800 rounded-xl border pb-1 sm:pb-5 flex flex-col gap-3 transition-shadow cursor-pointer justify-between select-none ${categoryColorsCard[entry.category]} `}
       className={`group relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm pb-1 sm:pb-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between select-none ${categoryColorsCard[entry.category]} `}
-      style={
-        entry.mastery_level === 5
-          ? { boxShadow: "0 0 0 0 transparent, 0 4px 16px 0 rgba(251,191,36,0.18), 0 1px 3px 0 rgba(0,0,0,0.07)" }
-          : undefined
-      }
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
       // onContextMenu={(e) => e.preventDefault()}
       onClick={handleClick}>
       {/* Mastered corner fold */}
-      {entry.mastery_level === 5 && (
+      {entry.mastery_level && entry.mastery_level > 3 && (
         <>
           <div className="absolute top-[-1px] left-[-1px] w-12 h-12 rounded-tl-md z-10 pointer-events-none">
-            <div className="absolute inset-0 bg-amber-400  rounded-tl-md [clip-path:polygon(0_0,100%_0,0_100%)]" />
-            <div className="absolute inset-0  border-t-[1px] border-l-[1px] border-amber-400  rounded-tl-md bg-gradient-to-bl from-amber-100 to-amber-400 [clip-path:polygon(0_0,calc(100%_-_1px)_0,0_calc(100%_-_1px))]" />
+            {/* <div className="absolute inset-0 bg-amber-400  rounded-tl-md [clip-path:polygon(0_0,100%_0,0_100%)]" /> */}
+            <div
+              className={`absolute inset-0 rounded-tl-md [clip-path:polygon(0_0,100%_0,0_100%)] ${masteryColorsBadge[entry.mastery_level].back}`}
+            />
+            <div
+              className={`absolute inset-0  rounded-tl-md border-t-[1px] border-l-[1px] ${masteryColorsBadge[entry.mastery_level].top} [clip-path:polygon(0_0,calc(100%_-_1px)_0,0_calc(100%_-_1px))]`}
+            />
           </div>
           <FaCrown
-            className="absolute top-2 left-1.5 z-10 text-[0.9rem] text-amber-400 pointer-events-none"
-            stroke="#89651d"
-            strokeWidth="30"
+            className={`absolute top-2 left-1.5 z-10 text-[0.9rem] pointer-events-none ${masteryColorsBadge[entry.mastery_level].svg} `}
           />
         </>
       )}
