@@ -6,6 +6,7 @@ import { DemoBanner } from "@/features/auth/components/DemoBanner";
 import { DarkModeToggle } from "@/shared/ui/DarkModeToggle";
 import { LanguageSwitcher } from "@/shared/ui/LanguageSwitcher";
 import { useEntriesData } from "@/hooks/useEntriesData";
+import { useEntriesStore } from "@/features/entries/store/entriesStore";
 import { getAvatarUrl } from "@/api/api";
 import { ImStatsBars } from "react-icons/im";
 import { PiCardsThree } from "react-icons/pi";
@@ -76,6 +77,8 @@ export function Layout() {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [appsOpen]);
+
+  const dueCount = useEntriesStore((s) => s.dueCount);
 
   useEntriesData();
 
@@ -191,7 +194,16 @@ export function Layout() {
               <span className="text-sm font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">
                 {user?.name ? t("layout.greeting", { name: user.name.split(" ")[0] }) : t("layout.greetingAnon")}
               </span>
-              <span className="text-[11px] text-gray-400 dark:text-gray-500 whitespace-nowrap">{t(motivationKey)}</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] text-gray-400 dark:text-gray-500 whitespace-nowrap">{t(motivationKey)}</span>
+                {dueCount !== null && dueCount > 0 && (
+                  <Link
+                    to="/practice/due"
+                    className="pointer-events-auto text-[10px] font-bold text-violet-600 dark:text-violet-400 whitespace-nowrap bg-violet-100 dark:bg-violet-900/40 px-1.5 py-0.5 rounded-full leading-tight">
+                    {t("layout.dueToday", { count: dueCount })}
+                  </Link>
+                )}
+              </div>
             </div>
           ) : (
             <span className="sm:hidden absolute left-1/2 -translate-x-1/2 text-xl font-bold text-emerald-600 tracking-tight whitespace-nowrap pointer-events-none">

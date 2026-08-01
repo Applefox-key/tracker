@@ -23,7 +23,8 @@
     "greetingAnon": "¡Hola! 👋",
     "motivateMorning": "¿Listo para aprender hoy?",
     "motivateAfternoon": "¡Sigue adelante!",
-    "motivateEvening": "¡Termina el día aprendiendo algo nuevo!"
+    "motivateEvening": "¡Termina el día aprendiendo algo nuevo!",
+    "dueToday": "🎯 {{count}} para hoy"
   },
   "dashboard": {
     "title": "Mi progreso",
@@ -57,6 +58,10 @@
     "viewAll": "Ver todo →",
     "weeklyActivity": "Actividad semanal",
     "days": "días",
+    "dueTodaySub": "tarjetas para repasar",
+    "dueTodayNone": "¡Todo al día!",
+    "dueTodayNoneSub": "Nada que repasar hoy",
+    "dueTodayStart": "Empezar repaso →",
     "badgesComingSoon": "Insignias — próximamente",
     "badgesComingSoonSub": "El sistema de logros está en camino",
     "rapidReview": {

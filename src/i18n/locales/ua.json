@@ -23,7 +23,8 @@
     "greetingAnon": "Привіт! 👋",
     "motivateMorning": "Починаємо день з нового?",
     "motivateAfternoon": "Продовжуємо навчатися!",
-    "motivateEvening": "Завершуємо день продуктивно!"
+    "motivateEvening": "Завершуємо день продуктивно!",
+    "dueToday": "🎯 {{count}} на сьог."
   },
   "dashboard": {
     "title": "Мій прогрес",
@@ -67,6 +68,10 @@
     "viewAll": "Всі →",
     "weeklyActivity": "Активність за тиждень",
     "days": "днів",
+    "dueTodaySub": "картки на повторення",
+    "dueTodayNone": "Всe гаразд!",
+    "dueTodayNoneSub": "На сьогодні нічого немає",
+    "dueTodayStart": "Почати повторення →",
     "badgesComingSoon": "Бейджі — скоро",
     "badgesComingSoonSub": "Система досягнень у розробці",
     "rapidReview": {

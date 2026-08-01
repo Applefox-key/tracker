@@ -3,7 +3,9 @@ import { Entry } from '../types'
 
 interface EntriesState {
   entries: Entry[]
+  dueCount: number | null
   setEntries: (entries: Entry[]) => void
+  setDueCount: (count: number) => void
   addEntry: (entry: Omit<Entry, 'id' | 'createdAt'>) => void
   updateEntry: (id: number, updates: Partial<Omit<Entry, 'id' | 'createdAt'>>) => void
   removeEntry: (id: number) => void
@@ -11,8 +13,10 @@ interface EntriesState {
 
 export const useEntriesStore = create<EntriesState>((set) => ({
   entries: [],
+  dueCount: null,
 
   setEntries: (entries) => set({ entries }),
+  setDueCount: (count) => set({ dueCount: count }),
 
   addEntry: (data) =>
     set((state) => ({

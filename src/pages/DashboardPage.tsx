@@ -8,7 +8,7 @@ import {
   FiTrendingUp,
   FiTarget,
   FiStar,
-  FiAward,
+  FiCalendar,
   FiPieChart,
   FiList,
 } from "react-icons/fi";
@@ -383,20 +383,47 @@ function DesktopWeeklyActivity({ entries }: { entries: Entry[] }) {
   );
 }
 
-// ── Desktop badge placeholder ─────────────────────────────────────────────
+// ── Desktop Due Today card ────────────────────────────────────────────────
 
-function DesktopBadgePlaceholder() {
+function DesktopDueTodayCard({ dueCount }: { dueCount: number | null }) {
   const { t } = useTranslation();
+  const hasDue = dueCount !== null && dueCount > 0;
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-800/40 border border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-5 flex flex-col items-center justify-center gap-3 shadow-sm min-h-[110px]">
-      <div className="w-11 h-11 bg-gray-100 dark:bg-gray-700/60 rounded-xl flex items-center justify-center">
-        <FiAward size={22} className="text-gray-400 dark:text-gray-500" />
+    <div
+      className={`rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm min-h-[110px] ${
+        hasDue
+          ? "bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800"
+          : "bg-gray-50 dark:bg-gray-800/40 border border-dashed border-gray-300 dark:border-gray-600"
+      }`}>
+      <div className="flex items-center gap-3">
+        <div
+          className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+            hasDue ? "bg-violet-500" : "bg-gray-100 dark:bg-gray-700/60"
+          }`}>
+          <FiCalendar size={20} className={hasDue ? "text-white" : "text-gray-400 dark:text-gray-500"} />
+        </div>
+        <div>
+          {hasDue ? (
+            <>
+              <p className="text-3xl font-extrabold text-violet-700 dark:text-violet-300 leading-none">{dueCount}</p>
+              <p className="text-xs text-violet-500 dark:text-violet-400 mt-0.5">{t("dashboard.dueTodaySub")}</p>
+            </>
+          ) : (
+            <>
+              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">{t("dashboard.dueTodayNone")}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t("dashboard.dueTodayNoneSub")}</p>
+            </>
+          )}
+        </div>
       </div>
-      <div className="text-center">
-        <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">{t("dashboard.badgesComingSoon")}</p>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t("dashboard.badgesComingSoonSub")}</p>
-      </div>
+      {hasDue && (
+        <Link to="/practice/due">
+          <button className="w-full text-sm font-semibold text-white bg-violet-500 hover:bg-violet-600 dark:bg-violet-600 dark:hover:bg-violet-500 rounded-xl py-2 transition-colors">
+            {t("dashboard.dueTodayStart")}
+          </button>
+        </Link>
+      )}
     </div>
   );
 }
@@ -653,6 +680,7 @@ function CategoryRingCard({ label, count, total, hexColor, mobileBg, mobileText,
 export function DashboardPage() {
   const { t } = useTranslation();
   const entries = useEntriesStore((s) => s.entries);
+  const dueCount = useEntriesStore((s) => s.dueCount);
   const [showAddForm, setShowAddForm] = useState(false);
   const { addEntry } = useEntryCrud();
 
@@ -729,11 +757,11 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Desktop row 1: streak + weekly activity + next badge ── */}
+      {/* ── Desktop row 1: streak + weekly activity + due today ── */}
       <div className="hidden sm:grid grid-cols-3 gap-4">
         <DesktopStreakBlock streak={streak} todayCount={stats.todayCount} flashCount={stats.flashCount} />
         <DesktopWeeklyActivity entries={entries} />
-        <DesktopBadgePlaceholder />
+        <DesktopDueTodayCard dueCount={dueCount} />
       </div>
 
       {/* ── Weekly activity chip — mobile only ── */}

@@ -23,7 +23,8 @@
     "greetingAnon": "Привет! 👋",
     "motivateMorning": "Начнём день с чего-то нового?",
     "motivateAfternoon": "Продолжаем учиться!",
-    "motivateEvening": "Заканчиваем день продуктивно!"
+    "motivateEvening": "Заканчиваем день продуктивно!",
+    "dueToday": "🎯 {{count}} на сег."
   },
   "dashboard": {
     "title": "Мой прогресс",
@@ -67,6 +68,10 @@
     "viewAll": "Все →",
     "weeklyActivity": "Активность за неделю",
     "days": "дней",
+    "dueTodaySub": "карточки на повторение",
+    "dueTodayNone": "Всё в порядке!",
+    "dueTodayNoneSub": "На сегодня ничего нет",
+    "dueTodayStart": "Начать повторение →",
     "badgesComingSoon": "Бейджи — скоро",
     "badgesComingSoonSub": "Система достижений уже в разработке",
     "rapidReview": {

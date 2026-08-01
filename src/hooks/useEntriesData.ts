@@ -17,6 +17,7 @@ import { MOCK_ENTRIES } from '@/data/mockEntries'
 export function useEntriesData() {
   const mode = useAuthStore((s) => s.mode)
   const setEntries = useEntriesStore((s) => s.setEntries)
+  const setDueCount = useEntriesStore((s) => s.setDueCount)
 
   // Server fetch — disabled in demo and unauthenticated modes
   const { data: serverEntries, isLoading } = useQuery({
@@ -24,6 +25,13 @@ export function useEntriesData() {
     queryFn: entriesApi.getEntries,
     enabled: mode === 'authenticated',
     staleTime: 30_000,
+  })
+
+  const { data: dueEntries } = useQuery({
+    queryKey: ['entries', 'due'],
+    queryFn: entriesApi.getDueEntries,
+    enabled: mode === 'authenticated',
+    staleTime: 60_000,
   })
 
   // Populate store based on mode change
@@ -41,6 +49,13 @@ export function useEntriesData() {
       setEntries(serverEntries)
     }
   }, [serverEntries, mode, setEntries])
+
+  // Sync due count into store
+  useEffect(() => {
+    if (dueEntries !== undefined) {
+      setDueCount(dueEntries.length)
+    }
+  }, [dueEntries, setDueCount])
 
   return { isLoading: mode === 'authenticated' && isLoading }
 }

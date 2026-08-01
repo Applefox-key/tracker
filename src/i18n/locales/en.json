@@ -23,7 +23,8 @@
     "greetingAnon": "Hey there! 👋",
     "motivateMorning": "Ready to learn today?",
     "motivateAfternoon": "Keep the momentum going!",
-    "motivateEvening": "End the day with something new!"
+    "motivateEvening": "End the day with something new!",
+    "dueToday": "🎯 {{count}} due"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -57,6 +58,10 @@
     "viewAll": "View all →",
     "weeklyActivity": "Weekly Activity",
     "days": "days",
+    "dueTodaySub": "cards to review",
+    "dueTodayNone": "All caught up!",
+    "dueTodayNoneSub": "Nothing to review today",
+    "dueTodayStart": "Start review →",
     "badgesComingSoon": "Badges — coming soon",
     "badgesComingSoonSub": "Achievement system is on the way",
     "rapidReview": {

@@ -23,7 +23,8 @@
     "greetingAnon": "Hej! 👋",
     "motivateMorning": "Gotowy na naukę dziś?",
     "motivateAfternoon": "Nie zatrzymuj się!",
-    "motivateEvening": "Zakończ dzień czymś nowym!"
+    "motivateEvening": "Zakończ dzień czymś nowym!",
+    "dueToday": "🎯 {{count}} na dziś"
   },
   "dashboard": {
     "title": "Moje postępy",
@@ -59,6 +60,10 @@
     "viewAll": "Wszystkie →",
     "weeklyActivity": "Aktywność tygodniowa",
     "days": "dni",
+    "dueTodaySub": "karty do powtórki",
+    "dueTodayNone": "Wszystko zrobione!",
+    "dueTodayNoneSub": "Nic do powtórzenia dziś",
+    "dueTodayStart": "Zacznij powtórkę →",
     "badgesComingSoon": "Odznaki — wkrótce",
     "badgesComingSoonSub": "System osiągnięć w drodze",
     "rapidReview": {
