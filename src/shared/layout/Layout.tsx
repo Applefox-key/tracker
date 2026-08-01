@@ -51,6 +51,7 @@ export function Layout() {
     "/practice/match",
     "/practice/puzzle",
     "/practice/due",
+    "/practice/write",
   ].includes(location.pathname);
   const [appsOpen, setAppsOpen] = useState(false);
   const [burgerOpen, setBurgerOpen] = useState(false);
