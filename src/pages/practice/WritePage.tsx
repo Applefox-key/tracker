@@ -327,8 +327,8 @@ export function WritePage() {
           </div>
 
           {/* Action button */}
-          <div className="flex justify-end">
-            {answerState === "unanswered" ? (
+          {answerState === "unanswered" ? (
+            <div className="flex justify-end">
               <Button
                 onClick={handleSubmit}
                 disabled={inputValue.trim() === ""}
@@ -336,12 +336,17 @@ export function WritePage() {
                 className="w-full sm:w-auto text-base">
                 {t("practice.write.checkAnswer")}
               </Button>
-            ) : (
-              <Button ref={nextBtnRef} onClick={handleNext} size="lg" className="w-full sm:w-auto text-base">
-                {currentIdx + 1 < questions.length ? t("practice.write.next") : t("practice.write.seeResults")}
-              </Button>
-            )}
-          </div>
+            </div>
+          ) : (
+            <>
+              <div className="h-20 sm:hidden" />
+              <div className="fixed bottom-0 left-0 right-0 sm:static sm:flex sm:justify-end bg-white dark:bg-gray-900 sm:bg-transparent border-t border-gray-200 dark:border-gray-700 sm:border-0 p-4 sm:p-0 z-50">
+                <Button ref={nextBtnRef} onClick={handleNext} size="lg" className="w-full sm:w-auto text-base">
+                  {currentIdx + 1 < questions.length ? t("practice.write.next") : t("practice.write.seeResults")}
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       )}
 
