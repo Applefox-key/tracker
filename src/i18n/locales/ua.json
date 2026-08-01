@@ -24,7 +24,8 @@
     "motivateMorning": "Починаємо день з нового?",
     "motivateAfternoon": "Продовжуємо навчатися!",
     "motivateEvening": "Завершуємо день продуктивно!",
-    "dueToday": "🎯 {{count}} на сьог."
+    "dueToday": "🎯 {{count}} на сьог.",
+    "more": "Ще"
   },
   "dashboard": {
     "title": "Мій прогрес",

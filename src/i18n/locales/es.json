@@ -24,7 +24,8 @@
     "motivateMorning": "¿Listo para aprender hoy?",
     "motivateAfternoon": "¡Sigue adelante!",
     "motivateEvening": "¡Termina el día aprendiendo algo nuevo!",
-    "dueToday": "🎯 {{count}} para hoy"
+    "dueToday": "🎯 {{count}} para hoy",
+    "more": "Más"
   },
   "dashboard": {
     "title": "Mi progreso",

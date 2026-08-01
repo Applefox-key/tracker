@@ -24,7 +24,8 @@
     "motivateMorning": "Ready to learn today?",
     "motivateAfternoon": "Keep the momentum going!",
     "motivateEvening": "End the day with something new!",
-    "dueToday": "🎯 {{count}} due"
+    "dueToday": "🎯 {{count}} due",
+    "more": "More"
   },
   "dashboard": {
     "title": "Dashboard",

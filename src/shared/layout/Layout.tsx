@@ -148,40 +148,18 @@ export function Layout() {
       <header
         className={`bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30${isGameRoute ? " hidden sm:block" : ""}`}>
         {/* ── Row 1 ── */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative flex items-center justify-between h-16">
-          {/* Left: burger (mobile) | logo (desktop) */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 relative flex items-center justify-between h-16">
+          {/* Left: due badge (mobile) | logo (desktop) */}
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setBurgerOpen((v) => !v)}
-              className="sm:hidden flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              aria-label={t("layout.menu")}>
-              {burgerOpen ? (
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              ) : (
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round">
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="3" y1="12" x2="21" y2="12" />
-                  <line x1="3" y1="18" x2="21" y2="18" />
-                </svg>
-              )}
-            </button>
+            {dueCount !== null && dueCount > 0 ? (
+              <Link
+                to="/practice/due"
+                className="sm:hidden text-xs font-bold text-violet-600 dark:text-violet-400 whitespace-nowrap bg-violet-100 dark:bg-violet-900/40 px-2.5 py-3 rounded-full leading-tight">
+                {t("layout.dueToday", { count: dueCount })}
+              </Link>
+            ) : (
+              <div className="sm:hidden w-8" />
+            )}
             {/* Logo - desktop only */}
             <span className="hidden sm:inline text-xl font-bold text-emerald-600 tracking-tight">
               {t("layout.logo")}
@@ -191,19 +169,10 @@ export function Layout() {
           {/* Title / Greeting - mobile only, absolutely centered */}
           {isDashboard ? (
             <div className="sm:hidden absolute left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none">
-              <span className="text-sm font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">
+              <span className="text-base font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">
                 {user?.name ? t("layout.greeting", { name: user.name.split(" ")[0] }) : t("layout.greetingAnon")}
               </span>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[11px] text-gray-400 dark:text-gray-500 whitespace-nowrap">{t(motivationKey)}</span>
-                {dueCount !== null && dueCount > 0 && (
-                  <Link
-                    to="/practice/due"
-                    className="pointer-events-auto text-[10px] font-bold text-violet-600 dark:text-violet-400 whitespace-nowrap bg-violet-100 dark:bg-violet-900/40 px-1.5 py-0.5 rounded-full leading-tight">
-                    {t("layout.dueToday", { count: dueCount })}
-                  </Link>
-                )}
-              </div>
+              <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">{t(motivationKey)}</span>
             </div>
           ) : (
             <span className="sm:hidden absolute left-1/2 -translate-x-1/2 text-xl font-bold text-emerald-600 tracking-tight whitespace-nowrap pointer-events-none">
@@ -321,7 +290,7 @@ export function Layout() {
                       <img
                         src={getAvatarUrl(user.img, user.id) ?? undefined}
                         alt={user.name}
-                        className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-gray-600 hover:ring-2 hover:ring-emerald-400 transition-all"
+                        className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-600 hover:ring-2 hover:ring-emerald-400 transition-all"
                       />
                     ) : (
                       <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-sm font-medium hover:ring-2 hover:ring-emerald-400 transition-all cursor-pointer">
@@ -346,9 +315,8 @@ export function Layout() {
       {!isGameRoute && burgerOpen && (
         <>
           <div className="sm:hidden fixed inset-0 z-20 bg-black/40" onClick={() => setBurgerOpen(false)} />
-          <div className="sm:hidden fixed top-0 left-0 bottom-0 z-30 w-72 bg-white dark:bg-gray-800 shadow-xl flex flex-col">
+          <div className="sm:hidden fixed top-0 right-0 bottom-0 z-30 w-72 bg-white dark:bg-gray-800 shadow-xl flex flex-col">
             <div className="flex items-center justify-between px-4 h-16 border-b border-gray-200 dark:border-gray-700 shrink-0">
-              <span className="text-base font-bold text-emerald-600">{t("layout.logo")}</span>
               <button
                 onClick={() => setBurgerOpen(false)}
                 className="flex items-center justify-center w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
@@ -364,6 +332,7 @@ export function Layout() {
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>
+              <span className="text-base font-bold text-emerald-600">{t("layout.logo")}</span>
             </div>
 
             <div className="flex-1 overflow-y-auto py-3 px-3 flex flex-col gap-1">
@@ -485,6 +454,31 @@ export function Layout() {
                 <span>{t(labelKey)}</span>
               </NavLink>
             ))}
+          <button
+            onClick={() => setBurgerOpen((v) => !v)}
+            className={[
+              "flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl text-xs font-medium transition-colors min-w-[52px]",
+              burgerOpen
+                ? "text-emerald-600 dark:text-emerald-400"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200",
+            ].join(" ")}
+            aria-label={t("layout.more")}>
+            <span className="text-xl leading-none">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </span>
+            <span>{t("layout.more")}</span>
+          </button>
         </div>
       </nav>
     </div>

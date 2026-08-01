@@ -95,7 +95,6 @@ const CATEGORY_STYLES: Array<{
 
 // ── Badge milestones ──────────────────────────────────────────────────────
 
-
 // ── Streak 2.5D cake ─────────────────────────────────────────────────────────
 
 function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number }) {

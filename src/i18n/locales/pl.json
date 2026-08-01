@@ -24,7 +24,8 @@
     "motivateMorning": "Gotowy na naukę dziś?",
     "motivateAfternoon": "Nie zatrzymuj się!",
     "motivateEvening": "Zakończ dzień czymś nowym!",
-    "dueToday": "🎯 {{count}} na dziś"
+    "dueToday": "🎯 {{count}} na dziś",
+    "more": "Więcej"
   },
   "dashboard": {
     "title": "Moje postępy",
