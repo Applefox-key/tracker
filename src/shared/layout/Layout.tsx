@@ -233,7 +233,7 @@ export function Layout() {
                 </svg>
               </button>
               {appsOpen && (
-                <div className="absolute right-0 top-10 z-50 w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-xl p-3">
+                <div className="absolute right-0 top-10 z-[50] w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-xl p-3">
                   <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2.5 px-1">
                     {t("layout.appsLabel")}
                   </p>
@@ -315,7 +315,7 @@ export function Layout() {
       {!isGameRoute && burgerOpen && (
         <>
           <div className="sm:hidden fixed inset-0 z-20 bg-black/40" onClick={() => setBurgerOpen(false)} />
-          <div className="sm:hidden fixed top-0 right-0 bottom-0 z-30 w-72 bg-white dark:bg-gray-800 shadow-xl flex flex-col">
+          <div className="sm:hidden fixed top-0 right-0 bottom-0 z-[52] w-72 bg-white dark:bg-gray-800 shadow-xl flex flex-col">
             <div className="flex items-center justify-between px-4 h-16 border-b border-gray-200 dark:border-gray-700 shrink-0">
               <button
                 onClick={() => setBurgerOpen(false)}
@@ -449,7 +449,7 @@ export function Layout() {
           {navItems
             .filter(({ to }) => to !== "/tags" && to !== "/about")
             .map(({ to, labelKey, icon }) => (
-              <NavLink key={to} to={to} end className={bottomNavLinkCls}>
+              <NavLink key={to} to={to} end className={bottomNavLinkCls} onClick={() => setBurgerOpen(false)}>
                 <span className="text-xl leading-none">{icon}</span>
                 <span>{t(labelKey)}</span>
               </NavLink>
