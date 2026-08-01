@@ -411,8 +411,16 @@ export function DuePage() {
     );
   }
 
-  function startSession() {
-    const q = buildQueue(shuffle(dueEntries), selectedModes);
+  async function startSession() {
+    let entries = dueEntries;
+    try {
+      const fresh = await entriesApi.getDueEntries();
+      setDueEntries(fresh);
+      entries = fresh;
+    } catch {
+      // fall back to cached list
+    }
+    const q = buildQueue(shuffle(entries), selectedModes);
     setQueue(q);
     setCurrentIdx(0);
     setPhase("playing");
