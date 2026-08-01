@@ -88,7 +88,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
       // onContextMenu={(e) => e.preventDefault()}
       onClick={handleClick}>
       {/* Mastered corner fold */}
-      {entry.mastery_level && entry.mastery_level > 3 && (
+      {!!entry.mastery_level && entry.mastery_level > 3 && (
         <>
           <div className="absolute top-[-1px] left-[-1px] w-12 h-12 rounded-tl-md z-10 pointer-events-none">
             {/* <div className="absolute inset-0 bg-amber-400  rounded-tl-md [clip-path:polygon(0_0,100%_0,0_100%)]" /> */}
