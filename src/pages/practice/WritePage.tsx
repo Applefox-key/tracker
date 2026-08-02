@@ -209,7 +209,7 @@ export function WritePage() {
 
       {/* ── Idle ────────────────────────────────────────────────── */}
       {phase === "idle" && (
-        <div className="flex flex-col items-center gap-5 py-8 max-w-xl mx-auto w-full">
+        <div className="flex flex-col items-center gap-5 py-8 pb-28 sm:pb-8 max-w-xl mx-auto w-full">
           <p className="text-sm text-gray-600 dark:text-gray-400 text-center leading-relaxed max-w-sm">
             {t("practice.write.helpDesc")}
           </p>
@@ -225,9 +225,17 @@ export function WritePage() {
             </p>
           )}
           {canStart && (
-            <Button onClick={startSession} size="lg">
+            <Button onClick={startSession} size="lg" className="hidden sm:flex">
               {t("practice.write.startWrite")}
             </Button>
+          )}
+
+          {canStart && (
+            <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 sm:hidden z-10">
+              <Button onClick={startSession} size="lg" className="w-full h-14 text-base">
+                {t("practice.write.startWrite")}
+              </Button>
+            </div>
           )}
         </div>
       )}
