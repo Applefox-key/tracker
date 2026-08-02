@@ -337,7 +337,7 @@ export function PuzzlePage() {
 
       {/* ── Playing ─────────────────────────────────────────────── */}
       {phase === "playing" && currentEntry && (
-        <div className="flex flex-col gap-6 max-w-xl mx-auto w-full">
+        <div className={["flex flex-col gap-6 max-w-xl mx-auto w-full", answerPhase !== "thinking" ? "pb-28 sm:pb-0" : ""].join(" ").trim()}>
           <div className="flex flex-col gap-1">
             <span className="text-xs text-gray-500 dark:text-gray-400">
               {t("practice.puzzle.progressLabel", { current: currentIdx + 1, total: questions.length })}
@@ -445,21 +445,38 @@ export function PuzzlePage() {
           </p>
 
           {answerPhase === "wrong" && (
-            <div className="flex justify-end gap-3">
-              <Button variant="secondary" onClick={tryAgain}>
-                {t("practice.puzzle.tryAgain")}
-              </Button>
-              <Button onClick={handleNext}>
-                {currentIdx + 1 < questions.length ? t("practice.puzzle.skip") : t("practice.puzzle.finish")}
-              </Button>
-            </div>
+            <>
+              <div className="hidden sm:flex justify-end gap-3">
+                <Button variant="secondary" onClick={tryAgain}>
+                  {t("practice.puzzle.tryAgain")}
+                </Button>
+                <Button onClick={handleNext}>
+                  {currentIdx + 1 < questions.length ? t("practice.puzzle.skip") : t("practice.puzzle.finish")}
+                </Button>
+              </div>
+              <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 sm:hidden z-10 flex gap-3">
+                <Button variant="secondary" onClick={tryAgain} className="flex-1">
+                  {t("practice.puzzle.tryAgain")}
+                </Button>
+                <Button onClick={handleNext} className="flex-1">
+                  {currentIdx + 1 < questions.length ? t("practice.puzzle.skip") : t("practice.puzzle.finish")}
+                </Button>
+              </div>
+            </>
           )}
           {answerPhase === "correct" && (
-            <div className="flex justify-end">
-              <Button onClick={handleNext}>
-                {currentIdx + 1 < questions.length ? t("practice.puzzle.next") : t("practice.puzzle.seeResults")}
-              </Button>
-            </div>
+            <>
+              <div className="hidden sm:flex justify-end">
+                <Button onClick={handleNext}>
+                  {currentIdx + 1 < questions.length ? t("practice.puzzle.next") : t("practice.puzzle.seeResults")}
+                </Button>
+              </div>
+              <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 sm:hidden z-10">
+                <Button onClick={handleNext} className="w-full h-14 text-base">
+                  {currentIdx + 1 < questions.length ? t("practice.puzzle.next") : t("practice.puzzle.seeResults")}
+                </Button>
+              </div>
+            </>
           )}
         </div>
       )}

@@ -147,7 +147,7 @@ export function MatchPage() {
     const isMatched = matched.has(card.entryId);
     const isSelected = selectedId === card.id;
     const isWrong = wrongIds.has(card.id);
-    const base = "w-full rounded-xl border px-3 py-2.5 text-left transition-all duration-150 select-none ";
+    const base = "relative w-full rounded-xl border px-3 py-2.5 text-left transition-all duration-150 select-none min-h-[4.5rem] sm:min-h-0 ";
     if (isMatched)
       return (
         base +
@@ -252,7 +252,6 @@ export function MatchPage() {
           tabLabel={t("practice.filters")}
           tabIcon={<TfiPanel className="text-xl" />}
           title={filtersTitle}
-          verticalPosition={phase === "playing" ? "bottom-0" : "bottom-[6rem]"}
           hasActiveIndicator={activeFilterCount > 0}
           headerAction={
             activeFilterCount > 0 ? (
@@ -343,8 +342,8 @@ export function MatchPage() {
                       onClick={() => handleWordClick(card)}
                       disabled={matched.has(card.entryId) || wrongIds.size > 0}
                       className={[cardCls(card, selectedWord?.id), isWrong ? "match-shake" : ""].join(" ")}>
-                      <span className="text-sm font-semibold leading-snug block">{card.text}</span>
-                      {matched.has(card.entryId) && <span className="text-green-500 text-xs ml-1">✓</span>}
+                      <span className="text-base font-semibold leading-snug block pr-4">{card.text}</span>
+                      {matched.has(card.entryId) && <span className="absolute top-1.5 right-2 text-green-500 text-xs leading-none">✓</span>}
                     </button>
                   );
                 })}
@@ -360,7 +359,7 @@ export function MatchPage() {
                       disabled={matched.has(card.entryId) || wrongIds.size > 0}
                       className={[cardCls(card, selectedExplanation?.id), isWrong ? "match-shake" : ""].join(" ")}>
                       <span
-                        className="text-xs leading-snug block"
+                        className="text-sm leading-snug block pr-4"
                         style={
                           !isSelected
                             ? {
@@ -373,7 +372,7 @@ export function MatchPage() {
                         }>
                         {card.text}
                       </span>
-                      {matched.has(card.entryId) && <span className="text-green-500 text-xs ml-1">✓</span>}
+                      {matched.has(card.entryId) && <span className="absolute top-1.5 right-2 text-green-500 text-xs leading-none">✓</span>}
                     </button>
                   );
                 })}

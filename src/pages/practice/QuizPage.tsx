@@ -282,7 +282,7 @@ export function QuizPage() {
 
       {/* ── Playing ─────────────────────────────────────────────── */}
       {phase === "playing" && (
-        <div className="flex flex-col gap-6 max-w-xl mx-auto w-full">
+        <div className={["flex flex-col gap-6 max-w-xl mx-auto w-full", answered ? "pb-28 sm:pb-0" : ""].join(" ").trim()}>
           <div className="flex items-center gap-4">
             <button
               onClick={() => setPhase("idle")}
@@ -356,11 +356,18 @@ export function QuizPage() {
           </div>
 
           {answered && (
-            <div className="flex justify-end">
-              <Button onClick={handleNext}>
-                {currentIdx + 1 < questions.length ? t("practice.quiz.next") : t("practice.quiz.seeResults")}
-              </Button>
-            </div>
+            <>
+              <div className="hidden sm:flex justify-end">
+                <Button onClick={handleNext}>
+                  {currentIdx + 1 < questions.length ? t("practice.quiz.next") : t("practice.quiz.seeResults")}
+                </Button>
+              </div>
+              <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 sm:hidden z-10">
+                <Button onClick={handleNext} className="w-full h-14 text-base">
+                  {currentIdx + 1 < questions.length ? t("practice.quiz.next") : t("practice.quiz.seeResults")}
+                </Button>
+              </div>
+            </>
           )}
         </div>
       )}
