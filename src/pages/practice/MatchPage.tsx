@@ -252,7 +252,7 @@ export function MatchPage() {
           tabLabel={t("practice.filters")}
           tabIcon={<TfiPanel className="text-xl" />}
           title={filtersTitle}
-          topline
+          verticalPosition={phase === "playing" ? "bottom-0" : "bottom-[6rem]"}
           hasActiveIndicator={activeFilterCount > 0}
           headerAction={
             activeFilterCount > 0 ? (

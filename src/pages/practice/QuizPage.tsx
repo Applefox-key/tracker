@@ -224,8 +224,8 @@ export function QuizPage() {
         tabLabel={t("practice.filters")}
         tabIcon={<TfiPanel className="text-xl" />}
         title={filtersTitle}
-        topline
         hasActiveIndicator={activeFilterCount > 0}
+        verticalPosition="top-0"
         headerAction={
           activeFilterCount > 0 ? (
             <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">

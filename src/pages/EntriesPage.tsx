@@ -119,7 +119,10 @@ export function EntriesPage() {
           {/* Desktop split button: left = Add Entry, right = dropdown */}
           <div className="hidden sm:flex relative" ref={addMenuRef}>
             <button
-              onClick={() => { setShowForm((v) => !v); setShowAddMenu(false); }}
+              onClick={() => {
+                setShowForm((v) => !v);
+                setShowAddMenu(false);
+              }}
               className="inline-flex items-center justify-center gap-2 rounded-l-lg font-medium px-4 py-2 text-sm bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500">
               {showForm ? t("entries.cancel") : t("entries.addEntry")}
             </button>
@@ -134,9 +137,21 @@ export function EntriesPage() {
             {showAddMenu && (
               <div className="absolute right-0 top-full mt-1.5 z-30 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden min-w-[160px]">
                 <button
-                  onClick={() => { setShowAddMenu(false); setShowImportModal(true); }}
+                  onClick={() => {
+                    setShowAddMenu(false);
+                    setShowImportModal(true);
+                  }}
                   className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors text-left">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                     <polyline points="14 2 14 8 20 8" />
                     <line x1="12" y1="18" x2="12" y2="12" />
@@ -350,6 +365,7 @@ export function EntriesPage() {
           onOpen={() => setIsMobileDrawerOpen(true)}
           tabLabel={t("entries.filters")}
           tabIcon={<TfiPanel className="text-xl" />}
+          verticalPosition={"top-[77px]"}
           title={`${t("entries.filters")}${advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}`}
           hasActiveIndicator={advancedFilterCount > 0}
           headerAction={
@@ -483,9 +499,7 @@ function EntryHeaderStrip({ entry, onView }: { entry: Entry; onView: (e: Entry) 
         {t(`dashboard.categories.${entry.category}`)}
       </span>
       <p className="flex-1 min-w-0 font-semibold text-gray-900 dark:text-gray-100 truncate">{entry.word}</p>
-      {entry.mastery_level === 5 && (
-        <TbCrown className="shrink-0 text-emerald-400 text-base" title="Mastered" />
-      )}
+      {entry.mastery_level === 5 && <TbCrown className="shrink-0 text-emerald-400 text-base" title="Mastered" />}
       <RatingStars value={entry.rating} readOnly />
       <p className="shrink-0 text-xs text-gray-400 dark:text-gray-500 hidden sm:block tabular-nums">
         {new Date(entry.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}

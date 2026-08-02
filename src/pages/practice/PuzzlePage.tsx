@@ -215,13 +215,13 @@ export function PuzzlePage() {
 
       {/* ── Header (always visible) ─────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
-        <div className="flex items-start gap-3 min-w-0 pt-[1rem]">
+        <div className="flex items-start  gap-3 min-w-0 pt-[1rem]">
           <Button onClick={() => navigate("/practice")}>
             <FaArrowLeft />
             {t("practice.match.backToPractice")}
           </Button>
           <div className="min-w-0 pb-2">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center  gap-1.5">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.puzzle.title")}</h1>
               {phase !== "idle" && (
                 <button
@@ -285,7 +285,6 @@ export function PuzzlePage() {
         onOpen={() => setIsMobileDrawerOpen(true)}
         tabLabel={t("practice.filters")}
         title={filtersTitle}
-        topline
         hasActiveIndicator={activeFilterCount > 0}
         headerAction={
           activeFilterCount > 0 ? (
