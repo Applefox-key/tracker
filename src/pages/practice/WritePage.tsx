@@ -53,8 +53,7 @@ export function WritePage() {
   const currentQuestion = questions[currentIdx] ?? null;
   const canStart = filteredEntries.length >= 1;
   const progressPct = questions.length > 0 ? Math.round((currentIdx / questions.length) * 100) : 0;
-  const resultPct =
-    phase === "done" && questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0;
+  const resultPct = phase === "done" && questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0;
 
   const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(
     Boolean,
@@ -147,11 +146,10 @@ export function WritePage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
         <div className="flex items-start gap-3 min-w-0 pb-2 pt-[1rem]">
-          <button
-            onClick={() => navigate("/practice")}
-            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mt-1 shrink-0 text-2xl">
+          <Button onClick={() => navigate("/practice")}>
             <FaArrowLeft />
-          </button>
+            {t("practice.match.backToPractice")}
+          </Button>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.write.title")}</h1>
@@ -327,8 +325,8 @@ export function WritePage() {
           </div>
 
           {/* Action button */}
-          {answerState === "unanswered" ? (
-            <div className="flex justify-end">
+          <div className="flex justify-end">
+            {answerState === "unanswered" ? (
               <Button
                 onClick={handleSubmit}
                 disabled={inputValue.trim() === ""}
@@ -336,17 +334,12 @@ export function WritePage() {
                 className="w-full sm:w-auto text-base">
                 {t("practice.write.checkAnswer")}
               </Button>
-            </div>
-          ) : (
-            <>
-              <div className="h-20 sm:hidden" />
-              <div className="fixed bottom-0 left-0 right-0 sm:static sm:flex sm:justify-end bg-white dark:bg-gray-900 sm:bg-transparent border-t border-gray-200 dark:border-gray-700 sm:border-0 p-4 sm:p-0 z-50">
-                <Button ref={nextBtnRef} onClick={handleNext} size="lg" className="w-full sm:w-auto text-base">
-                  {currentIdx + 1 < questions.length ? t("practice.write.next") : t("practice.write.seeResults")}
-                </Button>
-              </div>
-            </>
-          )}
+            ) : (
+              <Button ref={nextBtnRef} onClick={handleNext} size="lg" className="w-full sm:w-auto text-base">
+                {currentIdx + 1 < questions.length ? t("practice.write.next") : t("practice.write.seeResults")}
+              </Button>
+            )}
+          </div>
         </div>
       )}
 

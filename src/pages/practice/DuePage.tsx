@@ -460,11 +460,10 @@ export function DuePage() {
       {/* ── Header (always visible) ─────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
         <div className="flex items-start gap-3 min-w-0 pb-2 pt-[1rem]">
-          <button
-            onClick={() => navigate("/practice")}
-            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mt-1 shrink-0 text-2xl">
+          <Button onClick={() => navigate("/practice")}>
             <FaArrowLeft />
-          </button>
+            {t("practice.match.backToPractice")}
+          </Button>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.due.title")}</h1>
@@ -578,7 +577,9 @@ export function DuePage() {
             <div key={`${current.entry.id}-${currentIdx}`}>
               {current.mode === "flashcard" && <DueFlashcardItem entry={current.entry} onNext={handleNext} />}
               {current.mode === "quiz" && <DueQuizItem entry={current.entry} pool={dueEntries} onNext={handleNext} />}
-              {current.mode === "puzzle" && <DuePuzzleItem entry={current.entry} allEntries={dueEntries} onNext={handleNext} />}
+              {current.mode === "puzzle" && (
+                <DuePuzzleItem entry={current.entry} allEntries={dueEntries} onNext={handleNext} />
+              )}
             </div>
           )}
         </div>
