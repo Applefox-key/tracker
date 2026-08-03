@@ -56,8 +56,8 @@ export function useReviewEntry() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, grade, mode }: { id: number; grade: SRGrade; mode: PracticeMode }) =>
-      entriesApi.reviewEntry(id, grade, mode),
+    mutationFn: ({ id, grade, mode, isDue }: { id: number; grade: SRGrade; mode: PracticeMode; isDue?: boolean }) =>
+      entriesApi.reviewEntry(id, grade, mode, isDue),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ENTRIES_KEY })
     },

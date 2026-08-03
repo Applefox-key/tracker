@@ -227,8 +227,8 @@ export const entriesApi = {
     await apiClient.delete(`/entries/${id}`)
   },
 
-  async reviewEntry(id: number, grade: SRGrade, mode: PracticeMode): Promise<Entry> {
-    const res = await apiClient.post<RawEntry>(`/entries/${id}/review`, { grade, mode })
+  async reviewEntry(id: number, grade: SRGrade, mode: PracticeMode, isDue = false): Promise<Entry> {
+    const res = await apiClient.post<RawEntry>(`/entries/${id}/review`, { grade, mode, isDue })
     return toEntry(res.data)
   },
 

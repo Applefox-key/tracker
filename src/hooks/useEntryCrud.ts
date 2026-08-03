@@ -71,9 +71,9 @@ export function useEntryCrud() {
     }
   }
 
-  function reviewEntry(id: number, grade: SRGrade, practiceMode: PracticeMode) {
+  function reviewEntry(id: number, grade: SRGrade, practiceMode: PracticeMode, isDue = false) {
     if (mode === 'authenticated') {
-      reviewMutation.mutate({ id, grade, mode: practiceMode })
+      reviewMutation.mutate({ id, grade, mode: practiceMode, isDue })
     }
   }
 

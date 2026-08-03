@@ -104,7 +104,7 @@ function DueFlashcardItem({ entry, onNext }: { entry: Entry; onNext: () => void 
   const [isFlipped, setIsFlipped] = useState(false);
 
   function handleGrade(grade: SRGrade) {
-    reviewEntry(entry.id, grade, "flashcard");
+    reviewEntry(entry.id, grade, "flashcard", true);
     onNext();
   }
 
