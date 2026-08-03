@@ -97,7 +97,16 @@ const CATEGORY_STYLES: Array<{
 
 // ── Streak 2.5D cake ─────────────────────────────────────────────────────────
 
+const LAP_COLORS = [
+  { top: "fill-amber-400 dark:fill-amber-500",     side: "fill-amber-600 dark:fill-amber-700",   fadedTop: "fill-amber-200 dark:fill-amber-800",   fadedSide: "fill-amber-300 dark:fill-amber-700" },
+  { top: "fill-blue-400 dark:fill-blue-500",       side: "fill-blue-600 dark:fill-blue-700",     fadedTop: "fill-blue-200 dark:fill-blue-800",     fadedSide: "fill-blue-300 dark:fill-blue-700" },
+  { top: "fill-emerald-400 dark:fill-emerald-500", side: "fill-emerald-600 dark:fill-emerald-700", fadedTop: "fill-emerald-200 dark:fill-emerald-800", fadedSide: "fill-emerald-300 dark:fill-emerald-700" },
+  { top: "fill-violet-400 dark:fill-violet-500",   side: "fill-violet-600 dark:fill-violet-700", fadedTop: "fill-violet-200 dark:fill-violet-800",  fadedSide: "fill-violet-300 dark:fill-violet-700" },
+  { top: "fill-pink-400 dark:fill-pink-500",       side: "fill-pink-600 dark:fill-pink-700",     fadedTop: "fill-pink-200 dark:fill-pink-800",     fadedSide: "fill-pink-300 dark:fill-pink-700" },
+] as const;
+
 function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number }) {
+  const { t } = useTranslation();
   const cx = 60,
     cy = 36;
   const rx = 52,
@@ -105,6 +114,12 @@ function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number })
   const depth = 14;
   const STEP = (2 * Math.PI) / total;
   const START = -Math.PI / 2;
+
+  const completedLaps = Math.floor(streak / 7);
+  const progress = streak % 7;
+  const lapNumber = streak > 0 ? Math.ceil(streak / 7) : 0;
+  const currentColor = LAP_COLORS[completedLaps % LAP_COLORS.length];
+  const prevColor = completedLaps > 0 ? LAP_COLORS[(completedLaps - 1) % LAP_COLORS.length] : null;
 
   const pt = (angle: number, bot = false): [number, number] => [
     cx + rx * Math.cos(angle),
@@ -124,32 +139,56 @@ function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number })
       midSin > -0.25
         ? `${tx0.toFixed(2)},${ty0.toFixed(2)} ${bx0.toFixed(2)},${by0.toFixed(2)} ${bx1.toFixed(2)},${by1.toFixed(2)} ${tx1.toFixed(2)},${ty1.toFixed(2)}`
         : null;
-    return { i, filled: i < streak, midSin, topPath, sidePoints };
+
+    // progress===0 && streak>0 means lap just completed — show all sectors in that lap's color
+    const isFilledCurrent = progress === 0 ? streak > 0 : i < progress;
+
+    let topClass: string;
+    let sideClass: string;
+    if (isFilledCurrent) {
+      // When lap just completed (progress===0), show previous lap's color (the one just done)
+      const color = progress === 0 ? prevColor ?? currentColor : currentColor;
+      topClass = color.top;
+      sideClass = color.side;
+    } else if (prevColor) {
+      // Empty slots in lap 2+: faded version of the previous lap
+      topClass = prevColor.fadedTop;
+      sideClass = prevColor.fadedSide;
+    } else {
+      // Empty slots in lap 1: plain gray
+      topClass = "fill-gray-200 dark:fill-gray-600";
+      sideClass = "fill-gray-300 dark:fill-gray-500";
+    }
+
+    return { i, topClass, sideClass, midSin, topPath, sidePoints };
   });
 
   const sideSectors = [...sectors].filter((s) => s.sidePoints !== null).sort((a, b) => a.midSin - b.midSin);
 
   return (
-    <svg viewBox="0 0 120 80" className="w-20 h-14" aria-hidden>
-      <ellipse cx={cx} cy={cy + depth + ry + 2} rx={rx - 4} ry={4} fill="rgba(0,0,0,0.12)" />
-      <ellipse cx={cx} cy={cy + depth} rx={rx} ry={ry} className="fill-gray-200 dark:fill-gray-600" />
-      {sideSectors.map((s) => (
-        <polygon
-          key={`w${s.i}`}
-          points={s.sidePoints!}
-          className={s.filled ? "fill-amber-600 dark:fill-amber-700" : "fill-gray-300 dark:fill-gray-500"}
-        />
-      ))}
-      {sectors.map((s) => (
-        <path
-          key={`t${s.i}`}
-          d={s.topPath}
-          stroke="rgba(255,255,255,0.45)"
-          strokeWidth="0.7"
-          className={s.filled ? "fill-amber-400 dark:fill-amber-500" : "fill-gray-200 dark:fill-gray-600"}
-        />
-      ))}
-    </svg>
+    <div className="flex flex-col items-center gap-0.5 shrink-0">
+      <svg viewBox="0 0 120 80" className="w-20 h-14" aria-hidden>
+        <ellipse cx={cx} cy={cy + depth + ry + 2} rx={rx - 4} ry={4} fill="rgba(0,0,0,0.12)" />
+        <ellipse cx={cx} cy={cy + depth} rx={rx} ry={ry} className="fill-gray-200 dark:fill-gray-600" />
+        {sideSectors.map((s) => (
+          <polygon key={`w${s.i}`} points={s.sidePoints!} className={s.sideClass} />
+        ))}
+        {sectors.map((s) => (
+          <path
+            key={`t${s.i}`}
+            d={s.topPath}
+            stroke="rgba(255,255,255,0.45)"
+            strokeWidth="0.7"
+            className={s.topClass}
+          />
+        ))}
+      </svg>
+      {lapNumber >= 2 && (
+        <span className="text-[9px] font-bold bg-gray-700 dark:bg-gray-300 text-white dark:text-gray-800 px-1.5 py-0.5 rounded-full leading-none whitespace-nowrap">
+          {t("dashboard.streakLap", { count: lapNumber })}
+        </span>
+      )}
+    </div>
   );
 }
 
