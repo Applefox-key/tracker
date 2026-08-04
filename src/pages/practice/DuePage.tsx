@@ -87,7 +87,7 @@ function GradeButtons({ onGrade }: { onGrade: (g: SRGrade) => void }) {
           <button
             key={grade}
             onClick={() => onGrade(grade)}
-            className={`py-2 rounded-xl border text-xs font-semibold transition-colors bg-white dark:bg-gray-800 ${cls}`}>
+            className={`py-2.5 sm:py-2 rounded-xl border text-sm sm:text-xs font-semibold transition-colors bg-white dark:bg-gray-800 ${cls}`}>
             {t(key)}
           </button>
         ))}
@@ -109,17 +109,29 @@ function DueFlashcardItem({ entry, onNext }: { entry: Entry; onNext: () => void 
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={["flex flex-col gap-4", isFlipped ? "pb-32 sm:pb-0" : ""].join(" ").trim()}>
       <FlashCard
         card={entryToCard(entry)}
         isFlipped={isFlipped}
         onFlip={() => setIsFlipped((v) => !v)}
         reversed={true}
       />
-      {isFlipped ? (
-        <GradeButtons onGrade={handleGrade} />
-      ) : (
+      {!isFlipped && (
         <p className="text-center text-xs text-gray-300 dark:text-gray-600">{t("practice.flashcards.tapHint")}</p>
+      )}
+      {/* Desktop: inline grade buttons */}
+      {isFlipped && (
+        <div className="hidden sm:block">
+          <GradeButtons onGrade={handleGrade} />
+        </div>
+      )}
+      {/* Mobile: fixed bottom grade buttons */}
+      {isFlipped && (
+        <div
+          className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] dark:shadow-[0_-4px_16px_rgba(0,0,0,0.4)] px-4 pt-4"
+          style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom))" }}>
+          <GradeButtons onGrade={handleGrade} />
+        </div>
       )}
     </div>
   );
@@ -304,7 +316,7 @@ function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={["flex flex-col gap-4", phase !== "thinking" ? "pb-28 sm:pb-0" : ""].join(" ").trim()}>
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 flex flex-col gap-3">
         <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">
           {tileMode === "letter" ? t("practice.puzzle.spellWord") : t("practice.puzzle.arrangeWords")}
@@ -314,7 +326,7 @@ function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries
 
       <div
         className={[
-          "min-h-[52px] rounded-xl border-2 p-3 flex flex-wrap gap-2 items-center transition-colors",
+          "min-h-[64px] rounded-xl border-2 p-3 flex flex-wrap gap-2 items-center transition-colors",
           phase === "correct"
             ? "border-green-400 bg-green-50 dark:bg-green-900/20"
             : phase === "wrong"
@@ -330,7 +342,7 @@ function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries
           <button
             key={tile.id}
             onClick={() => removePlaced(tile)}
-            className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors">
+            className="min-h-[3rem] min-w-[3rem] px-4 py-2 rounded-lg bg-emerald-600 text-white text-base font-medium hover:bg-emerald-700 active:bg-emerald-800 transition-colors touch-manipulation">
             {tile.value}
           </button>
         ))}
@@ -352,24 +364,37 @@ function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries
             key={tile.id}
             onClick={() => placeTile(tile)}
             disabled={phase !== "thinking"}
-            className="px-3 py-1.5 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors disabled:opacity-40">
+            className="text-3xl min-h-[3.5rem] min-w-[3.5rem] px-4 py-2.5 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 font-medium text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 active:bg-emerald-100 transition-colors touch-manipulation disabled:opacity-40">
             {tile.value}
           </button>
         ))}
       </div>
 
       {phase === "wrong" && (
-        <div className="flex justify-end gap-3">
-          <Button variant="secondary" onClick={tryAgain}>
-            {t("practice.puzzle.tryAgain")}
-          </Button>
-          <Button onClick={handleSkip}>{t("practice.puzzle.skip")}</Button>
-        </div>
+        <>
+          <div className="hidden sm:flex justify-end gap-3">
+            <Button variant="secondary" onClick={tryAgain}>
+              {t("practice.puzzle.tryAgain")}
+            </Button>
+            <Button onClick={handleSkip}>{t("practice.puzzle.skip")}</Button>
+          </div>
+          <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 z-10 flex gap-3">
+            <Button variant="secondary" onClick={tryAgain} className="flex-1">
+              {t("practice.puzzle.tryAgain")}
+            </Button>
+            <Button onClick={handleSkip} className="flex-1">{t("practice.puzzle.skip")}</Button>
+          </div>
+        </>
       )}
       {phase === "correct" && (
-        <div className="flex justify-end">
-          <Button onClick={onNext}>{t("practice.puzzle.next")}</Button>
-        </div>
+        <>
+          <div className="hidden sm:flex justify-end">
+            <Button onClick={onNext}>{t("practice.puzzle.next")}</Button>
+          </div>
+          <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 z-10">
+            <Button onClick={onNext} className="w-full h-14 text-base">{t("practice.puzzle.next")}</Button>
+          </div>
+        </>
       )}
     </div>
   );

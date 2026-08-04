@@ -98,11 +98,36 @@ const CATEGORY_STYLES: Array<{
 // ── Streak 2.5D cake ─────────────────────────────────────────────────────────
 
 const LAP_COLORS = [
-  { top: "fill-amber-400 dark:fill-amber-500",     side: "fill-amber-600 dark:fill-amber-700",   fadedTop: "fill-amber-200 dark:fill-amber-800",   fadedSide: "fill-amber-300 dark:fill-amber-700" },
-  { top: "fill-blue-400 dark:fill-blue-500",       side: "fill-blue-600 dark:fill-blue-700",     fadedTop: "fill-blue-200 dark:fill-blue-800",     fadedSide: "fill-blue-300 dark:fill-blue-700" },
-  { top: "fill-emerald-400 dark:fill-emerald-500", side: "fill-emerald-600 dark:fill-emerald-700", fadedTop: "fill-emerald-200 dark:fill-emerald-800", fadedSide: "fill-emerald-300 dark:fill-emerald-700" },
-  { top: "fill-violet-400 dark:fill-violet-500",   side: "fill-violet-600 dark:fill-violet-700", fadedTop: "fill-violet-200 dark:fill-violet-800",  fadedSide: "fill-violet-300 dark:fill-violet-700" },
-  { top: "fill-pink-400 dark:fill-pink-500",       side: "fill-pink-600 dark:fill-pink-700",     fadedTop: "fill-pink-200 dark:fill-pink-800",     fadedSide: "fill-pink-300 dark:fill-pink-700" },
+  {
+    top: "fill-amber-400 dark:fill-amber-500",
+    side: "fill-amber-600 dark:fill-amber-700",
+    fadedTop: "fill-amber-200 dark:fill-amber-800",
+    fadedSide: "fill-amber-300 dark:fill-amber-700",
+  },
+  {
+    top: "fill-blue-400 dark:fill-blue-500",
+    side: "fill-blue-600 dark:fill-blue-700",
+    fadedTop: "fill-blue-200 dark:fill-blue-800",
+    fadedSide: "fill-blue-300 dark:fill-blue-700",
+  },
+  {
+    top: "fill-emerald-400 dark:fill-emerald-500",
+    side: "fill-emerald-600 dark:fill-emerald-700",
+    fadedTop: "fill-emerald-200 dark:fill-emerald-800",
+    fadedSide: "fill-emerald-300 dark:fill-emerald-700",
+  },
+  {
+    top: "fill-violet-400 dark:fill-violet-500",
+    side: "fill-violet-600 dark:fill-violet-700",
+    fadedTop: "fill-violet-200 dark:fill-violet-800",
+    fadedSide: "fill-violet-300 dark:fill-violet-700",
+  },
+  {
+    top: "fill-pink-400 dark:fill-pink-500",
+    side: "fill-pink-600 dark:fill-pink-700",
+    fadedTop: "fill-pink-200 dark:fill-pink-800",
+    fadedSide: "fill-pink-300 dark:fill-pink-700",
+  },
 ] as const;
 
 function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number }) {
@@ -147,7 +172,7 @@ function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number })
     let sideClass: string;
     if (isFilledCurrent) {
       // When lap just completed (progress===0), show previous lap's color (the one just done)
-      const color = progress === 0 ? prevColor ?? currentColor : currentColor;
+      const color = progress === 0 ? (prevColor ?? currentColor) : currentColor;
       topClass = color.top;
       sideClass = color.side;
     } else if (prevColor) {
@@ -242,6 +267,7 @@ function WeeklyActivityChip({ entries }: { entries: Entry[] }) {
   return (
     <div className="flex items-center gap-3 sm:gap-4 px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-sm">
       <StreakCake3D streak={streak} />
+
       <div className="flex-1 min-w-0">
         {streakMain ? (
           <div>
