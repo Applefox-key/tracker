@@ -235,11 +235,26 @@ function WeeklyActivityChip({ entries }: { entries: Entry[] }) {
       return { count, letter, isToday: i === 6 };
     });
 
+    const activityDates = new Set(
+      entries.map((e) => {
+        const d = new Date(e.createdAt);
+        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      }),
+    );
     let s = 0;
-    for (let i = 6; i >= 0; i--) {
-      if (arr[i].count > 0) s++;
-      else if (i === 6) continue;
-      else break;
+    let i = 0;
+    while (true) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      if (activityDates.has(key)) {
+        s++;
+        i++;
+      } else if (i === 0) {
+        i++;
+      } else {
+        break;
+      }
     }
     return { days: arr, streak: s };
   }, [entries, i18n.language]);
@@ -755,20 +770,26 @@ export function DashboardPage() {
   }
 
   const streak = useMemo(() => {
-    const dayCounts = Array.from({ length: 7 }, (_, i) => {
-      const from = daysAgo(6 - i);
-      const to = new Date(from);
-      to.setDate(to.getDate() + 1);
-      return entries.filter((e) => {
-        const time = new Date(e.createdAt).getTime();
-        return time >= from.getTime() && time < to.getTime();
-      }).length;
-    });
+    const activityDates = new Set(
+      entries.map((e) => {
+        const d = new Date(e.createdAt);
+        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      }),
+    );
     let s = 0;
-    for (let i = 6; i >= 0; i--) {
-      if (dayCounts[i] > 0) s++;
-      else if (i === 6) continue;
-      else break;
+    let i = 0;
+    while (true) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      if (activityDates.has(key)) {
+        s++;
+        i++;
+      } else if (i === 0) {
+        i++; // today has no entries yet — check yesterday
+      } else {
+        break;
+      }
     }
     return s;
   }, [entries]);
