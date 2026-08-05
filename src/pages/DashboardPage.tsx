@@ -163,9 +163,9 @@ function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number })
     const [bx0, by0] = pt(a0, true);
     const [bx1, by1] = pt(a1, true);
     const topPath = `M ${cx} ${cy} L ${tx0.toFixed(2)} ${ty0.toFixed(2)} A ${rx} ${ry} 0 0 1 ${tx1.toFixed(2)} ${ty1.toFixed(2)} Z`;
-    const sidePoints =
+    const sidePath =
       midSin > -0.25
-        ? `${tx0.toFixed(2)},${ty0.toFixed(2)} ${bx0.toFixed(2)},${by0.toFixed(2)} ${bx1.toFixed(2)},${by1.toFixed(2)} ${tx1.toFixed(2)},${ty1.toFixed(2)}`
+        ? `M ${tx0.toFixed(2)} ${ty0.toFixed(2)} L ${bx0.toFixed(2)} ${by0.toFixed(2)} A ${rx} ${ry} 0 0 1 ${bx1.toFixed(2)} ${by1.toFixed(2)} L ${tx1.toFixed(2)} ${ty1.toFixed(2)} Z`
         : null;
 
     // progress===0 && streak>0 means lap just completed — show all sectors in that lap's color
@@ -188,10 +188,10 @@ function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number })
       sideClass = "fill-gray-300 dark:fill-gray-500";
     }
 
-    return { i, topClass, sideClass, midSin, topPath, sidePoints };
+    return { i, topClass, sideClass, midSin, topPath, sidePath };
   });
 
-  const sideSectors = [...sectors].filter((s) => s.sidePoints !== null).sort((a, b) => a.midSin - b.midSin);
+  const sideSectors = [...sectors].filter((s) => s.sidePath !== null).sort((a, b) => a.midSin - b.midSin);
 
   return (
     <div className="flex flex-col items-center gap-0.5 shrink-0">
@@ -199,7 +199,7 @@ function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number })
         <ellipse cx={cx} cy={cy + depth + ry + 2} rx={rx - 4} ry={4} fill="rgba(0,0,0,0.12)" />
         <ellipse cx={cx} cy={cy + depth} rx={rx} ry={ry} className="fill-gray-200 dark:fill-gray-600" />
         {sideSectors.map((s) => (
-          <polygon key={`w${s.i}`} points={s.sidePoints!} className={s.sideClass} />
+          <path key={`w${s.i}`} d={s.sidePath!} className={s.sideClass} />
         ))}
         {sectors.map((s) => (
           <path

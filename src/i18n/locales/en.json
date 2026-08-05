@@ -41,7 +41,7 @@
     "streakKeepUpSub": "keep it up!",
     "noStreak": "No streak yet",
     "noStreakSub": "start today!",
-    "streakLap": "Lap {{count}}",
+    "streakLap": "Week: {{count}}",
     "totalEntriesLabel_one": "total entry",
     "totalEntriesLabel_other": "total entries",
     "statTotal": "Total Entries",

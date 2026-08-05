@@ -41,7 +41,7 @@
     "streakKeepUpSub": "¡sigue así!",
     "noStreak": "Sin racha aún",
     "noStreakSub": "¡empieza hoy!",
-    "streakLap": "Vuelta {{count}}",
+    "streakLap": "Semana: {{count}}",
     "totalEntriesLabel_one": "entrada en total",
     "totalEntriesLabel_other": "entradas en total",
     "statTotal": "Total entradas",

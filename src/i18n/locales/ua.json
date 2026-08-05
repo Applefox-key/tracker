@@ -49,7 +49,7 @@
     "streakKeepUpSub": "продовжуй!",
     "noStreak": "Поки немає серії",
     "noStreakSub": "починай сьогодні!",
-    "streakLap": "Коло {{count}}",
+    "streakLap": "Тиждень: {{count}}",
     "totalEntriesLabel_one": "запис",
     "totalEntriesLabel_few": "записи",
     "totalEntriesLabel_many": "записів",

@@ -49,7 +49,7 @@
     "streakKeepUpSub": "не останавливайся!",
     "noStreak": "Ещё нет серии",
     "noStreakSub": "начни сегодня!",
-    "streakLap": "Круг {{count}}",
+    "streakLap": "Неделя: {{count}}",
     "totalEntriesLabel_one": "запись",
     "totalEntriesLabel_few": "записи",
     "totalEntriesLabel_many": "записей",

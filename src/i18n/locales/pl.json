@@ -41,7 +41,7 @@
     "streakKeepUpSub": "tak trzymaj!",
     "noStreak": "Brak serii",
     "noStreakSub": "zacznij dziś!",
-    "streakLap": "Runda {{count}}",
+    "streakLap": "Tydzień: {{count}}",
     "totalEntriesLabel_one": "wpis",
     "totalEntriesLabel_few": "wpisy",
     "totalEntriesLabel_many": "wpisów",
