@@ -262,11 +262,11 @@
       "puzzle": { "label": "Puzzle", "description": "Ordena letras o palabras en el orden correcto" },
       "due": { "label": "Para hoy", "description": "Repasa las tarjetas programadas para hoy" },
       "write": { "label": "Escribe la palabra", "description": "Escribe la palabra correcta a partir de su explicación" },
-      "custom": { "label": "Mi práctica", "description": "Elige entradas con filtros y mezcla todos los juegos" }
+      "custom": { "label": "Mezclador", "description": "Repasa tarjetas mezclando todos los modos de juego" }
     },
     "custom": {
-      "title": "Mi práctica",
-      "description": "Filtra las entradas que quieres repasar y practica con una mezcla aleatoria de juegos.",
+      "title": "Mezclador",
+      "description": "Repasa tus tarjetas",
       "cardsSelected": "{{count}} tarjeta seleccionada",
       "cardsSelected_other": "{{count}} tarjetas seleccionadas",
       "noEntries": "Ninguna entrada coincide con los filtros. Intenta ajustarlos.",

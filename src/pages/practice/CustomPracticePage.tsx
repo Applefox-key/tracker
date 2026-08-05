@@ -398,7 +398,9 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
             <Button variant="secondary" onClick={tryAgain} className="flex-1">
               {t("practice.puzzle.tryAgain")}
             </Button>
-            <Button onClick={handleSkip} className="flex-1">{t("practice.puzzle.skip")}</Button>
+            <Button onClick={handleSkip} className="flex-1">
+              {t("practice.puzzle.skip")}
+            </Button>
           </div>
         </>
       )}
@@ -408,7 +410,9 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
             <Button onClick={onNext}>{t("practice.puzzle.next")}</Button>
           </div>
           <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 z-10">
-            <Button onClick={onNext} className="w-full h-14 text-base">{t("practice.puzzle.next")}</Button>
+            <Button onClick={onNext} className="w-full h-14 text-base">
+              {t("practice.puzzle.next")}
+            </Button>
           </div>
         </>
       )}
@@ -419,7 +423,12 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
 // ── WriteItem ─────────────────────────────────────────────────────────────────
 
 function normalizeAnswer(s: string): string {
-  return s.trim().replace(/[.?!]+$/, "").replace(/\s+/g, " ").trim().toLowerCase();
+  return s
+    .trim()
+    .replace(/[.?!]+$/, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
 }
 
 function WriteItem({ entry, onNext }: { entry: Entry; onNext: () => void }) {
@@ -636,60 +645,33 @@ export function CustomPracticePage() {
           </div>
         </div>
 
-      </div>
-
-      <hr className="border-gray-200 dark:border-gray-700" />
-
-      {/* Mobile SideDrawer for filters — visible only during idle */}
-      {phase === "idle" && (
-        <SideDrawer
-          open={isMobileDrawerOpen}
-          onClose={() => setIsMobileDrawerOpen(false)}
-          onOpen={() => setIsMobileDrawerOpen(true)}
-          tabLabel={t("practice.filters")}
-          tabIcon={<TfiPanel className="text-xl" />}
-          title={t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "")}
-          hasActiveIndicator={activeFilterCount > 0}
-          headerAction={
-            activeFilterCount > 0 ? (
-              <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">
-                {t("practice.clearFilters")}
-              </button>
-            ) : undefined
-          }>
-          <PracticeFilterPanel
-            allTags={allTags}
-            selectedCategory={filters.selectedCategory}
-            onCategoryChange={(c) => setFilters((f) => ({ ...f, selectedCategory: c }))}
-            selectedTag={filters.selectedTag}
-            onTagChange={(t) => setFilters((f) => ({ ...f, selectedTag: t }))}
-            selectedRatings={filters.selectedRatings}
-            onRatingsChange={(r) => setFilters((f) => ({ ...f, selectedRatings: r }))}
-            inDrawer={true}
-          />
-        </SideDrawer>
-      )}
-
-      {/* ── Idle ────────────────────────────────────────────────── */}
-      {phase === "idle" && (
-        <div className="flex flex-col gap-6 max-w-xl mx-auto w-full pb-28 sm:pb-8">
-          {/* Desktop filter toggle */}
-          <div className="hidden sm:flex items-center gap-3">
+        {phase === "idle" && (
+          <div className="flex items-center gap-2 sm:ml-auto flex-wrap sm:flex-nowrap">
             <Button
               variant={showFilters ? "primary" : "secondary"}
               size="sm"
+              className="hidden sm:block"
               onClick={() => setShowFilters((v) => !v)}>
               {t("practice.filters")}
               {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
               <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
             </Button>
             {activeFilterCount > 0 && (
-              <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">
+              <button
+                onClick={clearFilters}
+                className="text-xs text-red-500 hover:text-red-700 font-medium hidden sm:block">
                 {t("practice.clear")}
               </button>
             )}
           </div>
+        )}
+      </div>
 
+      <hr className="border-gray-200 dark:border-gray-700" />
+
+      {/* Mobile SideDrawer for filters and filters for PC— visible only during idle */}
+      {phase === "idle" && (
+        <>
           {showFilters && (
             <div className="hidden sm:block">
               <PracticeFilterPanel
@@ -702,11 +684,43 @@ export function CustomPracticePage() {
                 onRatingsChange={(r) => setFilters((f) => ({ ...f, selectedRatings: r }))}
               />
             </div>
-          )}
+          )}{" "}
+          {/* Mobile SideDrawer for filters — visible only during idle */}
+          <SideDrawer
+            open={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            onOpen={() => setIsMobileDrawerOpen(true)}
+            tabLabel={t("practice.filters")}
+            tabIcon={<TfiPanel className="text-xl" />}
+            title={t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "")}
+            hasActiveIndicator={activeFilterCount > 0}
+            headerAction={
+              activeFilterCount > 0 ? (
+                <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">
+                  {t("practice.clearFilters")}
+                </button>
+              ) : undefined
+            }>
+            <PracticeFilterPanel
+              allTags={allTags}
+              selectedCategory={filters.selectedCategory}
+              onCategoryChange={(c) => setFilters((f) => ({ ...f, selectedCategory: c }))}
+              selectedTag={filters.selectedTag}
+              onTagChange={(t) => setFilters((f) => ({ ...f, selectedTag: t }))}
+              selectedRatings={filters.selectedRatings}
+              onRatingsChange={(r) => setFilters((f) => ({ ...f, selectedRatings: r }))}
+              inDrawer={true}
+            />
+          </SideDrawer>
+        </>
+      )}
 
+      {/* ── Idle ────────────────────────────────────────────────── */}
+      {phase === "idle" && (
+        <div className="flex flex-col gap-6 max-w-xl mx-auto w-full pb-28 sm:pb-8">
           {/* Mode selection */}
           <div className="flex flex-col gap-3">
-            <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+            <p className="text-md font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
               {t("practice.due.selectModes")}
             </p>
             <ul className="flex flex-col gap-3">
@@ -722,7 +736,7 @@ export function CustomPracticePage() {
                     ].join(" ")}>
                     {selectedModes.includes(m) ? "✓" : ""}
                   </button>
-                  <p className="text-sm sm:text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                  <p className="text-md text-gray-500 dark:text-gray-400 leading-relaxed">
                     <span className="font-semibold text-gray-700 dark:text-gray-300">
                       {MODE_ICONS[m]} {t(`practice.custom.modes.${m}`)}
                     </span>

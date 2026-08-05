@@ -270,11 +270,11 @@
       "puzzle": { "label": "Puzzle", "description": "Ułóż litery lub słowa w prawidłowej kolejności" },
       "due": { "label": "Na dziś", "description": "Powtórz fiszki zaplanowane na dzisiaj" },
       "write": { "label": "Napisz słowo", "description": "Wpisz poprawne słowo na podstawie jego wyjaśnienia" },
-      "custom": { "label": "Moje ćwiczenia", "description": "Wybierz wpisy przez filtry i mieszaj wszystkie gry" }
+      "custom": { "label": "Mikser", "description": "Powtórz fiszki mieszając wszystkie gry" }
     },
     "custom": {
-      "title": "Moje ćwiczenia",
-      "description": "Przefiltruj wpisy, które chcesz powtórzyć, i ćwicz je w losowej kolejności gier.",
+      "title": "Mikser",
+      "description": "Powtórz fiszki",
       "cardsSelected_one": "{{count}} fiszka wybrana",
       "cardsSelected_few": "{{count}} fiszki wybrane",
       "cardsSelected_many": "{{count}} fiszek wybranych",

@@ -19,10 +19,45 @@ export const WRITE_ALLOWED_CATEGORIES: EntryCategory[] = ["word", "phrase", "idi
 function normalizeAnswer(s: string): string {
   return s
     .trim()
+    .replace(/[,:]/g, "")
     .replace(/[.?!]+$/, "")
     .replace(/\s+/g, " ")
     .trim()
     .toLowerCase();
+}
+
+function AnswerDiff({ input, correct }: { input: string; correct: string }) {
+  const normInput = normalizeAnswer(input);
+  const normCorrect = normalizeAnswer(correct);
+  const len = Math.max(normInput.length, normCorrect.length);
+
+  return (
+    <span className="font-semibold tracking-wide">
+      {Array.from({ length: len }, (_, i) => {
+        const u = normInput[i];
+        const c = normCorrect[i];
+        if (i >= normCorrect.length) {
+          return (
+            <span key={i} className="text-red-500 dark:text-red-400 line-through opacity-60">
+              {u}
+            </span>
+          );
+        }
+        if (u === c) {
+          return (
+            <span key={i} className="text-green-600 dark:text-green-400">
+              {u}
+            </span>
+          );
+        }
+        return (
+          <span key={i} className="text-red-600 dark:text-red-400 underline decoration-red-500 underline-offset-2">
+            {u ?? c}
+          </span>
+        );
+      })}
+    </span>
+  );
 }
 
 export function WritePage() {
@@ -64,10 +99,19 @@ export function WritePage() {
     if (phase === "playing" && answerState === "unanswered") {
       setTimeout(() => inputRef.current?.focus(), 50);
     }
-    if (phase === "playing" && answerState !== "unanswered") {
-      setTimeout(() => nextBtnRef.current?.focus(), 50);
-    }
   }, [phase, currentIdx, answerState]);
+
+  useEffect(() => {
+    if (phase !== "playing") return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Enter" || e.repeat) return;
+      if (answerState === "unanswered") handleSubmit();
+      else handleNext();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, answerState, currentIdx, inputValue]);
 
   useEffect(() => {
     if (phase !== "playing") return;
@@ -102,13 +146,6 @@ export function WritePage() {
       setInputValue("");
       setAnswerState("unanswered");
       setShowExample(false);
-    }
-  }
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      if (answerState === "unanswered") handleSubmit();
-      else handleNext();
     }
   }
 
@@ -284,29 +321,32 @@ export function WritePage() {
 
           {/* Input + feedback */}
           <div className="flex flex-col gap-3">
-            <input
-              ref={inputRef}
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-              disabled={answerState !== "unanswered"}
-              placeholder={t("practice.write.typeAnswer")}
-              autoComplete="off"
-              autoCorrect="off"
-              autoCapitalize="none"
-              spellCheck={false}
-              className={[
-                "w-full px-4 py-3 sm:py-4 rounded-xl border text-base sm:text-lg transition-colors outline-none",
-                "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100",
-                "placeholder:text-gray-400 dark:placeholder:text-gray-500",
-                answerState === "unanswered"
-                  ? "border-gray-300 dark:border-gray-600 focus:border-emerald-400 dark:focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:focus:ring-emerald-900/30"
-                  : answerState === "correct"
-                    ? "border-green-400 dark:border-green-500 bg-green-50 dark:bg-green-900/10"
-                    : "border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-900/10",
-              ].join(" ")}
-            />
+            {answerState === "wrong" ? (
+              <div className="w-full px-4 py-3 sm:py-4 rounded-xl border border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-900/10 text-base sm:text-lg">
+                <AnswerDiff input={inputValue} correct={currentQuestion.word} />
+              </div>
+            ) : (
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                disabled={answerState !== "unanswered"}
+                placeholder={t("practice.write.typeAnswer")}
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="none"
+                spellCheck={false}
+                className={[
+                  "w-full px-4 py-3 sm:py-4 rounded-xl border text-base sm:text-lg transition-colors outline-none",
+                  "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100",
+                  "placeholder:text-gray-400 dark:placeholder:text-gray-500",
+                  answerState === "unanswered"
+                    ? "border-gray-300 dark:border-gray-600 focus:border-emerald-400 dark:focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 dark:focus:ring-emerald-900/30"
+                    : "border-green-400 dark:border-green-500 bg-green-50 dark:bg-green-900/10",
+                ].join(" ")}
+              />
+            )}
 
             {answerState === "correct" && (
               <p className="text-base font-semibold text-green-600 dark:text-green-400 flex items-center gap-2 px-1">

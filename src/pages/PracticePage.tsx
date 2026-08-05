@@ -13,6 +13,7 @@ const MODES = [
   { key: "match" as const, icon: "🔗", route: "/practice/match", min: 2 },
   { key: "puzzle" as const, icon: "🧩", route: "/practice/puzzle", min: 1 },
   { key: "write" as const, icon: "✍️", route: "/practice/write", min: 1 },
+  { key: "custom" as const, icon: "🎨", route: "/practice/custom", min: 1, emphasized: true },
 ];
 
 export function PracticePage() {
@@ -39,6 +40,7 @@ export function PracticePage() {
       puzzle: base.filter((e) => !["note", "grammar"].includes(e.category)).filter((e) => wordCount(e.word) <= 10)
         .length,
       write: base.filter((e) => ["word", "phrase", "idiom"].includes(e.category)).length,
+      custom: base.length,
     };
   }, [entries]);
 
@@ -78,12 +80,14 @@ export function PracticePage() {
         </div>
 
         {/* Custom practice */}
-        <div
+        {/* <div
           onClick={() => navigate("/practice/custom")}
           className="flex-1 bg-violet-50 dark:bg-violet-900/20 rounded-2xl border border-violet-200 dark:border-violet-800 p-4 sm:p-6 flex items-center gap-4 cursor-pointer hover:shadow-md hover:border-violet-400 dark:hover:border-violet-600 transition-all">
           <span className="text-4xl leading-none shrink-0">🎯</span>
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{t("practice.modes.custom.label")}</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              {t("practice.modes.custom.label")}
+            </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{t("practice.modes.custom.description")}</p>
           </div>
           <div className="flex flex-col items-end gap-2 shrink-0">
@@ -97,7 +101,7 @@ export function PracticePage() {
               {t("practice.start")}
             </Button>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Mode cards */}
@@ -111,9 +115,12 @@ export function PracticePage() {
               onClick={disabled ? undefined : () => navigate(mode.route)}
               className={[
                 "bg-white dark:bg-gray-800 rounded-2xl border p-2 sm:p-6 flex flex-col gap-4 transition-all",
+
                 disabled
                   ? "border-gray-100 dark:border-gray-700/50 opacity-60"
-                  : "border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50/40 dark:hover:bg-emerald-900/10 cursor-pointer",
+                  : mode.emphasized
+                    ? "bg-violet-50 dark:bg-violet-900/20  border border-violet-200 dark:border-violet-800 cursor-pointer hover:shadow-md hover:border-violet-400 dark:hover:border-violet-600 "
+                    : "border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50/40 dark:hover:bg-emerald-900/10 cursor-pointer",
               ].join(" ")}>
               <div className="flex items-start gap-3">
                 <span className="text-3xl leading-none">{mode.icon}</span>
@@ -136,7 +143,11 @@ export function PracticePage() {
                   </span>
                 ) : (
                   <Button
-                    className="bg-emerald-400 text-white hover:bg-emerald-700 focus:ring-emerald-400 transition-colors"
+                    className={
+                      mode.emphasized
+                        ? "bg-violet-500 hover:bg-violet-600 text-white border-0"
+                        : "bg-emerald-400 text-white hover:bg-emerald-700 focus:ring-emerald-400 transition-colors"
+                    }
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation();

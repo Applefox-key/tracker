@@ -261,11 +261,11 @@
       "puzzle": { "label": "Puzzle", "description": "Arrange letters or words in correct order" },
       "due": { "label": "Due Today", "description": "Review cards scheduled for today" },
       "write": { "label": "Write It", "description": "Type the correct word from its explanation" },
-      "custom": { "label": "My Practice", "description": "Pick entries with filters and mix all game modes" }
+      "custom": { "label": "Mixer", "description": "Review cards by mixing all game modes" }
     },
     "custom": {
-      "title": "My Practice",
-      "description": "Filter the entries you want to review, then practice them through a random mix of games.",
+      "title": "Mixer",
+      "description": "Review your cards",
       "cardsSelected": "{{count}} card selected",
       "cardsSelected_other": "{{count}} cards selected",
       "noEntries": "No entries match your filters. Try adjusting them.",
