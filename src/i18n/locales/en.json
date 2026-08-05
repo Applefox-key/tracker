@@ -59,6 +59,8 @@
     "recentEntries": "Recent Entries",
     "viewAll": "View all →",
     "weeklyActivity": "Weekly Activity",
+    "tooltipEntries": "Added",
+    "tooltipReviews": "Reviews",
     "days": "days",
     "dueTodaySub": "cards to review",
     "dueTodayNone": "All caught up!",

@@ -3,6 +3,14 @@ import { apiClient, TOKEN_KEY, BASE_URL } from './client'
 import type { Entry, EntryCategory, EntryTag, SRGrade, PracticeMode } from '@/features/entries/types'
 import type { User, LoginCredentials } from '@/features/auth/types'
 
+// ── Types ─────────────────────────────────────────────────────────────────
+
+export interface DayStat {
+  date: string           // YYYY-MM-DD
+  entries_added: number
+  reviews_count: number
+}
+
 // ── Raw server shapes ──────────────────────────────────────────────────────
 
 /** Shape returned by the server for an entry */
@@ -246,6 +254,12 @@ export const entriesApi = {
   async getDueEntries(): Promise<Entry[]> {
     const res = await apiClient.get<RawEntry[]>('/entries/due')
     return res.data.map(toEntry)
+  },
+
+  async getWeeklyStats(): Promise<DayStat[]> {
+    const tz = -new Date().getTimezoneOffset()
+    const res = await apiClient.get<DayStat[]>(`/entries/stats/weekly?tz=${tz}`)
+    return res.data
   },
 
   async batchCreateEntries(

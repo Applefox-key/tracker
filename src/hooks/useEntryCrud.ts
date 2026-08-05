@@ -40,6 +40,7 @@ export function useEntryCrud() {
         await entryTagsApi.setEntryTags(created.id, tagIds)
         await queryClient.invalidateQueries({ queryKey: ['entries'] })
       }
+      queryClient.invalidateQueries({ queryKey: ['weeklyStats'] })
     } else {
       storeAdd({ ...data, tags: [] })
     }
@@ -66,6 +67,7 @@ export function useEntryCrud() {
   function removeEntry(id: number) {
     if (mode === 'authenticated') {
       deleteMutation.mutate(id)
+      queryClient.invalidateQueries({ queryKey: ['weeklyStats'] })
     } else {
       storeRemove(id)
     }
@@ -74,6 +76,7 @@ export function useEntryCrud() {
   function reviewEntry(id: number, grade: SRGrade, practiceMode: PracticeMode, isDue = false) {
     if (mode === 'authenticated') {
       reviewMutation.mutate({ id, grade, mode: practiceMode, isDue })
+      queryClient.invalidateQueries({ queryKey: ['weeklyStats'] })
     }
   }
 
@@ -88,6 +91,7 @@ export function useEntryCrud() {
     if (mode === 'authenticated') {
       const result = await entriesApi.batchCreateEntries(entries, tagIds)
       await queryClient.invalidateQueries({ queryKey: ['entries'] })
+      queryClient.invalidateQueries({ queryKey: ['weeklyStats'] })
       return { count: result.count }
     } else {
       for (const e of entries) storeAdd({ ...e, tags: [] })

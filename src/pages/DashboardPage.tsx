@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
 import {
   FiBookOpen,
   FiPlusCircle,
@@ -15,10 +16,12 @@ import {
 import { Card, CardHeader, CardTitle } from "@/shared/ui/Card";
 import { Button } from "@/shared/ui/Button";
 import { useEntriesStore } from "@/features/entries/store/entriesStore";
+import { useAuthStore } from "@/features/auth/store/authStore";
 import { Entry, EntryCategory } from "@/features/entries/types";
 import { AddEntryFab } from "@/features/entries/components/AddEntryFab";
 import { EntryForm, EntryFormValues } from "@/features/entries/components/AddEntryForm";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
+import { entriesApi, type DayStat } from "@/api/api";
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -219,47 +222,24 @@ function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number })
 
 // ── Weekly activity chip — mobile ─────────────────────────────────────────
 
-function WeeklyActivityChip({ entries }: { entries: Entry[] }) {
+function WeeklyActivityChip({ streak, weeklyStats }: { streak: number; weeklyStats: DayStat[] }) {
   const { t, i18n } = useTranslation();
 
-  const { days, streak } = useMemo(() => {
-    const arr = Array.from({ length: 7 }, (_, i) => {
-      const from = daysAgo(6 - i);
-      const to = new Date(from);
-      to.setDate(to.getDate() + 1);
-      const count = entries.filter((e) => {
-        const time = new Date(e.createdAt).getTime();
-        return time >= from.getTime() && time < to.getTime();
-      }).length;
-      const letter = from.toLocaleDateString(i18n.language, { weekday: "narrow" });
-      return { count, letter, isToday: i === 6 };
+  const days = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    return weeklyStats.map((stat) => {
+      const d = new Date(stat.date + "T12:00:00");
+      return {
+        entries_added: stat.entries_added,
+        reviews_count: stat.reviews_count,
+        letter: d.toLocaleDateString(i18n.language, { weekday: "narrow" }),
+        isToday: stat.date === today,
+      };
     });
+  }, [weeklyStats, i18n.language]);
 
-    const activityDates = new Set(
-      entries.map((e) => {
-        const d = new Date(e.createdAt);
-        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-      }),
-    );
-    let s = 0;
-    let i = 0;
-    while (true) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-      if (activityDates.has(key)) {
-        s++;
-        i++;
-      } else if (i === 0) {
-        i++;
-      } else {
-        break;
-      }
-    }
-    return { days: arr, streak: s };
-  }, [entries, i18n.language]);
-
-  const max = Math.max(...days.map((d) => d.count), 1);
+  const maxEntries = Math.max(...days.map((d) => d.entries_added), 1);
+  const maxReviews = Math.max(...days.map((d) => d.reviews_count), 1);
 
   const streakMain =
     streak === 0
@@ -299,26 +279,36 @@ function WeeklyActivityChip({ entries }: { entries: Entry[] }) {
         )}
       </div>
       <div className="flex flex-col gap-1 shrink-0">
-        <div className="flex items-end gap-[3px] h-8">
-          {days.map((d, i) => {
-            const heightPct = d.count > 0 ? Math.max((d.count / max) * 100, 22) : 0;
-            return (
-              <div
-                key={i}
-                className={`w-3 rounded-sm transition-all duration-300 ${d.count > 0 ? "bg-emerald-400 dark:bg-emerald-400" : "bg-gray-300 dark:bg-gray-600/40"}`}
-                style={{ height: d.count > 0 ? `${heightPct}%` : "3px" }}
-              />
-            );
-          })}
-        </div>
-        <div className="flex gap-[3px]">
+        <div className="flex items-end gap-[5px] h-12">
           {days.map((d, i) => (
-            <div key={i} className="w-3 flex justify-center">
+            <div key={i} className="flex items-end" style={{ height: "100%" }}>
+              {d.entries_added > 0 ? (
+                <div
+                  className="w-[11px] rounded-sm bg-emerald-400 dark:bg-emerald-400 transition-all duration-300"
+                  style={{ height: `${Math.max((d.entries_added / maxEntries) * 100, 18)}%` }}
+                />
+              ) : (
+                <div className="w-[11px] rounded-sm bg-gray-300 dark:bg-gray-600/40" style={{ height: "3px" }} />
+              )}
+              {d.reviews_count > 0 ? (
+                <div
+                  className="w-[11px] rounded-sm bg-indigo-400 dark:bg-indigo-400 transition-all duration-300"
+                  style={{ height: `${Math.max((d.reviews_count / maxReviews) * 100, 18)}%` }}
+                />
+              ) : (
+                <div className="w-[11px] rounded-sm bg-gray-300 dark:bg-gray-600/40" style={{ height: "3px" }} />
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-[5px]">
+          {days.map((d, i) => (
+            <div key={i} className="flex justify-center" style={{ width: "22px" }}>
               <span
                 className={`text-[9px] font-medium leading-none select-none ${
                   d.isToday
                     ? "text-emerald-500 dark:text-emerald-400 font-bold"
-                    : d.count > 0
+                    : d.entries_added + d.reviews_count > 0
                       ? "text-gray-600 dark:text-gray-400"
                       : "text-gray-400 dark:text-gray-600"
                 }`}>
@@ -408,48 +398,70 @@ function DesktopStreakBlock({
 
 // ── Desktop weekly activity bar ───────────────────────────────────────────
 
-function DesktopWeeklyActivity({ entries }: { entries: Entry[] }) {
+function DesktopWeeklyActivity({ weeklyStats }: { weeklyStats: DayStat[] }) {
   const { t, i18n } = useTranslation();
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   const days = useMemo(() => {
-    return Array.from({ length: 7 }, (_, i) => {
-      const from = daysAgo(6 - i);
-      const to = new Date(from);
-      to.setDate(to.getDate() + 1);
-      const count = entries.filter((e) => {
-        const time = new Date(e.createdAt).getTime();
-        return time >= from.getTime() && time < to.getTime();
-      }).length;
-      const letter = from.toLocaleDateString(i18n.language, { weekday: "narrow" });
-      return { count, letter, isToday: i === 6 };
+    const today = new Date().toISOString().slice(0, 10);
+    return weeklyStats.map((stat) => {
+      const d = new Date(stat.date + "T12:00:00");
+      return {
+        entries_added: stat.entries_added,
+        reviews_count: stat.reviews_count,
+        letter: d.toLocaleDateString(i18n.language, { weekday: "narrow" }),
+        isToday: stat.date === today,
+      };
     });
-  }, [entries, i18n.language]);
+  }, [weeklyStats, i18n.language]);
 
-  const max = Math.max(...days.map((d) => d.count), 1);
+  const maxEntries = Math.max(...days.map((d) => d.entries_added), 1);
+  const maxReviews = Math.max(...days.map((d) => d.reviews_count), 1);
 
   return (
     <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-5 flex flex-col gap-3 shadow-sm">
       <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">{t("dashboard.weeklyActivity")}</p>
       <div className="flex items-end gap-2 flex-1" style={{ minHeight: "80px" }}>
         {days.map((d, i) => (
-          <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
-            <div className="w-full flex items-end justify-center" style={{ height: "64px" }}>
+          <div
+            key={i}
+            className="flex-1 flex flex-col items-center gap-1.5 relative"
+            onMouseEnter={() => setHoveredIdx(i)}
+            onMouseLeave={() => setHoveredIdx(null)}>
+            {hoveredIdx === i && (
+              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-10 bg-gray-900 dark:bg-gray-700 text-white rounded-lg px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none flex flex-col gap-1">
+                <div className="flex items-center gap-1.5 text-[11px]">
+                  <span className="w-2 h-2 rounded-sm bg-emerald-400 shrink-0" />
+                  <span className="text-gray-300">{t("dashboard.tooltipEntries")}:</span>
+                  <span className="font-semibold">{d.entries_added}</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px]">
+                  <span className="w-2 h-2 rounded-sm bg-indigo-400 shrink-0" />
+                  <span className="text-gray-300">{t("dashboard.tooltipReviews")}:</span>
+                  <span className="font-semibold">{d.reviews_count}</span>
+                </div>
+                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-gray-700" />
+              </div>
+            )}
+            <div className="w-full flex items-end " style={{ height: "64px" }}>
               <div
-                className={`w-full rounded-t-lg transition-all duration-300 ${
-                  d.count > 0
-                    ? d.isToday
-                      ? "bg-emerald-500 dark:bg-emerald-400"
-                      : "bg-emerald-400 dark:bg-emerald-500"
-                    : "bg-gray-200 dark:bg-gray-600"
-                }`}
-                style={{ height: d.count > 0 ? `${Math.max((d.count / max) * 100, 15)}%` : "4px" }}
+                className={`flex-1 rounded-t-md transition-all duration-300 ${d.entries_added > 0 ? "bg-emerald-400 dark:bg-emerald-500" : "bg-gray-200 dark:bg-gray-600"}`}
+                style={{
+                  height: d.entries_added > 0 ? `${Math.max((d.entries_added / maxEntries) * 100, 15)}%` : "4px",
+                }}
+              />
+              <div
+                className={`flex-1 rounded-t-md transition-all duration-300 ${d.reviews_count > 0 ? "bg-indigo-400 dark:bg-indigo-400" : "bg-gray-200 dark:bg-gray-600"}`}
+                style={{
+                  height: d.reviews_count > 0 ? `${Math.max((d.reviews_count / maxReviews) * 100, 15)}%` : "4px",
+                }}
               />
             </div>
             <span
               className={`text-[10px] font-medium select-none ${
                 d.isToday
                   ? "text-emerald-500 dark:text-emerald-400 font-bold"
-                  : d.count > 0
+                  : d.entries_added + d.reviews_count > 0
                     ? "text-gray-600 dark:text-gray-400"
                     : "text-gray-400 dark:text-gray-600"
               }`}>
@@ -762,6 +774,36 @@ export function DashboardPage() {
   const dueCount = useEntriesStore((s) => s.dueCount);
   const [showAddForm, setShowAddForm] = useState(false);
   const { addEntry } = useEntryCrud();
+  const mode = useAuthStore((s) => s.mode);
+
+  const { data: weeklyStatsData } = useQuery({
+    queryKey: ["weeklyStats"],
+    queryFn: () => entriesApi.getWeeklyStats(),
+    enabled: mode === "authenticated",
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Fallback for demo/unauthenticated: calculate from entries (entries only, no reviews)
+  const fallbackStats = useMemo<DayStat[]>(
+    () =>
+      Array.from({ length: 7 }, (_, i) => {
+        const d = daysAgo(6 - i);
+        const date = d.toISOString().slice(0, 10);
+        const from = d.getTime();
+        const to = from + 86400000;
+        return {
+          date,
+          entries_added: entries.filter((e) => {
+            const t = new Date(e.createdAt).getTime();
+            return t >= from && t < to;
+          }).length,
+          reviews_count: 0,
+        };
+      }),
+    [entries],
+  );
+
+  const weeklyStats = weeklyStatsData?.length ? weeklyStatsData : fallbackStats;
 
   async function handleAdd(values: EntryFormValues) {
     const { tagIds, imgFile, removeImg: _, ...entryData } = values;
@@ -770,12 +812,20 @@ export function DashboardPage() {
   }
 
   const streak = useMemo(() => {
+    // Dates with new entries (all-time, infinite lookback)
     const activityDates = new Set(
       entries.map((e) => {
         const d = new Date(e.createdAt);
         return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
       }),
     );
+    // Also count days where user did reviews (last 7 days from weeklyStats)
+    for (const stat of weeklyStats) {
+      if (stat.reviews_count > 0) {
+        const d = new Date(stat.date + "T12:00:00");
+        activityDates.add(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`);
+      }
+    }
     let s = 0;
     let i = 0;
     while (true) {
@@ -786,13 +836,13 @@ export function DashboardPage() {
         s++;
         i++;
       } else if (i === 0) {
-        i++; // today has no entries yet — check yesterday
+        i++; // today has no activity yet — check yesterday
       } else {
         break;
       }
     }
     return s;
-  }, [entries]);
+  }, [entries, weeklyStats]);
 
   const stats = useMemo(() => {
     const today = startOfToday();
@@ -845,13 +895,13 @@ export function DashboardPage() {
       {/* ── Desktop row 1: streak + weekly activity + due today ── */}
       <div className="hidden sm:grid grid-cols-3 gap-4">
         <DesktopStreakBlock streak={streak} todayCount={stats.todayCount} flashCount={stats.flashCount} />
-        <DesktopWeeklyActivity entries={entries} />
+        <DesktopWeeklyActivity weeklyStats={weeklyStats} />
         <DesktopDueTodayCard dueCount={dueCount} />
       </div>
 
       {/* ── Weekly activity chip — mobile only ── */}
       <div className="sm:hidden">
-        <WeeklyActivityChip entries={entries} />
+        <WeeklyActivityChip streak={streak} weeklyStats={weeklyStats} />
       </div>
 
       {/* ── Stats — mobile (3 icon cards) ── */}

@@ -12,12 +12,13 @@ export const apiClient = axios.create({
   withCredentials: true,
 })
 
-// Attach Bearer token to every request
+// Attach Bearer token and timezone offset to every request
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem(TOKEN_KEY)
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  config.headers['X-TZ-Offset'] = String(-new Date().getTimezoneOffset())
   return config
 })
 apiClient.interceptors.request.use((config) => {
