@@ -269,7 +269,28 @@
       "match": { "label": "Dopasuj", "description": "Połącz słowa z ich wyjaśnieniami" },
       "puzzle": { "label": "Puzzle", "description": "Ułóż litery lub słowa w prawidłowej kolejności" },
       "due": { "label": "Na dziś", "description": "Powtórz fiszki zaplanowane na dzisiaj" },
-      "write": { "label": "Napisz słowo", "description": "Wpisz poprawne słowo na podstawie jego wyjaśnienia" }
+      "write": { "label": "Napisz słowo", "description": "Wpisz poprawne słowo na podstawie jego wyjaśnienia" },
+      "custom": { "label": "Moje ćwiczenia", "description": "Wybierz wpisy przez filtry i mieszaj wszystkie gry" }
+    },
+    "custom": {
+      "title": "Moje ćwiczenia",
+      "description": "Przefiltruj wpisy, które chcesz powtórzyć, i ćwicz je w losowej kolejności gier.",
+      "cardsSelected_one": "{{count}} fiszka wybrana",
+      "cardsSelected_few": "{{count}} fiszki wybrane",
+      "cardsSelected_many": "{{count}} fiszek wybranych",
+      "cardsSelected_other": "{{count}} fiszek wybranych",
+      "noEntries": "Żaden wpis nie pasuje do filtrów. Spróbuj je zmienić.",
+      "start": "Rozpocznij sesję",
+      "modes": {
+        "flashcard": "Fiszki",
+        "quiz": "Quiz",
+        "puzzle": "Puzzle",
+        "write": "Napisz"
+      },
+      "helpFlashcard": "Odwróć fiszkę, aby zobaczyć odpowiedź, a następnie oceń, jak dobrze ją pamiętałeś.",
+      "helpQuiz": "Wybierz poprawne słowo spośród 4 opcji na podstawie podanego wyjaśnienia.",
+      "helpPuzzle": "Ułóż poprawne słowo lub frazę, klikając kafelki.",
+      "helpWrite": "Wpisz poprawne słowo na podstawie wyjaśnienia. Naciśnij Enter, aby sprawdzić."
     },
     "due": {
       "title": "Na dziś",

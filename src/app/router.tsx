@@ -11,6 +11,7 @@ import { MatchPage } from '@/pages/practice/MatchPage'
 import { PuzzlePage } from '@/pages/practice/PuzzlePage'
 import { DuePage } from '@/pages/practice/DuePage'
 import { WritePage } from '@/pages/practice/WritePage'
+import { CustomPracticePage } from '@/pages/practice/CustomPracticePage'
 import { AboutPage } from '@/pages/AboutPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { ProfilePage } from '@/pages/ProfilePage'
@@ -45,6 +46,7 @@ export const router = createBrowserRouter([
           { path: 'practice/match', element: <MatchPage /> },
           { path: 'practice/puzzle', element: <PuzzlePage /> },
           { path: 'practice/due', element: <DuePage /> },
+          { path: 'practice/custom', element: <CustomPracticePage /> },
           { path: 'practice/write', element: <WritePage /> },
           { path: 'profile', element: <ProfilePage /> },
           { path: 'tags', element: <TagsPage /> },

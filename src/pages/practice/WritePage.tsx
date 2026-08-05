@@ -241,7 +241,7 @@ export function WritePage() {
 
       {/* ── Playing ─────────────────────────────────────────────── */}
       {phase === "playing" && currentQuestion && (
-        <div className="flex flex-col gap-5 max-w-xl mx-auto w-full">
+        <div className="flex flex-col gap-5 max-w-xl mx-auto w-full pb-28 sm:pb-0">
           {/* Progress bar */}
           <div className="flex items-center gap-4">
             <button
@@ -332,21 +332,37 @@ export function WritePage() {
           </div>
 
           {/* Action button */}
-          <div className="flex justify-end">
-            {answerState === "unanswered" ? (
-              <Button
-                onClick={handleSubmit}
-                disabled={inputValue.trim() === ""}
-                size="lg"
-                className="w-full sm:w-auto text-base">
-                {t("practice.write.checkAnswer")}
-              </Button>
-            ) : (
-              <Button ref={nextBtnRef} onClick={handleNext} size="lg" className="w-full sm:w-auto text-base">
-                {currentIdx + 1 < questions.length ? t("practice.write.next") : t("practice.write.seeResults")}
-              </Button>
-            )}
-          </div>
+          {answerState === "unanswered" ? (
+            <>
+              <div className="hidden sm:flex justify-end">
+                <Button onClick={handleSubmit} disabled={inputValue.trim() === ""} size="lg" className="text-base">
+                  {t("practice.write.checkAnswer")}
+                </Button>
+              </div>
+              <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 sm:hidden z-10">
+                <Button
+                  onClick={handleSubmit}
+                  disabled={inputValue.trim() === ""}
+                  size="lg"
+                  className="w-full h-14 text-base">
+                  {t("practice.write.checkAnswer")}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="hidden sm:flex justify-end">
+                <Button ref={nextBtnRef} onClick={handleNext} size="lg" className="text-base">
+                  {currentIdx + 1 < questions.length ? t("practice.write.next") : t("practice.write.seeResults")}
+                </Button>
+              </div>
+              <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 sm:hidden z-10">
+                <Button ref={nextBtnRef} onClick={handleNext} size="lg" className="w-full h-14 text-base">
+                  {currentIdx + 1 < questions.length ? t("practice.write.next") : t("practice.write.seeResults")}
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       )}
 

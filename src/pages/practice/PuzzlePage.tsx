@@ -11,6 +11,7 @@ import { EntryImage } from "@/shared/ui/EntryImage";
 import { getEntryImageUrl } from "@/api/api";
 import type { Entry, EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
+import { TfiPanel } from "react-icons/tfi";
 
 const LS_PUZZLE_SHOW_IMAGES = "puzzle_show_images";
 
@@ -285,6 +286,7 @@ export function PuzzlePage() {
         onOpen={() => setIsMobileDrawerOpen(true)}
         tabLabel={t("practice.filters")}
         title={filtersTitle}
+        tabIcon={<TfiPanel className="text-xl" />}
         hasActiveIndicator={activeFilterCount > 0}
         headerAction={
           activeFilterCount > 0 ? (
@@ -337,7 +339,10 @@ export function PuzzlePage() {
 
       {/* ── Playing ─────────────────────────────────────────────── */}
       {phase === "playing" && currentEntry && (
-        <div className={["flex flex-col gap-6 max-w-xl mx-auto w-full", answerPhase !== "thinking" ? "pb-28 sm:pb-0" : ""].join(" ").trim()}>
+        <div
+          className={["flex flex-col gap-6 max-w-xl mx-auto w-full", answerPhase !== "thinking" ? "pb-28 sm:pb-0" : ""]
+            .join(" ")
+            .trim()}>
           <div className="flex flex-col gap-1">
             <span className="text-xs text-gray-500 dark:text-gray-400">
               {t("practice.puzzle.progressLabel", { current: currentIdx + 1, total: questions.length })}

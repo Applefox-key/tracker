@@ -42,9 +42,9 @@ export function SideDrawer({
       {/* Peek tab — mobile only */}
       <button
         onClick={open ? onClose : onOpen}
-        className={`sm:hidden fixed z-[51] bg-emerald-600 text-white shadow-lg select-none flex  items-center justify-center gap-1 p-2 opacity-70
+        className={`sm:hidden fixed z-[51] bg-emerald-600 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-white shadow-lg select-none flex  items-center justify-center gap-1 p-2 opacity-70
           transition-[transform,opacity] duration-300 ease-in-out h-14 
-          ${open ? "opacity-100" : "opacity-70"}
+          ${open ? "opacity-100  dark:bg-emerald-600" : "opacity-70"}
   
           ${verticalPosition}
           ${isRight ? "right-0 rounded-l-md" : "left-0 rounded-r-md"}
@@ -52,7 +52,9 @@ export function SideDrawer({
           ${!isRight && open ? "translate-x-[22rem]" : ""}`}>
         {tabIcon}
 
-        <span className="font-bold leading-none tracking-wide flex items-center gap-0.5" style={{ fontSize: "12px" }}>
+        <span
+          className="hidden sm:flex font-bold leading-none tracking-wide flex items-center gap-0.5"
+          style={{ fontSize: "12px" }}>
           {tabLabel}
           {!tabIcon && (
             <span className={`transition-transform duration-300 inline-block ${open ? "rotate-180" : ""}`}>{">"}</span>

@@ -166,7 +166,7 @@ export function EntriesPage() {
         {/* ── Filters + view toggle ── */}
         <div className="flex flex-col gap-2">
           {/* Filter section */}
-          <div className="flex flex-col gap-2 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl sm:max-w-unset">
+          <div className="flex flex-col gap-2 p-3 mr-8 sm:mr-[0] bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl sm:max-w-unset">
             {/* Row 1: search + category chips + filters toggle */}
             <div className="flex flex-col sm:flex-row gap-2 ">
               <input

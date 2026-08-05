@@ -260,7 +260,26 @@
       "match": { "label": "Match", "description": "Connect words with their explanations" },
       "puzzle": { "label": "Puzzle", "description": "Arrange letters or words in correct order" },
       "due": { "label": "Due Today", "description": "Review cards scheduled for today" },
-      "write": { "label": "Write It", "description": "Type the correct word from its explanation" }
+      "write": { "label": "Write It", "description": "Type the correct word from its explanation" },
+      "custom": { "label": "My Practice", "description": "Pick entries with filters and mix all game modes" }
+    },
+    "custom": {
+      "title": "My Practice",
+      "description": "Filter the entries you want to review, then practice them through a random mix of games.",
+      "cardsSelected": "{{count}} card selected",
+      "cardsSelected_other": "{{count}} cards selected",
+      "noEntries": "No entries match your filters. Try adjusting them.",
+      "start": "Start session",
+      "modes": {
+        "flashcard": "Flashcard",
+        "quiz": "Quiz",
+        "puzzle": "Puzzle",
+        "write": "Write"
+      },
+      "helpFlashcard": "Flip the card to reveal the answer, then rate how well you recalled it.",
+      "helpQuiz": "Choose the correct word from 4 options based on the explanation shown.",
+      "helpPuzzle": "Assemble the correct word or phrase by clicking the tiles.",
+      "helpWrite": "Type the correct word from its explanation. Press Enter to check."
     },
     "due": {
       "title": "Due Today",
