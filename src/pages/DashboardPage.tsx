@@ -222,7 +222,15 @@ function StreakCake3D({ streak, total = 7, small = false }: { streak: number; to
 
 // ── Weekly activity chip — mobile ─────────────────────────────────────────
 
-function WeeklyActivityChip({ streak, weeklyStats }: { streak: number; weeklyStats: DayStat[] }) {
+function WeeklyActivityChip({
+  streak,
+  weeklyStats,
+  todayCount,
+}: {
+  streak: number;
+  weeklyStats: DayStat[];
+  todayCount: number;
+}) {
   const { t, i18n } = useTranslation();
 
   const days = useMemo(() => {
@@ -241,7 +249,7 @@ function WeeklyActivityChip({ streak, weeklyStats }: { streak: number; weeklySta
   const maxEntries = Math.max(...days.map((d) => d.entries_added), 1);
   const maxReviews = Math.max(...days.map((d) => d.reviews_count), 1);
 
-  const todayData = days.find((d) => d.isToday) ?? null;
+  const lastDay = days[days.length - 1];
   const lapNumber = streak > 0 ? Math.ceil(streak / 7) : 0;
 
   const streakMain =
@@ -287,18 +295,16 @@ function WeeklyActivityChip({ streak, weeklyStats }: { streak: number; weeklySta
             {t("dashboard.streakLap", { count: lapNumber })}
           </span>
         )}
-        {todayData && (
-          <div className="shrink-0 flex flex-col items-end gap-0.5">
-            <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
-              <span className="w-2 h-2 rounded-[2px] bg-emerald-400" />
-              {todayData.entries_added} {t("dashboard.tooltipEntries")}
-            </span>
-            <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
-              <span className="w-2 h-2 rounded-[2px] bg-indigo-400" />
-              {todayData.reviews_count} {t("dashboard.tooltipReviews")}
-            </span>
-          </div>
-        )}
+        <div className="shrink-0 flex flex-col items-end gap-0.5">
+          <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
+            <span className="w-2 h-2 rounded-[2px] bg-emerald-400" />
+            {todayCount} {t("dashboard.tooltipEntries")}
+          </span>
+          <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
+            <span className="w-2 h-2 rounded-[2px] bg-indigo-400" />
+            {lastDay?.reviews_count ?? 0} {t("dashboard.tooltipReviews")}
+          </span>
+        </div>
       </div>
 
       {/* Bottom: full-width bar chart */}
@@ -881,10 +887,7 @@ export function DashboardPage() {
     return { todayCount, weekCount, flashCount, avgRating };
   }, [entries]);
 
-  const todayReviews = useMemo(() => {
-    const todayStr = new Date().toISOString().slice(0, 10);
-    return weeklyStats.find((s) => s.date === todayStr)?.reviews_count ?? 0;
-  }, [weeklyStats]);
+  const todayReviews = weeklyStats[weeklyStats.length - 1]?.reviews_count ?? 0;
 
   const categoryCounts = useMemo(() => {
     return entries.reduce<Partial<Record<EntryCategory, number>>>((acc, e) => {
@@ -930,7 +933,7 @@ export function DashboardPage() {
 
       {/* ── Weekly activity chip — mobile only ── */}
       <div className="sm:hidden">
-        <WeeklyActivityChip streak={streak} weeklyStats={weeklyStats} />
+        <WeeklyActivityChip streak={streak} weeklyStats={weeklyStats} todayCount={stats.todayCount} />
       </div>
 
       {/* ── Stats — mobile (3 icon cards) ── */}
