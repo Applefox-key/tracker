@@ -352,7 +352,6 @@ export function Layout() {
 
               {/* Nav items */}
               {navItems
-                .filter(({ to }) => !(isAuthenticated && to === "/about"))
                 .map(({ to, labelKey, icon }) => (
                   <NavLink
                     key={to}
