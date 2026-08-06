@@ -1154,7 +1154,7 @@ export function DashboardPage() {
       <AddEntryFab to="/entries" state={{ openCreateForm: true }} ariaLabel={t("dashboard.addEntry")} />
 
       {showAddForm && (
-        <div className="fixed inset-0 z-50 overflow-y-auto sm:hidden">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-white dark:bg-gray-900 sm:hidden">
           <EntryForm mode="create" onSubmit={handleAdd} onCancel={() => setShowAddForm(false)} />
         </div>
       )}
