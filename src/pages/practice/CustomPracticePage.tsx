@@ -293,6 +293,7 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
   const { reviewEntry } = useEntryCrud();
   const [pool, setPool] = useState<Tile[]>([]);
   const [placed, setPlaced] = useState<Tile[]>([]);
+  const [usedTileIds, setUsedTileIds] = useState<Set<string>>(new Set());
   const [tileMode, setTileMode] = useState<"letter" | "word">("letter");
   const [phase, setPhase] = useState<AnswerPhase>("thinking");
   const [hasRetried, setHasRetried] = useState(false);
@@ -303,6 +304,7 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
     const { tiles, mode } = buildTiles(entry, allEntries);
     setPool(tiles);
     setPlaced([]);
+    setUsedTileIds(new Set());
     setTileMode(mode);
     setPhase("thinking");
     setHasRetried(false);
@@ -326,20 +328,25 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
 
   function placeTile(tile: Tile) {
     if (phase !== "thinking") return;
-    setPool((p) => p.filter((t) => t.id !== tile.id));
+    setUsedTileIds((s) => new Set([...s, tile.id]));
     setPlaced((p) => [...p, tile]);
   }
 
   function removePlaced(tile: Tile) {
     if (phase !== "thinking") return;
     setPlaced((p) => p.filter((t) => t.id !== tile.id));
-    setPool((p) => [...p, tile]);
+    setUsedTileIds((s) => {
+      const next = new Set(s);
+      next.delete(tile.id);
+      return next;
+    });
   }
 
   function tryAgain() {
     const { tiles, mode } = buildTiles(entry);
     setPool(tiles);
     setPlaced([]);
+    setUsedTileIds(new Set());
     setTileMode(mode);
     setPhase("thinking");
     setHasRetried(true);
@@ -406,15 +413,23 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {pool.map((tile) => (
-          <button
-            key={tile.id}
-            onClick={() => placeTile(tile)}
-            disabled={phase !== "thinking"}
-            className="text-3xl min-h-[3.5rem] min-w-[3.5rem] px-4 py-2.5 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 font-medium text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 active:bg-emerald-100 transition-colors touch-manipulation disabled:opacity-40">
-            {tile.value}
-          </button>
-        ))}
+        {pool.map((tile) => {
+          const used = usedTileIds.has(tile.id);
+          return (
+            <button
+              key={tile.id}
+              onClick={used || phase !== "thinking" ? undefined : () => placeTile(tile)}
+              disabled={used || phase !== "thinking"}
+              className={[
+                "text-3xl min-h-[3.5rem] min-w-[3.5rem] px-4 py-2.5 rounded-lg border font-medium transition-colors touch-manipulation",
+                used
+                  ? "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-300 dark:text-gray-600 cursor-default"
+                  : "bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 active:bg-emerald-100 disabled:opacity-40",
+              ].join(" ")}>
+              {tile.value}
+            </button>
+          );
+        })}
       </div>
 
       {phase === "wrong" && (
