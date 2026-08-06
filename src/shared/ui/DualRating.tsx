@@ -13,9 +13,10 @@ interface DualRatingProps {
   confidenceRating: number;
   masteryLevel?: number | null;
   onConfidenceChange?: (value: number) => void;
+  showAutoRating?: boolean;
 }
 
-export function DualRating({ confidenceRating, masteryLevel, onConfidenceChange }: DualRatingProps) {
+export function DualRating({ confidenceRating, masteryLevel, onConfidenceChange, showAutoRating = true }: DualRatingProps) {
   const { t } = useTranslation();
   const [hovered, setHovered] = useState(0);
   const readOnly = !onConfidenceChange;
@@ -54,7 +55,7 @@ export function DualRating({ confidenceRating, masteryLevel, onConfidenceChange 
       </div>
 
       {/* System mastery row */}
-      <div className="flex items-center gap-2">
+      {showAutoRating && <div className="flex items-center gap-2">
         <span className="text-xs text-gray-400 dark:text-gray-500 w-14 shrink-0">
           {t('entries.rating.system')}
         </span>
@@ -79,7 +80,7 @@ export function DualRating({ confidenceRating, masteryLevel, onConfidenceChange 
             {delta > 0 ? `+${delta}` : `${delta}`}
           </span>
         )}
-      </div>
+      </div>}
     </div>
   );
 }

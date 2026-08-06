@@ -21,10 +21,11 @@ export function FlashCard({
   showImageOnFront = false,
 }: FlashCardProps) {
   const { t } = useTranslation();
-  const frontLabel = reversed ? t("practice.flashcards.explanationLabel") : t("practice.flashcards.wordLabel");
-  const frontText = reversed ? card.back : card.front;
-  const backLabel = reversed ? t("practice.flashcards.wordLabel") : t("practice.flashcards.explanationLabel");
-  const backText = reversed ? card.front : card.back;
+  const effectiveReversed = reversed && !["grammar", "note"].includes(card.category);
+  const frontLabel = effectiveReversed ? t("practice.flashcards.explanationLabel") : t("practice.flashcards.wordLabel");
+  const frontText = effectiveReversed ? card.back : card.front;
+  const backLabel = effectiveReversed ? t("practice.flashcards.wordLabel") : t("practice.flashcards.explanationLabel");
+  const backText = effectiveReversed ? card.front : card.back;
 
   return (
     <div className="cursor-pointer select-none" style={{ perspective: "1200px" }} onClick={onFlip}>
@@ -56,7 +57,11 @@ export function FlashCard({
                   style={{ maxWidth: "100%", maxHeight: 100, objectFit: "contain" }}
                 />
               )}
-              <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center">{frontText}</p>
+              {/* <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center">{frontText}</p> */}
+              <p
+                className={` ${frontText.length > 100 ? "text-md" : "text-3xl"} font-bold text-gray-900 dark:text-gray-100 text-center`}>
+                {frontText}
+              </p>
             </div>
           </div>
 
@@ -103,7 +108,10 @@ export function FlashCard({
                 />
               )}
               <div className="flex flex-col items-center gap-3 min-h-full justify-center">
-                <p className="text-2xl font-bold text-white text-center whitespace-pre-wrap break-words">{backText}</p>
+                <p
+                  className={` ${backText.length > 100 ? "text-md" : "text-2xl"} font-bold text-white text-center whitespace-pre-wrap break-words`}>
+                  {backText}
+                </p>
                 {card.hint && (
                   <p className="text-sm text-emerald-100 text-center italic opacity-90 whitespace-pre-wrap break-words">
                     "{card.hint}"

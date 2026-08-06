@@ -117,7 +117,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
 
           {/* Desktop-only: DualRating + Practice */}
           <div className="hidden sm:flex items-center justify-between gap-4">
-            <DualRating confidenceRating={entry.rating} masteryLevel={entry.mastery_level} />
+            <DualRating confidenceRating={entry.rating} masteryLevel={entry.mastery_level} showAutoRating={entry.includeInPractice} />
             <div className="flex items-center gap-2 shrink-0">
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 {entry.includeInPractice ? t("entries.detail.inPractice") : t("entries.detail.notInPractice")}

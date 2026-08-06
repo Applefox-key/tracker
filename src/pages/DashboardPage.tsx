@@ -133,7 +133,7 @@ const LAP_COLORS = [
   },
 ] as const;
 
-function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number }) {
+function StreakCake3D({ streak, total = 7, small = false }: { streak: number; total?: number; small?: boolean }) {
   const { t } = useTranslation();
   const cx = 60,
     cy = 36;
@@ -211,7 +211,7 @@ function StreakCake3D({ streak, total = 7 }: { streak: number; total?: number })
           />
         ))}
       </svg>
-      {lapNumber >= 2 && (
+      {!small && lapNumber >= 2 && (
         <span className="text-[9px] font-bold bg-gray-700 dark:bg-gray-300 text-white dark:text-gray-800 px-1.5 py-0.5 rounded-full leading-none whitespace-nowrap">
           {t("dashboard.streakLap", { count: lapNumber })}
         </span>
@@ -241,6 +241,9 @@ function WeeklyActivityChip({ streak, weeklyStats }: { streak: number; weeklySta
   const maxEntries = Math.max(...days.map((d) => d.entries_added), 1);
   const maxReviews = Math.max(...days.map((d) => d.reviews_count), 1);
 
+  const todayData = days.find((d) => d.isToday) ?? null;
+  const lapNumber = streak > 0 ? Math.ceil(streak / 7) : 0;
+
   const streakMain =
     streak === 0
       ? null
@@ -260,50 +263,71 @@ function WeeklyActivityChip({ streak, weeklyStats }: { streak: number; weeklySta
           : t("dashboard.streakKeepUpSub");
 
   return (
-    <div className="flex items-center gap-3 sm:gap-4 px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-sm">
-      <StreakCake3D streak={streak} />
-
-      <div className="flex-1 min-w-0">
-        {streakMain ? (
-          <div>
-            <p className="text-sm font-semibold text-amber-500 dark:text-amber-400 leading-snug">{streakMain}</p>
-            <p className="text-xs text-amber-400 dark:text-amber-300 leading-snug">{streakSub}</p>
-          </div>
-        ) : (
-          <div>
-            <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-snug">
-              {t("dashboard.noStreak")}
-            </p>
-            <p className="text-xs text-gray-400 dark:text-gray-500 leading-snug">{t("dashboard.noStreakSub")}</p>
+    <div className="flex flex-col gap-3 px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-sm">
+      {/* Top row: [pie] [text flex-1] [badge] [today stats] */}
+      <div className="flex items-center gap-2">
+        <StreakCake3D streak={streak} small />
+        <div className="flex-1 min-w-0">
+          {streakMain ? (
+            <>
+              <p className="text-sm font-semibold text-amber-500 dark:text-amber-400 leading-snug">{streakMain}</p>
+              <p className="text-xs text-amber-400 dark:text-amber-300 leading-snug">{streakSub}</p>
+            </>
+          ) : (
+            <>
+              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-snug">
+                {t("dashboard.noStreak")}
+              </p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 leading-snug">{t("dashboard.noStreakSub")}</p>
+            </>
+          )}
+        </div>
+        {lapNumber >= 2 && (
+          <span className="shrink-0 text-[9px] font-bold bg-gray-600 dark:bg-gray-300 text-white dark:text-gray-800 px-1.5 py-0.5 rounded-full leading-none whitespace-nowrap">
+            {t("dashboard.streakLap", { count: lapNumber })}
+          </span>
+        )}
+        {todayData && (
+          <div className="shrink-0 flex flex-col items-end gap-0.5">
+            <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
+              <span className="w-2 h-2 rounded-[2px] bg-emerald-400" />
+              {todayData.entries_added} {t("dashboard.tooltipEntries")}
+            </span>
+            <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
+              <span className="w-2 h-2 rounded-[2px] bg-indigo-400" />
+              {todayData.reviews_count} {t("dashboard.tooltipReviews")}
+            </span>
           </div>
         )}
       </div>
-      <div className="flex flex-col gap-1 shrink-0">
-        <div className="flex items-end gap-[5px] h-12">
+
+      {/* Bottom: full-width bar chart */}
+      <div className="flex flex-col gap-1">
+        <div className="flex items-end gap-[3px] h-10">
           {days.map((d, i) => (
-            <div key={i} className="flex items-end" style={{ height: "100%" }}>
+            <div key={i} className="flex-1 flex items-end gap-[2px]" style={{ height: "100%" }}>
               {d.entries_added > 0 ? (
                 <div
-                  className="w-[11px] rounded-sm bg-emerald-400 dark:bg-emerald-400 transition-all duration-300"
+                  className="flex-1 rounded-sm bg-emerald-400 dark:bg-emerald-400 transition-all duration-300"
                   style={{ height: `${Math.max((d.entries_added / maxEntries) * 100, 18)}%` }}
                 />
               ) : (
-                <div className="w-[11px] rounded-sm bg-gray-300 dark:bg-gray-600/40" style={{ height: "3px" }} />
+                <div className="flex-1 rounded-sm bg-gray-300 dark:bg-gray-600/40" style={{ height: "3px" }} />
               )}
               {d.reviews_count > 0 ? (
                 <div
-                  className="w-[11px] rounded-sm bg-indigo-400 dark:bg-indigo-400 transition-all duration-300"
+                  className="flex-1 rounded-sm bg-indigo-400 dark:bg-indigo-400 transition-all duration-300"
                   style={{ height: `${Math.max((d.reviews_count / maxReviews) * 100, 18)}%` }}
                 />
               ) : (
-                <div className="w-[11px] rounded-sm bg-gray-300 dark:bg-gray-600/40" style={{ height: "3px" }} />
+                <div className="flex-1 rounded-sm bg-gray-300 dark:bg-gray-600/40" style={{ height: "3px" }} />
               )}
             </div>
           ))}
         </div>
-        <div className="flex gap-[5px]">
+        <div className="flex gap-[3px]">
           {days.map((d, i) => (
-            <div key={i} className="flex justify-center" style={{ width: "22px" }}>
+            <div key={i} className="flex-1 flex justify-center">
               <span
                 className={`text-[9px] font-medium leading-none select-none ${
                   d.isToday
@@ -327,11 +351,11 @@ function WeeklyActivityChip({ streak, weeklyStats }: { streak: number; weeklySta
 function DesktopStreakBlock({
   streak,
   todayCount,
-  flashCount,
+  todayReviews,
 }: {
   streak: number;
   todayCount: number;
-  flashCount: number;
+  todayReviews: number;
 }) {
   const { t } = useTranslation();
 
@@ -385,9 +409,9 @@ function DesktopStreakBlock({
             <FiTarget size={16} />
           </div>
           <div className="min-w-0">
-            <p className="text-xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">{flashCount}</p>
+            <p className="text-xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">{todayReviews}</p>
             <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight truncate">
-              {t("dashboard.statPractice")}
+              {t("dashboard.statTodayReviews")}
             </p>
           </div>
         </div>
@@ -857,6 +881,11 @@ export function DashboardPage() {
     return { todayCount, weekCount, flashCount, avgRating };
   }, [entries]);
 
+  const todayReviews = useMemo(() => {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    return weeklyStats.find((s) => s.date === todayStr)?.reviews_count ?? 0;
+  }, [weeklyStats]);
+
   const categoryCounts = useMemo(() => {
     return entries.reduce<Partial<Record<EntryCategory, number>>>((acc, e) => {
       acc[e.category] = (acc[e.category] ?? 0) + 1;
@@ -894,7 +923,7 @@ export function DashboardPage() {
 
       {/* ── Desktop row 1: streak + weekly activity + due today ── */}
       <div className="hidden sm:grid grid-cols-3 gap-4">
-        <DesktopStreakBlock streak={streak} todayCount={stats.todayCount} flashCount={stats.flashCount} />
+        <DesktopStreakBlock streak={streak} todayCount={stats.todayCount} todayReviews={todayReviews} />
         <DesktopWeeklyActivity weeklyStats={weeklyStats} />
         <DesktopDueTodayCard dueCount={dueCount} />
       </div>

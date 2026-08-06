@@ -53,6 +53,7 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
         hint: e.example || undefined,
         rating: e.rating,
         img: e.img ? getEntryImageUrl(e.img) : null,
+        category: e.category,
       }))
   }, [entries, selectedRatings, selectedCategory, selectedTag, unmasteredOnly])
 

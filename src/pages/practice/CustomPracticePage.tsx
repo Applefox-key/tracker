@@ -34,6 +34,7 @@ function entryToCard(entry: Entry): Flashcard {
     hint: entry.example || undefined,
     rating: entry.rating,
     img: entry.img ? getEntryImageUrl(entry.img) : null,
+    category: entry.category,
   };
 }
 

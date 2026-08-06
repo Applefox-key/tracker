@@ -171,6 +171,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
             confidenceRating={entry.rating}
             masteryLevel={entry.mastery_level}
             onConfidenceChange={(v) => updateEntry(entry.id, { rating: v })}
+            showAutoRating={entry.includeInPractice}
           />
           <div className="sm:hidden">
             <ToggleSwitch
