@@ -153,7 +153,8 @@ function DueQuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onN
       .map((e) => e.word);
     while (others.length < 3) others.push("—");
     return shuffle([entry.word, ...others]);
-  }, [entry, pool]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entry.id]);
 
   function handleSelect(opt: string) {
     if (selected !== null) return;
@@ -294,7 +295,8 @@ function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries
     setHasRetried(false);
     setShowExample(false);
     setHintUsed(false);
-  }, [entry, allEntries]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entry.id]);
 
   useEffect(() => {
     if (phase !== "thinking" || placed.length === 0) return;
