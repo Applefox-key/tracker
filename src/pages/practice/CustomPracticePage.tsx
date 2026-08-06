@@ -8,6 +8,7 @@ import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { useEntriesStore } from "@/features/entries/store/entriesStore";
 import { FlashCard } from "@/features/flashcards/components/FlashCard";
 import { Button } from "@/shared/ui/Button";
+import { AnswerDiff, normalizeAnswer } from "@/shared/ui/AnswerDiff";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
 import { PracticeHelpModal } from "@/features/practice/components/PracticeHelpModal";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
@@ -470,15 +471,6 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
 
 // ── WriteItem ─────────────────────────────────────────────────────────────────
 
-function normalizeAnswer(s: string): string {
-  return s
-    .trim()
-    .replace(/[.?!]+$/, "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .toLowerCase();
-}
-
 function WriteItem({ entry, onNext }: { entry: Entry; onNext: () => void }) {
   const { t } = useTranslation();
   const { reviewEntry } = useEntryCrud();
@@ -557,10 +549,13 @@ function WriteItem({ entry, onNext }: { entry: Entry; onNext: () => void }) {
       )}
 
       {answerState === "wrong" && (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <p className="text-base font-semibold text-red-600 dark:text-red-400 flex items-center gap-2">
             <span>✗</span> {t("practice.write.wrong")}
           </p>
+          <div className="w-full px-4 py-3 rounded-xl border border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-900/10 text-base">
+            <AnswerDiff input={inputValue} correct={entry.word} />
+          </div>
           <p className="text-sm text-gray-600 dark:text-gray-300">
             <span className="font-medium text-gray-700 dark:text-gray-200">{t("practice.write.correctAnswer")}</span>{" "}
             <span className="text-emerald-700 dark:text-emerald-300 font-semibold">{entry.word}</span>

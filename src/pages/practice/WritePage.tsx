@@ -10,55 +10,12 @@ import { Button } from "@/shared/ui/Button";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
 import type { Entry, EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
+import { AnswerDiff, normalizeAnswer } from "@/shared/ui/AnswerDiff";
 
 type Phase = "idle" | "playing" | "done";
 type AnswerState = "unanswered" | "correct" | "wrong";
 
 export const WRITE_ALLOWED_CATEGORIES: EntryCategory[] = ["word", "phrase", "idiom"];
-
-function normalizeAnswer(s: string): string {
-  return s
-    .trim()
-    .replace(/[,:]/g, "")
-    .replace(/[.?!]+$/, "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .toLowerCase();
-}
-
-function AnswerDiff({ input, correct }: { input: string; correct: string }) {
-  const normInput = normalizeAnswer(input);
-  const normCorrect = normalizeAnswer(correct);
-  const len = Math.max(normInput.length, normCorrect.length);
-
-  return (
-    <span className="font-semibold tracking-wide">
-      {Array.from({ length: len }, (_, i) => {
-        const u = normInput[i];
-        const c = normCorrect[i];
-        if (i >= normCorrect.length) {
-          return (
-            <span key={i} className="text-red-500 dark:text-red-400 line-through opacity-60">
-              {u}
-            </span>
-          );
-        }
-        if (u === c) {
-          return (
-            <span key={i} className="text-green-600 dark:text-green-400">
-              {u}
-            </span>
-          );
-        }
-        return (
-          <span key={i} className="text-red-600 dark:text-red-400 underline decoration-red-500 underline-offset-2">
-            {u ?? c}
-          </span>
-        );
-      })}
-    </span>
-  );
-}
 
 export function WritePage() {
   const { t } = useTranslation();
