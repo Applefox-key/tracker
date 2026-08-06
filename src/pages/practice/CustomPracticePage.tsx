@@ -160,6 +160,8 @@ function QuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onNext
   const { t } = useTranslation();
   const { reviewEntry } = useEntryCrud();
   const [selected, setSelected] = useState<string | null>(null);
+  const [showExample, setShowExample] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
 
   const options = useMemo(() => {
     const others = shuffle(pool.filter((e) => e.id !== entry.id))
@@ -173,7 +175,12 @@ function QuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onNext
     if (selected !== null) return;
     const isCorrect = opt === entry.word;
     setSelected(opt);
-    reviewEntry(entry.id, isCorrect ? 5 : 0, "quiz");
+    if (!hintUsed) reviewEntry(entry.id, isCorrect ? 5 : 0, "quiz");
+  }
+
+  function handleShowExample() {
+    setShowExample(true);
+    setHintUsed(true);
   }
 
   const answered = selected !== null;
@@ -185,11 +192,18 @@ function QuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onNext
           {t("practice.quiz.promptWord")}
         </span>
         <p className="text-xl font-semibold text-gray-800 dark:text-gray-100">{entry.explanation}</p>
-        {entry.example && (
-          <p className="text-sm text-gray-400 dark:text-gray-500 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">
-            {entry.example}
-          </p>
-        )}
+        {entry.example &&
+          (showExample ? (
+            <p className="text-sm text-gray-400 dark:text-gray-500 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">
+              {entry.example}
+            </p>
+          ) : (
+            <button
+              onClick={handleShowExample}
+              className="text-sm text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 text-left transition-colors">
+              {t("practice.write.showExample")}
+            </button>
+          ))}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {options.map((opt) => {
@@ -282,6 +296,8 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
   const [tileMode, setTileMode] = useState<"letter" | "word">("letter");
   const [phase, setPhase] = useState<AnswerPhase>("thinking");
   const [hasRetried, setHasRetried] = useState(false);
+  const [showExample, setShowExample] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
 
   useEffect(() => {
     const { tiles, mode } = buildTiles(entry, allEntries);
@@ -290,6 +306,8 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
     setTileMode(mode);
     setPhase("thinking");
     setHasRetried(false);
+    setShowExample(false);
+    setHintUsed(false);
   }, [entry, allEntries]);
 
   useEffect(() => {
@@ -299,7 +317,7 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
       const correct = checkAnswer(placed, entry, tileMode);
       if (correct) {
         setPhase("correct");
-        reviewEntry(entry.id, hasRetried ? 4 : 5, "puzzle");
+        if (!hintUsed) reviewEntry(entry.id, hasRetried ? 4 : 5, "puzzle");
       } else {
         setPhase("wrong");
       }
@@ -328,7 +346,7 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
   }
 
   function handleSkip() {
-    reviewEntry(entry.id, 0, "puzzle");
+    if (!hintUsed) reviewEntry(entry.id, 0, "puzzle");
     onNext();
   }
 
@@ -339,6 +357,18 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
           {tileMode === "letter" ? t("practice.puzzle.spellWord") : t("practice.puzzle.arrangeWords")}
         </span>
         <p className="text-base font-semibold text-gray-800 dark:text-gray-100">{entry.explanation}</p>
+        {entry.example &&
+          (showExample ? (
+            <p className="text-sm text-gray-400 dark:text-gray-500 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">
+              {entry.example}
+            </p>
+          ) : (
+            <button
+              onClick={() => { setShowExample(true); setHintUsed(true); }}
+              className="text-sm text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 text-left transition-colors">
+              {t("practice.write.showExample")}
+            </button>
+          ))}
       </div>
 
       <div
@@ -438,6 +468,7 @@ function WriteItem({ entry, onNext }: { entry: Entry; onNext: () => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState("");
   const [answerState, setAnswerState] = useState<"unanswered" | "correct" | "wrong">("unanswered");
+  const [showExample, setShowExample] = useState(false);
 
   useEffect(() => {
     setTimeout(() => inputRef.current?.focus(), 50);
@@ -447,7 +478,7 @@ function WriteItem({ entry, onNext }: { entry: Entry; onNext: () => void }) {
     if (answerState !== "unanswered" || inputValue.trim() === "") return;
     const isCorrect = normalizeAnswer(inputValue) === normalizeAnswer(entry.word);
     setAnswerState(isCorrect ? "correct" : "wrong");
-    reviewEntry(entry.id, isCorrect ? 5 : 0, "write");
+    if (!showExample) reviewEntry(entry.id, isCorrect ? 5 : 0, "write");
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -464,11 +495,18 @@ function WriteItem({ entry, onNext }: { entry: Entry; onNext: () => void }) {
           {t("practice.write.promptLabel")}
         </span>
         <p className="text-base font-semibold text-gray-800 dark:text-gray-100">{entry.explanation}</p>
-        {entry.example && (
-          <p className="text-sm text-gray-400 dark:text-gray-500 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">
-            {entry.example}
-          </p>
-        )}
+        {entry.example &&
+          (showExample ? (
+            <p className="text-sm text-gray-400 dark:text-gray-500 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">
+              {entry.example}
+            </p>
+          ) : (
+            <button
+              onClick={() => setShowExample(true)}
+              className="text-sm text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 text-left transition-colors">
+              {t("practice.write.showExample")}
+            </button>
+          ))}
       </div>
 
       <input

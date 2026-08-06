@@ -100,6 +100,7 @@ export function QuizPage() {
     setCurrentIdx(0);
     setSelected(null);
     setCorrectCount(0);
+    setShowExample(false);
     setPhase("playing");
   }
 
@@ -108,7 +109,7 @@ export function QuizPage() {
     const isCorrect = opt === questions[currentIdx][answerField];
     if (isCorrect) setCorrectCount((n) => n + 1);
     setSelected(opt);
-    reviewEntry(questions[currentIdx].id, isCorrect ? 5 : 0, "quiz");
+    if (!showExample) reviewEntry(questions[currentIdx].id, isCorrect ? 5 : 0, "quiz");
   }
 
   function handleNext() {

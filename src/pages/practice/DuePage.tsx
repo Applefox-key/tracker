@@ -144,6 +144,8 @@ function DueQuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onN
   const { t } = useTranslation();
   const { reviewEntry } = useEntryCrud();
   const [selected, setSelected] = useState<string | null>(null);
+  const [showExample, setShowExample] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
 
   const options = useMemo(() => {
     const others = shuffle(pool.filter((e) => e.id !== entry.id))
@@ -157,7 +159,12 @@ function DueQuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onN
     if (selected !== null) return;
     const isCorrect = opt === entry.word;
     setSelected(opt);
-    reviewEntry(entry.id, isCorrect ? 5 : 0, "quiz");
+    if (!hintUsed) reviewEntry(entry.id, isCorrect ? 5 : 0, "quiz");
+  }
+
+  function handleShowExample() {
+    setShowExample(true);
+    setHintUsed(true);
   }
 
   const answered = selected !== null;
@@ -169,11 +176,18 @@ function DueQuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onN
           {t("practice.quiz.promptWord")}
         </span>
         <p className="text-xl font-semibold text-gray-800 dark:text-gray-100">{entry.explanation}</p>
-        {entry.example && (
-          <p className="text-sm text-gray-400 dark:text-gray-500 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">
-            {entry.example}
-          </p>
-        )}
+        {entry.example &&
+          (showExample ? (
+            <p className="text-sm text-gray-400 dark:text-gray-500 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">
+              {entry.example}
+            </p>
+          ) : (
+            <button
+              onClick={handleShowExample}
+              className="text-sm text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 text-left transition-colors">
+              {t("practice.write.showExample")}
+            </button>
+          ))}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {options.map((opt) => {
@@ -266,6 +280,8 @@ function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries
   const [tileMode, setTileMode] = useState<"letter" | "word">("letter");
   const [phase, setPhase] = useState<AnswerPhase>("thinking");
   const [hasRetried, setHasRetried] = useState(false);
+  const [showExample, setShowExample] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
 
   useEffect(() => {
     const { tiles, mode } = buildTiles(entry, allEntries);
@@ -274,6 +290,8 @@ function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries
     setTileMode(mode);
     setPhase("thinking");
     setHasRetried(false);
+    setShowExample(false);
+    setHintUsed(false);
   }, [entry, allEntries]);
 
   useEffect(() => {
@@ -283,7 +301,7 @@ function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries
       const correct = checkAnswer(placed, entry, tileMode);
       if (correct) {
         setPhase("correct");
-        reviewEntry(entry.id, hasRetried ? 4 : 5, "puzzle");
+        if (!hintUsed) reviewEntry(entry.id, hasRetried ? 4 : 5, "puzzle");
       } else {
         setPhase("wrong");
       }
@@ -312,7 +330,7 @@ function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries
   }
 
   function handleSkip() {
-    reviewEntry(entry.id, 0, "puzzle");
+    if (!hintUsed) reviewEntry(entry.id, 0, "puzzle");
     onNext();
   }
 
@@ -323,6 +341,18 @@ function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries
           {tileMode === "letter" ? t("practice.puzzle.spellWord") : t("practice.puzzle.arrangeWords")}
         </span>
         <p className="text-base font-semibold text-gray-800 dark:text-gray-100">{entry.explanation}</p>
+        {entry.example &&
+          (showExample ? (
+            <p className="text-sm text-gray-400 dark:text-gray-500 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">
+              {entry.example}
+            </p>
+          ) : (
+            <button
+              onClick={() => { setShowExample(true); setHintUsed(true); }}
+              className="text-sm text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 text-left transition-colors">
+              {t("practice.write.showExample")}
+            </button>
+          ))}
       </div>
 
       <div

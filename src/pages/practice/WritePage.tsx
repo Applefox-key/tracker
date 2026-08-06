@@ -135,7 +135,7 @@ export function WritePage() {
     const isCorrect = normalizeAnswer(inputValue) === normalizeAnswer(currentQuestion.word);
     setAnswerState(isCorrect ? "correct" : "wrong");
     if (isCorrect) setCorrectCount((n) => n + 1);
-    reviewEntry(currentQuestion.id, isCorrect ? 5 : 0, "write");
+    if (!showExample) reviewEntry(currentQuestion.id, isCorrect ? 5 : 0, "write");
   }
 
   function handleNext() {
