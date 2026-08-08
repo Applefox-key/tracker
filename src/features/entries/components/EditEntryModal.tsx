@@ -35,10 +35,8 @@ export function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-white dark:bg-gray-900 sm:overflow-hidden sm:bg-black/50 sm:backdrop-blur-sm sm:flex sm:items-center sm:justify-center sm:p-4">
-      <div
-        className="w-full sm:max-w-xl h-[100vh] sm:h-auto sm:max-h-[90vh] sm:overflow-y-auto sm:rounded-2xl">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-white dark:bg-gray-900 sm:overflow-hidden sm:bg-black/50 sm:backdrop-blur-sm sm:flex sm:items-center sm:justify-center sm:p-4">
+      <div className="w-full sm:max-w-[764px] h-[100vh] sm:h-auto sm:max-h-[90vh] sm:overflow-y-auto sm:rounded-2xl">
         <EntryForm
           mode="edit"
           initialValues={initialValues}

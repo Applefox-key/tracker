@@ -70,7 +70,15 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
   );
 }
 
-export function EntryForm({ mode, initialValues, currentImgUrl, masteryLevel, onResetMastery, onSubmit, onCancel }: EntryFormProps) {
+export function EntryForm({
+  mode,
+  initialValues,
+  currentImgUrl,
+  masteryLevel,
+  onResetMastery,
+  onSubmit,
+  onCancel,
+}: EntryFormProps) {
   const { t } = useTranslation();
   const init = initialValues ?? DEFAULT_VALUES;
 
@@ -165,6 +173,7 @@ export function EntryForm({ mode, initialValues, currentImgUrl, masteryLevel, on
           aria-label="Cancel">
           <FaArrowLeft />
         </button>
+
         <p className="font-semibold text-emerald-800 dark:text-emerald-300">
           {isEdit ? t("entries.form.editTitle") : t("entries.form.newTitle")}
         </p>
@@ -235,8 +244,8 @@ export function EntryForm({ mode, initialValues, currentImgUrl, masteryLevel, on
         </div>
       </div>
 
-      {/* Example */}
-      <div className="flex flex-col gap-1">
+      {/* Example — mobile only */}
+      <div className="flex flex-col gap-1 sm:hidden">
         <div className="flex items-center justify-between">
           <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.example")}</label>
           <VoiceInputButton onResult={(t) => setExample(t)} />
@@ -248,6 +257,63 @@ export function EntryForm({ mode, initialValues, currentImgUrl, masteryLevel, on
           placeholder="e.g. It was pure serendipity that we met."
           className={textareaCls}
         />
+      </div>
+
+      {/* Desktop: Example (left) + Image (right, square) */}
+      <div className="hidden sm:grid sm:grid-cols-[1fr_140px] gap-3">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.example")}</label>
+            <VoiceInputButton onResult={(t) => setExample(t)} />
+          </div>
+          <textarea
+            rows={4}
+            value={example}
+            onChange={(e) => setExample(e.target.value)}
+            placeholder="e.g. It was pure serendipity that we met."
+            className={textareaCls}
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          {displayImgUrl ? (
+            <>
+              <EntryImage
+                src={displayImgUrl}
+                alt="Entry illustration"
+                className="w-full aspect-square border border-gray-200 dark:border-gray-600"
+              />
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline">
+                  {t("entries.form.changeImg")}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRemoveImg}
+                  className="text-xs text-red-500 dark:text-red-400 hover:underline">
+                  {t("entries.form.removeImg")}
+                </button>
+              </div>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full aspect-square flex flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 hover:border-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  fillRule="evenodd"
+                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span className="text-xs">{t("entries.form.addImg")}</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Hidden file input shared by both mobile and desktop */}
@@ -342,98 +408,59 @@ export function EntryForm({ mode, initialValues, currentImgUrl, masteryLevel, on
         </div>
       </div>
 
-      {/* Desktop-only: Image + Rating / Practice */}
-      <div className="hidden sm:flex items-start justify-between gap-4">
-        <div className="flex flex-col gap-1.5 items-end">
-          {/* <label className="text-xs font-medium text-gray-600 dark:text-gray-400 self-start">
-            {t("entries.form.image")}
-          </label> */}
-          {displayImgUrl ? (
-            <div className="flex flex-row items-center gap-1 h-28">
-              <EntryImage
-                src={displayImgUrl}
-                alt="Entry illustration"
-                className="w-32 h-32 shrink-0 border border-gray-200 dark:border-gray-600"
-              />
-              <div className="flex gap-2 flex-col">
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline">
-                  {t("entries.form.changeImg")}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleRemoveImg}
-                  className="text-xs text-red-500 dark:text-red-400 hover:underline">
-                  {t("entries.form.removeImg")}
-                </button>
-              </div>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="w-28 h-28 flex flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 hover:border-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span className="text-xs">{t("entries.form.addImg")}</span>
-            </button>
-          )}
-        </div>
-
-        <div className="flex flex-col justify-between" style={{ minHeight: "100px" }}>
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              {t("entries.form.ratingLabel")}
-            </label>
-            <StarRating value={rating} onChange={setRating} />
-          </div>
-          <div className="flex items-center gap-2">
-            <input
-              id="flashcards-check"
-              type="checkbox"
-              checked={includeInPractice}
-              onChange={(e) => setIncludeInPractice(e.target.checked)}
-              className="w-4 h-4 accent-emerald-600 cursor-pointer"
-            />
-            <label
-              htmlFor="flashcards-check"
-              className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
-              {t("entries.form.practice")}
-            </label>
+      {/* Desktop: Category | Rating | Practice | Tags — all in one row, bottom-aligned */}
+      <div className="hidden sm:flex items-end gap-5 flex-wrap">
+        <div className="flex flex-col gap-1 shrink-0">
+          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.category")}</label>
+          <div className="flex gap-2 flex-wrap">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setCategory(cat)}
+                className={[
+                  "px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors",
+                  category === cat
+                    ? "bg-emerald-600 text-white border-emerald-600"
+                    : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600",
+                ].join(" ")}>
+                {t(`dashboard.categories.${cat}`)}
+              </button>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* Desktop-only: Category */}
-      <div className="hidden sm:flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.category")}</label>
-        <div className="flex gap-2 flex-wrap">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => setCategory(cat)}
-              className={[
-                "px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors",
-                category === cat
-                  ? "bg-emerald-600 text-white border-emerald-600"
-                  : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600",
-              ].join(" ")}>
-              {t(`dashboard.categories.${cat}`)}
-            </button>
-          ))}
+        <div className="w-px self-stretch bg-gray-200 dark:bg-gray-700 shrink-0" />
+
+        <div className="flex flex-col gap-1 shrink-0">
+          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+            {t("entries.form.ratingLabel")}
+          </label>
+          <StarRating value={rating} onChange={setRating} />
+        </div>
+
+        <div className="flex items-center gap-2 pb-0.5 shrink-0">
+          <input
+            id="flashcards-check"
+            type="checkbox"
+            checked={includeInPractice}
+            onChange={(e) => setIncludeInPractice(e.target.checked)}
+            className="w-4 h-4 accent-emerald-600 cursor-pointer"
+          />
+          <label
+            htmlFor="flashcards-check"
+            className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
+            {t("entries.form.practice")}
+          </label>
         </div>
       </div>
-
-      {/* Tags — both mobile and desktop, at bottom */}
-      <div className="flex flex-col gap-1.5">
+      {/* Tags — desktop only */}
+      <div className="flex flex-col gap-1 flex-1 min-w-0">
+        <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.tags")}</label>
+        <TagCombobox selectedIds={selectedTagIds} onChange={setSelectedTagIds} />
+      </div>
+      {/* Tags — mobile only */}
+      <div className="hidden sm:flex flex-col gap-1.5 sm:hidden">
         <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.tags")}</label>
         <TagCombobox selectedIds={selectedTagIds} onChange={setSelectedTagIds} />
       </div>
@@ -447,15 +474,22 @@ export function EntryForm({ mode, initialValues, currentImgUrl, masteryLevel, on
               <>
                 <div className="flex text-sm leading-none">
                   {[1, 2, 3, 4, 5].map((s) => (
-                    <span key={s} className={masteryLevel >= s ? "text-amber-400" : "text-gray-300 dark:text-gray-600"}>★</span>
+                    <span key={s} className={masteryLevel >= s ? "text-amber-400" : "text-gray-300 dark:text-gray-600"}>
+                      ★
+                    </span>
                   ))}
                 </div>
                 {confirmingReset ? (
                   <span className="flex items-center gap-1">
-                    <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">{t("entries.form.resetConfirm")}</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">
+                      {t("entries.form.resetConfirm")}
+                    </span>
                     <button
                       type="button"
-                      onClick={() => { onResetMastery(); setConfirmingReset(false); }}
+                      onClick={() => {
+                        onResetMastery();
+                        setConfirmingReset(false);
+                      }}
                       className="text-xs font-medium text-red-500 hover:text-red-700 dark:hover:text-red-300 hover:underline shrink-0">
                       {t("entries.form.resetYes")}
                     </button>

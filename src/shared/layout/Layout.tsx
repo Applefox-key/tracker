@@ -150,7 +150,7 @@ export function Layout() {
       <header
         className={`bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30${isGameRoute ? " hidden sm:block" : ""}`}>
         {/* ── Row 1 ── */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 relative flex items-center justify-between h-16">
+        <div className="max-w-full 3xl:max-w-[2000px] mx-auto px-4 sm:px-6 relative flex items-center justify-between h-16">
           {/* Left: due badge (mobile) | logo (desktop) */}
           <div className="flex items-center gap-2">
             {dueCount !== null && dueCount > 0 ? (
@@ -351,25 +351,24 @@ export function Layout() {
               </div>
 
               {/* Nav items */}
-              {navItems
-                .map(({ to, labelKey, icon }) => (
-                  <NavLink
-                    key={to}
-                    to={to}
-                    end
-                    onClick={() => setBurgerOpen(false)}
-                    className={({ isActive }) =>
-                      [
-                        "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
-                        isActive
-                          ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
-                          : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700",
-                      ].join(" ")
-                    }>
-                    <span className="text-base">{icon}</span>
-                    <span>{t(labelKey)}</span>
-                  </NavLink>
-                ))}
+              {navItems.map(({ to, labelKey, icon }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  end
+                  onClick={() => setBurgerOpen(false)}
+                  className={({ isActive }) =>
+                    [
+                      "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                        : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700",
+                    ].join(" ")
+                  }>
+                  <span className="text-base">{icon}</span>
+                  <span>{t(labelKey)}</span>
+                </NavLink>
+              ))}
 
               {/* Apps section */}
               <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
@@ -418,7 +417,7 @@ export function Layout() {
       <DemoBanner />
 
       <main
-        className={`flex-1 py-2 sm:py-8 pt-0 sm:pt-8 max-w-7xl w-full mx-auto px-4 sm:px-6  sm:pb-0${isGameRoute ? "" : " pb-24"}`}
+        className={`flex-1 py-2 sm:py-8 pt-0 sm:pt-8 max-w-7xl 3xl:max-w-[2000px] w-full mx-auto px-4 sm:px-6  sm:pb-0${isGameRoute ? "" : " pb-24"}`}
         style={!isGameRoute ? { paddingBottom: "calc(5rem + env(safe-area-inset-bottom))" } : undefined}>
         <Outlet />
       </main>

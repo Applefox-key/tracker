@@ -32,7 +32,6 @@ export function EntriesPage() {
   const [editingEntry, setEditingEntry] = useState<Entry | null>(null);
   const [viewingEntry, setViewingEntry] = useState<Entry | null>(null);
   const [confirmDeleteEntry, setConfirmDeleteEntry] = useState<Entry | null>(null);
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"expanded" | "collapsed">("expanded");
   const [showAddMenu, setShowAddMenu] = useState(false);
@@ -103,159 +102,133 @@ export function EntriesPage() {
   const filterBtnActive = "bg-emerald-600 text-white border-emerald-600";
 
   return (
-    <div className="flex flex-col gap-6 pb-10 sm:pb-0 max-w-5xl m-auto">
-      {/* Sticky: header + filters + view toggle */}
-      <div className="sticky top-16 z-20 -mx-4 px-4 sm:-mx-6 sm:px-6 bg-white dark:bg-gray-900 flex flex-col gap-2 pb-3">
-        {/* Header */}
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h1 className="hidden sm:block text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {t("entries.title")}
-            </h1>
-            <p className="hidden sm:block text-gray-500 dark:text-gray-400 mt-1">
-              {t("entries.subtitle", { count: totalCount })}
-            </p>
-          </div>
-          {/* Desktop split button: left = Add Entry, right = dropdown */}
-          <div className="hidden sm:flex relative" ref={addMenuRef}>
-            <button
-              onClick={() => {
-                setShowForm((v) => !v);
-                setShowAddMenu(false);
-              }}
-              className="inline-flex items-center justify-center gap-2 rounded-l-lg font-medium px-4 py-2 text-sm bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500">
-              {showForm ? t("entries.cancel") : t("entries.addEntry")}
-            </button>
-            <button
-              onClick={() => setShowAddMenu((v) => !v)}
-              aria-label={t("entries.importBundle.menuAriaLabel")}
-              className="inline-flex items-center justify-center px-2 py-2 text-sm bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 transition-colors rounded-r-lg border-l border-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M7 10l5 5 5-5z" />
-              </svg>
-            </button>
-            {showAddMenu && (
-              <div className="absolute right-0 top-full mt-1.5 z-30 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden min-w-[160px]">
-                <button
-                  onClick={() => {
-                    setShowAddMenu(false);
-                    setShowImportModal(true);
-                  }}
-                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors text-left">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <line x1="12" y1="18" x2="12" y2="12" />
-                    <line x1="9" y1="15" x2="15" y2="15" />
-                  </svg>
-                  {t("entries.addBundle")}
-                </button>
-              </div>
+    <div className="flex flex-col sm:flex-row gap-6 pb-10 sm:pb-0 max-w-7xl 3xl:max-w-[2000px] m-auto items-start">
+      {/* ===== DESKTOP LEFT SIDEBAR ===== */}
+      <aside className="hidden sm:flex flex-col gap-4 w-[22rem] 3xl:w-[23rem] shrink-0 sticky top-20">
+        {/* Title + subtitle */}
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("entries.title")}</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">{t("entries.subtitle", { count: totalCount })}</p>
+        </div>
+
+        {/* Filter panel */}
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
+          <div className="bg-emerald-600 px-4 py-2.5 flex items-center justify-between">
+            <span className="text-white font-semibold text-sm">{t("entries.filters")}</span>
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                className="text-xs text-emerald-100 hover:text-white font-medium transition-colors">
+                {t("entries.clearAll")}
+              </button>
             )}
+          </div>
+          <div className="p-4 flex flex-col gap-4 max-h-[calc(100vh-14rem)] overflow-y-auto [scrollbar-width:thin]">
+            <AdvancedFiltersPanel
+              allTags={allTags}
+              selectedTag={selectedTag}
+              setSelectedTag={setSelectedTag}
+              dateFilter={dateFilter}
+              setDateFilter={setDateFilter}
+              selectedRatings={selectedRatings}
+              setSelectedRatings={setSelectedRatings}
+              masteredOnly={masteredOnly}
+              setMasteredOnly={setMasteredOnly}
+              filterBtnActive={filterBtnActive}
+              sidebar
+            />
           </div>
         </div>
-        {/* ── Filters + view toggle ── */}
-        <div className="flex flex-col gap-2">
-          {/* Filter section */}
-          <div className="flex flex-col gap-2 p-3 mr-8 sm:mr-[0] bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl sm:max-w-unset">
-            {/* Row 1: search + category chips + filters toggle */}
-            <div className="flex flex-col sm:flex-row gap-2 ">
-              <input
-                type="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={t("entries.searchPlaceholder")}
-                className="order-2 sm:order-1 sm:w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
-                         focus:outline-none focus:ring-2 focus:ring-emerald-400 shrink-0"
-              />
-              <div
-                className="order-1 sm:order-2 hidden sm:flex gap-1.5 flex-1 overflow-x-auto [scrollbar-width:none]
-                            [&::-webkit-scrollbar]:hidden sm:flex-wrap items-center">
-                {CATEGORIES.map(({ value, label }) => (
-                  <button
-                    key={value}
-                    onClick={() => setFilterCategory(value)}
-                    className={[
-                      "shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
-                      filterCategory === value ? filterBtnActive : filterBtnInactive,
-                    ].join(" ")}>
-                    {label}
-                  </button>
-                ))}
-              </div>
-              <button
-                onClick={() => setIsFiltersOpen((v) => !v)}
-                className={[
-                  "order-3 hidden sm:block shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
-                  isFiltersOpen || advancedFilterCount > 0 ? filterBtnActive : filterBtnInactive,
-                ].join(" ")}>
-                {t("entries.filters")}
-                {advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""} {isFiltersOpen ? "▲" : "▼"}
-              </button>
-            </div>
-            {/* Row 2: advanced filters */}
-            {isFiltersOpen && (
-              <div className="flex flex-col gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-                <AdvancedFiltersPanel
-                  allTags={allTags}
-                  selectedTag={selectedTag}
-                  setSelectedTag={setSelectedTag}
-                  dateFilter={dateFilter}
-                  setDateFilter={setDateFilter}
-                  selectedRatings={selectedRatings}
-                  setSelectedRatings={setSelectedRatings}
-                  masteredOnly={masteredOnly}
-                  setMasteredOnly={setMasteredOnly}
-                  filterBtnActive={filterBtnActive}
-                />
-              </div>
-            )}
-            {/* Active filters + clear */}
-            {hasActiveFilters && (
-              <div className="flex items-center gap-2 flex-wrap pt-1.5 border-t border-gray-200 dark:border-gray-700">
-                <span className="text-xs text-gray-400 dark:text-gray-500">{t("entries.activeLabel")}</span>
-                {filterCategory !== "all" && (
-                  <ActiveChip label={filterCategory} onRemove={() => setFilterCategory("all")} />
-                )}
-                {selectedTag !== null && (
-                  <ActiveChip
-                    label={`#${allTags.find((t) => t.id === selectedTag)?.name ?? selectedTag}`}
-                    onRemove={() => setSelectedTag(null)}
-                  />
-                )}
-                {selectedRatings.length > 0 && (
-                  <ActiveChip
-                    label={`★ ${[...selectedRatings].sort((a, b) => a - b).join(", ")}`}
-                    onRemove={() => setSelectedRatings([])}
-                  />
-                )}
-                {dateFilter !== "all" && (
-                  <ActiveChip
-                    label={dateFilter === "today" ? t("entries.today") : t("entries.thisWeek")}
-                    onRemove={() => setDateFilter("all")}
-                  />
-                )}
-                {masteredOnly && (
-                  <ActiveChip label={t("entries.masteredOnly")} onRemove={() => setMasteredOnly(false)} />
-                )}
-                {search !== "" && <ActiveChip label={`"${search}"`} onRemove={() => setSearch("")} />}
-                <button onClick={clearFilters} className="ml-auto text-xs text-red-500 hover:text-red-700 font-medium">
-                  {t("entries.clearAll")}
-                </button>
-              </div>
-            )}
+      </aside>
+
+      {/* ===== MAIN CONTENT ===== */}
+      <div className="flex-1 min-w-0 flex flex-col gap-4">
+        {/* Sticky bar */}
+        <div className="sticky top-16 z-20 -mx-4 px-4 sm:mx-0 sm:px-0 bg-white dark:bg-gray-900 flex flex-col gap-2 pb-3 sm:-mt-8 sm:pt-8">
+          {/* Mobile: search box (mr-8 leaves space for SideDrawer tab) */}
+          <div className="sm:hidden flex flex-col gap-2 p-3 mr-8 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t("entries.searchPlaceholder")}
+              className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            />
           </div>
+
+          {/* Desktop: search + category chips + Add Entry button */}
+          <div className="hidden sm:flex items-center gap-3">
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t("entries.searchPlaceholder")}
+              className="w-48 shrink-0 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            />
+            <div className="flex gap-1.5 flex-1 flex-wrap items-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {CATEGORIES.map(({ value, label }) => (
+                <button
+                  key={value}
+                  onClick={() => setFilterCategory(value)}
+                  className={[
+                    "shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors",
+                    filterCategory === value ? filterBtnActive : filterBtnInactive,
+                  ].join(" ")}>
+                  {label}
+                </button>
+              ))}
+            </div>
+            {/* Add Entry split button */}
+            <div className="relative shrink-0 flex" ref={addMenuRef}>
+              <button
+                onClick={() => {
+                  if (!showForm) window.scrollTo({ top: 0, behavior: "smooth" });
+                  setShowForm((v) => !v);
+                  setShowAddMenu(false);
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-l-lg font-medium px-4 py-2 text-sm bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500">
+                {showForm ? t("entries.cancel") : t("entries.addEntry")}
+              </button>
+              <button
+                onClick={() => setShowAddMenu((v) => !v)}
+                aria-label={t("entries.importBundle.menuAriaLabel")}
+                className="inline-flex items-center justify-center px-2 py-2 text-sm bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 transition-colors rounded-r-lg border-l border-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M7 10l5 5 5-5z" />
+                </svg>
+              </button>
+              {showAddMenu && (
+                <div className="absolute right-0 top-full mt-1.5 z-30 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden min-w-[160px]">
+                  <button
+                    onClick={() => {
+                      setShowAddMenu(false);
+                      setShowImportModal(true);
+                    }}
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors text-left">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="12" y1="18" x2="12" y2="12" />
+                      <line x1="9" y1="15" x2="15" y2="15" />
+                    </svg>
+                    {t("entries.addBundle")}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Entry count + view toggle */}
-          <div className="flex items-center justify-between px-4">
+          <div className="flex items-center justify-between px-1 sm:px-0">
             <p className="text-sm text-gray-400 dark:text-gray-500">
               {t("entries.showing", { shown: entries.length, total: totalCount })}
             </p>
@@ -303,44 +276,78 @@ export function EntriesPage() {
             </div>
           </div>
         </div>
-      </div>
-      {/* Add form — mobile: full-screen modal; desktop: inline */}
-      {showForm && (
-        <div className="fixed inset-0 z-[52] overflow-y-auto bg-white dark:bg-gray-900 sm:static sm:inset-auto sm:z-auto sm:overflow-visible sm:bg-transparent dark:sm:bg-transparent">
-          <EntryForm mode="create" onSubmit={handleAdd} onCancel={() => setShowForm(false)} />
-        </div>
-      )}
 
-      {/* Entry list */}
-      {entries.length === 0 ? (
-        <div className="text-center py-16 text-gray-400 dark:text-gray-500">
-          <p className="text-lg">{t("entries.noMatch")}</p>
-          <p className="text-sm mt-1">
-            {t("entries.noMatchHint")}{" "}
-            <button className="text-emerald-500 hover:underline" onClick={clearFilters}>
-              {t("entries.noMatchClear")}
+        {/* Active filters chips — mobile only (desktop sidebar shows active state visually) */}
+        {hasActiveFilters && (
+          <div className="sm:hidden flex items-center gap-2 flex-wrap">
+            <span className="text-xs text-gray-400 dark:text-gray-500">{t("entries.activeLabel")}</span>
+            {filterCategory !== "all" && (
+              <ActiveChip label={filterCategory} onRemove={() => setFilterCategory("all")} />
+            )}
+            {selectedTag !== null && (
+              <ActiveChip
+                label={`#${allTags.find((t) => t.id === selectedTag)?.name ?? selectedTag}`}
+                onRemove={() => setSelectedTag(null)}
+              />
+            )}
+            {selectedRatings.length > 0 && (
+              <ActiveChip
+                label={`★ ${[...selectedRatings].sort((a, b) => a - b).join(", ")}`}
+                onRemove={() => setSelectedRatings([])}
+              />
+            )}
+            {dateFilter !== "all" && (
+              <ActiveChip
+                label={dateFilter === "today" ? t("entries.today") : t("entries.thisWeek")}
+                onRemove={() => setDateFilter("all")}
+              />
+            )}
+            {masteredOnly && <ActiveChip label={t("entries.masteredOnly")} onRemove={() => setMasteredOnly(false)} />}
+            {search !== "" && <ActiveChip label={`"${search}"`} onRemove={() => setSearch("")} />}
+            <button onClick={clearFilters} className="ml-auto text-xs text-red-500 hover:text-red-700 font-medium">
+              {t("entries.clearAll")}
             </button>
-          </p>
-        </div>
-      ) : viewMode === "expanded" ? (
-        <div className="overflow-hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {entries.map((entry) => (
-            <EntryCard
-              key={entry.id}
-              entry={entry}
-              onRemove={(id) => setConfirmDeleteEntry(entries.find((e) => e.id === id) ?? null)}
-              onEdit={setEditingEntry}
-              onView={setViewingEntry}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
-          {entries.map((entry) => (
-            <EntryHeaderStrip key={entry.id} entry={entry} onView={setViewingEntry} />
-          ))}
-        </div>
-      )}
+          </div>
+        )}
+
+        {/* Add form — mobile: full-screen modal; desktop: inline */}
+        {showForm && (
+          <div className="fixed inset-0 z-[52] overflow-y-auto bg-white dark:bg-gray-900 sm:static sm:inset-auto sm:z-auto sm:overflow-visible sm:bg-transparent dark:sm:bg-transparent">
+            <EntryForm mode="create" onSubmit={handleAdd} onCancel={() => setShowForm(false)} />
+          </div>
+        )}
+
+        {/* Entry list */}
+        {entries.length === 0 ? (
+          <div className="text-center py-16 text-gray-400 dark:text-gray-500">
+            <p className="text-lg">{t("entries.noMatch")}</p>
+            <p className="text-sm mt-1">
+              {t("entries.noMatchHint")}{" "}
+              <button className="text-emerald-500 hover:underline" onClick={clearFilters}>
+                {t("entries.noMatchClear")}
+              </button>
+            </p>
+          </div>
+        ) : viewMode === "expanded" ? (
+          <div className="overflow-hidden grid grid-cols-1 sm:grid-cols-2 3xl:grid-cols-3 gap-4">
+            {entries.map((entry) => (
+              <EntryCard
+                key={entry.id}
+                entry={entry}
+                onRemove={(id) => setConfirmDeleteEntry(entries.find((e) => e.id === id) ?? null)}
+                onEdit={setEditingEntry}
+                onView={setViewingEntry}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+            {entries.map((entry) => (
+              <EntryHeaderStrip key={entry.id} entry={entry} onView={setViewingEntry} />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Detail modal */}
       {viewingEntry && (
@@ -543,6 +550,7 @@ interface AdvancedFiltersPanelProps {
   setMasteredOnly: (v: boolean) => void;
   filterBtnActive: string;
   inDrawer?: boolean;
+  sidebar?: boolean;
 }
 
 function AdvancedFiltersPanel({
@@ -557,16 +565,21 @@ function AdvancedFiltersPanel({
   setMasteredOnly,
   filterBtnActive,
   inDrawer,
+  sidebar,
 }: AdvancedFiltersPanelProps) {
   const { t } = useTranslation();
-  const labelCls = inDrawer
-    ? "text-sm font-medium text-gray-500 dark:text-gray-400"
-    : "text-xs font-medium text-gray-500 dark:text-gray-400";
-  const btnCls = inDrawer
-    ? "px-3 py-1.5 rounded-full text-sm font-medium border transition-colors"
-    : "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors";
-  const gapCls = inDrawer ? "gap-2" : "gap-1.5";
-  const sectionGap = inDrawer ? "gap-2" : "gap-1.5";
+  const labelCls = sidebar
+    ? "text-xs 3xl:text-sm font-medium text-gray-500 dark:text-gray-400"
+    : inDrawer
+      ? "text-sm font-medium text-gray-500 dark:text-gray-400"
+      : "text-xs font-medium text-gray-500 dark:text-gray-400";
+  const btnCls = sidebar
+    ? "px-2.5 py-1 3xl:py-1.5 rounded-full text-xs 3xl:text-sm font-medium border transition-colors"
+    : inDrawer
+      ? "px-3 py-1.5 rounded-full text-sm font-medium border transition-colors"
+      : "px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors";
+  const gapCls = sidebar ? "gap-2" : inDrawer ? "gap-2" : "gap-1.5";
+  const sectionGap = sidebar ? "gap-2" : inDrawer ? "gap-2" : "gap-1.5";
   return (
     <>
       <div className={`flex flex-col ${sectionGap}`}>
@@ -590,7 +603,7 @@ function AdvancedFiltersPanel({
 
       <div className={`flex flex-col ${sectionGap}`}>
         <span className={labelCls}>{t("entries.ratingLabel")}</span>
-        <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} large={inDrawer} />
+        <RatingMultiSelect selected={selectedRatings} onChange={setSelectedRatings} large={inDrawer && !sidebar} />
       </div>
 
       <div className={`flex flex-col ${sectionGap}`}>
