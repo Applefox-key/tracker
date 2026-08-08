@@ -272,6 +272,7 @@
     "clear": "Очистити",
     "backToPractice": "← Практика",
     "quit": "✕ Вийти",
+    "retryMistakes": "Повторити помилки ({{count}})",
     "modes": {
       "flashcards": { "label": "Картки", "description": "Перевірте пам'ять, перегортаючи картки" },
       "quiz": { "label": "Тест", "description": "Оберіть правильну відповідь з 4 варіантів" },

@@ -101,6 +101,7 @@ export function PuzzlePage() {
   const [showExample, setShowExample] = useState(false);
   const [hasRetried, setHasRetried] = useState(false);
   const [usedTileIds, setUsedTileIds] = useState<Set<string>>(new Set());
+  const [wrongEntries, setWrongEntries] = useState<Entry[]>([]);
 
   const { reviewEntry } = useEntryCrud();
 
@@ -153,6 +154,15 @@ export function PuzzlePage() {
     setQuestions(shuffle(filteredEntries));
     setCurrentIdx(0);
     setScore(0);
+    setWrongEntries([]);
+    setPhase("playing");
+  }
+
+  function retryMistakes() {
+    setQuestions(shuffle(wrongEntries));
+    setCurrentIdx(0);
+    setScore(0);
+    setWrongEntries([]);
     setPhase("playing");
   }
 
@@ -186,6 +196,7 @@ export function PuzzlePage() {
   function handleNext() {
     if (answerPhase === "wrong" && currentEntry) {
       reviewEntry(currentEntry.id, 0, "puzzle");
+      setWrongEntries((prev) => [...prev, currentEntry]);
     }
     setHasRetried(false);
     if (currentIdx + 1 >= questions.length) setPhase("done");
@@ -508,6 +519,11 @@ export function PuzzlePage() {
             <Button variant="secondary" onClick={startSession}>
               {t("practice.puzzle.tryAgain")}
             </Button>
+            {wrongEntries.length > 0 && (
+              <Button variant="secondary" onClick={retryMistakes}>
+                {t("practice.retryMistakes", { count: wrongEntries.length })}
+              </Button>
+            )}
             <Button onClick={() => navigate("/practice")}>{t("practice.puzzle.backToPractice")}</Button>
           </div>
         </div>

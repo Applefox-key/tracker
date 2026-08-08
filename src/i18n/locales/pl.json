@@ -264,6 +264,7 @@
     "clear": "Wyczyść",
     "backToPractice": "← Ćwiczenia",
     "quit": "✕ Wyjdź",
+    "retryMistakes": "Powtórz błędy ({{count}})",
     "modes": {
       "flashcards": { "label": "Fiszki", "description": "Odwracaj fiszki, aby sprawdzić pamięć" },
       "quiz": { "label": "Quiz", "description": "Wybierz poprawną odpowiedź spośród 4 opcji" },

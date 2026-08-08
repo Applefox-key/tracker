@@ -49,6 +49,7 @@ export function QuizPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
   const [showExample, setShowExample] = useState(false);
+  const [wrongEntries, setWrongEntries] = useState<Entry[]>([]);
 
   const filteredEntries = usePracticeEntries("quiz", { selectedRatings, selectedCategory, selectedTag });
   const { reviewEntry } = useEntryCrud();
@@ -101,6 +102,17 @@ export function QuizPage() {
     setSelected(null);
     setCorrectCount(0);
     setShowExample(false);
+    setWrongEntries([]);
+    setPhase("playing");
+  }
+
+  function retryMistakes() {
+    setQuestions(shuffle(wrongEntries));
+    setCurrentIdx(0);
+    setSelected(null);
+    setCorrectCount(0);
+    setShowExample(false);
+    setWrongEntries([]);
     setPhase("playing");
   }
 
@@ -108,6 +120,7 @@ export function QuizPage() {
     if (selected !== null) return;
     const isCorrect = opt === questions[currentIdx][answerField];
     if (isCorrect) setCorrectCount((n) => n + 1);
+    else setWrongEntries((prev) => [...prev, questions[currentIdx]]);
     setSelected(opt);
     if (!showExample) reviewEntry(questions[currentIdx].id, isCorrect ? 5 : 0, "quiz");
   }
@@ -393,6 +406,11 @@ export function QuizPage() {
             <Button variant="secondary" onClick={startSession}>
               {t("practice.quiz.tryAgain")}
             </Button>
+            {wrongEntries.length > 0 && (
+              <Button variant="secondary" onClick={retryMistakes}>
+                {t("practice.retryMistakes", { count: wrongEntries.length })}
+              </Button>
+            )}
             <Button onClick={() => navigate("/practice")}>{t("practice.quiz.backToPractice")}</Button>
           </div>
         </div>

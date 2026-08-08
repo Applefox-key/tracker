@@ -135,6 +135,16 @@ export function MatchPage() {
     setSelectedExplanation((prev) => (prev?.id === card.id ? null : card));
   }
 
+  function retryMistakes() {
+    const wrongEntriesList = allEntries.filter((e) => wrongEntryIds.has(e.id));
+    setAllEntries(shuffle(wrongEntriesList));
+    setRoundStart(0);
+    setTotalMatched(0);
+    setTotalErrors(0);
+    setWrongEntryIds(new Set());
+    setPhase("playing");
+  }
+
   function advanceRound() {
     const nextTotalMatched = totalMatched + roundSize;
     setTotalMatched(nextTotalMatched);
@@ -424,6 +434,11 @@ export function MatchPage() {
               <Button variant="secondary" onClick={startSession}>
                 {t("practice.match.playAgain")}
               </Button>
+              {wrongEntryIds.size >= 2 && (
+                <Button variant="secondary" onClick={retryMistakes}>
+                  {t("practice.retryMistakes", { count: wrongEntryIds.size })}
+                </Button>
+              )}
               <Button onClick={() => navigate("/practice")}>{t("practice.match.backToPractice")}</Button>
             </div>
           </div>

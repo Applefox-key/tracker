@@ -256,6 +256,7 @@
     "clear": "Limpiar",
     "backToPractice": "← Práctica",
     "quit": "✕ Salir",
+    "retryMistakes": "Repetir errores ({{count}})",
     "modes": {
       "flashcards": { "label": "Tarjetas", "description": "Voltea las tarjetas para poner a prueba tu memoria" },
       "quiz": { "label": "Quiz", "description": "Elige la respuesta correcta de 4 opciones" },

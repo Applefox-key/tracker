@@ -255,6 +255,7 @@
     "clear": "Clear",
     "backToPractice": "← Practice",
     "quit": "✕ Quit",
+    "retryMistakes": "Retry mistakes ({{count}})",
     "modes": {
       "flashcards": { "label": "Flashcards", "description": "Flip cards to test your memory" },
       "quiz": { "label": "Quiz", "description": "Choose the correct answer from 4 options" },
