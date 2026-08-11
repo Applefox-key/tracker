@@ -10,6 +10,7 @@ import { SideDrawer } from "@/shared/ui/SideDrawer";
 import type { Entry, EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { TfiPanel } from "react-icons/tfi";
+import { IoCheckmarkSharp } from "react-icons/io5";
 
 interface MatchCard {
   id: string;
@@ -55,6 +56,8 @@ export function MatchPage() {
   const [totalMatched, setTotalMatched] = useState(0);
   const [totalErrors, setTotalErrors] = useState(0);
   const [wrongEntryIds, setWrongEntryIds] = useState<Set<number>>(new Set());
+  const [exitingIds, setExitingIds] = useState<Set<string>>(new Set());
+  const [matchedPairsList, setMatchedPairsList] = useState<Array<{ word: string; explanation: string }>>([]);
 
   const { reviewEntry } = useEntryCrud();
 
@@ -73,7 +76,7 @@ export function MatchPage() {
 
   const roundEntries = allEntries.slice(roundStart, roundStart + ROUND_SIZE);
   const roundSize = roundEntries.length;
-  const roundComplete = matched.size === roundSize && roundSize > 0;
+  const roundComplete = matched.size === roundSize && roundSize > 0 && exitingIds.size === 0;
   const totalPairs = allEntries.length;
   const overallProgress = totalPairs > 0 ? Math.round(((totalMatched + matched.size) / totalPairs) * 100) : 0;
 
@@ -86,6 +89,8 @@ export function MatchPage() {
     setSelectedExplanation(null);
     setWrongIds(new Set());
     setMatched(new Set());
+    setExitingIds(new Set());
+    setMatchedPairsList([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, roundStart, allEntries]);
 
@@ -93,10 +98,23 @@ export function MatchPage() {
     if (!selectedWord || !selectedExplanation) return;
     if (selectedWord.entryId === selectedExplanation.entryId) {
       const id = selectedWord.entryId;
+      const wId = selectedWord.id;
+      const eId = selectedExplanation.id;
+      const pair = { word: selectedWord.text, explanation: selectedExplanation.text };
       setMatched((prev) => new Set([...prev, id]));
+      setExitingIds((prev) => new Set([...prev, wId, eId]));
       reviewEntry(id, wrongEntryIds.has(id) ? 3 : 5, "match");
       setSelectedWord(null);
       setSelectedExplanation(null);
+      setTimeout(() => {
+        setExitingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(wId);
+          next.delete(eId);
+          return next;
+        });
+        setMatchedPairsList((prev) => [...prev, pair]);
+      }, 480);
     } else {
       setTotalErrors((prev) => prev + 1);
       setWrongEntryIds((prev) => new Set([...prev, selectedWord.entryId, selectedExplanation.entryId]));
@@ -153,11 +171,12 @@ export function MatchPage() {
     else setRoundStart(nextRoundStart);
   }
 
-  function cardCls(card: MatchCard, selectedId: string | undefined): string {
-    const isMatched = matched.has(card.entryId);
+  function cardCls(card: MatchCard, selectedId: string | undefined, isExiting = false): string {
+    const isMatched = !isExiting && matched.has(card.entryId);
     const isSelected = selectedId === card.id;
     const isWrong = wrongIds.has(card.id);
-    const base = "relative w-full rounded-xl border px-3 py-2.5 text-left transition-all duration-150 select-none min-h-[4.5rem] sm:min-h-0 ";
+    const base =
+      "relative w-full rounded-xl border px-3 py-2.5 text-left transition-all duration-150 select-none min-h-[4.5rem] sm:min-h-0 ";
     if (isMatched)
       return (
         base +
@@ -170,11 +189,24 @@ export function MatchPage() {
         base +
         "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 text-emerald-800 dark:text-emerald-300 shadow-sm cursor-pointer"
       );
+    if (card.type === "word")
+      return (
+        base +
+        "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700/60 text-gray-800 dark:text-gray-200 cursor-pointer" +
+        (isTouchDevice
+          ? ""
+          : " hover:border-blue-400 hover:bg-blue-100/60 dark:hover:border-blue-500 dark:hover:bg-blue-900/40")
+      );
     return (
       base +
-      "bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200 hover:border-emerald-300 hover:bg-emerald-50/50 dark:hover:border-emerald-600 dark:hover:bg-emerald-900/10 cursor-pointer"
+      "bg-violet-50 dark:bg-violet-900/20 border-violet-200 dark:border-violet-700/60 text-gray-800 dark:text-gray-200 cursor-pointer" +
+      (isTouchDevice
+        ? ""
+        : " hover:border-violet-400 hover:bg-violet-100/60 dark:hover:border-violet-500 dark:hover:bg-violet-900/40")
     );
   }
+
+  const isTouchDevice = typeof window !== "undefined" && window.matchMedia("(hover: none)").matches;
 
   const filtersTitle = t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "");
   const canStart = filteredEntries.length >= 2;
@@ -190,6 +222,23 @@ export function MatchPage() {
           80%     { transform: translateX(4px); }
         }
         .match-shake { animation: match-shake 0.5s ease; }
+
+        @keyframes match-exit {
+          0%   { opacity: 1; transform: scale(1);    max-height: 200px; }
+          40%  { opacity: 0; transform: scale(0.88); max-height: 200px; }
+          100% { opacity: 0; transform: scale(0.88); max-height: 0; padding-top: 0; padding-bottom: 0; border-top-width: 0; border-bottom-width: 0; }
+        }
+        .match-exit {
+          animation: match-exit 0.48s ease forwards;
+          overflow: hidden;
+          pointer-events: none;
+        }
+
+        @keyframes pair-enter {
+          from { opacity: 0; transform: translateY(10px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .pair-enter { animation: pair-enter 0.35s ease forwards; }
       `}</style>
 
       <div className="flex flex-col gap-4">
@@ -345,52 +394,77 @@ export function MatchPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
                 {wordCards.map((card) => {
+                  if (matched.has(card.entryId) && !exitingIds.has(card.id)) return null;
+                  const isExiting = exitingIds.has(card.id);
                   const isWrong = wrongIds.has(card.id);
                   return (
-                    <button
-                      key={card.id}
-                      onClick={() => handleWordClick(card)}
-                      disabled={matched.has(card.entryId) || wrongIds.size > 0}
-                      className={[cardCls(card, selectedWord?.id), isWrong ? "match-shake" : ""].join(" ")}>
-                      <span className="text-base font-semibold leading-snug block pr-4">{card.text}</span>
-                      {matched.has(card.entryId) && <span className="absolute top-1.5 right-2 text-green-500 text-xs leading-none">✓</span>}
-                    </button>
+                    <div key={card.id} className={isExiting ? "match-exit" : ""}>
+                      <button
+                        onClick={() => handleWordClick(card)}
+                        disabled={matched.has(card.entryId) || wrongIds.size > 0}
+                        className={[cardCls(card, selectedWord?.id, isExiting), isWrong ? "match-shake" : ""].join(
+                          " ",
+                        )}>
+                        <span className="text-base font-semibold leading-snug block pr-4">{card.text}</span>
+                      </button>
+                    </div>
                   );
                 })}
               </div>
               <div className="flex flex-col gap-2">
                 {explanationCards.map((card) => {
-                  const isSelected = selectedExplanation?.id === card.id;
+                  if (matched.has(card.entryId) && !exitingIds.has(card.id)) return null;
+                  const isExiting = exitingIds.has(card.id);
                   const isWrong = wrongIds.has(card.id);
                   return (
-                    <button
-                      key={card.id}
-                      onClick={() => handleExplanationClick(card)}
-                      disabled={matched.has(card.entryId) || wrongIds.size > 0}
-                      className={[cardCls(card, selectedExplanation?.id), isWrong ? "match-shake" : ""].join(" ")}>
-                      <span
-                        className="text-sm leading-snug block pr-4"
-                        style={
-                          !isSelected
-                            ? {
-                                display: "-webkit-box",
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: "vertical",
-                                overflow: "hidden",
-                              }
-                            : undefined
-                        }>
-                        {card.text}
-                      </span>
-                      {matched.has(card.entryId) && <span className="absolute top-1.5 right-2 text-green-500 text-xs leading-none">✓</span>}
-                    </button>
+                    <div key={card.id} className={isExiting ? "match-exit" : ""}>
+                      <button
+                        onClick={() => handleExplanationClick(card)}
+                        disabled={matched.has(card.entryId) || wrongIds.size > 0}
+                        className={[
+                          cardCls(card, selectedExplanation?.id, isExiting),
+                          isWrong ? "match-shake" : "",
+                        ].join(" ")}>
+                        <span className="text-sm leading-snug block pr-4">{card.text}</span>
+                      </button>
+                    </div>
                   );
                 })}
               </div>
             </div>
 
-            {!roundComplete && (
+            {!roundComplete && matched.size === 0 && (
               <p className="text-xs text-gray-400 dark:text-gray-500 text-center">{t("practice.match.selectHint")}</p>
+            )}
+
+            {matchedPairsList.length > 0 && (
+              <div className="flex flex-col gap-3 mt-1">
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+                  <span className="text-xs text-gray-400 dark:text-gray-500 font-medium shrink-0">
+                    {t("practice.match.matchedPairs", { count: matchedPairsList.length })}
+                  </span>
+                  <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  {matchedPairsList.map((pair, i) => (
+                    <div key={i} className="pair-enter flex flex-col gap-1">
+                      <div className="flex sm:justify-start relative">
+                        <div className="relative w-full sm:w-auto sm:max-w-[65%] bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-lg sm:rounded-2xl sm:rounded-tl-sm px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200">
+                          {pair.word}
+                        </div>{" "}
+                        <span className="absolute top-1.5 right-2 text-green-500 text-xs leading-none">✓</span>
+                      </div>
+                      <div className="flex sm:justify-end relative ">
+                        <div className="w-full sm:w-auto sm:max-w-[65%] bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-700/50 rounded-lg sm:rounded-2xl sm:rounded-tr-sm px-3 py-2 text-sm text-gray-600 dark:text-gray-300 sm:text-right">
+                          {pair.explanation}
+                        </div>
+                      </div>{" "}
+                      <hr className="border-gray-200 dark:border-gray-700"></hr>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
 
             {roundComplete && (

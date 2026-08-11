@@ -393,6 +393,7 @@
       "playAgain": "Graj ponownie",
       "backToPractice": "Powrót do ćwiczeń",
       "progressLabel": "Dopasowano {{matched}} z {{total}}",
+      "matchedPairs": "Dopasowane ({{count}})",
       "helpDesc": "Wybierz kartę z kolumny Słowa, a następnie pasujące wyjaśnienie z prawej kolumny. Dopasuj wszystkie pary, aby ukończyć rundę."
     },
     "puzzle": {

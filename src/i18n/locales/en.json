@@ -382,6 +382,7 @@
       "playAgain": "Play again",
       "backToPractice": "Back to Practice",
       "progressLabel": "Matched {{matched}} of {{total}}",
+      "matchedPairs": "Matched ({{count}})",
       "helpDesc": "Select a card from the Words column, then its matching Explanation from the right. Match all pairs to complete the round."
     },
     "puzzle": {

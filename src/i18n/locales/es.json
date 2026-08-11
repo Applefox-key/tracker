@@ -381,6 +381,7 @@
       "playAgain": "Jugar de nuevo",
       "backToPractice": "Volver a práctica",
       "progressLabel": "Emparejadas {{matched}} de {{total}}",
+      "matchedPairs": "Emparejadas ({{count}})",
       "helpDesc": "Selecciona una tarjeta de la columna Palabras y luego su explicación correspondiente en la columna derecha. Empareja todos los pares para completar la ronda."
     },
     "puzzle": {
