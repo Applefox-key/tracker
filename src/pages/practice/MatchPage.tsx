@@ -10,7 +10,6 @@ import { SideDrawer } from "@/shared/ui/SideDrawer";
 import type { Entry, EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { TfiPanel } from "react-icons/tfi";
-import { IoCheckmarkSharp } from "react-icons/io5";
 
 interface MatchCard {
   id: string;
