@@ -305,7 +305,14 @@
       },
       "helpFlashcard": "Flip the card to reveal the answer, then rate how well you recalled it.",
       "helpQuiz": "Choose the correct word from 4 options based on the explanation shown.",
-      "helpPuzzle": "Assemble the correct word or phrase by clicking the tiles."
+      "helpPuzzle": "Assemble the correct word or phrase by clicking the tiles.",
+      "calculatingResults": "Counting results…",
+      "masteredUp_one": "{{count}} card leveled up",
+      "masteredUp_other": "{{count}} cards leveled up",
+      "nextReviewLabel": "Next review",
+      "nextSoon": "tomorrow",
+      "nextWeek": "this week",
+      "nextLater": "later"
     },
     "helpModal": {
       "howToPlay": "How to play",

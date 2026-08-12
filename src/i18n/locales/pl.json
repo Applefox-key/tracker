@@ -316,7 +316,16 @@
       },
       "helpFlashcard": "Odwróć fiszkę, aby zobaczyć odpowiedź, a następnie oceń, jak dobrze ją pamiętałeś.",
       "helpQuiz": "Wybierz poprawne słowo spośród 4 opcji na podstawie wyświetlonego wyjaśnienia.",
-      "helpPuzzle": "Ułóż poprawne słowo lub wyrażenie, klikając kafelki."
+      "helpPuzzle": "Ułóż poprawne słowo lub wyrażenie, klikając kafelki.",
+      "calculatingResults": "Obliczanie wyników…",
+      "masteredUp_one": "{{count}} fiszka awansowała poziom",
+      "masteredUp_few": "{{count}} fiszki awansowały poziom",
+      "masteredUp_many": "{{count}} fiszek awansowało poziom",
+      "masteredUp_other": "{{count}} fiszek awansowało poziom",
+      "nextReviewLabel": "Następna powtórka",
+      "nextSoon": "jutro",
+      "nextWeek": "w tym tygodniu",
+      "nextLater": "później"
     },
     "helpModal": {
       "howToPlay": "Jak grać",

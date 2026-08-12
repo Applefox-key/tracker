@@ -99,13 +99,14 @@ function GradeButtons({ onGrade }: { onGrade: (g: SRGrade) => void }) {
 
 // ── DueFlashcardItem ──────────────────────────────────────────────────────────
 
-function DueFlashcardItem({ entry, onNext }: { entry: Entry; onNext: () => void }) {
+function DueFlashcardItem({ entry, onNext, onReviewed }: { entry: Entry; onNext: () => void; onReviewed: (before: Entry, after: Entry) => void }) {
   const { t } = useTranslation();
   const { reviewEntry } = useEntryCrud();
   const [isFlipped, setIsFlipped] = useState(false);
 
   function handleGrade(grade: SRGrade) {
-    reviewEntry(entry.id, grade, "flashcard", true);
+    reviewEntry(entry.id, grade, "flashcard", true)
+      .then(updated => { if (updated) onReviewed(entry, updated); });
     onNext();
   }
 
@@ -140,7 +141,7 @@ function DueFlashcardItem({ entry, onNext }: { entry: Entry; onNext: () => void 
 
 // ── DueQuizItem ───────────────────────────────────────────────────────────────
 
-function DueQuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onNext: () => void }) {
+function DueQuizItem({ entry, pool, onNext, onReviewed }: { entry: Entry; pool: Entry[]; onNext: () => void; onReviewed: (before: Entry, after: Entry) => void }) {
   const { t } = useTranslation();
   const { reviewEntry } = useEntryCrud();
   const [selected, setSelected] = useState<string | null>(null);
@@ -160,7 +161,10 @@ function DueQuizItem({ entry, pool, onNext }: { entry: Entry; pool: Entry[]; onN
     if (selected !== null) return;
     const isCorrect = opt === entry.word;
     setSelected(opt);
-    if (!hintUsed) reviewEntry(entry.id, isCorrect ? 5 : 0, "quiz");
+    if (!hintUsed) {
+      reviewEntry(entry.id, isCorrect ? 5 : 0, "quiz")
+        .then(updated => { if (updated) onReviewed(entry, updated); });
+    }
   }
 
   function handleShowExample() {
@@ -273,7 +277,7 @@ function checkAnswer(placed: Tile[], entry: Entry, mode: "letter" | "word"): boo
   );
 }
 
-function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: Entry[]; onNext: () => void }) {
+function DuePuzzleItem({ entry, allEntries, onNext, onReviewed }: { entry: Entry; allEntries: Entry[]; onNext: () => void; onReviewed: (before: Entry, after: Entry) => void }) {
   const { t } = useTranslation();
   const { reviewEntry } = useEntryCrud();
   const [pool, setPool] = useState<Tile[]>([]);
@@ -305,7 +309,10 @@ function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries
       const correct = checkAnswer(placed, entry, tileMode);
       if (correct) {
         setPhase("correct");
-        if (!hintUsed) reviewEntry(entry.id, hasRetried ? 4 : 5, "puzzle");
+        if (!hintUsed) {
+          reviewEntry(entry.id, hasRetried ? 4 : 5, "puzzle")
+            .then(updated => { if (updated) onReviewed(entry, updated); });
+        }
       } else {
         setPhase("wrong");
       }
@@ -339,7 +346,10 @@ function DuePuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries
   }
 
   function handleSkip() {
-    if (!hintUsed) reviewEntry(entry.id, 0, "puzzle");
+    if (!hintUsed) {
+      reviewEntry(entry.id, 0, "puzzle")
+        .then(updated => { if (updated) onReviewed(entry, updated); });
+    }
     onNext();
   }
 
@@ -463,7 +473,8 @@ export function DuePage() {
   const [selectedModes, setSelectedModes] = useState<DueMode[]>(["flashcard", "quiz", "puzzle"]);
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [remainingDue, setRemainingDue] = useState(0);
+  const [remainingDue, setRemainingDue] = useState<number | null>(null);
+  const [reviewResults, setReviewResults] = useState<{ before: Entry; after: Entry }[]>([]);
 
   useEffect(() => {
     if (authMode !== "authenticated") {
@@ -496,8 +507,13 @@ export function DuePage() {
     );
   }
 
+  function handleReviewed(before: Entry, after: Entry) {
+    setReviewResults(prev => [...prev, { before, after }]);
+  }
+
   async function startSession() {
-    setRemainingDue(0);
+    setRemainingDue(null);
+    setReviewResults([]);
     let entries = dueEntries;
     try {
       const fresh = await entriesApi.getDueEntries();
@@ -668,10 +684,10 @@ export function DuePage() {
 
           {current && (
             <div key={`${current.entry.id}-${currentIdx}`}>
-              {current.mode === "flashcard" && <DueFlashcardItem entry={current.entry} onNext={handleNext} />}
-              {current.mode === "quiz" && <DueQuizItem entry={current.entry} pool={dueEntries} onNext={handleNext} />}
+              {current.mode === "flashcard" && <DueFlashcardItem entry={current.entry} onNext={handleNext} onReviewed={handleReviewed} />}
+              {current.mode === "quiz" && <DueQuizItem entry={current.entry} pool={dueEntries} onNext={handleNext} onReviewed={handleReviewed} />}
               {current.mode === "puzzle" && (
-                <DuePuzzleItem entry={current.entry} allEntries={dueEntries} onNext={handleNext} />
+                <DuePuzzleItem entry={current.entry} allEntries={dueEntries} onNext={handleNext} onReviewed={handleReviewed} />
               )}
             </div>
           )}
@@ -679,25 +695,69 @@ export function DuePage() {
       )}
 
       {/* ── Done: results ───────────────────────────────────────── */}
-      {phase === "done" && (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
-          <span className="text-5xl">🎉</span>
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t("practice.due.done")}</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
-              {t("practice.due.reviewed", { count: queue.length })}
-            </p>
-          </div>
-          <div className="flex gap-3 flex-wrap justify-center">
-            {remainingDue > 0 && (
-              <Button variant="secondary" onClick={startSession}>
-                {t("practice.quiz.tryAgain")}
-              </Button>
+      {phase === "done" && (() => {
+        const masteredUp = reviewResults.filter(r =>
+          (r.after.mastery_level ?? 0) > (r.before.mastery_level ?? 0)
+        ).length;
+        const soon  = reviewResults.filter(r => (r.after.interval_days ?? 1) <= 1).length;
+        const week  = reviewResults.filter(r => { const d = r.after.interval_days ?? 1; return d > 1 && d <= 7; }).length;
+        const later = reviewResults.filter(r => (r.after.interval_days ?? 1) > 7).length;
+        const hasNextReview = soon + week + later > 0;
+        const isLoading = remainingDue === null;
+        return (
+          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-6 text-center max-w-md mx-auto w-full">
+            <span className="text-5xl">🎉</span>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t("practice.due.done")}</h2>
+              <p className="text-gray-500 dark:text-gray-400 mt-1">
+                {t("practice.due.reviewed", { count: queue.length })}
+              </p>
+            </div>
+
+            {isLoading ? (
+              <div className="flex flex-col items-center gap-2 py-1">
+                <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                <p className="text-xs text-gray-400 dark:text-gray-500">{t("practice.due.calculatingResults")}</p>
+              </div>
+            ) : (
+              <>
+                {/* ── Stats ── */}
+                {(masteredUp > 0 || hasNextReview) && (
+                  <div className="w-full flex flex-col gap-3">
+                    {masteredUp > 0 && (
+                      <div className="flex items-center justify-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 font-medium">
+                        <span>↑</span>
+                        <span>{t("practice.due.masteredUp", { count: masteredUp })}</span>
+                      </div>
+                    )}
+                    {hasNextReview && (
+                      <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 flex flex-col gap-1.5">
+                        <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                          {t("practice.due.nextReviewLabel")}
+                        </p>
+                        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-300">
+                          {soon  > 0 && <span><span className="font-semibold">{soon}</span>  {t("practice.due.nextSoon")}</span>}
+                          {week  > 0 && <span><span className="font-semibold">{week}</span>  {t("practice.due.nextWeek")}</span>}
+                          {later > 0 && <span><span className="font-semibold">{later}</span> {t("practice.due.nextLater")}</span>}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="flex gap-3 flex-wrap justify-center">
+                  {remainingDue > 0 && (
+                    <Button variant="secondary" onClick={startSession}>
+                      {t("practice.quiz.tryAgain")}
+                    </Button>
+                  )}
+                  <Button onClick={() => navigate("/practice")}>{t("practice.backToPractice")}</Button>
+                </div>
+              </>
             )}
-            <Button onClick={() => navigate("/practice")}>{t("practice.backToPractice")}</Button>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }

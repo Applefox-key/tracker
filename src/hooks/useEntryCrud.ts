@@ -73,10 +73,11 @@ export function useEntryCrud() {
     }
   }
 
-  function reviewEntry(id: number, grade: SRGrade, practiceMode: PracticeMode, isDue = false) {
+  async function reviewEntry(id: number, grade: SRGrade, practiceMode: PracticeMode, isDue = false): Promise<Entry | undefined> {
     if (mode === 'authenticated') {
-      reviewMutation.mutate({ id, grade, mode: practiceMode, isDue })
+      const result = await reviewMutation.mutateAsync({ id, grade, mode: practiceMode, isDue })
       queryClient.invalidateQueries({ queryKey: ['weeklyStats'] })
+      return result
     }
   }
 

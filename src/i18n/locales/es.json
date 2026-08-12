@@ -304,7 +304,14 @@
       },
       "helpFlashcard": "Voltea la tarjeta para ver la respuesta y valora qué tan bien la recordaste.",
       "helpQuiz": "Elige la palabra correcta entre 4 opciones según la explicación mostrada.",
-      "helpPuzzle": "Construye la palabra o frase correcta haciendo clic en las piezas."
+      "helpPuzzle": "Construye la palabra o frase correcta haciendo clic en las piezas.",
+      "calculatingResults": "Calculando resultados…",
+      "masteredUp_one": "{{count}} tarjeta subió de nivel",
+      "masteredUp_other": "{{count}} tarjetas subieron de nivel",
+      "nextReviewLabel": "Próximo repaso",
+      "nextSoon": "mañana",
+      "nextWeek": "esta semana",
+      "nextLater": "más adelante"
     },
     "helpModal": {
       "howToPlay": "Cómo jugar",
