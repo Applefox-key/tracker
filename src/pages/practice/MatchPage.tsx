@@ -445,21 +445,36 @@ export function MatchPage() {
                   </span>
                   <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col">
                   {matchedPairsList.map((pair, i) => (
-                    <div key={i} className="pair-enter flex flex-col gap-1">
-                      <div className="flex sm:justify-start relative">
-                        <div className="relative w-full sm:w-auto sm:max-w-[65%] bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-lg sm:rounded-2xl sm:rounded-tl-sm px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200">
-                          {pair.word}
-                        </div>{" "}
-                        <span className="absolute top-1.5 right-2 text-green-500 text-xs leading-none">✓</span>
-                      </div>
-                      <div className="flex sm:justify-end relative ">
-                        <div className="w-full sm:w-auto sm:max-w-[65%] bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-700/50 rounded-lg sm:rounded-2xl sm:rounded-tr-sm px-3 py-2 text-sm text-gray-600 dark:text-gray-300 sm:text-right">
-                          {pair.explanation}
+                    <div key={i} className="pair-enter py-1.5 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                      {/* mobile: stacked full-width */}
+                      <div className="flex flex-col gap-1 sm:hidden">
+                        <div className="flex justify-start relative">
+                          <div className="w-full bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-lg rounded-tl-sm px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200">
+                            {pair.word}
+                          </div>
+                          <span className="absolute top-1.5 right-2 text-green-500 text-xs leading-none">✓</span>
                         </div>
-                      </div>{" "}
-                      <hr className="border-gray-200 dark:border-gray-700"></hr>
+                        <div className="flex justify-end">
+                          <div className="w-full bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-700/50 rounded-lg rounded-tr-sm px-3 py-2 text-sm text-gray-600 dark:text-gray-300 text-right">
+                            {pair.explanation}
+                          </div>
+                        </div>
+                      </div>
+                      {/* desktop: single row */}
+                      <div className="hidden sm:flex items-start gap-2">
+                        <span className="text-green-500 shrink-0 mt-1 text-sm">✓</span>
+                        <div className="flex items-start gap-1.5 flex-wrap min-w-0 flex-1">
+                          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-lg px-2.5 py-1 text-sm font-medium text-gray-800 dark:text-gray-200">
+                            {pair.word}
+                          </div>
+                          <span className="text-gray-300 dark:text-gray-600 self-center">–</span>
+                          <div className="bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-700/50 rounded-lg px-2.5 py-1 text-sm text-gray-600 dark:text-gray-300">
+                            {pair.explanation}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
