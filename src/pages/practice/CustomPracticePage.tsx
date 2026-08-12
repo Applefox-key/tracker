@@ -483,18 +483,22 @@ function WriteItem({ entry, onNext }: { entry: Entry; onNext: () => void }) {
     setTimeout(() => inputRef.current?.focus(), 50);
   }, []);
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Enter" || e.repeat) return;
+      if (answerState === "unanswered") handleSubmit();
+      else onNext();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answerState, inputValue]);
+
   function handleSubmit() {
     if (answerState !== "unanswered" || inputValue.trim() === "") return;
     const isCorrect = normalizeAnswer(inputValue) === normalizeAnswer(entry.word);
     setAnswerState(isCorrect ? "correct" : "wrong");
     if (!showExample) reviewEntry(entry.id, isCorrect ? 5 : 0, "write");
-  }
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      if (answerState === "unanswered") handleSubmit();
-      else onNext();
-    }
   }
 
   return (
@@ -523,7 +527,6 @@ function WriteItem({ entry, onNext }: { entry: Entry; onNext: () => void }) {
         type="text"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={handleKeyDown}
         disabled={answerState !== "unanswered"}
         placeholder={t("practice.write.typeAnswer")}
         autoComplete="off"
