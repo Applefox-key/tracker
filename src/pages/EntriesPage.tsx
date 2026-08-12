@@ -10,7 +10,7 @@ import { EntryForm, EntryFormValues } from "@/features/entries/components/AddEnt
 import { EditEntryModal } from "@/features/entries/components/EditEntryModal";
 import { EntryDetailModal } from "@/features/entries/components/EntryDetailModal";
 import { ImportBundleModal } from "@/features/entries/components/ImportBundleModal";
-import { useEntries, DateFilter } from "@/features/entries/hooks/useEntries";
+import { useEntries, DateFilter, PracticeFilter } from "@/features/entries/hooks/useEntries";
 import { Entry, EntryCategory } from "@/features/entries/types";
 import { TbTargetArrow, TbCrown } from "react-icons/tb";
 import { AddEntryFab } from "@/features/entries/components/AddEntryFab";
@@ -77,6 +77,8 @@ export function EntriesPage() {
     setDateFilter,
     masteredOnly,
     setMasteredOnly,
+    practiceFilter,
+    setPracticeFilter,
     hasActiveFilters,
     clearFilters,
     addEntry,
@@ -89,6 +91,7 @@ export function EntriesPage() {
     selectedRatings.length > 0,
     dateFilter !== "all",
     masteredOnly,
+    practiceFilter !== "all",
   ].filter(Boolean).length;
 
   function handleAdd(values: EntryFormValues) {
@@ -134,6 +137,8 @@ export function EntriesPage() {
               setSelectedRatings={setSelectedRatings}
               masteredOnly={masteredOnly}
               setMasteredOnly={setMasteredOnly}
+              practiceFilter={practiceFilter}
+              setPracticeFilter={setPracticeFilter}
               filterBtnActive={filterBtnActive}
               sidebar
             />
@@ -303,6 +308,12 @@ export function EntriesPage() {
               />
             )}
             {masteredOnly && <ActiveChip label={t("entries.masteredOnly")} onRemove={() => setMasteredOnly(false)} />}
+            {practiceFilter !== "all" && (
+              <ActiveChip
+                label={t(practiceFilter === "inPractice" ? "entries.inPractice" : "entries.notInPractice")}
+                onRemove={() => setPracticeFilter("all")}
+              />
+            )}
             {search !== "" && <ActiveChip label={`"${search}"`} onRemove={() => setSearch("")} />}
             <button onClick={clearFilters} className="ml-auto text-xs text-red-500 hover:text-red-700 font-medium">
               {t("entries.clearAll")}
@@ -409,6 +420,8 @@ export function EntriesPage() {
             setSelectedRatings={setSelectedRatings}
             masteredOnly={masteredOnly}
             setMasteredOnly={setMasteredOnly}
+            practiceFilter={practiceFilter}
+            setPracticeFilter={setPracticeFilter}
             filterBtnActive={filterBtnActive}
             inDrawer
           />
@@ -548,6 +561,8 @@ interface AdvancedFiltersPanelProps {
   setSelectedRatings: (r: number[]) => void;
   masteredOnly: boolean;
   setMasteredOnly: (v: boolean) => void;
+  practiceFilter: PracticeFilter;
+  setPracticeFilter: (v: PracticeFilter) => void;
   filterBtnActive: string;
   inDrawer?: boolean;
   sidebar?: boolean;
@@ -563,6 +578,8 @@ function AdvancedFiltersPanel({
   setSelectedRatings,
   masteredOnly,
   setMasteredOnly,
+  practiceFilter,
+  setPracticeFilter,
   filterBtnActive,
   inDrawer,
   sidebar,
@@ -614,6 +631,25 @@ function AdvancedFiltersPanel({
             className={[btnCls, masteredOnly ? filterBtnActive : tagBtnInactive].join(" ")}>
             {t("entries.masteredOnly")}
           </button>
+        </div>
+      </div>
+
+      <div className={`flex flex-col ${sectionGap}`}>
+        <span className={labelCls}>{t("entries.practiceLabel")}</span>
+        <div className={`flex ${gapCls} flex-wrap`}>
+          {(
+            [
+              { value: "inPractice", label: t("entries.inPractice") },
+              { value: "notInPractice", label: t("entries.notInPractice") },
+            ] as const
+          ).map(({ value, label }) => (
+            <button
+              key={value}
+              onClick={() => setPracticeFilter(practiceFilter === value ? "all" : value)}
+              className={[btnCls, practiceFilter === value ? filterBtnActive : tagBtnInactive].join(" ")}>
+              {label}
+            </button>
+          ))}
         </div>
       </div>
 

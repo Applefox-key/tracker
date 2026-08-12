@@ -106,6 +106,9 @@
     "tagLabel": "Tag",
     "masteredLabel": "Mastered",
     "masteredOnly": "Mastered only",
+    "practiceLabel": "Practice",
+    "inPractice": "In practice",
+    "notInPractice": "Not in practice",
     "all": "All",
     "form": {
       "editTitle": "Edit Entry",

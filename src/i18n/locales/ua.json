@@ -119,6 +119,9 @@
     "tagLabel": "Тег",
     "masteredLabel": "Засвоєно",
     "masteredOnly": "Тільки засвоєні",
+    "practiceLabel": "Практика",
+    "inPractice": "В практиці",
+    "notInPractice": "Не в практиці",
     "all": "Всі",
     "form": {
       "editTitle": "Редагувати запис",

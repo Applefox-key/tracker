@@ -4,6 +4,7 @@ import { useEntryCrud } from '@/hooks/useEntryCrud'
 import { EntryCategory, EntryTag } from '../types'
 
 export type DateFilter = 'all' | 'today' | 'week'
+export type PracticeFilter = 'all' | 'inPractice' | 'notInPractice'
 
 function startOfToday() {
   const d = new Date()
@@ -31,6 +32,7 @@ export function useEntries(
   const [selectedRatings, setSelectedRatings] = useState<number[]>([])
   const [dateFilter, setDateFilter] = useState<DateFilter>(initialDateFilter)
   const [masteredOnly, setMasteredOnly] = useState(false)
+  const [practiceFilter, setPracticeFilter] = useState<PracticeFilter>('all')
 
   const allTags = useMemo(() => {
     const seen = new Map<number, EntryTag>()
@@ -55,13 +57,17 @@ export function useEntries(
         dateFilter === 'today' ? new Date(e.createdAt) >= today :
         new Date(e.createdAt) >= week
       const matchesMastered = !masteredOnly || (e.mastery_level ?? 0) >= 4
-      return matchesSearch && matchesCategory && matchesTag && matchesRating && matchesDate && matchesMastered
+      const matchesPractice =
+        practiceFilter === 'all' ? true :
+        practiceFilter === 'inPractice' ? e.includeInPractice :
+        !e.includeInPractice
+      return matchesSearch && matchesCategory && matchesTag && matchesRating && matchesDate && matchesMastered && matchesPractice
     })
-  }, [entries, search, filterCategory, selectedTag, selectedRatings, dateFilter, masteredOnly])
+  }, [entries, search, filterCategory, selectedTag, selectedRatings, dateFilter, masteredOnly, practiceFilter])
 
   const hasActiveFilters =
     search !== '' || filterCategory !== 'all' || selectedTag !== null ||
-    selectedRatings.length > 0 || dateFilter !== 'all' || masteredOnly
+    selectedRatings.length > 0 || dateFilter !== 'all' || masteredOnly || practiceFilter !== 'all'
 
   function clearFilters() {
     setSearch('')
@@ -70,6 +76,7 @@ export function useEntries(
     setSelectedRatings([])
     setDateFilter('all')
     setMasteredOnly(false)
+    setPracticeFilter('all')
   }
 
   return {
@@ -88,6 +95,8 @@ export function useEntries(
     setDateFilter,
     masteredOnly,
     setMasteredOnly,
+    practiceFilter,
+    setPracticeFilter,
     hasActiveFilters,
     clearFilters,
     addEntry,

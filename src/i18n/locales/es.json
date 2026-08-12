@@ -107,6 +107,9 @@
     "tagLabel": "Etiqueta",
     "masteredLabel": "Dominado",
     "masteredOnly": "Solo dominadas",
+    "practiceLabel": "Práctica",
+    "inPractice": "En práctica",
+    "notInPractice": "Sin práctica",
     "all": "Todas",
     "form": {
       "editTitle": "Editar entrada",

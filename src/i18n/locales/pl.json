@@ -111,6 +111,9 @@
     "tagLabel": "Tag",
     "masteredLabel": "Opanowane",
     "masteredOnly": "Tylko opanowane",
+    "practiceLabel": "Praktyka",
+    "inPractice": "W praktyce",
+    "notInPractice": "Poza praktyką",
     "all": "Wszystkie",
     "form": {
       "editTitle": "Edytuj wpis",
