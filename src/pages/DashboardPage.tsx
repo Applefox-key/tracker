@@ -145,8 +145,8 @@ const LAP_COLORS = [
   },
 ] as const;
 
-// fruit per lap: amber→🍌 blue→🫐 emerald→🍏 violet→🍇 pink→🍒 orange→🍊 teal→🥝
-const LAP_FRUITS = ["🍌", "🫐", "🍏", "🍇", "🍒", "🍊", "🥝"] as const;
+// fruit per lap: amber→🍋 blue→🫐 emerald→🍏 violet→🍇 pink→🍒 orange→🍊 teal→🥝
+const LAP_FRUITS = ["🍋", "🫐", "🍏", "🍇", "🍒", "🍊", "🥝"] as const;
 
 function StreakFruits({
   completedLaps,

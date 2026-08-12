@@ -463,6 +463,7 @@ export function DuePage() {
   const [selectedModes, setSelectedModes] = useState<DueMode[]>(["flashcard", "quiz", "puzzle"]);
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [currentIdx, setCurrentIdx] = useState(0);
+  const [remainingDue, setRemainingDue] = useState(0);
 
   useEffect(() => {
     if (authMode !== "authenticated") {
@@ -478,6 +479,17 @@ export function DuePage() {
       .catch(() => setPhase("idle"));
   }, [authMode]);
 
+  useEffect(() => {
+    if (phase !== "done") return;
+    entriesApi
+      .getDueEntries()
+      .then((fresh) => {
+        setDueEntries(fresh);
+        setRemainingDue(fresh.length);
+      })
+      .catch(() => setRemainingDue(0));
+  }, [phase]);
+
   function toggleMode(m: DueMode) {
     setSelectedModes((prev) =>
       prev.includes(m) ? (prev.length > 1 ? prev.filter((x) => x !== m) : prev) : [...prev, m],
@@ -485,6 +497,7 @@ export function DuePage() {
   }
 
   async function startSession() {
+    setRemainingDue(0);
     let entries = dueEntries;
     try {
       const fresh = await entriesApi.getDueEntries();
@@ -676,9 +689,11 @@ export function DuePage() {
             </p>
           </div>
           <div className="flex gap-3 flex-wrap justify-center">
-            <Button variant="secondary" onClick={startSession}>
-              {t("practice.quiz.tryAgain")}
-            </Button>
+            {remainingDue > 0 && (
+              <Button variant="secondary" onClick={startSession}>
+                {t("practice.quiz.tryAgain")}
+              </Button>
+            )}
             <Button onClick={() => navigate("/practice")}>{t("practice.backToPractice")}</Button>
           </div>
         </div>
