@@ -131,9 +131,70 @@ const LAP_COLORS = [
     fadedTop: "fill-pink-200 dark:fill-pink-800",
     fadedSide: "fill-pink-300 dark:fill-pink-700",
   },
+  {
+    top: "fill-orange-400 dark:fill-orange-500",
+    side: "fill-orange-600 dark:fill-orange-700",
+    fadedTop: "fill-orange-200 dark:fill-orange-800",
+    fadedSide: "fill-orange-300 dark:fill-orange-700",
+  },
+  {
+    top: "fill-teal-400 dark:fill-teal-500",
+    side: "fill-teal-600 dark:fill-teal-700",
+    fadedTop: "fill-teal-200 dark:fill-teal-800",
+    fadedSide: "fill-teal-300 dark:fill-teal-700",
+  },
 ] as const;
 
-function StreakCake3D({ streak, total = 7, small = false }: { streak: number; total?: number; small?: boolean }) {
+// fruit per lap: amber→🍌 blue→🫐 emerald→🍏 violet→🍇 pink→🍒 orange→🍊 teal→🥝
+const LAP_FRUITS = ["🍌", "🫐", "🍏", "🍇", "🍒", "🍊", "🥝"] as const;
+
+function StreakFruits({
+  completedLaps,
+  max = 7,
+  small = false,
+}: {
+  completedLaps: number;
+  max?: number;
+  small?: boolean;
+}) {
+  if (completedLaps === 0) return null;
+  const visible = Math.min(completedLaps, max);
+  const overflow = completedLaps - visible;
+  return (
+    <div className="flex items-center gap-0.5 flex-wrap">
+      {Array.from({ length: visible }, (_, i) => (
+        <span
+          key={i}
+          className={small ? "text-[11px] leading-none" : "text-md leading-none select-none"}
+          title={`Week ${i + 1}`}>
+          {LAP_FRUITS[i % LAP_FRUITS.length]}
+        </span>
+      ))}
+      {overflow > 0 && (
+        <span
+          className={
+            small
+              ? "text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-0.5"
+              : "text-md font-bold text-gray-400 dark:text-gray-500 ml-0.5"
+          }>
+          +{overflow}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function StreakCake3D({
+  streak,
+  total = 7,
+  small = false,
+  hideBadge = false,
+}: {
+  streak: number;
+  total?: number;
+  small?: boolean;
+  hideBadge?: boolean;
+}) {
   const { t } = useTranslation();
   const cx = 60,
     cy = 36;
@@ -211,7 +272,7 @@ function StreakCake3D({ streak, total = 7, small = false }: { streak: number; to
           />
         ))}
       </svg>
-      {!small && lapNumber >= 2 && (
+      {!small && !hideBadge && lapNumber >= 2 && (
         <span className="text-[9px] font-bold bg-gray-700 dark:bg-gray-300 text-white dark:text-gray-800 px-1.5 py-0.5 rounded-full leading-none whitespace-nowrap">
           {t("dashboard.streakLap", { count: lapNumber })}
         </span>
@@ -271,15 +332,18 @@ function WeeklyActivityChip({
           : t("dashboard.streakKeepUpSub");
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-sm">
+    <div className="flex flex-col gap-1 px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-sm">
       {/* Top row: [pie] [text flex-1] [badge] [today stats] */}
+
       <div className="flex items-center gap-2">
         <StreakCake3D streak={streak} small />
         <div className="flex-1 min-w-0">
           {streakMain ? (
             <>
-              <p className="text-sm font-semibold text-amber-500 dark:text-amber-400 leading-snug">{streakMain}</p>
-              <p className="text-xs text-amber-400 dark:text-amber-300 leading-snug">{streakSub}</p>
+              <div className="flex flex-col  max-w-fit">
+                <p className="text-sm font-semibold text-amber-500 dark:text-amber-400 leading-snug">{streakMain}</p>
+                <p className="text-xs text-right italic text-amber-400 dark:text-amber-300 leading-snug">{streakSub}</p>
+              </div>
             </>
           ) : (
             <>
@@ -290,11 +354,6 @@ function WeeklyActivityChip({
             </>
           )}
         </div>
-        {lapNumber >= 2 && (
-          <span className="shrink-0 text-[9px] font-bold bg-gray-600 dark:bg-gray-300 text-white dark:text-gray-800 px-1.5 py-0.5 rounded-full leading-none whitespace-nowrap">
-            {t("dashboard.streakLap", { count: lapNumber })}
-          </span>
-        )}
         <div className="shrink-0 flex flex-col items-end gap-0.5">
           <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
             <span className="w-2 h-2 rounded-[2px] bg-emerald-400" />
@@ -306,27 +365,34 @@ function WeeklyActivityChip({
           </span>
         </div>
       </div>
-
+      {lapNumber >= 2 && (
+        <div className="flex items-center gap-1.5 mb-1">
+          <span className="shrink-0 text-[10px] font-bold text-gray-600 border  dark:text-gray-300 bg-white dark:bg-gray-700 px-1.5 py-1 rounded-full leading-none whitespace-nowrap">
+            {t("dashboard.streakLap", { count: lapNumber })}
+          </span>
+          <StreakFruits completedLaps={Math.floor(streak / 7)} max={5} small />
+        </div>
+      )}
       {/* Bottom: full-width bar chart */}
       <div className="flex flex-col gap-1">
-        <div className="flex items-end gap-[3px] h-10">
+        <div className="flex items-end gap-[10px] h-10">
           {days.map((d, i) => (
-            <div key={i} className="flex-1 flex items-end gap-[2px]" style={{ height: "100%" }}>
+            <div key={i} className="flex-1 flex items-end gap-[1px]" style={{ height: "100%" }}>
               {d.entries_added > 0 ? (
                 <div
-                  className="flex-1 rounded-sm bg-emerald-400 dark:bg-emerald-400 transition-all duration-300"
+                  className="flex-1 rounded-t-md bg-emerald-400 dark:bg-emerald-400 transition-all duration-300"
                   style={{ height: `${Math.max((d.entries_added / maxEntries) * 100, 18)}%` }}
                 />
               ) : (
-                <div className="flex-1 rounded-sm bg-gray-300 dark:bg-gray-600/40" style={{ height: "3px" }} />
+                <div className="flex-1 rounded-t-md bg-gray-300 dark:bg-gray-600/40" style={{ height: "3px" }} />
               )}
               {d.reviews_count > 0 ? (
                 <div
-                  className="flex-1 rounded-sm bg-indigo-400 dark:bg-indigo-400 transition-all duration-300"
+                  className="flex-1 rounded-t-md bg-indigo-400 dark:bg-indigo-400 transition-all duration-300"
                   style={{ height: `${Math.max((d.reviews_count / maxReviews) * 100, 18)}%` }}
                 />
               ) : (
-                <div className="flex-1 rounded-sm bg-gray-300 dark:bg-gray-600/40" style={{ height: "3px" }} />
+                <div className="flex-1 rounded-t-md bg-gray-300 dark:bg-gray-600/40" style={{ height: "3px" }} />
               )}
             </div>
           ))}
@@ -384,9 +450,9 @@ function DesktopStreakBlock({
           : t("dashboard.streakKeepUpSub");
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-5 flex flex-col gap-4 shadow-sm">
+    <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-5 flex flex-col gap-2 shadow-sm">
       <div className="flex items-center gap-4">
-        <StreakCake3D streak={streak} />
+        <StreakCake3D streak={streak} hideBadge />
         <div className="flex-1 min-w-0">
           <p
             className={`text-base font-bold leading-snug ${streak > 0 ? "text-amber-500 dark:text-amber-400" : "text-gray-500 dark:text-gray-400"}`}>
@@ -397,6 +463,20 @@ function DesktopStreakBlock({
             {streakSub}
           </p>
         </div>
+      </div>
+      {/* <div className="flex items-center gap-4"> */}
+      <div className="flex-1 min-w-0">
+        {Math.floor(streak / 7) >= 1 && (
+          <div className="flex items-center gap-1.5 mt-1">
+            {Math.ceil(streak / 7) >= 2 && (
+              <span className="shrink-0 text-[12px] font-bold text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border px-1.5 py-1 rounded-full leading-none whitespace-nowrap">
+                {t("dashboard.streakLap", { count: Math.ceil(streak / 7) })}
+              </span>
+            )}
+            <StreakFruits completedLaps={Math.floor(streak / 7)} max={7} />
+          </div>
+        )}
+        {/* </div> */}
       </div>
       <div className="flex gap-2">
         <div className="flex-1 bg-white dark:bg-gray-700 rounded-xl p-3 flex items-center gap-2.5 shadow-sm">
