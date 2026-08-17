@@ -11,6 +11,11 @@ export interface DayStat {
   reviews_count: number
 }
 
+export interface WeeklyStatsResponse {
+  days: DayStat[]
+  streak: number
+}
+
 // ── Raw server shapes ──────────────────────────────────────────────────────
 
 /** Shape returned by the server for an entry */
@@ -256,9 +261,9 @@ export const entriesApi = {
     return res.data.map(toEntry)
   },
 
-  async getWeeklyStats(): Promise<DayStat[]> {
+  async getWeeklyStats(): Promise<WeeklyStatsResponse> {
     const tz = -new Date().getTimezoneOffset()
-    const res = await apiClient.get<DayStat[]>(`/entries/stats/weekly?tz=${tz}`)
+    const res = await apiClient.get<WeeklyStatsResponse>(`/entries/stats/weekly?tz=${tz}`)
     return res.data
   },
 

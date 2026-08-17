@@ -913,7 +913,7 @@ export function DashboardPage() {
     [entries],
   );
 
-  const weeklyStats = weeklyStatsData?.length ? weeklyStatsData : fallbackStats;
+  const weeklyStats = weeklyStatsData?.days?.length ? weeklyStatsData.days : fallbackStats;
 
   async function handleAdd(values: EntryFormValues) {
     const { tagIds, imgFile, removeImg: _, ...entryData } = values;
@@ -922,20 +922,16 @@ export function DashboardPage() {
   }
 
   const streak = useMemo(() => {
-    // Dates with new entries (all-time, infinite lookback)
+    if (mode === "authenticated" && weeklyStatsData?.streak !== undefined) {
+      return weeklyStatsData.streak;
+    }
+    // Demo/unauthenticated fallback: count from entries only
     const activityDates = new Set(
       entries.map((e) => {
         const d = new Date(e.createdAt);
         return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
       }),
     );
-    // Also count days where user did reviews (last 7 days from weeklyStats)
-    for (const stat of weeklyStats) {
-      if (stat.reviews_count > 0) {
-        const d = new Date(stat.date + "T12:00:00");
-        activityDates.add(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`);
-      }
-    }
     let s = 0;
     let i = 0;
     while (true) {
@@ -946,13 +942,13 @@ export function DashboardPage() {
         s++;
         i++;
       } else if (i === 0) {
-        i++; // today has no activity yet — check yesterday
+        i++;
       } else {
         break;
       }
     }
     return s;
-  }, [entries, weeklyStats]);
+  }, [mode, weeklyStatsData, entries]);
 
   const stats = useMemo(() => {
     const today = startOfToday();
