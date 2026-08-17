@@ -35,11 +35,13 @@ apiClient.interceptors.response.use(
       if (error.code === 'ERR_NETWORK') {
         throw new Error('Network error. Please check your connection.')
       }
-      if (error.response?.status === 401) {
+      if (error.response?.status === 401 || error.response?.status === 403) {
         localStorage.removeItem(TOKEN_KEY)
         localStorage.setItem('Auth', 'false')
         localStorage.removeItem('auth') // clear Zustand auth persist key
-        window.location.href = '/login'
+        if (!window.location.pathname.startsWith('/login')) {
+          window.location.href = '/login'
+        }
       }
       const message: unknown = error.response?.data?.error
       throw new Error(typeof message === 'string' ? message : 'An unexpected error occurred.')

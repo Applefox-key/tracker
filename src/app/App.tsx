@@ -65,7 +65,15 @@ export function App() {
           if (!user?.id && !user?.email) return;
           useAuthStore.setState({ user });
         })
-        .catch(() => {});
+        .catch((err: unknown) => {
+          const msg = err instanceof Error ? err.message : "";
+          if (msg === "Network error. Please check your connection.") return;
+          // Server rejected the token; window.location.href already set by
+          // the axios interceptor for 401/403, but clear state as a safety net.
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.setItem("Auth", "false");
+          localStorage.removeItem("auth");
+        });
       return;
     }
 

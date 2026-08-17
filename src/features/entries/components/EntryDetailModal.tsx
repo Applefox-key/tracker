@@ -21,38 +21,83 @@ interface EntryDetailModalProps {
   entry: Entry;
   onClose: () => void;
   onEdit: (entry: Entry) => void;
+  onPrev?: () => void;
+  onNext?: () => void;
 }
 
-export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalProps) {
+export function EntryDetailModal({ entry, onClose, onEdit, onPrev, onNext }: EntryDetailModalProps) {
   const { t } = useTranslation();
   const isMultiline = MULTILINE_CATEGORIES.has(entry.category);
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") onPrev?.();
+      if (e.key === "ArrowRight") onNext?.();
     }
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [onClose]);
+  }, [onClose, onPrev, onNext]);
 
   function handleEdit() {
     onClose();
     onEdit(entry);
   }
 
+  const navBtnBase =
+    "flex items-center justify-center w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-md text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 transition-colors border border-emerald-500 disabled:border-none disabled:opacity-30 disabled:cursor-not-allowed";
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/50 backdrop-blur-sm"
       onClick={onClose}>
+      {/* Desktop prev arrow */}
+      {(onPrev || onNext) && (
+        <button
+          className={`hidden sm:flex absolute left-[max(0.25rem,calc(50%-300px))] z-10 ${navBtnBase}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onPrev?.();
+          }}
+          disabled={!onPrev}
+          aria-label="Previous entry">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fillRule="evenodd"
+              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+      )}
+      {/* Desktop next arrow */}
+      {(onPrev || onNext) && (
+        <button
+          className={`hidden sm:flex absolute right-[max(0.25rem,calc(50%-300px))] z-10 ${navBtnBase}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onNext?.();
+          }}
+          disabled={!onNext}
+          aria-label="Next entry">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fillRule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+      )}
       <div
         className="w-full max-w-lg flex justify-between sm:block bg-white dark:bg-gray-800 sm:rounded-2xl sm:rounded-t-2xl shadow-xl flex flex-col h-[100vh] sm:h-auto sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div
-          className={`flex items-start justify-between p-4 border-b border-gray-100 dark:border-gray-700  shadow-sm  rounded-t-2xl bg-gray-100 dark:bg-gray-700/50 `}>
-          <div className="flex-1 min-w-0 pr-4">
+          className={`flex items-start justify-between p-4 border-b border-gray-100 dark:border-gray-700  shadow-sm  rounded-none sm:rounded-t-2xl bg-gray-100 dark:bg-gray-700/50 `}>
+          <div className="flex-1 min-w-0 pr-4 flex flex-col-reverse sm:flex-col gap-1.5">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 break-words">{entry.word}</h2>
-            <div className="flex items-center gap-2 mt-1.5">
+            <div className="flex items-center gap-2">
               <span
                 className={[
                   "inline-block px-2.5 py-0.5 rounded-full text-xs font-medium",
@@ -99,7 +144,7 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
                     {t("entries.detail.example")}
                   </p>
                   <p
-                    className={`text-base sm:text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 bg-emerald-100 dark:bg-emerald-900/50 leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
+                    className={`text-base sm:text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3 bg-emerald-100 dark:bg-emerald-900/50 leading-relaxed whitespace-pre-wrap break-words`}>
                     {entry.example}
                   </p>
                 </div>
@@ -117,7 +162,11 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
 
           {/* Desktop-only: DualRating + Practice */}
           <div className="hidden sm:flex items-center justify-between gap-4">
-            <DualRating confidenceRating={entry.rating} masteryLevel={entry.mastery_level} showAutoRating={entry.includeInPractice} />
+            <DualRating
+              confidenceRating={entry.rating}
+              masteryLevel={entry.mastery_level}
+              showAutoRating={entry.includeInPractice}
+            />
             <div className="flex items-center gap-2 shrink-0">
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 {entry.includeInPractice ? t("entries.detail.inPractice") : t("entries.detail.notInPractice")}
@@ -135,16 +184,27 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
         {/* Mobile-only: DualRating + Practice above tags */}
         <div className="sm:hidden flex items-center justify-between gap-4 px-4 py-3 border-t border-gray-100 dark:border-gray-700">
           <DualRating confidenceRating={entry.rating} masteryLevel={entry.mastery_level} />
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-base sm:text-sm text-gray-600 dark:text-gray-400">
-              {entry.includeInPractice ? t("entries.detail.inPractice") : t("entries.detail.notInPractice")}
-            </span>
-            <TbTargetArrow
-              className={[
-                "text-base sm:text-sm shrink-0",
-                entry.includeInPractice ? "text-green-500" : "text-gray-300 dark:text-gray-600",
-              ].join(" ")}
-            />
+
+          <div className=" ">
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-base sm:text-sm text-gray-600 dark:text-gray-400">
+                {entry.includeInPractice ? t("entries.detail.inPractice") : t("entries.detail.notInPractice")}
+              </span>
+              <TbTargetArrow
+                className={[
+                  "text-base sm:text-sm shrink-0",
+                  entry.includeInPractice ? "text-green-500" : "text-gray-300 dark:text-gray-600",
+                ].join(" ")}
+              />
+            </div>{" "}
+            <p className="text-xs text-gray-300 dark:text-gray-600">
+              {t("entries.detail.added")}{" "}
+              {new Date(entry.createdAt).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </p>
           </div>
         </div>
 
@@ -159,13 +219,13 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
                   #{tag.name}
                 </span>
               ))}
-            </div>
+            </div>{" "}
           </div>
         )}
 
         {/* Footer */}
         <div className="flex justify-between gap-2 px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 sm:rounded-b-2xl">
-          <div className="flex items-center">
+          <div className="hidden sm:flex items-center">
             <p className="text-xs text-gray-300 dark:text-gray-600">
               {t("entries.detail.added")}{" "}
               {new Date(entry.createdAt).toLocaleDateString("en-GB", {
@@ -175,6 +235,29 @@ export function EntryDetailModal({ entry, onClose, onEdit }: EntryDetailModalPro
               })}
             </p>
           </div>
+          {/* Mobile: prev/next arrows */}
+          {(onPrev || onNext) && (
+            <div className="flex sm:hidden gap-2">
+              <button className={navBtnBase} onClick={onPrev} disabled={!onPrev} aria-label="Previous entry">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+              <button className={navBtnBase} onClick={onNext} disabled={!onNext} aria-label="Next entry">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+          )}
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={onClose}>
               {t("entries.detail.close")}

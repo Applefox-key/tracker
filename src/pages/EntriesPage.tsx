@@ -361,16 +361,21 @@ export function EntriesPage() {
       </div>
 
       {/* Detail modal */}
-      {viewingEntry && (
-        <EntryDetailModal
-          entry={viewingEntry}
-          onClose={() => setViewingEntry(null)}
-          onEdit={(entry) => {
-            setViewingEntry(null);
-            setEditingEntry(entry);
-          }}
-        />
-      )}
+      {viewingEntry && (() => {
+        const idx = entries.findIndex((e) => e.id === viewingEntry.id);
+        return (
+          <EntryDetailModal
+            entry={viewingEntry}
+            onClose={() => setViewingEntry(null)}
+            onEdit={(entry) => {
+              setViewingEntry(null);
+              setEditingEntry(entry);
+            }}
+            onPrev={idx > 0 ? () => setViewingEntry(entries[idx - 1]) : undefined}
+            onNext={idx < entries.length - 1 ? () => setViewingEntry(entries[idx + 1]) : undefined}
+          />
+        );
+      })()}
 
       {/* Edit modal */}
       {editingEntry && <EditEntryModal entry={editingEntry} onClose={() => setEditingEntry(null)} />}

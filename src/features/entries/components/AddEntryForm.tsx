@@ -468,7 +468,7 @@ export function EntryForm({
       {/* Actions */}
       <div className="mt-auto sticky bottom-0 -mx-5 -mb-5 px-5 py-3 rounded-b-xl flex gap-2 items-center justify-between bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 sm:static sm:mt-0 sm:bg-transparent sm:dark:bg-transparent sm:border-0 sm:mx-0 sm:mb-0 sm:px-0 sm:pt-1 sm:pb-0 sm:rounded-none">
         {isEdit && onResetMastery ? (
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">{t("entries.detail.mastery")}:</span>
             {masteryLevel ? (
               <>
