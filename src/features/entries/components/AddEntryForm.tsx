@@ -178,7 +178,6 @@ export function EntryForm({
           {isEdit ? t("entries.form.editTitle") : t("entries.form.newTitle")}
         </p>
       </div>
-
       {/* Word & Explanation */}
       <div className={isMultiline ? "flex flex-col gap-3" : "grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-3"}>
         <div className="flex flex-col gap-1">
@@ -243,7 +242,6 @@ export function EntryForm({
           )}
         </div>
       </div>
-
       {/* Example — mobile only */}
       <div className="flex flex-col gap-1 sm:hidden">
         <div className="flex items-center justify-between">
@@ -258,7 +256,6 @@ export function EntryForm({
           className={textareaCls}
         />
       </div>
-
       {/* Desktop: Example (left) + Image (right, square) */}
       <div className="hidden sm:grid sm:grid-cols-[1fr_140px] gap-3">
         <div className="flex flex-col gap-1">
@@ -315,16 +312,38 @@ export function EntryForm({
           )}
         </div>
       </div>
-
       {/* Hidden file input shared by both mobile and desktop */}
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-
-      {/* Mobile-only: Category chips (col) + Image/Rating/Practice (right) */}
-      <div className="sm:hidden flex flex-row gap-3 items-start">
+      {/* Mobile-only: Rating/Practice (row) */}
+      <div className="sm:hidden flex flex-row gap-3 items-end justify-between px-3 py-2 ">
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+            {t("entries.form.ratingLabel")}
+          </label>
+          <StarRating value={rating} onChange={setRating} />
+        </div>
+        <div className="flex items-center flex-col gap-1">
+          <label
+            htmlFor="flashcards-check-mobile"
+            className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
+            {t("entries.form.practice")}
+          </label>
+          <input
+            id="flashcards-check-mobile"
+            type="checkbox"
+            checked={includeInPractice}
+            onChange={(e) => setIncludeInPractice(e.target.checked)}
+            className="w-4 h-4 accent-emerald-600 cursor-pointer"
+          />
+        </div>
+      </div>{" "}
+      <hr className="shadow-sm m-0 p-0" />
+      {/* Mobile-only: Category chips (col) + Image(right) */}
+      <div className="sm:hidden flex flex-row gap-3 items-end justify-between">
         {/* Left: category chips stacked vertically */}
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.category")}</label>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-0.5">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
@@ -342,17 +361,31 @@ export function EntryForm({
           </div>
         </div>
 
-        {/* Right: image, rating, practice stacked */}
-        <div className="flex flex-col gap-3 flex-1 ps-[30px]">
+        {/* Right: image */}
+        <div className="flex flex-col gap-3 ">
           <div className="flex flex-col gap-1.5">
             {displayImgUrl ? (
               <div className="flex flex-row items-center gap-1">
+                <div className="flex flex-col gap-2 ">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="rounded-full border border-gray-200 dark:border-gray-600 px-2 text-xs text-emerald-600 dark:text-emerald-400 hover:underline">
+                    {t("entries.form.changeImg")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleRemoveImg}
+                    className="rounded-full border border-gray-200 dark:border-gray-600 px-2 text-xs text-red-500 dark:text-red-400 hover:underline">
+                    {t("entries.form.removeImg")}
+                  </button>
+                </div>
                 <EntryImage
                   src={displayImgUrl}
                   alt="Entry illustration"
-                  className="w-28 h-28 shrink-0 border border-gray-200 dark:border-gray-600"
+                  className="w-48 h-48 shrink-0 border border-gray-200 dark:border-gray-600"
                 />
-                <div className="flex gap-2 flex-col">
+                {/* <div className="flex gap-2 flex-col">
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
@@ -365,49 +398,26 @@ export function EntryForm({
                     className="text-xs text-red-500 dark:text-red-400 hover:underline">
                     {t("entries.form.removeImg")}
                   </button>
-                </div>
+                </div> */}
               </div>
             ) : (
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-32 h-32 flex flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 hover:border-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                className="w-48 h-48 flex flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 hover:border-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 20 20" fill="currentColor">
                   <path
                     fillRule="evenodd"
                     d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="text-xs">{t("entries.form.addImg")}</span>
+                <span className="text-lg">{t("entries.form.addImg")}</span>
               </button>
             )}
           </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              {t("entries.form.ratingLabel")}
-            </label>
-            <StarRating value={rating} onChange={setRating} />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input
-              id="flashcards-check-mobile"
-              type="checkbox"
-              checked={includeInPractice}
-              onChange={(e) => setIncludeInPractice(e.target.checked)}
-              className="w-4 h-4 accent-emerald-600 cursor-pointer"
-            />
-            <label
-              htmlFor="flashcards-check-mobile"
-              className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
-              {t("entries.form.practice")}
-            </label>
-          </div>
         </div>
       </div>
-
       {/* Desktop: Category | Rating | Practice | Tags — all in one row, bottom-aligned */}
       <div className="hidden sm:flex items-end gap-5 flex-wrap">
         <div className="flex flex-col gap-1 shrink-0">
@@ -464,7 +474,6 @@ export function EntryForm({
         <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.tags")}</label>
         <TagCombobox selectedIds={selectedTagIds} onChange={setSelectedTagIds} />
       </div>
-
       {/* Actions */}
       <div className="mt-auto sticky bottom-0 -mx-5 -mb-5 px-5 py-3 rounded-b-xl flex gap-2 items-center justify-between bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 sm:static sm:mt-0 sm:bg-transparent sm:dark:bg-transparent sm:border-0 sm:mx-0 sm:mb-0 sm:px-0 sm:pt-1 sm:pb-0 sm:rounded-none">
         {isEdit && onResetMastery ? (

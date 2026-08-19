@@ -1,5 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { useEntryTags, useCreateEntryTag } from "@/hooks/useEntries";
+import { useEntriesStore } from "@/features/entries/store/entriesStore";
 
 interface TagComboboxProps {
   selectedIds: number[];
@@ -10,11 +12,23 @@ interface TagComboboxProps {
 export function TagCombobox({ selectedIds, onChange, placeholder }: TagComboboxProps) {
   const [inputValue, setInputValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
   const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: availableTags = [] } = useEntryTags();
   const createTag = useCreateEntryTag();
+  const entries = useEntriesStore((s) => s.entries);
+
+  const popularTags = useMemo(() => {
+    const counts = new Map<number, number>();
+    entries.forEach((e) => e.tags.forEach((t) => counts.set(t.id, (counts.get(t.id) ?? 0) + 1)));
+    return availableTags
+      .filter((t) => counts.has(t.id) && !selectedIds.includes(t.id))
+      .sort((a, b) => (counts.get(b.id) ?? 0) - (counts.get(a.id) ?? 0))
+      .slice(0, 6);
+  }, [entries, availableTags, selectedIds]);
 
   const filtered = availableTags.filter(
     (tag) => tag.name.toLowerCase().includes(inputValue.toLowerCase()) && !selectedIds.includes(tag.id),
@@ -25,15 +39,39 @@ export function TagCombobox({ selectedIds, onChange, placeholder }: TagComboboxP
     !availableTags.some((t) => t.name.toLowerCase() === inputValue.trim().toLowerCase());
 
   useEffect(() => {
-    function handle(e: MouseEvent) {
+    function handleClick(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false);
         setInputValue("");
       }
     }
-    document.addEventListener("mousedown", handle);
-    return () => document.removeEventListener("mousedown", handle);
+    function handleClose(e: Event) {
+      if (dropdownRef.current?.contains(e.target as Node)) return;
+      setIsOpen(false);
+      setInputValue("");
+    }
+    document.addEventListener("mousedown", handleClick);
+    window.addEventListener("scroll", handleClose, true);
+    window.addEventListener("resize", handleClose);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      window.removeEventListener("scroll", handleClose, true);
+      window.removeEventListener("resize", handleClose);
+    };
   }, []);
+
+  useEffect(() => {
+    if (isOpen && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setDropdownStyle({
+        position: "fixed",
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+        zIndex: 9999,
+      });
+    }
+  }, [isOpen]);
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Escape") {
@@ -128,39 +166,60 @@ export function TagCombobox({ selectedIds, onChange, placeholder }: TagComboboxP
         />
       </div>
 
-      {/* Dropdown */}
-      {showDropdown && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md max-h-48 overflow-y-auto">
-          {filtered.map((tag) => (
-            <div
+      {/* Popular tag suggestions */}
+      {popularTags.length > 0 && !isOpen && (
+        <div className="flex flex-wrap gap-1.5 mt-1.5">
+          {popularTags.map((tag) => (
+            <button
               key={tag.id}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                selectTag(tag.id);
-              }}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-400 cursor-pointer">
-              <span className="text-emerald-400 text-xs">#</span>
+              type="button"
+              onClick={() => selectTag(tag.id)}
+              className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors">
+              <span className="text-emerald-400">#</span>
               {tag.name}
-            </div>
+            </button>
           ))}
-
-          {showCreate && (
-            <div
-              onMouseDown={(e) => {
-                e.preventDefault();
-                handleCreate(inputValue.trim().toLowerCase());
-              }}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 cursor-pointer border-t border-gray-100 dark:border-gray-700">
-              <span className="text-base leading-none">+</span>
-              Create tag &ldquo;<strong>{inputValue.trim()}</strong>&rdquo;
-            </div>
-          )}
-
-          {filtered.length === 0 && !showCreate && (
-            <div className="px-3 py-2 text-xs text-gray-400 dark:text-gray-500 italic">No matching tags</div>
-          )}
         </div>
       )}
+
+      {/* Dropdown via portal — renders outside the modal to avoid overflow clipping */}
+      {showDropdown &&
+        createPortal(
+          <div
+            ref={dropdownRef}
+            style={dropdownStyle}
+            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+            {filtered.map((tag) => (
+              <div
+                key={tag.id}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  selectTag(tag.id);
+                }}
+                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-400 cursor-pointer">
+                <span className="text-emerald-400 text-xs">#</span>
+                {tag.name}
+              </div>
+            ))}
+
+            {showCreate && (
+              <div
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  handleCreate(inputValue.trim().toLowerCase());
+                }}
+                className="flex items-center gap-2 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 cursor-pointer border-t border-gray-100 dark:border-gray-700">
+                <span className="text-base leading-none">+</span>
+                Create tag &ldquo;<strong>{inputValue.trim()}</strong>&rdquo;
+              </div>
+            )}
+
+            {filtered.length === 0 && !showCreate && (
+              <div className="px-3 py-2 text-xs text-gray-400 dark:text-gray-500 italic">No matching tags</div>
+            )}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
