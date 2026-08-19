@@ -53,6 +53,7 @@ export function EntriesPage() {
 
   const initialDateFilter = (location.state?.dateFilter as DateFilter) ?? "all";
   const initialCategoryFilter = (location.state?.categoryFilter as EntryCategory | "all") ?? "all";
+  const initialMasteredOnly = (location.state?.masteredOnly as boolean) ?? false;
 
   useEffect(() => {
     if (location.state?.openCreateForm) {
@@ -83,7 +84,7 @@ export function EntriesPage() {
     clearFilters,
     addEntry,
     removeEntry,
-  } = useEntries(initialDateFilter, initialCategoryFilter);
+  } = useEntries(initialDateFilter, initialCategoryFilter, initialMasteredOnly);
 
   const advancedFilterCount = [
     filterCategory !== "all",

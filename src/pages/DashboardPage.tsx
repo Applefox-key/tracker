@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { FaCrown } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
 import {
   FiBookOpen,
@@ -12,6 +13,8 @@ import {
   FiCalendar,
   FiPieChart,
   FiList,
+  FiChevronDown,
+  FiChevronUp,
 } from "react-icons/fi";
 import { Card, CardHeader, CardTitle } from "@/shared/ui/Card";
 import { Button } from "@/shared/ui/Button";
@@ -645,15 +648,17 @@ function DesktopStatCard({ label, value, sub, icon, iconBg, to, toState }: Deskt
   const card = (
     <Card
       padding="sm"
-      className={`flex items-center gap-4 p-5 h-full${to ? " hover:shadow-md transition-shadow cursor-pointer" : ""}`}>
-      <div className={`w-12 h-12 shrink-0 rounded-xl ${iconBg} flex items-center justify-center text-white`}>
-        {icon}
-      </div>
-      <div className="min-w-0 flex-1">
+      className={`flex flex-col items-center gap-2 p-4 h-full${to ? " hover:shadow-md transition-shadow cursor-pointer" : ""}`}>
+      <div className="flex items-center gap-3 justify-around w-full">
+        <div className={`w-10 h-10 shrink-0 rounded-xl ${iconBg} flex items-center justify-center text-white`}>
+          {icon}
+        </div>
         <p className="text-2xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">{value}</p>
-        <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-0.5 truncate">{label}</p>
-        {sub && <p className="text-xs text-gray-400 dark:text-gray-500">{sub}</p>}
       </div>
+      <p className="text-[13px] font-semibold text-center text-gray-700 dark:text-gray-300 leading-tight w-full">
+        {label}
+      </p>
+      {sub && <p className="text-[11px] text-center text-gray-400 dark:text-gray-500 leading-tight w-full">{sub}</p>}
     </Card>
   );
   if (to)
@@ -663,6 +668,41 @@ function DesktopStatCard({ label, value, sub, icon, iconBg, to, toState }: Deskt
       </Link>
     );
   return card;
+}
+
+function DesktopMasteredCard({ goldCount, silverCount }: { goldCount: number; silverCount: number }) {
+  const { t } = useTranslation();
+  return (
+    <Link to="/entries" state={{ masteredOnly: true }} className="block">
+      <Card padding="sm" className="flex flex-col items-center gap-2 p-4 h-full hover:shadow-md transition-shadow cursor-pointer">
+        <div className="flex items-center gap-3 justify-around w-full">
+          <div className="w-10 h-10 shrink-0 rounded-xl bg-amber-400 flex items-center justify-center">
+            <FaCrown size={18} className="text-amber-100" style={{ filter: "drop-shadow(0 0 2px #89651d)" }} />
+          </div>
+          <p className="text-2xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">
+            {goldCount + silverCount}
+          </p>
+        </div>
+        <p className="text-[13px] font-semibold text-center text-gray-700 dark:text-gray-300 leading-tight w-full">
+          {t("dashboard.statMastered")}
+        </p>
+        <div className="flex justify-center gap-5">
+          <div className="flex items-center gap-1.5">
+            <FaCrown size={10} className="text-amber-400 shrink-0" />
+            <span className="text-[11px] text-center text-gray-400 dark:text-gray-500 leading-tight w-full">
+              {goldCount}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <FaCrown size={10} className="text-slate-400 shrink-0" />
+            <span className="text-[11px] text-center text-gray-400 dark:text-gray-500 leading-tight w-full">
+              {silverCount}
+            </span>
+          </div>
+        </div>
+      </Card>
+    </Link>
+  );
 }
 
 // ── Rapid Review Card ─────────────────────────────────────────────────────
@@ -816,6 +856,37 @@ function MobileStatCard({ label, value, sub, icon, iconBg, to, toState, onIconCl
   return card;
 }
 
+function MobileMasteredCard({ goldCount, silverCount }: { goldCount: number; silverCount: number }) {
+  const { t } = useTranslation();
+  return (
+    <Link to="/entries" state={{ masteredOnly: true }} className="flex-1">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm flex flex-col gap-1.5 h-full cursor-pointer active:scale-95 transition-transform">
+        <div className="flex items-center gap-2 justify-around">
+          <div className="w-9 h-9 shrink-0 rounded-xl bg-amber-400 flex items-center justify-center">
+            <FaCrown size={16} className="text-amber-100" style={{ filter: "drop-shadow(0 0 1px #89651d)" }} />
+          </div>
+          <p className="text-2xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">
+            {goldCount + silverCount}
+          </p>
+        </div>
+        <p className="text-[11px] font-semibold text-center text-gray-700 dark:text-gray-300 leading-tight truncate">
+          {t("dashboard.statMastered")}
+        </p>
+        <div className="flex justify-center gap-5">
+          <div className="flex items-center gap-1">
+            <FaCrown size={9} className="text-amber-400 shrink-0" />
+            <span className="text-[10px] text-center text-gray-400 dark:text-gray-500">{goldCount}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <FaCrown size={9} className="text-slate-400 shrink-0" />
+            <span className="text-[10px] text-center text-gray-400 dark:text-gray-500">{silverCount}</span>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 // ── Circular SVG progress ring ─────────────────────────────────────────────
 
 function CircularRing({ pct, hexColor }: { pct: number; hexColor: string }) {
@@ -883,6 +954,7 @@ export function DashboardPage() {
   const entries = useEntriesStore((s) => s.entries);
   const dueCount = useEntriesStore((s) => s.dueCount);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [statsExpanded, setStatsExpanded] = useState(false);
   const { addEntry } = useEntryCrud();
   const mode = useAuthStore((s) => s.mode);
 
@@ -959,8 +1031,10 @@ export function DashboardPage() {
     const flashCount = entries.filter((e) => e.includeInPractice).length;
     const avgRating =
       entries.length > 0 ? (entries.reduce((sum, e) => sum + e.rating, 0) / entries.length).toFixed(1) : "—";
+    const goldCount = entries.filter((e) => e.mastery_level === 5).length;
+    const silverCount = entries.filter((e) => e.mastery_level === 4).length;
 
-    return { todayCount, weekCount, flashCount, avgRating };
+    return { todayCount, weekCount, flashCount, avgRating, goldCount, silverCount };
   }, [entries]);
 
   const todayReviews = weeklyStats[weeklyStats.length - 1]?.reviews_count ?? 0;
@@ -1012,39 +1086,80 @@ export function DashboardPage() {
         <WeeklyActivityChip streak={streak} weeklyStats={weeklyStats} todayCount={stats.todayCount} />
       </div>
 
-      {/* ── Stats — mobile (3 icon cards) ── */}
-      <div className="flex gap-2.5 sm:hidden">
-        <MobileStatCard
-          label={t("dashboard.statTotal")}
-          value={entries.length}
-          sub={t("dashboard.statTotalSub")}
-          icon={<FiBookOpen size={18} />}
-          iconBg="bg-emerald-500"
-          to="/entries"
-        />
-        <MobileStatCard
-          label={t("dashboard.statToday")}
-          value={stats.todayCount}
-          sub={t("dashboard.statTodaySub")}
-          icon={<FiPlusCircle size={18} />}
-          iconBg="bg-orange-400"
-          to="/entries"
-          toState={{ dateFilter: "today" }}
-          onIconClick={() => setShowAddForm(true)}
-        />
-        <MobileStatCard
-          label={t("dashboard.statWeek")}
-          value={stats.weekCount}
-          sub={t("dashboard.statWeekMotivation")}
-          icon={<FiTrendingUp size={18} />}
-          iconBg="bg-blue-500"
-          to="/entries"
-          toState={{ dateFilter: "week" }}
-        />
+      {/* ── Stats — mobile (3 icon cards + expandable row) ── */}
+      <div className="flex flex-col gap-2 sm:hidden">
+        <div className="flex gap-2.5">
+          <MobileStatCard
+            label={t("dashboard.statTotal")}
+            value={entries.length}
+            sub={t("dashboard.statTotalSub")}
+            icon={<FiBookOpen size={18} />}
+            iconBg="bg-emerald-500"
+            to="/entries"
+          />
+          <MobileStatCard
+            label={t("dashboard.statToday")}
+            value={stats.todayCount}
+            sub={t("dashboard.statTodaySub")}
+            icon={<FiPlusCircle size={18} />}
+            iconBg="bg-orange-400"
+            to="/entries"
+            toState={{ dateFilter: "today" }}
+            onIconClick={() => setShowAddForm(true)}
+          />
+          <MobileStatCard
+            label={t("dashboard.statWeek")}
+            value={stats.weekCount}
+            sub={t("dashboard.statWeekMotivation")}
+            icon={<FiTrendingUp size={18} />}
+            iconBg="bg-blue-500"
+            to="/entries"
+            toState={{ dateFilter: "week" }}
+          />
+        </div>
+
+        {/* Expandable extra stats */}
+        {statsExpanded && (
+          <div className="flex gap-2.5">
+            <MobileStatCard
+              label={t("dashboard.statPractice")}
+              value={stats.flashCount}
+              sub={t("dashboard.statWeekMotivation")}
+              icon={<FiTarget size={18} />}
+              iconBg="bg-violet-500"
+              to="/practice"
+            />
+            <MobileStatCard
+              label={t("dashboard.statAvgRating")}
+              value={stats.avgRating}
+              sub={t("dashboard.statAvgRatingSub")}
+              icon={<FiStar size={18} />}
+              iconBg="bg-amber-400"
+              to="/practice"
+            />
+            <MobileMasteredCard goldCount={stats.goldCount} silverCount={stats.silverCount} />
+          </div>
+        )}
+
+        <button
+          onClick={() => setStatsExpanded((v) => !v)}
+          className="flex items-center justify-center gap-1 self-center px-3 py-1 rounded-full text-[11px] font-medium text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+          {statsExpanded ? (
+            <>
+              <FiChevronUp size={13} />
+              {t("dashboard.statsCollapse", "Show less")}
+            </>
+          ) : (
+            <>
+              <FiChevronDown size={13} />
+              {t("dashboard.statsExpand", "Show more stats")}
+            </>
+          )}
+        </button>
       </div>
 
       {/* ── Desktop row 2: stat cards with icons ── */}
-      <div className="hidden sm:grid grid-cols-5 gap-4">
+      <div className="hidden sm:grid grid-cols-6 gap-4">
         <DesktopStatCard
           label={t("dashboard.statTotal")}
           value={entries.length}
@@ -1087,6 +1202,7 @@ export function DashboardPage() {
           iconBg="bg-amber-400"
           to="/practice"
         />
+        <DesktopMasteredCard goldCount={stats.goldCount} silverCount={stats.silverCount} />
       </div>
 
       {/* ── Category rings — mobile ── */}

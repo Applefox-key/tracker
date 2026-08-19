@@ -67,6 +67,12 @@
     "dueTodayNone": "All caught up!",
     "dueTodayNoneSub": "Nothing to review today",
     "dueTodayStart": "Start review →",
+    "statsExpand": "Show more stats",
+    "statsCollapse": "Show less",
+    "statMastered": "Mastered",
+
+    "statGold": "Gold",
+    "statSilver": "Silver",
     "badgesComingSoon": "Badges — coming soon",
     "badgesComingSoonSub": "Achievement system is on the way",
     "rapidReview": {
@@ -432,6 +438,7 @@
       "wrong": "Incorrect",
       "correctAnswer": "Correct answer:",
       "showExample": "Show example…",
+      "diffLegend": { "missing": "missing", "extra": "extra", "correct": "correct" },
       "startWrite": "Start →",
       "next": "Next →",
       "seeResults": "See results",

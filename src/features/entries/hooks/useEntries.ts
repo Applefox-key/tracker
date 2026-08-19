@@ -22,6 +22,7 @@ function startOfWeek() {
 export function useEntries(
   initialDateFilter: DateFilter = 'all',
   initialCategoryFilter: EntryCategory | 'all' = 'all',
+  initialMasteredOnly: boolean = false,
 ) {
   const entries = useEntriesStore((s) => s.entries)
   const { addEntry, removeEntry } = useEntryCrud()
@@ -31,7 +32,7 @@ export function useEntries(
   const [selectedTag, setSelectedTag] = useState<number | null>(null)
   const [selectedRatings, setSelectedRatings] = useState<number[]>([])
   const [dateFilter, setDateFilter] = useState<DateFilter>(initialDateFilter)
-  const [masteredOnly, setMasteredOnly] = useState(false)
+  const [masteredOnly, setMasteredOnly] = useState(initialMasteredOnly)
   const [practiceFilter, setPracticeFilter] = useState<PracticeFilter>('all')
 
   const allTags = useMemo(() => {
