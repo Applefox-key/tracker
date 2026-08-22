@@ -23,7 +23,7 @@ const APPS = [
     iconColor: "#4f46e5",
   },
   {
-    name: "Phrasely",
+    name: "SayLoop",
     desc: "90-second method",
     href: "https://phrasely.learnypie.com",
     current: false,
