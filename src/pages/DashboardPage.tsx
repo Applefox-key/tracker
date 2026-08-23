@@ -339,7 +339,7 @@ function WeeklyActivityChip({
       {/* Top row: [pie] [text flex-1] [badge] [today stats] */}
 
       <div className="flex items-center gap-2">
-        <StreakCake3D streak={streak} small />
+        <StreakCake3D streak={streak} small /> <StreakCake3D streak={streak} small />
         <div className="flex-1 min-w-0">
           {streakMain ? (
             <>
@@ -674,7 +674,9 @@ function DesktopMasteredCard({ goldCount, silverCount }: { goldCount: number; si
   const { t } = useTranslation();
   return (
     <Link to="/entries" state={{ masteredOnly: true }} className="block">
-      <Card padding="sm" className="flex flex-col items-center gap-2 p-4 h-full hover:shadow-md transition-shadow cursor-pointer">
+      <Card
+        padding="sm"
+        className="flex flex-col items-center gap-2 p-4 h-full hover:shadow-md transition-shadow cursor-pointer">
         <div className="flex items-center gap-3 justify-around w-full">
           <div className="w-10 h-10 shrink-0 rounded-xl bg-amber-400 flex items-center justify-center">
             <FaCrown size={18} className="text-amber-100" style={{ filter: "drop-shadow(0 0 2px #89651d)" }} />
