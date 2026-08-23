@@ -436,6 +436,21 @@ export function MatchPage() {
               <p className="text-xs text-gray-400 dark:text-gray-500 text-center">{t("practice.match.selectHint")}</p>
             )}
 
+            {roundComplete && (
+              <div className="flex flex-col items-center gap-3 py-4">
+                <p className="text-green-600 dark:text-green-400 font-semibold text-center">
+                  {roundStart + ROUND_SIZE >= allEntries.length
+                    ? t("practice.match.allPairsMatched")
+                    : t("practice.match.roundComplete")}
+                </p>
+                <Button onClick={advanceRound}>
+                  {roundStart + ROUND_SIZE >= allEntries.length
+                    ? t("practice.match.seeResults")
+                    : t("practice.match.nextRound")}
+                </Button>
+              </div>
+            )}
+
             {matchedPairsList.length > 0 && (
               <div className="flex flex-col gap-3 mt-1">
                 <div className="flex items-center gap-2">
@@ -481,23 +496,6 @@ export function MatchPage() {
               </div>
             )}
 
-            {roundComplete && (
-              <>
-                <div className="h-20 sm:hidden" />
-                <div className="fixed bottom-0 left-0 right-0 sm:static bg-white dark:bg-gray-900 sm:bg-transparent border-t border-gray-200 dark:border-gray-700 sm:border-0 p-4 sm:p-0 sm:flex sm:flex-col sm:items-center sm:gap-4 sm:py-4 z-50">
-                  <p className="text-green-600 dark:text-green-400 font-semibold text-center mb-2 sm:mb-0">
-                    {roundStart + ROUND_SIZE >= allEntries.length
-                      ? t("practice.match.allPairsMatched")
-                      : t("practice.match.roundComplete")}
-                  </p>
-                  <Button onClick={advanceRound} className="w-full sm:w-auto">
-                    {roundStart + ROUND_SIZE >= allEntries.length
-                      ? t("practice.match.seeResults")
-                      : t("practice.match.nextRound")}
-                  </Button>
-                </div>
-              </>
-            )}
           </div>
         )}
 

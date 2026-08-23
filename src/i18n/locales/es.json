@@ -421,6 +421,8 @@
       "tilesPlaced": "{{placed}} / {{total}} piezas colocadas",
       "correct": "✓ ¡Correcto!",
       "wrongFeedback": "✗ Inténtalo de nuevo",
+      "checkAnswer": "Comprobar",
+      "hint": "Pista",
       "tryAgain": "Intentar de nuevo",
       "skip": "Omitir →",
       "finish": "Terminar",

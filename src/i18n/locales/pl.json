@@ -435,6 +435,8 @@
       "tilesPlaced": "{{placed}} / {{total}} kafelków umieszczonych",
       "correct": "✓ Poprawnie!",
       "wrongFeedback": "✗ Spróbuj ponownie",
+      "checkAnswer": "Sprawdź",
+      "hint": "Podpowiedź",
       "tryAgain": "Spróbuj ponownie",
       "skip": "Pomiń →",
       "finish": "Zakończ",

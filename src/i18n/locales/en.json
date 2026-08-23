@@ -423,6 +423,8 @@
       "tilesPlaced": "{{placed}} / {{total}} tiles placed",
       "correct": "✓ Correct!",
       "wrongFeedback": "✗ Try again",
+      "checkAnswer": "Check",
+      "hint": "Hint",
       "tryAgain": "Try again",
       "skip": "Skip →",
       "finish": "Finish",

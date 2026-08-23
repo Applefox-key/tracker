@@ -445,6 +445,8 @@
       "tilesPlaced": "{{placed}} / {{total}} плиток установлено",
       "correct": "✓ Правильно!",
       "wrongFeedback": "✗ Попробуй снова",
+      "checkAnswer": "Проверить",
+      "hint": "Подсказка",
       "tryAgain": "Попробовать снова",
       "skip": "Пропустить →",
       "finish": "Завершить",
