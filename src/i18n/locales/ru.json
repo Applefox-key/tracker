@@ -485,7 +485,8 @@
       "tag": "Тег:",
       "all": "Все",
       "unmastered": "Неосвоенные:",
-      "unmasteredOnly": "Только неосвоенные"
+      "unmasteredOnly": "Не освоено",
+      "masteredOnly": "Освоено"
     }
   }
 }

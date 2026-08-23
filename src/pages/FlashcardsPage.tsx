@@ -8,6 +8,7 @@ const LS_SHOW_IMAGES = "flashcard_show_images";
 import { FlashCard } from "@/features/flashcards/components/FlashCard";
 import { CardNavigation } from "@/features/flashcards/components/CardNavigation";
 import { useFlashcards } from "@/features/flashcards/hooks/useFlashcards";
+import type { MasteryFilter } from "@/features/practice/hooks/usePracticeEntries";
 import { Button } from "@/shared/ui/Button";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
@@ -49,7 +50,7 @@ export function FlashcardsPage() {
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null);
   const [selectedTag, setSelectedTag] = useState<number | null>(null);
-  const [unmasteredOnly, setUnmasteredOnly] = useState(false);
+  const [masteryFilter, setMasteryFilter] = useState<MasteryFilter>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [startSide, setStartSide] = useState<"word" | "explanation">(() =>
@@ -87,7 +88,7 @@ export function FlashcardsPage() {
   }
 
   const { currentCard, currentIndex, total, progress, isFlipped, allTags, goNext, goPrev, flip, reset, shuffleOnce } =
-    useFlashcards({ selectedRatings, selectedCategory, selectedTag, unmasteredOnly });
+    useFlashcards({ selectedRatings, selectedCategory, selectedTag, masteryFilter });
 
   const [cardVisible, setCardVisible] = useState(true);
   const [flipAnimated, setFlipAnimated] = useState(true);
@@ -112,14 +113,14 @@ export function FlashcardsPage() {
     selectedRatings.length > 0,
     selectedCategory !== null,
     selectedTag !== null,
-    unmasteredOnly,
+    masteryFilter !== null,
   ].filter(Boolean).length;
 
   function clearFilters() {
     setSelectedRatings([]);
     setSelectedCategory(null);
     setSelectedTag(null);
-    setUnmasteredOnly(false);
+    setMasteryFilter(null);
   }
 
   const filterBtnInactive =
@@ -242,8 +243,8 @@ export function FlashcardsPage() {
             onTagChange={setSelectedTag}
             selectedRatings={selectedRatings}
             onRatingsChange={setSelectedRatings}
-            unmasteredOnly={unmasteredOnly}
-            onUnmasteredOnlyChange={setUnmasteredOnly}
+            masteryFilter={masteryFilter}
+            onMasteryFilterChange={setMasteryFilter}
           />
         </div>
       )}
@@ -271,8 +272,8 @@ export function FlashcardsPage() {
           onTagChange={setSelectedTag}
           selectedRatings={selectedRatings}
           onRatingsChange={setSelectedRatings}
-          unmasteredOnly={unmasteredOnly}
-          onUnmasteredOnlyChange={setUnmasteredOnly}
+          masteryFilter={masteryFilter}
+          onMasteryFilterChange={setMasteryFilter}
           inDrawer
         />
       </SideDrawer>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
-import { usePracticeEntries, usePracticeTags, shuffle } from "@/features/practice/hooks/usePracticeEntries";
+import { usePracticeEntries, usePracticeTags, shuffle, type MasteryFilter } from "@/features/practice/hooks/usePracticeEntries";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
 import { PracticeHelpModal } from "@/features/practice/components/PracticeHelpModal";
 import { PuzzleGame } from "@/features/practice/components/PuzzleGame";
@@ -24,6 +24,7 @@ export function PuzzlePage() {
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null);
   const [selectedTag, setSelectedTag] = useState<number | null>(null);
+  const [masteryFilter, setMasteryFilter] = useState<MasteryFilter>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [showImages, setShowImages] = useState(() => localStorage.getItem(LS_PUZZLE_SHOW_IMAGES) === "true");
@@ -43,16 +44,16 @@ export function PuzzlePage() {
 
   const { reviewEntry } = useEntryCrud();
 
-  const filteredEntries = usePracticeEntries("puzzle", { selectedRatings, selectedCategory, selectedTag });
+  const filteredEntries = usePracticeEntries("puzzle", { selectedRatings, selectedCategory, selectedTag, masteryFilter });
 
   useEffect(() => {
     if (phase !== "playing") return;
     if (canStart) startSession();
     else setPhase("idle");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRatings, selectedCategory, selectedTag]);
+  }, [selectedRatings, selectedCategory, selectedTag, masteryFilter]);
 
-  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(
+  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null, masteryFilter !== null].filter(
     Boolean,
   ).length;
 
@@ -62,6 +63,7 @@ export function PuzzlePage() {
     setSelectedRatings([]);
     setSelectedCategory(null);
     setSelectedTag(null);
+    setMasteryFilter(null);
   }
 
   function startSession() {
@@ -167,6 +169,8 @@ export function PuzzlePage() {
             onTagChange={setSelectedTag}
             selectedRatings={selectedRatings}
             onRatingsChange={setSelectedRatings}
+            masteryFilter={masteryFilter}
+            onMasteryFilterChange={setMasteryFilter}
           />
         </div>
       )}
@@ -195,6 +199,8 @@ export function PuzzlePage() {
           onTagChange={setSelectedTag}
           selectedRatings={selectedRatings}
           onRatingsChange={setSelectedRatings}
+          masteryFilter={masteryFilter}
+          onMasteryFilterChange={setMasteryFilter}
           inDrawer
         />
       </SideDrawer>

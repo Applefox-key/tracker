@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
 import { TfiPanel } from "react-icons/tfi";
-import { usePracticeEntries, usePracticeTags, shuffle } from "@/features/practice/hooks/usePracticeEntries";
+import { usePracticeEntries, usePracticeTags, shuffle, type MasteryFilter } from "@/features/practice/hooks/usePracticeEntries";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
 import { PracticeHelpModal } from "@/features/practice/components/PracticeHelpModal";
 import { Button } from "@/shared/ui/Button";
@@ -27,6 +27,7 @@ export function WritePage() {
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null);
   const [selectedTag, setSelectedTag] = useState<number | null>(null);
+  const [masteryFilter, setMasteryFilter] = useState<MasteryFilter>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
@@ -39,7 +40,7 @@ export function WritePage() {
   const [correctCount, setCorrectCount] = useState(0);
   const [showExample, setShowExample] = useState(false);
 
-  const filteredEntries = usePracticeEntries("write", { selectedRatings, selectedCategory, selectedTag });
+  const filteredEntries = usePracticeEntries("write", { selectedRatings, selectedCategory, selectedTag, masteryFilter });
   const { reviewEntry } = useEntryCrud();
 
   const currentQuestion = questions[currentIdx] ?? null;
@@ -47,7 +48,7 @@ export function WritePage() {
   const progressPct = questions.length > 0 ? Math.round((currentIdx / questions.length) * 100) : 0;
   const resultPct = phase === "done" && questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0;
 
-  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null].filter(
+  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null, masteryFilter !== null].filter(
     Boolean,
   ).length;
   const filtersTitle = t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "");
@@ -75,7 +76,7 @@ export function WritePage() {
     if (canStart) startSession();
     else setPhase("idle");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRatings, selectedCategory, selectedTag]);
+  }, [selectedRatings, selectedCategory, selectedTag, masteryFilter]);
 
   function startSession() {
     setQuestions(shuffle(filteredEntries));
@@ -110,6 +111,7 @@ export function WritePage() {
     setSelectedRatings([]);
     setSelectedCategory(null);
     setSelectedTag(null);
+    setMasteryFilter(null);
   }
 
   const filterPanel = (inDrawer = false) => (
@@ -121,6 +123,8 @@ export function WritePage() {
       onTagChange={setSelectedTag}
       selectedRatings={selectedRatings}
       onRatingsChange={setSelectedRatings}
+      masteryFilter={masteryFilter}
+      onMasteryFilterChange={setMasteryFilter}
       allowedCategories={WRITE_ALLOWED_CATEGORIES}
       inDrawer={inDrawer}
     />

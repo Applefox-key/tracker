@@ -481,7 +481,8 @@
       "tag": "Тег:",
       "all": "Всі",
       "unmastered": "Незасвоєні:",
-      "unmasteredOnly": "Тільки незасвоєні"
+      "unmasteredOnly": "Не засвоєно",
+      "masteredOnly": "Засвоєно"
     }
   }
 }

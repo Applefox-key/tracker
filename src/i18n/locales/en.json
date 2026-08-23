@@ -463,7 +463,8 @@
       "tag": "Tag:",
       "all": "All",
       "unmastered": "Unmastered:",
-      "unmasteredOnly": "Unmastered only"
+      "unmasteredOnly": "Not mastered",
+      "masteredOnly": "Mastered"
     }
   }
 }

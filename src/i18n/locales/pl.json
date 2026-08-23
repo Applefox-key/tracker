@@ -475,7 +475,8 @@
       "tag": "Tag:",
       "all": "Wszystkie",
       "unmastered": "Nieopanowane:",
-      "unmasteredOnly": "Tylko nieopanowane"
+      "unmasteredOnly": "Nie opanowane",
+      "masteredOnly": "Opanowane"
     }
   }
 }

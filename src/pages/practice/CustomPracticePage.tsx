@@ -14,7 +14,7 @@ import { QuizGame } from "@/features/practice/components/QuizGame";
 import { PuzzleGame } from "@/features/practice/components/PuzzleGame";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
 import { usePracticeTags, shuffle, wordCount } from "@/features/practice/hooks/usePracticeEntries";
-import type { PracticeFilters } from "@/features/practice/hooks/usePracticeEntries";
+import type { PracticeFilters, MasteryFilter } from "@/features/practice/hooks/usePracticeEntries";
 import type { Entry } from "@/features/entries/types";
 
 type CustomMode = "flashcard" | "quiz" | "puzzle" | "write";
@@ -42,6 +42,8 @@ function applyFilters(entries: Entry[], f: PracticeFilters): Entry[] {
     if (f.selectedRatings.length && !f.selectedRatings.includes(e.rating)) return false;
     if (f.selectedCategory !== null && e.category !== f.selectedCategory) return false;
     if (f.selectedTag !== null && !e.tags.some((t) => t.id === f.selectedTag)) return false;
+    if (f.masteryFilter === 'unmastered' && e.rating >= 5) return false;
+    if (f.masteryFilter === 'mastered' && e.rating < 5) return false;
     return true;
   });
 }
@@ -200,6 +202,7 @@ const EMPTY_FILTERS: PracticeFilters = {
   selectedRatings: [],
   selectedCategory: null,
   selectedTag: null,
+  masteryFilter: null,
 };
 
 export function CustomPracticePage() {
@@ -236,6 +239,7 @@ export function CustomPracticePage() {
     filters.selectedRatings.length > 0,
     filters.selectedCategory !== null,
     filters.selectedTag !== null,
+    filters.masteryFilter !== null,
   ].filter(Boolean).length;
 
   function startSession() {
@@ -328,6 +332,8 @@ export function CustomPracticePage() {
                 onTagChange={(t) => setFilters((f) => ({ ...f, selectedTag: t }))}
                 selectedRatings={filters.selectedRatings}
                 onRatingsChange={(r) => setFilters((f) => ({ ...f, selectedRatings: r }))}
+                masteryFilter={filters.masteryFilter as MasteryFilter}
+                onMasteryFilterChange={(v) => setFilters((f) => ({ ...f, masteryFilter: v }))}
               />
             </div>
           )}{" "}
@@ -355,6 +361,8 @@ export function CustomPracticePage() {
               onTagChange={(t) => setFilters((f) => ({ ...f, selectedTag: t }))}
               selectedRatings={filters.selectedRatings}
               onRatingsChange={(r) => setFilters((f) => ({ ...f, selectedRatings: r }))}
+              masteryFilter={filters.masteryFilter as MasteryFilter}
+              onMasteryFilterChange={(v) => setFilters((f) => ({ ...f, masteryFilter: v }))}
               inDrawer={true}
             />
           </SideDrawer>

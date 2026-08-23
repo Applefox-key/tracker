@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { RatingMultiSelect } from "@/shared/ui/RatingMultiSelect";
 import type { EntryCategory, EntryTag } from "@/features/entries/types";
+import type { MasteryFilter } from "@/features/practice/hooks/usePracticeEntries";
 
 const CATEGORY_KEYS: EntryCategory[] = ["word", "phrase", "grammar", "idiom", "note"];
 
@@ -16,8 +17,8 @@ interface Props {
   onTagChange: (t: number | null) => void;
   selectedRatings: number[];
   onRatingsChange: (r: number[]) => void;
-  unmasteredOnly?: boolean;
-  onUnmasteredOnlyChange?: (v: boolean) => void;
+  masteryFilter?: MasteryFilter;
+  onMasteryFilterChange?: (v: MasteryFilter) => void;
   allowedCategories?: EntryCategory[];
   inDrawer?: boolean;
 }
@@ -30,8 +31,8 @@ export function PracticeFilterPanel({
   onTagChange,
   selectedRatings,
   onRatingsChange,
-  unmasteredOnly = false,
-  onUnmasteredOnlyChange,
+  masteryFilter = null,
+  onMasteryFilterChange,
   allowedCategories,
   inDrawer = false,
 }: Props) {
@@ -58,6 +59,23 @@ export function PracticeFilterPanel({
       <div className={sectionCls}>
         <span className={labelCls}>{t("practice.filterPanel.rating")}</span>
         <RatingMultiSelect selected={selectedRatings} onChange={onRatingsChange} large={inDrawer} />
+        {onMasteryFilterChange && (
+          <>
+            <div className="w-px bg-gray-200 dark:bg-gray-600 self-stretch shrink-0 hidden sm:block" />
+            <div className="flex gap-1.5 flex-wrap">
+              <button
+                onClick={() => onMasteryFilterChange(masteryFilter === "unmastered" ? null : "unmastered")}
+                className={[btnBase, masteryFilter === "unmastered" ? active : inactive].join(" ")}>
+                {t("practice.filterPanel.unmasteredOnly")}
+              </button>
+              <button
+                onClick={() => onMasteryFilterChange(masteryFilter === "mastered" ? null : "mastered")}
+                className={[btnBase, masteryFilter === "mastered" ? active : inactive].join(" ")}>
+                {t("practice.filterPanel.masteredOnly")}
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       <div className={sectionCls}>
@@ -78,17 +96,6 @@ export function PracticeFilterPanel({
           ))}
         </div>
       </div>
-
-      {onUnmasteredOnlyChange && (
-        <div className={sectionCls}>
-          <span className={labelCls}>{t("practice.filterPanel.unmastered")}</span>
-          <button
-            onClick={() => onUnmasteredOnlyChange(!unmasteredOnly)}
-            className={[btnBase, unmasteredOnly ? active : inactive].join(" ")}>
-            {t("practice.filterPanel.unmasteredOnly")}
-          </button>
-        </div>
-      )}
 
       {allTags.length > 0 && (
         <div className={sectionCls}>

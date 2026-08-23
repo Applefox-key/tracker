@@ -461,7 +461,8 @@
       "tag": "Etiqueta:",
       "all": "Todas",
       "unmastered": "Sin dominar:",
-      "unmasteredOnly": "Solo sin dominar"
+      "unmasteredOnly": "Sin dominar",
+      "masteredOnly": "Dominadas"
     }
   }
 }
