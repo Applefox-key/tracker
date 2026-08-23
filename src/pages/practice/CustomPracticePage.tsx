@@ -301,6 +301,9 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
   const [hasRetried, setHasRetried] = useState(false);
   const [showExample, setShowExample] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
+  const [showTilesHint, setShowTilesHint] = useState(false);
+
+  const tLen = wordCount(entry.word) === 1 ? entry.word.length : wordCount(entry.word);
 
   useEffect(() => {
     const { tiles, mode } = buildTiles(entry, allEntries);
@@ -312,22 +315,9 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
     setHasRetried(false);
     setShowExample(false);
     setHintUsed(false);
+    setShowTilesHint(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entry.id]);
-
-  useEffect(() => {
-    if (phase !== "thinking" || placed.length === 0) return;
-    const tLen = wordCount(entry.word) === 1 ? entry.word.length : wordCount(entry.word);
-    if (placed.length === tLen) {
-      const correct = checkAnswer(placed, entry, tileMode);
-      if (correct) {
-        setPhase("correct");
-        if (!hintUsed) reviewEntry(entry.id, hasRetried ? 4 : 5, "puzzle");
-      } else {
-        setPhase("wrong");
-      }
-    }
-  }, [placed, entry, tileMode, phase]);
 
   function placeTile(tile: Tile) {
     if (phase !== "thinking") return;
@@ -343,6 +333,18 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
       next.delete(tile.id);
       return next;
     });
+  }
+
+  function handleCheck() {
+    if (phase !== "thinking" || placed.length === 0) return;
+    const correct = checkAnswer(placed, entry, tileMode);
+    if (correct) {
+      setPhase("correct");
+      if (!hintUsed) reviewEntry(entry.id, hasRetried ? 4 : 5, "puzzle");
+    } else {
+      setHasRetried(true);
+      setPhase("wrong");
+    }
   }
 
   function tryAgain() {
@@ -361,7 +363,7 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
   }
 
   return (
-    <div className={["flex flex-col gap-4", phase !== "thinking" ? "pb-28 sm:pb-0" : ""].join(" ").trim()}>
+    <div className={["flex flex-col gap-4", (phase !== "thinking" || placed.length >= 1) ? "pb-28 sm:pb-0" : ""].join(" ").trim()}>
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 flex flex-col gap-3">
         <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">
           {tileMode === "letter" ? t("practice.puzzle.spellWord") : t("practice.puzzle.arrangeWords")}
@@ -434,6 +436,29 @@ function PuzzleItem({ entry, allEntries, onNext }: { entry: Entry; allEntries: E
           );
         })}
       </div>
+
+      <div className="flex justify-center">
+        <button
+          onClick={() => setShowTilesHint((v) => !v)}
+          className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+          {showTilesHint
+            ? t("practice.puzzle.tilesPlaced", { placed: placed.length, total: tLen })
+            : t("practice.puzzle.hint")}
+        </button>
+      </div>
+
+      {phase === "thinking" && placed.length >= 1 && (
+        <>
+          <div className="hidden sm:flex justify-end">
+            <Button onClick={handleCheck}>{t("practice.puzzle.checkAnswer")}</Button>
+          </div>
+          <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 sm:hidden z-10">
+            <Button onClick={handleCheck} className="w-full h-14 text-base">
+              {t("practice.puzzle.checkAnswer")}
+            </Button>
+          </div>
+        </>
+      )}
 
       {phase === "wrong" && (
         <>
