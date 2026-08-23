@@ -149,7 +149,14 @@
       "resetMastery": "Скинути",
       "resetConfirm": "Впевнені?",
       "resetYes": "Так",
-      "resetNo": "Ні"
+      "resetNo": "Ні",
+      "fields": {
+        "word":    { "word": "Слово",              "explanation": "Переклад",           "example": "Приклад" },
+        "phrase":  { "word": "Фраза",              "explanation": "Переклад",           "example": "Нотатка" },
+        "grammar": { "word": "Граматичне правило", "explanation": "Пояснення",          "example": "Приклад" },
+        "idiom":   { "word": "Ідіома",             "explanation": "Переклад / Значення","example": "Нотатка" },
+        "note":    { "word": "Заголовок",          "explanation": "Пояснення",          "example": "Приклад" }
+      }
     },
     "card": {
       "edit": "Редагувати",

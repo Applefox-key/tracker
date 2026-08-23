@@ -141,7 +141,14 @@
       "resetMastery": "Resetuj",
       "resetConfirm": "Na pewno?",
       "resetYes": "Tak",
-      "resetNo": "Nie"
+      "resetNo": "Nie",
+      "fields": {
+        "word":    { "word": "Słowo",           "explanation": "Tłumaczenie",          "example": "Przykład" },
+        "phrase":  { "word": "Fraza",           "explanation": "Tłumaczenie",          "example": "Notatka" },
+        "grammar": { "word": "Punkt gramatyczny","explanation": "Wyjaśnienie",         "example": "Przykład" },
+        "idiom":   { "word": "Idiom",           "explanation": "Tłumaczenie / Znaczenie","example": "Notatka" },
+        "note":    { "word": "Tytuł",           "explanation": "Wyjaśnienie",          "example": "Przykład" }
+      }
     },
     "card": {
       "edit": "Edytuj",

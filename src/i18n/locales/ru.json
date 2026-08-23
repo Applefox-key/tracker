@@ -149,7 +149,14 @@
       "resetMastery": "Сбросить",
       "resetConfirm": "Уверены?",
       "resetYes": "Да",
-      "resetNo": "Нет"
+      "resetNo": "Нет",
+      "fields": {
+        "word":    { "word": "Слово",                    "explanation": "Перевод",          "example": "Пример" },
+        "phrase":  { "word": "Фраза",                    "explanation": "Перевод",          "example": "Заметка" },
+        "grammar": { "word": "Грамматическое правило",   "explanation": "Объяснение",       "example": "Пример" },
+        "idiom":   { "word": "Идиома",                   "explanation": "Перевод / Значение","example": "Заметка" },
+        "note":    { "word": "Заголовок",                "explanation": "Объяснение",       "example": "Пример" }
+      }
     },
     "card": {
       "edit": "Изменить",

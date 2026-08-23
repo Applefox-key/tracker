@@ -157,7 +157,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
             src={getEntryImageUrl(entry.img)}
             alt={entry.word}
             style={{ width: 150, height: 150, objectFit: "cover" }}
-            className="shrink-0 m-auto"
+            className="shrink-0 m-auto sm:m-0"
           />
         )}
       </div>

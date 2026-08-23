@@ -29,6 +29,9 @@ export function EntryDetailModal({ entry, onClose, onEdit, onPrev, onNext }: Ent
   const { t } = useTranslation();
   const isMultiline = MULTILINE_CATEGORIES.has(entry.category);
 
+  const explanationLabel = t(`entries.form.fields.${entry.category}.explanation`);
+  const exampleLabel = t(`entries.form.fields.${entry.category}.example`);
+
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
@@ -141,7 +144,7 @@ export function EntryDetailModal({ entry, onClose, onEdit, onPrev, onNext }: Ent
               {entry.explanation && (
                 <div>
                   <p className="text-sm sm:text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
-                    {t("entries.detail.explanation")}
+                    {explanationLabel}
                   </p>
                   <p
                     className={`text-base sm:text-sm text-gray-700 dark:text-gray-300 bg-emerald-100 dark:bg-emerald-900/50 font-bold leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
@@ -152,7 +155,7 @@ export function EntryDetailModal({ entry, onClose, onEdit, onPrev, onNext }: Ent
               {entry.example && (
                 <div>
                   <p className="text-sm sm:text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
-                    {t("entries.detail.example")}
+                    {exampleLabel}
                   </p>
                   <p
                     className={`text-base sm:text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3  leading-relaxed whitespace-pre-wrap break-words`}>

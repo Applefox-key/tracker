@@ -157,6 +157,10 @@ export function EntryForm({
 
   const isEdit = mode === "edit";
   const isMultiline = MULTILINE_CATEGORIES.has(category);
+
+  const wordLabel = t(`entries.form.fields.${category}.word`);
+  const explanationLabel = t(`entries.form.fields.${category}.explanation`);
+  const exampleLabel = t(`entries.form.fields.${category}.example`);
   const inputCls =
     "border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500";
   const textareaCls = inputCls + " resize-none leading-relaxed";
@@ -183,7 +187,7 @@ export function EntryForm({
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
             <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              {t("entries.form.wordPhrase")}
+              {wordLabel} *
             </label>
             <VoiceInputButton onResult={(t) => setWord(t)} lang={wordLang} onLangChange={setWordLang} />
           </div>
@@ -198,7 +202,7 @@ export function EntryForm({
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
             <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              {t("entries.form.explanation")}
+              {explanationLabel} *
             </label>
             <div className="flex items-center gap-1.5">
               {translateError && <span className="text-xs text-red-500 dark:text-red-400">{translateError}</span>}
@@ -245,7 +249,7 @@ export function EntryForm({
       {/* Example — mobile only */}
       <div className="flex flex-col gap-1 sm:hidden">
         <div className="flex items-center justify-between">
-          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.example")}</label>
+          <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{exampleLabel}</label>
           <VoiceInputButton onResult={(t) => setExample(t)} />
         </div>
         <textarea
@@ -260,7 +264,7 @@ export function EntryForm({
       <div className="hidden sm:grid sm:grid-cols-[1fr_140px] gap-3">
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("entries.form.example")}</label>
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{exampleLabel}</label>
             <VoiceInputButton onResult={(t) => setExample(t)} />
           </div>
           <textarea

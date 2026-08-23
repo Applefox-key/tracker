@@ -137,7 +137,14 @@
       "resetMastery": "Reiniciar",
       "resetConfirm": "¿Seguro?",
       "resetYes": "Sí",
-      "resetNo": "No"
+      "resetNo": "No",
+      "fields": {
+        "word":    { "word": "Palabra",         "explanation": "Traducción",          "example": "Ejemplo" },
+        "phrase":  { "word": "Frase",           "explanation": "Traducción",          "example": "Nota" },
+        "grammar": { "word": "Punto gramatical","explanation": "Explicación",         "example": "Ejemplo" },
+        "idiom":   { "word": "Modismo",         "explanation": "Traducción / Significado","example": "Nota" },
+        "note":    { "word": "Título",          "explanation": "Explicación",         "example": "Ejemplo" }
+      }
     },
     "card": {
       "edit": "Editar",
