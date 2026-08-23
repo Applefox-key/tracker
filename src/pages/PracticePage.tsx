@@ -45,7 +45,7 @@ export function PracticePage() {
   }, [entries]);
 
   return (
-    <div className="flex flex-col gap-6 py-4 sm:py-auto lg:p-8 max-w-5xl m-auto">
+    <div className="flex flex-col gap-2 sm:gap-6 py-4 sm:py-auto lg:p-8 max-w-5xl m-auto">
       {/* Header */}
       <div className="hidden sm:block">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.title")}</h1>
@@ -105,7 +105,7 @@ export function PracticePage() {
       </div>
 
       {/* Mode cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
         {MODES.map((mode) => {
           const count = counts[mode.key];
           const disabled = count < mode.min;
@@ -114,7 +114,7 @@ export function PracticePage() {
               key={mode.key}
               onClick={disabled ? undefined : () => navigate(mode.route)}
               className={[
-                "bg-white dark:bg-gray-800 rounded-2xl border p-2 sm:p-6 flex flex-col gap-4 transition-all",
+                "bg-white dark:bg-gray-800 rounded-2xl border p-2 sm:p-6 flex flex-col gap-2 sm:gap-4 transition-all",
 
                 disabled
                   ? "border-gray-100 dark:border-gray-700/50 opacity-60"

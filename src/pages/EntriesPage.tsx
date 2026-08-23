@@ -148,11 +148,11 @@ export function EntriesPage() {
       </aside>
 
       {/* ===== MAIN CONTENT ===== */}
-      <div className="flex-1 min-w-0 flex flex-col gap-4">
+      <div className="flex-1 min-w-0 w-full flex flex-col gap-4">
         {/* Sticky bar */}
         <div className="sticky top-16 z-20 -mx-4 px-4 sm:mx-0 sm:px-0 bg-white dark:bg-gray-900 flex flex-col gap-2 pb-3 sm:-mt-8 sm:pt-8">
           {/* Mobile: search box (mr-8 leaves space for SideDrawer tab) */}
-          <div className="sm:hidden flex flex-col gap-2 p-3 mr-8 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
+          <div className="sm:hidden flex flex-col gap-2 p-3 mr-8 mt-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
             <input
               type="search"
               value={search}
@@ -353,7 +353,7 @@ export function EntriesPage() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+          <div className="w-full flex flex-col rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
             {entries.map((entry) => (
               <EntryHeaderStrip key={entry.id} entry={entry} onView={setViewingEntry} />
             ))}
@@ -362,21 +362,22 @@ export function EntriesPage() {
       </div>
 
       {/* Detail modal */}
-      {viewingEntry && (() => {
-        const idx = entries.findIndex((e) => e.id === viewingEntry.id);
-        return (
-          <EntryDetailModal
-            entry={viewingEntry}
-            onClose={() => setViewingEntry(null)}
-            onEdit={(entry) => {
-              setViewingEntry(null);
-              setEditingEntry(entry);
-            }}
-            onPrev={idx > 0 ? () => setViewingEntry(entries[idx - 1]) : undefined}
-            onNext={idx < entries.length - 1 ? () => setViewingEntry(entries[idx + 1]) : undefined}
-          />
-        );
-      })()}
+      {viewingEntry &&
+        (() => {
+          const idx = entries.findIndex((e) => e.id === viewingEntry.id);
+          return (
+            <EntryDetailModal
+              entry={viewingEntry}
+              onClose={() => setViewingEntry(null)}
+              onEdit={(entry) => {
+                setViewingEntry(null);
+                setEditingEntry(entry);
+              }}
+              onPrev={idx > 0 ? () => setViewingEntry(entries[idx - 1]) : undefined}
+              onNext={idx < entries.length - 1 ? () => setViewingEntry(entries[idx + 1]) : undefined}
+            />
+          );
+        })()}
 
       {/* Edit modal */}
       {editingEntry && <EditEntryModal entry={editingEntry} onClose={() => setEditingEntry(null)} />}

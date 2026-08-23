@@ -93,7 +93,7 @@ export function EntryDetailModal({ entry, onClose, onEdit, onPrev, onNext }: Ent
         </button>
       )}
       <div
-        className="w-full max-w-lg sm:max-w-2xl flex justify-between sm:block bg-white dark:bg-gray-800 sm:rounded-2xl sm:rounded-t-2xl shadow-xl flex flex-col h-[100vh] sm:h-auto sm:max-h-[90vh]"
+        className="w-full max-w-lg sm:max-w-2xl flex justify-between sm:block bg-white dark:bg-gray-800 sm:rounded-2xl sm:rounded-t-2xl shadow-xl flex flex-col h-dvh sm:h-auto sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}>
         <div>
           {/* Header */}
