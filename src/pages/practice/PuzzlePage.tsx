@@ -2,74 +2,19 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
-import { usePracticeEntries, usePracticeTags, shuffle, wordCount } from "@/features/practice/hooks/usePracticeEntries";
+import { usePracticeEntries, usePracticeTags, shuffle } from "@/features/practice/hooks/usePracticeEntries";
 import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
 import { PracticeHelpModal } from "@/features/practice/components/PracticeHelpModal";
+import { PuzzleGame } from "@/features/practice/components/PuzzleGame";
 import { Button } from "@/shared/ui/Button";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
-import { EntryImage } from "@/shared/ui/EntryImage";
-import { getEntryImageUrl } from "@/api/api";
 import type { Entry, EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { TfiPanel } from "react-icons/tfi";
 
 const LS_PUZZLE_SHOW_IMAGES = "puzzle_show_images";
 
-interface Tile {
-  id: string;
-  value: string;
-}
-type AnswerPhase = "thinking" | "correct" | "wrong";
 type Phase = "idle" | "playing" | "done";
-
-function randomLetter(): string {
-  return String.fromCharCode(97 + Math.floor(Math.random() * 26));
-}
-
-function buildTiles(entry: Entry, allEntries: Entry[] = []): { tiles: Tile[]; mode: "letter" | "word" } {
-  const wc = wordCount(entry.word);
-  if (wc === 1) {
-    const letters = entry.word
-      .toLowerCase()
-      .split("")
-      .map((c, i) => ({ id: `l${i}`, value: c }));
-    const extras = [
-      { id: "ex0", value: randomLetter() },
-      { id: "ex1", value: randomLetter() },
-    ];
-    return { tiles: shuffle([...letters, ...extras]), mode: "letter" };
-  }
-  const words = entry.word
-    .trim()
-    .split(/\s+/)
-    .map((w, i) => ({ id: `w${i}`, value: w }));
-  const correctSet = new Set(words.map((t) => t.value.toLowerCase()));
-  const candidates: string[] = [];
-  for (const other of allEntries) {
-    if (other.id === entry.id) continue;
-    for (const w of other.word.trim().split(/\s+/)) {
-      if (!correctSet.has(w.toLowerCase())) candidates.push(w);
-    }
-  }
-  const distractors = shuffle(candidates)
-    .slice(0, 3)
-    .map((w, i) => ({ id: `d${i}`, value: w }));
-  return { tiles: shuffle([...words, ...distractors]), mode: "word" };
-}
-
-function checkAnswer(placed: Tile[], entry: Entry, mode: "letter" | "word"): boolean {
-  if (mode === "letter") return placed.map((t) => t.value).join("") === entry.word.toLowerCase();
-  return (
-    placed
-      .map((t) => t.value)
-      .join(" ")
-      .toLowerCase() === entry.word.toLowerCase()
-  );
-}
-
-function targetLength(entry: Entry): number {
-  return wordCount(entry.word) === 1 ? entry.word.length : wordCount(entry.word);
-}
 
 export function PuzzlePage() {
   const { t } = useTranslation();
@@ -93,16 +38,8 @@ export function PuzzlePage() {
   const [phase, setPhase] = useState<Phase>("idle");
   const [questions, setQuestions] = useState<Entry[]>([]);
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [pool, setPool] = useState<Tile[]>([]);
-  const [placed, setPlaced] = useState<Tile[]>([]);
-  const [tileMode, setTileMode] = useState<"letter" | "word">("letter");
-  const [answerPhase, setAnswerPhase] = useState<AnswerPhase>("thinking");
   const [score, setScore] = useState(0);
-  const [showExample, setShowExample] = useState(false);
-  const [hasRetried, setHasRetried] = useState(false);
-  const [usedTileIds, setUsedTileIds] = useState<Set<string>>(new Set());
   const [wrongEntries, setWrongEntries] = useState<Entry[]>([]);
-  const [showTilesHint, setShowTilesHint] = useState(false);
 
   const { reviewEntry } = useEntryCrud();
 
@@ -120,18 +57,6 @@ export function PuzzlePage() {
   ).length;
 
   const currentEntry = questions[currentIdx] ?? null;
-
-  useEffect(() => {
-    if (!currentEntry) return;
-    const { tiles, mode } = buildTiles(currentEntry, filteredEntries);
-    setPool(tiles);
-    setPlaced([]);
-    setUsedTileIds(new Set());
-    setTileMode(mode);
-    setAnswerPhase("thinking");
-    setShowExample(false);
-    setShowTilesHint(false);
-  }, [currentIdx, questions]);
 
   function clearFilters() {
     setSelectedRatings([]);
@@ -155,52 +80,7 @@ export function PuzzlePage() {
     setPhase("playing");
   }
 
-  function placeTile(tile: Tile) {
-    if (answerPhase !== "thinking") return;
-    setUsedTileIds((s) => new Set([...s, tile.id]));
-    setPlaced((p) => [...p, tile]);
-  }
-
-  function removePlaced(tile: Tile) {
-    if (answerPhase !== "thinking") return;
-    setPlaced((p) => p.filter((t) => t.id !== tile.id));
-    setUsedTileIds((s) => {
-      const next = new Set(s);
-      next.delete(tile.id);
-      return next;
-    });
-  }
-
-  function tryAgain() {
-    if (!currentEntry) return;
-    const { tiles, mode } = buildTiles(currentEntry, filteredEntries);
-    setPool(tiles);
-    setPlaced([]);
-    setUsedTileIds(new Set());
-    setTileMode(mode);
-    setAnswerPhase("thinking");
-    setHasRetried(true);
-  }
-
-  function handleCheck() {
-    if (!currentEntry || answerPhase !== "thinking") return;
-    const correct = checkAnswer(placed, currentEntry, tileMode);
-    if (correct) {
-      setScore((n) => n + 1);
-      setAnswerPhase("correct");
-      reviewEntry(currentEntry.id, hasRetried ? 4 : 5, "puzzle");
-    } else {
-      setHasRetried(true);
-      setAnswerPhase("wrong");
-    }
-  }
-
-  function handleNext() {
-    if ((answerPhase === "wrong" || (answerPhase === "thinking" && hasRetried)) && currentEntry) {
-      reviewEntry(currentEntry.id, 0, "puzzle");
-      setWrongEntries((prev) => [...prev, currentEntry]);
-    }
-    setHasRetried(false);
+  function advanceOrFinish() {
     if (currentIdx + 1 >= questions.length) setPhase("done");
     else setCurrentIdx((i) => i + 1);
   }
@@ -209,7 +89,6 @@ export function PuzzlePage() {
   const canStart = filteredEntries.length > 0;
   const progress = questions.length > 0 ? Math.round((currentIdx / questions.length) * 100) : 0;
   const resultPct = phase === "done" && questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
-  const tLen = currentEntry ? targetLength(currentEntry) : 0;
 
   const btnInactive =
     "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600";
@@ -352,10 +231,7 @@ export function PuzzlePage() {
 
       {/* ── Playing ─────────────────────────────────────────────── */}
       {phase === "playing" && currentEntry && (
-        <div
-          className={["flex flex-col gap-6 max-w-xl mx-auto w-full", answerPhase !== "thinking" ? "pb-28 sm:pb-0" : ""]
-            .join(" ")
-            .trim()}>
+        <div className="flex flex-col gap-6 max-w-xl mx-auto  w-full">
           <div className="flex flex-col gap-1">
             <span className="text-xs text-gray-500 dark:text-gray-400">
               {t("practice.puzzle.progressLabel", { current: currentIdx + 1, total: questions.length })}
@@ -368,155 +244,24 @@ export function PuzzlePage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 flex flex-col gap-3">
-            <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">
-              {tileMode === "letter" ? t("practice.puzzle.spellWord") : t("practice.puzzle.arrangeWords")}
-            </span>
-            <div className="flex items-start gap-4">
-              <p className="flex-1 text-base font-semibold text-gray-800 dark:text-gray-100 leading-relaxed">
-                {currentEntry.explanation}
-              </p>
-              {showImages && currentEntry.img && (
-                <EntryImage
-                  src={getEntryImageUrl(currentEntry.img)}
-                  alt=""
-                  className="rounded-lg border border-gray-200 dark:border-gray-600 shrink-0"
-                  style={{ maxWidth: 100, maxHeight: 80, objectFit: "contain" }}
-                />
-              )}
-            </div>
-            {currentEntry.example &&
-              (showExample ? (
-                <p className="text-sm text-gray-500 dark:text-gray-400 italic border-l-2 border-emerald-200 dark:border-emerald-700 pl-3">
-                  {currentEntry.example}
-                </p>
-              ) : (
-                <button
-                  onClick={() => setShowExample(true)}
-                  className="text-sm text-emerald-500 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300 text-left transition-colors">
-                  {t("practice.puzzle.showExample")}
-                </button>
-              ))}
-          </div>
-
-          <div
-            className={[
-              "min-h-[64px] rounded-xl border-2 p-3 flex flex-wrap gap-2 items-center transition-colors",
-              answerPhase === "correct"
-                ? "border-green-400 bg-green-50 dark:bg-green-900/20"
-                : answerPhase === "wrong"
-                  ? "border-red-400 bg-red-50 dark:bg-red-900/20"
-                  : "border-dashed border-emerald-300 dark:border-emerald-700 bg-emerald-50/40 dark:bg-emerald-900/10",
-            ].join(" ")}>
-            {placed.length === 0 && answerPhase === "thinking" && (
-              <span className="text-sm text-emerald-300 dark:text-emerald-700 italic">
-                {t("practice.puzzle.clickTiles")}
-              </span>
-            )}
-            {placed.map((tile) => (
-              <button
-                key={tile.id}
-                onClick={() => removePlaced(tile)}
-                className="min-h-[3rem] min-w-[3rem] px-4 py-2 rounded-lg bg-emerald-600 text-white text-base font-medium hover:bg-emerald-700 active:bg-emerald-800 transition-colors touch-manipulation">
-                {tile.value}
-              </button>
-            ))}
-            {answerPhase === "correct" && (
-              <span className="ml-auto text-green-600 dark:text-green-400 font-semibold text-sm">
-                {t("practice.puzzle.correct")}
-              </span>
-            )}
-            {answerPhase === "wrong" && (
-              <span className="ml-auto text-red-600 dark:text-red-400 font-semibold text-sm">
-                {t("practice.puzzle.wrongFeedback")}
-              </span>
-            )}
-          </div>
-
-          {answerPhase === "thinking" && placed.length >= 1 && (
-            <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 sm:hidden z-10">
-              <Button onClick={handleCheck} className="w-full h-14 text-base">
-                {t("practice.puzzle.checkAnswer")}
-              </Button>
-            </div>
-          )}
-
-          <div className="flex flex-wrap gap-2">
-            {pool.map((tile) => {
-              const used = usedTileIds.has(tile.id);
-              return (
-                <button
-                  key={tile.id}
-                  onClick={used || answerPhase !== "thinking" ? undefined : () => placeTile(tile)}
-                  disabled={used || answerPhase !== "thinking"}
-                  className={[
-                    "text-3xl min-h-[3.5rem] min-w-[3.5rem] px-4 py-2.5 rounded-lg border font-medium transition-colors touch-manipulation",
-                    used
-                      ? "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-300 dark:text-gray-600 cursor-default"
-                      : "bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 active:bg-emerald-100 disabled:opacity-40",
-                  ].join(" ")}>
-                  {tile.value}
-                </button>
-              );
-            })}
-            {usedTileIds.size === pool.length && answerPhase === "thinking" && (
-              <span className="text-xs text-gray-400 dark:text-gray-500 italic">
-                {t("practice.puzzle.allTilesPlaced")}
-              </span>
-            )}
-          </div>
-
-          <div className="flex justify-center">
-            <button
-              onClick={() => setShowTilesHint((v) => !v)}
-              className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-              {showTilesHint
-                ? t("practice.puzzle.tilesPlaced", { placed: placed.length, total: tLen })
-                : t("practice.puzzle.hint")}
-            </button>
-          </div>
-
-          {answerPhase === "thinking" && placed.length >= 1 && (
-            <div className="hidden sm:flex justify-end">
-              <Button onClick={handleCheck}>
-                {t("practice.puzzle.checkAnswer")}
-              </Button>
-            </div>
-          )}
-          {answerPhase === "wrong" && (
-            <>
-              <div className="hidden sm:flex justify-end gap-3">
-                <Button variant="secondary" onClick={tryAgain}>
-                  {t("practice.puzzle.tryAgain")}
-                </Button>
-                <Button onClick={handleNext}>
-                  {currentIdx + 1 < questions.length ? t("practice.puzzle.skip") : t("practice.puzzle.finish")}
-                </Button>
-              </div>
-              <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 sm:hidden z-10 flex gap-3">
-                <Button variant="secondary" onClick={tryAgain} className="flex-1">
-                  {t("practice.puzzle.tryAgain")}
-                </Button>
-                <Button onClick={handleNext} className="flex-1">
-                  {currentIdx + 1 < questions.length ? t("practice.puzzle.skip") : t("practice.puzzle.finish")}
-                </Button>
-              </div>
-            </>
-          )}
-          {answerPhase === "correct" && (
-            <>
-              <div className="hidden sm:flex justify-end">
-                <Button onClick={handleNext}>
-                  {currentIdx + 1 < questions.length ? t("practice.puzzle.next") : t("practice.puzzle.seeResults")}
-                </Button>
-              </div>
-              <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 sm:hidden z-10">
-                <Button onClick={handleNext} className="w-full h-14 text-base">
-                  {currentIdx + 1 < questions.length ? t("practice.puzzle.next") : t("practice.puzzle.seeResults")}
-                </Button>
-              </div>
-            </>
-          )}
+          <PuzzleGame
+            key={`${currentEntry.id}-${currentIdx}`}
+            entry={currentEntry}
+            allEntries={filteredEntries}
+            showImages={showImages}
+            nextLabel={currentIdx + 1 < questions.length ? t("practice.puzzle.next") : t("practice.puzzle.seeResults")}
+            skipLabel={currentIdx + 1 < questions.length ? t("practice.puzzle.skip") : t("practice.puzzle.finish")}
+            onCorrect={(_hintUsed, retried) => {
+              setScore((n) => n + 1);
+              reviewEntry(currentEntry.id, retried ? 4 : 5, "puzzle");
+              advanceOrFinish();
+            }}
+            onSkip={(_hintUsed) => {
+              reviewEntry(currentEntry.id, 0, "puzzle");
+              setWrongEntries((prev) => [...prev, currentEntry]);
+              advanceOrFinish();
+            }}
+          />
         </div>
       )}
 
