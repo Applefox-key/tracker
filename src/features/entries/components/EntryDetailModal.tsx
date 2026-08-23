@@ -147,7 +147,7 @@ export function EntryDetailModal({ entry, onClose, onEdit, onPrev, onNext }: Ent
                     {explanationLabel}
                   </p>
                   <p
-                    className={`text-base sm:text-sm text-gray-700 dark:text-gray-300 bg-emerald-100 dark:bg-emerald-900/50 font-bold leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
+                    className={`text-base rounded-lg p-2 sm:text-sm text-gray-700 dark:text-gray-300 bg-emerald-100 dark:bg-emerald-900/50 font-bold leading-relaxed${isMultiline ? " whitespace-pre-wrap break-words" : ""}`}>
                     {entry.explanation}
                   </p>
                 </div>
