@@ -339,7 +339,7 @@ function WeeklyActivityChip({
       {/* Top row: [pie] [text flex-1] [badge] [today stats] */}
 
       <div className="flex items-center gap-2">
-        <StreakCake3D streak={streak} small /> <StreakCake3D streak={streak} small />
+        <StreakCake3D streak={streak} small />
         <div className="flex-1 min-w-0">
           {streakMain ? (
             <>
