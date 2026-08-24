@@ -124,6 +124,7 @@
     "tagLabel": "Тег",
     "masteredLabel": "Освоено",
     "masteredOnly": "Только освоенные",
+    "staleOnly": "Не повторялось 30+ дней",
     "practiceLabel": "Практика",
     "inPractice": "В практике",
     "notInPractice": "Не в практике",
@@ -486,7 +487,8 @@
       "all": "Все",
       "unmastered": "Неосвоенные:",
       "unmasteredOnly": "Не освоено",
-      "masteredOnly": "Освоено"
+      "masteredOnly": "Освоено",
+      "staleOnly": "Не повторялось 30+ дней"
     }
   }
 }

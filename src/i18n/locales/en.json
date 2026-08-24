@@ -112,6 +112,7 @@
     "tagLabel": "Tag",
     "masteredLabel": "Mastered",
     "masteredOnly": "Mastered only",
+    "staleOnly": "Not reviewed 30+ days",
     "practiceLabel": "Practice",
     "inPractice": "In practice",
     "notInPractice": "Not in practice",
@@ -464,7 +465,8 @@
       "all": "All",
       "unmastered": "Unmastered:",
       "unmasteredOnly": "Not mastered",
-      "masteredOnly": "Mastered"
+      "masteredOnly": "Mastered",
+      "staleOnly": "Not reviewed 30+ days"
     }
   }
 }

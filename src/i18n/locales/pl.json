@@ -116,6 +116,7 @@
     "tagLabel": "Tag",
     "masteredLabel": "Opanowane",
     "masteredOnly": "Tylko opanowane",
+    "staleOnly": "Nie powtarzane 30+ dni",
     "practiceLabel": "Praktyka",
     "inPractice": "W praktyce",
     "notInPractice": "Poza praktyką",
@@ -476,7 +477,8 @@
       "all": "Wszystkie",
       "unmastered": "Nieopanowane:",
       "unmasteredOnly": "Nie opanowane",
-      "masteredOnly": "Opanowane"
+      "masteredOnly": "Opanowane",
+      "staleOnly": "Nie powtarzane 30+ dni"
     }
   }
 }

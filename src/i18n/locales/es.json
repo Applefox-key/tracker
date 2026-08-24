@@ -112,6 +112,7 @@
     "tagLabel": "Etiqueta",
     "masteredLabel": "Dominado",
     "masteredOnly": "Solo dominadas",
+    "staleOnly": "Sin repasar 30+ días",
     "practiceLabel": "Práctica",
     "inPractice": "En práctica",
     "notInPractice": "Sin práctica",
@@ -462,7 +463,8 @@
       "all": "Todas",
       "unmastered": "Sin dominar:",
       "unmasteredOnly": "Sin dominar",
-      "masteredOnly": "Dominadas"
+      "masteredOnly": "Dominadas",
+      "staleOnly": "Sin repasar 30+ días"
     }
   }
 }

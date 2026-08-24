@@ -2,29 +2,23 @@ import { useEffect, useMemo, useState } from 'react'
 import { useEntriesStore } from '@/features/entries/store/entriesStore'
 import { useFlashcardsStore } from '../store/flashcardsStore'
 import { Flashcard } from '../types'
-import { EntryCategory, EntryTag } from '@/features/entries/types'
+import { EntryTag } from '@/features/entries/types'
 import { getEntryImageUrl } from '@/api/api'
-import type { MasteryFilter } from '@/features/practice/hooks/usePracticeEntries'
+import type { PracticeFilters } from '@/features/practice/hooks/usePracticeEntries'
+import { EMPTY_FILTERS } from '@/features/practice/hooks/usePracticeEntries'
 
-export interface FlashcardFilters {
-  selectedRatings: number[]
-  selectedCategory: EntryCategory | null
-  selectedTag: number | null
-  masteryFilter: MasteryFilter
+function isStale(lastReviewedAt: string | null | undefined): boolean {
+  if (!lastReviewedAt) return true
+  const cutoff = new Date()
+  cutoff.setDate(cutoff.getDate() - 30)
+  return new Date(lastReviewedAt) < cutoff
 }
 
-const EMPTY_FILTERS: FlashcardFilters = {
-  selectedRatings: [],
-  selectedCategory: null,
-  selectedTag: null,
-  masteryFilter: null,
-}
-
-export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
+export function useFlashcards(filters: PracticeFilters = EMPTY_FILTERS) {
   const entries = useEntriesStore((s) => s.entries)
   const { currentIndex, isFlipped, goNext, goPrev, flip, reset } = useFlashcardsStore()
 
-  const { selectedRatings, selectedCategory, selectedTag, masteryFilter } = filters
+  const { selectedRatings, selectedCategory, selectedTag, masteryFilter, staleOnly } = filters
 
   const [shuffledIds, setShuffledIds] = useState<number[] | null>(null)
 
@@ -46,6 +40,7 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
         if (selectedTag !== null && !e.tags.some((t) => t.id === selectedTag)) return false
         if (masteryFilter === 'unmastered' && e.rating >= 5) return false
         if (masteryFilter === 'mastered' && e.rating < 5) return false
+        if (staleOnly && !isStale(e.last_reviewed_at)) return false
         return true
       })
       .map((e) => ({
@@ -57,7 +52,7 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
         img: e.img ? getEntryImageUrl(e.img) : null,
         category: e.category,
       }))
-  }, [entries, selectedRatings, selectedCategory, selectedTag, masteryFilter])
+  }, [entries, selectedRatings, selectedCategory, selectedTag, masteryFilter, staleOnly])
 
   // Apply stored shuffle order to current filtered cards (handles entries being updated mid-session)
   const cards: Flashcard[] = useMemo(() => {
@@ -77,7 +72,7 @@ export function useFlashcards(filters: FlashcardFilters = EMPTY_FILTERS) {
   useEffect(() => {
     setShuffledIds(null)
     reset()
-  }, [ratingsKey, selectedCategory, selectedTag, masteryFilter, reset])
+  }, [ratingsKey, selectedCategory, selectedTag, masteryFilter, staleOnly, reset])
 
   function shuffleOnce() {
     const arr = [...filteredCards]

@@ -2,14 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
-import { usePracticeEntries, usePracticeTags, shuffle, type MasteryFilter } from "@/features/practice/hooks/usePracticeEntries";
-import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
+import { usePracticeEntries, shuffle } from "@/features/practice/hooks/usePracticeEntries";
+import { usePracticeFilters } from "@/features/practice/hooks/usePracticeFilters";
+import { PracticeFiltersArea } from "@/features/practice/components/PracticeFiltersArea";
 import { PracticeHelpModal } from "@/features/practice/components/PracticeHelpModal";
 import { Button } from "@/shared/ui/Button";
-import { SideDrawer } from "@/shared/ui/SideDrawer";
-import type { Entry, EntryCategory } from "@/features/entries/types";
+import type { Entry } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
-import { TfiPanel } from "react-icons/tfi";
 
 interface MatchCard {
   id: string;
@@ -34,14 +33,8 @@ type Phase = "idle" | "playing" | "done";
 export function MatchPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const allTags = usePracticeTags();
-
-  const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null);
-  const [selectedTag, setSelectedTag] = useState<number | null>(null);
-  const [masteryFilter, setMasteryFilter] = useState<MasteryFilter>(null);
-  const [showFilters, setShowFilters] = useState(false);
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const filterState = usePracticeFilters();
+  const { filters, showFilters, setShowFilters, activeFilterCount, clearFilters } = filterState;
 
   const [showHelp, setShowHelp] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -61,18 +54,14 @@ export function MatchPage() {
 
   const { reviewEntry } = useEntryCrud();
 
-  const filteredEntries = usePracticeEntries("match", { selectedRatings, selectedCategory, selectedTag, masteryFilter });
+  const filteredEntries = usePracticeEntries("match", filters);
 
   useEffect(() => {
     if (phase !== "playing") return;
     if (canStart) startSession();
     else setPhase("idle");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRatings, selectedCategory, selectedTag, masteryFilter]);
-
-  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null, masteryFilter !== null].filter(
-    Boolean,
-  ).length;
+  }, [filters]);
 
   const roundEntries = allEntries.slice(roundStart, roundStart + ROUND_SIZE);
   const roundSize = roundEntries.length;
@@ -126,13 +115,6 @@ export function MatchPage() {
       }, 600);
     }
   }, [selectedWord, selectedExplanation]);
-
-  function clearFilters() {
-    setSelectedRatings([]);
-    setSelectedCategory(null);
-    setSelectedTag(null);
-    setMasteryFilter(null);
-  }
 
   function startSession() {
     const shuffled = shuffle(filteredEntries);
@@ -209,7 +191,6 @@ export function MatchPage() {
 
   const isTouchDevice = typeof window !== "undefined" && window.matchMedia("(hover: none)").matches;
 
-  const filtersTitle = t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "");
   const canStart = filteredEntries.length >= 2;
 
   return (
@@ -289,52 +270,7 @@ export function MatchPage() {
 
         <hr className="border-gray-200 dark:border-gray-700" />
 
-        {/* ── Collapsible filters panel ───────────────────────────── */}
-        {showFilters && (
-          <div className="hidden sm:block">
-            <PracticeFilterPanel
-              allTags={allTags}
-              selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
-              selectedTag={selectedTag}
-              onTagChange={setSelectedTag}
-              selectedRatings={selectedRatings}
-              onRatingsChange={setSelectedRatings}
-              masteryFilter={masteryFilter}
-              onMasteryFilterChange={setMasteryFilter}
-            />
-          </div>
-        )}
-
-        {/* Mobile filter sidebar */}
-        <SideDrawer
-          open={isMobileDrawerOpen}
-          onClose={() => setIsMobileDrawerOpen(false)}
-          onOpen={() => setIsMobileDrawerOpen(true)}
-          tabLabel={t("practice.filters")}
-          tabIcon={<TfiPanel className="text-xl" />}
-          title={filtersTitle}
-          hasActiveIndicator={activeFilterCount > 0}
-          headerAction={
-            activeFilterCount > 0 ? (
-              <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">
-                {t("practice.clearFilters")}
-              </button>
-            ) : undefined
-          }>
-          <PracticeFilterPanel
-            allTags={allTags}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-            selectedTag={selectedTag}
-            onTagChange={setSelectedTag}
-            selectedRatings={selectedRatings}
-            onRatingsChange={setSelectedRatings}
-            masteryFilter={masteryFilter}
-            onMasteryFilterChange={setMasteryFilter}
-            inDrawer
-          />
-        </SideDrawer>
+        <PracticeFiltersArea filterState={filterState} />
 
         {/* ── Idle: start prompt ──────────────────────────────────── */}
         {phase === "idle" && (

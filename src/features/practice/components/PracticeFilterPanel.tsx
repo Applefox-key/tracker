@@ -19,6 +19,8 @@ interface Props {
   onRatingsChange: (r: number[]) => void;
   masteryFilter?: MasteryFilter;
   onMasteryFilterChange?: (v: MasteryFilter) => void;
+  staleOnly?: boolean;
+  onStaleOnlyChange?: (v: boolean) => void;
   allowedCategories?: EntryCategory[];
   inDrawer?: boolean;
 }
@@ -33,6 +35,8 @@ export function PracticeFilterPanel({
   onRatingsChange,
   masteryFilter = null,
   onMasteryFilterChange,
+  staleOnly = false,
+  onStaleOnlyChange,
   allowedCategories,
   inDrawer = false,
 }: Props) {
@@ -74,6 +78,16 @@ export function PracticeFilterPanel({
                 {t("practice.filterPanel.masteredOnly")}
               </button>
             </div>
+          </>
+        )}
+        {onStaleOnlyChange && (
+          <>
+            <div className="w-px bg-gray-200 dark:bg-gray-600 self-stretch shrink-0 hidden sm:block" />
+            <button
+              onClick={() => onStaleOnlyChange(!staleOnly)}
+              className={[btnBase, staleOnly ? active : inactive].join(" ")}>
+              {t("practice.filterPanel.staleOnly")}
+            </button>
           </>
         )}
       </div>

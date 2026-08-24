@@ -43,7 +43,7 @@ export function QuizGame({ entry, pool, nextLabel, onSelect, onNext }: QuizGameP
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 flex flex-col gap-3">
+      <div className="bg-teal-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 flex flex-col gap-3">
         <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">
           {t("practice.quiz.promptWord")}
         </span>
@@ -72,10 +72,8 @@ export function QuizGame({ entry, pool, nextLabel, onSelect, onNext }: QuizGameP
               "bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-gray-700 dark:text-gray-200";
           else if (isCorrect)
             cls += "bg-green-50 dark:bg-green-900/20 border-green-400 text-green-800 dark:text-green-400";
-          else if (isSelected)
-            cls += "bg-red-50 dark:bg-red-900/20 border-red-400 text-red-800 dark:text-red-400";
-          else
-            cls += "bg-white dark:bg-gray-700 border-gray-100 dark:border-gray-600 text-gray-400 dark:text-gray-500";
+          else if (isSelected) cls += "bg-red-50 dark:bg-red-900/20 border-red-400 text-red-800 dark:text-red-400";
+          else cls += "bg-white dark:bg-gray-700 border-gray-100 dark:border-gray-600 text-gray-400 dark:text-gray-500";
           return (
             <button key={opt} onClick={() => handleSelect(opt)} disabled={answered} className={cls}>
               {opt}

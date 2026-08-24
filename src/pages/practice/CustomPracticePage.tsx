@@ -2,19 +2,17 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
-import { TfiPanel } from "react-icons/tfi";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { useEntriesStore } from "@/features/entries/store/entriesStore";
 import { Button } from "@/shared/ui/Button";
 import { AnswerDiff, normalizeAnswer } from "@/shared/ui/AnswerDiff";
-import { SideDrawer } from "@/shared/ui/SideDrawer";
 import { PracticeHelpModal } from "@/features/practice/components/PracticeHelpModal";
 import { FlashcardGame } from "@/features/practice/components/FlashcardGame";
 import { QuizGame } from "@/features/practice/components/QuizGame";
 import { PuzzleGame } from "@/features/practice/components/PuzzleGame";
-import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
-import { usePracticeTags, shuffle, wordCount } from "@/features/practice/hooks/usePracticeEntries";
-import type { PracticeFilters, MasteryFilter } from "@/features/practice/hooks/usePracticeEntries";
+import { PracticeFiltersArea } from "@/features/practice/components/PracticeFiltersArea";
+import { applyFilters, shuffle, wordCount } from "@/features/practice/hooks/usePracticeEntries";
+import { usePracticeFilters } from "@/features/practice/hooks/usePracticeFilters";
 import type { Entry } from "@/features/entries/types";
 
 type CustomMode = "flashcard" | "quiz" | "puzzle" | "write";
@@ -36,17 +34,6 @@ function isWriteable(entry: Entry): boolean {
   return ["word", "phrase", "idiom"].includes(entry.category);
 }
 
-function applyFilters(entries: Entry[], f: PracticeFilters): Entry[] {
-  return entries.filter((e) => {
-    if (!e.includeInPractice) return false;
-    if (f.selectedRatings.length && !f.selectedRatings.includes(e.rating)) return false;
-    if (f.selectedCategory !== null && e.category !== f.selectedCategory) return false;
-    if (f.selectedTag !== null && !e.tags.some((t) => t.id === f.selectedTag)) return false;
-    if (f.masteryFilter === 'unmastered' && e.rating >= 5) return false;
-    if (f.masteryFilter === 'mastered' && e.rating < 5) return false;
-    return true;
-  });
-}
 
 function buildQueue(entries: Entry[], modes: CustomMode[]): QueueItem[] {
   return entries.map((entry) => {
@@ -198,23 +185,15 @@ const MODE_ICONS: Record<CustomMode, string> = {
   write: "✍️",
 };
 
-const EMPTY_FILTERS: PracticeFilters = {
-  selectedRatings: [],
-  selectedCategory: null,
-  selectedTag: null,
-  masteryFilter: null,
-};
-
 export function CustomPracticePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const allEntries = useEntriesStore((s) => s.entries);
-  const allTags = usePracticeTags();
   const { reviewEntry } = useEntryCrud();
 
-  const [filters, setFilters] = useState<PracticeFilters>(EMPTY_FILTERS);
-  const [showFilters, setShowFilters] = useState(false);
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const filterState = usePracticeFilters();
+  const { filters, showFilters, setShowFilters, activeFilterCount, clearFilters } = filterState;
+
   const [showHelp, setShowHelp] = useState(false);
   const [selectedModes, setSelectedModes] = useState<CustomMode[]>(["flashcard", "quiz", "puzzle", "write"]);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -230,17 +209,6 @@ export function CustomPracticePage() {
       prev.includes(m) ? (prev.length > 1 ? prev.filter((x) => x !== m) : prev) : [...prev, m],
     );
   }
-
-  function clearFilters() {
-    setFilters(EMPTY_FILTERS);
-  }
-
-  const activeFilterCount = [
-    filters.selectedRatings.length > 0,
-    filters.selectedCategory !== null,
-    filters.selectedTag !== null,
-    filters.masteryFilter !== null,
-  ].filter(Boolean).length;
 
   function startSession() {
     const q = buildQueue(shuffle(filteredEntries), selectedModes);
@@ -319,55 +287,7 @@ export function CustomPracticePage() {
 
       <hr className="border-gray-200 dark:border-gray-700" />
 
-      {/* Mobile SideDrawer for filters and filters for PC— visible only during idle */}
-      {phase === "idle" && (
-        <>
-          {showFilters && (
-            <div className="hidden sm:block">
-              <PracticeFilterPanel
-                allTags={allTags}
-                selectedCategory={filters.selectedCategory}
-                onCategoryChange={(c) => setFilters((f) => ({ ...f, selectedCategory: c }))}
-                selectedTag={filters.selectedTag}
-                onTagChange={(t) => setFilters((f) => ({ ...f, selectedTag: t }))}
-                selectedRatings={filters.selectedRatings}
-                onRatingsChange={(r) => setFilters((f) => ({ ...f, selectedRatings: r }))}
-                masteryFilter={filters.masteryFilter as MasteryFilter}
-                onMasteryFilterChange={(v) => setFilters((f) => ({ ...f, masteryFilter: v }))}
-              />
-            </div>
-          )}{" "}
-          {/* Mobile SideDrawer for filters — visible only during idle */}
-          <SideDrawer
-            open={isMobileDrawerOpen}
-            onClose={() => setIsMobileDrawerOpen(false)}
-            onOpen={() => setIsMobileDrawerOpen(true)}
-            tabLabel={t("practice.filters")}
-            tabIcon={<TfiPanel className="text-xl" />}
-            title={t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "")}
-            hasActiveIndicator={activeFilterCount > 0}
-            headerAction={
-              activeFilterCount > 0 ? (
-                <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">
-                  {t("practice.clearFilters")}
-                </button>
-              ) : undefined
-            }>
-            <PracticeFilterPanel
-              allTags={allTags}
-              selectedCategory={filters.selectedCategory}
-              onCategoryChange={(c) => setFilters((f) => ({ ...f, selectedCategory: c }))}
-              selectedTag={filters.selectedTag}
-              onTagChange={(t) => setFilters((f) => ({ ...f, selectedTag: t }))}
-              selectedRatings={filters.selectedRatings}
-              onRatingsChange={(r) => setFilters((f) => ({ ...f, selectedRatings: r }))}
-              masteryFilter={filters.masteryFilter as MasteryFilter}
-              onMasteryFilterChange={(v) => setFilters((f) => ({ ...f, masteryFilter: v }))}
-              inDrawer={true}
-            />
-          </SideDrawer>
-        </>
-      )}
+      {phase === "idle" && <PracticeFiltersArea filterState={filterState} />}
 
       {/* ── Idle ────────────────────────────────────────────────── */}
       {phase === "idle" && (

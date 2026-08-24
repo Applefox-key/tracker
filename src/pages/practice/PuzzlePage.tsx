@@ -2,15 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
-import { usePracticeEntries, usePracticeTags, shuffle, type MasteryFilter } from "@/features/practice/hooks/usePracticeEntries";
-import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
+import { usePracticeEntries, shuffle } from "@/features/practice/hooks/usePracticeEntries";
+import { usePracticeFilters } from "@/features/practice/hooks/usePracticeFilters";
+import { PracticeFiltersArea } from "@/features/practice/components/PracticeFiltersArea";
 import { PracticeHelpModal } from "@/features/practice/components/PracticeHelpModal";
 import { PuzzleGame } from "@/features/practice/components/PuzzleGame";
 import { Button } from "@/shared/ui/Button";
-import { SideDrawer } from "@/shared/ui/SideDrawer";
-import type { Entry, EntryCategory } from "@/features/entries/types";
+import type { Entry } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
-import { TfiPanel } from "react-icons/tfi";
 
 const LS_PUZZLE_SHOW_IMAGES = "puzzle_show_images";
 
@@ -19,14 +18,8 @@ type Phase = "idle" | "playing" | "done";
 export function PuzzlePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const allTags = usePracticeTags();
-
-  const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null);
-  const [selectedTag, setSelectedTag] = useState<number | null>(null);
-  const [masteryFilter, setMasteryFilter] = useState<MasteryFilter>(null);
-  const [showFilters, setShowFilters] = useState(false);
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const filterState = usePracticeFilters();
+  const { filters, showFilters, setShowFilters, activeFilterCount, clearFilters } = filterState;
   const [showImages, setShowImages] = useState(() => localStorage.getItem(LS_PUZZLE_SHOW_IMAGES) === "true");
   const [showHelp, setShowHelp] = useState(false);
 
@@ -44,27 +37,16 @@ export function PuzzlePage() {
 
   const { reviewEntry } = useEntryCrud();
 
-  const filteredEntries = usePracticeEntries("puzzle", { selectedRatings, selectedCategory, selectedTag, masteryFilter });
+  const filteredEntries = usePracticeEntries("puzzle", filters);
 
   useEffect(() => {
     if (phase !== "playing") return;
     if (canStart) startSession();
     else setPhase("idle");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRatings, selectedCategory, selectedTag, masteryFilter]);
-
-  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null, masteryFilter !== null].filter(
-    Boolean,
-  ).length;
+  }, [filters]);
 
   const currentEntry = questions[currentIdx] ?? null;
-
-  function clearFilters() {
-    setSelectedRatings([]);
-    setSelectedCategory(null);
-    setSelectedTag(null);
-    setMasteryFilter(null);
-  }
 
   function startSession() {
     setQuestions(shuffle(filteredEntries));
@@ -87,7 +69,6 @@ export function PuzzlePage() {
     else setCurrentIdx((i) => i + 1);
   }
 
-  const filtersTitle = t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "");
   const canStart = filteredEntries.length > 0;
   const progress = questions.length > 0 ? Math.round((currentIdx / questions.length) * 100) : 0;
   const resultPct = phase === "done" && questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
@@ -158,52 +139,7 @@ export function PuzzlePage() {
 
       <hr className="border-gray-200 dark:border-gray-700" />
 
-      {/* ── Collapsible filters panel ───────────────────────────── */}
-      {showFilters && (
-        <div className="hidden sm:block">
-          <PracticeFilterPanel
-            allTags={allTags}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-            selectedTag={selectedTag}
-            onTagChange={setSelectedTag}
-            selectedRatings={selectedRatings}
-            onRatingsChange={setSelectedRatings}
-            masteryFilter={masteryFilter}
-            onMasteryFilterChange={setMasteryFilter}
-          />
-        </div>
-      )}
-
-      {/* Mobile filter sidebar */}
-      <SideDrawer
-        open={isMobileDrawerOpen}
-        onClose={() => setIsMobileDrawerOpen(false)}
-        onOpen={() => setIsMobileDrawerOpen(true)}
-        tabLabel={t("practice.filters")}
-        title={filtersTitle}
-        tabIcon={<TfiPanel className="text-xl" />}
-        hasActiveIndicator={activeFilterCount > 0}
-        headerAction={
-          activeFilterCount > 0 ? (
-            <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">
-              {t("practice.clearFilters")}
-            </button>
-          ) : undefined
-        }>
-        <PracticeFilterPanel
-          allTags={allTags}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          selectedTag={selectedTag}
-          onTagChange={setSelectedTag}
-          selectedRatings={selectedRatings}
-          onRatingsChange={setSelectedRatings}
-          masteryFilter={masteryFilter}
-          onMasteryFilterChange={setMasteryFilter}
-          inDrawer
-        />
-      </SideDrawer>
+      <PracticeFiltersArea filterState={filterState} />
 
       {/* ── Idle: start prompt ──────────────────────────────────── */}
       {phase === "idle" && (

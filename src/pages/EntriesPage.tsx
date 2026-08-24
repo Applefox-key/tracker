@@ -15,6 +15,7 @@ import { Entry, EntryCategory } from "@/features/entries/types";
 import { TbTargetArrow, TbCrown } from "react-icons/tb";
 import { AddEntryFab } from "@/features/entries/components/AddEntryFab";
 import { TfiPanel } from "react-icons/tfi";
+import Masonry from "react-masonry-css";
 
 export function EntriesPage() {
   const { t } = useTranslation();
@@ -80,6 +81,8 @@ export function EntriesPage() {
     setMasteredOnly,
     practiceFilter,
     setPracticeFilter,
+    staleFilter,
+    setStaleFilter,
     hasActiveFilters,
     clearFilters,
     addEntry,
@@ -93,6 +96,7 @@ export function EntriesPage() {
     dateFilter !== "all",
     masteredOnly,
     practiceFilter !== "all",
+    staleFilter,
   ].filter(Boolean).length;
 
   function handleAdd(values: EntryFormValues) {
@@ -140,6 +144,8 @@ export function EntriesPage() {
               setMasteredOnly={setMasteredOnly}
               practiceFilter={practiceFilter}
               setPracticeFilter={setPracticeFilter}
+              staleFilter={staleFilter}
+              setStaleFilter={setStaleFilter}
               filterBtnActive={filterBtnActive}
               sidebar
             />
@@ -341,7 +347,10 @@ export function EntriesPage() {
             </p>
           </div>
         ) : viewMode === "expanded" ? (
-          <div className="overflow-hidden grid grid-cols-1 sm:grid-cols-2 3xl:grid-cols-3 gap-4">
+          <Masonry
+            breakpointCols={{ default: 3, 2000: 2, 639: 1 }}
+            className="flex gap-4 w-full"
+            columnClassName="flex flex-col gap-4 flex-1 min-w-0">
             {entries.map((entry) => (
               <EntryCard
                 key={entry.id}
@@ -351,7 +360,7 @@ export function EntriesPage() {
                 onView={setViewingEntry}
               />
             ))}
-          </div>
+          </Masonry>
         ) : (
           <div className="w-full flex flex-col rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
             {entries.map((entry) => (
@@ -429,6 +438,8 @@ export function EntriesPage() {
             setMasteredOnly={setMasteredOnly}
             practiceFilter={practiceFilter}
             setPracticeFilter={setPracticeFilter}
+            staleFilter={staleFilter}
+            setStaleFilter={setStaleFilter}
             filterBtnActive={filterBtnActive}
             inDrawer
           />
@@ -570,6 +581,8 @@ interface AdvancedFiltersPanelProps {
   setMasteredOnly: (v: boolean) => void;
   practiceFilter: PracticeFilter;
   setPracticeFilter: (v: PracticeFilter) => void;
+  staleFilter: boolean;
+  setStaleFilter: (v: boolean) => void;
   filterBtnActive: string;
   inDrawer?: boolean;
   sidebar?: boolean;
@@ -587,6 +600,8 @@ function AdvancedFiltersPanel({
   setMasteredOnly,
   practiceFilter,
   setPracticeFilter,
+  staleFilter,
+  setStaleFilter,
   filterBtnActive,
   inDrawer,
   sidebar,
@@ -637,6 +652,11 @@ function AdvancedFiltersPanel({
             onClick={() => setMasteredOnly(!masteredOnly)}
             className={[btnCls, masteredOnly ? filterBtnActive : tagBtnInactive].join(" ")}>
             {t("entries.masteredOnly")}
+          </button>
+          <button
+            onClick={() => setStaleFilter(!staleFilter)}
+            className={[btnCls, staleFilter ? filterBtnActive : tagBtnInactive].join(" ")}>
+            {t("entries.staleOnly")}
           </button>
         </div>
       </div>

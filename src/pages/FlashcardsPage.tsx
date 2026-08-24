@@ -8,16 +8,13 @@ const LS_SHOW_IMAGES = "flashcard_show_images";
 import { FlashCard } from "@/features/flashcards/components/FlashCard";
 import { CardNavigation } from "@/features/flashcards/components/CardNavigation";
 import { useFlashcards } from "@/features/flashcards/hooks/useFlashcards";
-import type { MasteryFilter } from "@/features/practice/hooks/usePracticeEntries";
+import { usePracticeFilters } from "@/features/practice/hooks/usePracticeFilters";
 import { Button } from "@/shared/ui/Button";
-import { SideDrawer } from "@/shared/ui/SideDrawer";
-import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
+import { PracticeFiltersArea } from "@/features/practice/components/PracticeFiltersArea";
 import { PracticeHelpModal } from "@/features/practice/components/PracticeHelpModal";
-import { EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import type { SRGrade } from "@/features/entries/types";
 import { FaShuffle } from "react-icons/fa6";
-import { TfiPanel } from "react-icons/tfi";
 
 const SR_GRADES = [
   {
@@ -47,12 +44,8 @@ const removeBtn =
 
 export function FlashcardsPage() {
   const { t } = useTranslation();
-  const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null);
-  const [selectedTag, setSelectedTag] = useState<number | null>(null);
-  const [masteryFilter, setMasteryFilter] = useState<MasteryFilter>(null);
-  const [showFilters, setShowFilters] = useState(false);
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const filterState = usePracticeFilters();
+  const { filters, showFilters, setShowFilters, activeFilterCount, clearFilters } = filterState;
   const [startSide, setStartSide] = useState<"word" | "explanation">(() =>
     localStorage.getItem(LS_START_SIDE) === "explanation" ? "explanation" : "word",
   );
@@ -87,8 +80,8 @@ export function FlashcardsPage() {
     navigate(goNext);
   }
 
-  const { currentCard, currentIndex, total, progress, isFlipped, allTags, goNext, goPrev, flip, reset, shuffleOnce } =
-    useFlashcards({ selectedRatings, selectedCategory, selectedTag, masteryFilter });
+  const { currentCard, currentIndex, total, progress, isFlipped, goNext, goPrev, flip, reset, shuffleOnce } =
+    useFlashcards(filters);
 
   const [cardVisible, setCardVisible] = useState(true);
   const [flipAnimated, setFlipAnimated] = useState(true);
@@ -109,25 +102,9 @@ export function FlashcardsPage() {
     }, 200);
   }, []);
 
-  const activeFilterCount = [
-    selectedRatings.length > 0,
-    selectedCategory !== null,
-    selectedTag !== null,
-    masteryFilter !== null,
-  ].filter(Boolean).length;
-
-  function clearFilters() {
-    setSelectedRatings([]);
-    setSelectedCategory(null);
-    setSelectedTag(null);
-    setMasteryFilter(null);
-  }
-
   const filterBtnInactive =
     "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600";
   const filterBtnActive = "bg-emerald-600 text-white border-emerald-600";
-
-  const filtersTitle = t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "");
 
   return (
     <div className="flex flex-col gap-4">
@@ -233,50 +210,7 @@ export function FlashcardsPage() {
 
       <hr className="hidden sm:block border-gray-200 dark:border-gray-700" />
 
-      {showFilters && (
-        <div className="hidden sm:block">
-          <PracticeFilterPanel
-            allTags={allTags}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-            selectedTag={selectedTag}
-            onTagChange={setSelectedTag}
-            selectedRatings={selectedRatings}
-            onRatingsChange={setSelectedRatings}
-            masteryFilter={masteryFilter}
-            onMasteryFilterChange={setMasteryFilter}
-          />
-        </div>
-      )}
-
-      <SideDrawer
-        open={isMobileDrawerOpen}
-        onClose={() => setIsMobileDrawerOpen(false)}
-        onOpen={() => setIsMobileDrawerOpen(true)}
-        tabLabel={t("practice.filters")}
-        tabIcon={<TfiPanel className="text-xl" />}
-        title={filtersTitle}
-        hasActiveIndicator={activeFilterCount > 0}
-        headerAction={
-          activeFilterCount > 0 ? (
-            <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">
-              {t("practice.clearFilters")}
-            </button>
-          ) : undefined
-        }>
-        <PracticeFilterPanel
-          allTags={allTags}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          selectedTag={selectedTag}
-          onTagChange={setSelectedTag}
-          selectedRatings={selectedRatings}
-          onRatingsChange={setSelectedRatings}
-          masteryFilter={masteryFilter}
-          onMasteryFilterChange={setMasteryFilter}
-          inDrawer
-        />
-      </SideDrawer>
+      <PracticeFiltersArea filterState={filterState} />
 
       {/* ── Card area or empty state ─────────────────────────────── */}
       {!currentCard ? (

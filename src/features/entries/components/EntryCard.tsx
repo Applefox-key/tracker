@@ -81,7 +81,7 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
   return (
     <div
       // className={`group relative dark:bg-gray-800 rounded-xl border pb-1 sm:pb-5 flex flex-col gap-3 transition-shadow cursor-pointer justify-between select-none ${categoryColorsCard[entry.category]} `}
-      className={`group relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm pb-1 sm:pb-5 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between select-none ${categoryColorsCard[entry.category]} `}
+      className={`group relative dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm pb-1 sm:pb- flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer justify-between select-none ${categoryColorsCard[entry.category]} `}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
@@ -105,61 +105,63 @@ export function EntryCard({ entry, onRemove, onEdit, onView }: EntryCardProps) {
         </>
       )}
       {/* Header row */}
-      <div
-        className={`flex items-start justify-between p-5 pb-4 gap-3  rounded-t-xl ${categoryColors[entry.category]} ${entry.mastery_level === 5 ? "ps-7" : ""}`}>
-        <div className="flex-1 min-w-0">
-          <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">{entry.word}</p>
-        </div>{" "}
-        <p className="text-xs text-gray-300 dark:text-gray-600 mt-1 absolute top-10 right-5">
-          {new Date(entry.createdAt).toLocaleDateString("en-GB", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          })}
-        </p>
-        <span
-          className={[
-            "shrink-0 inline-block px-2.5 py-0.5 rounded-full text-xs font-medium",
-            categoryColors[entry.category],
-          ].join(" ")}>
-          {t(`dashboard.categories.${entry.category}`)}
-        </span>
-      </div>{" "}
-      {/* Content row */}{" "}
-      <div className="flex flex-col sm:flex-row px-5 items-start sm:items-center gap-3 justify-between">
-        <div className={`flex flex-col items-start ${entry.img ? "justify-start" : "justify-between"} gap-3 h-full`}>
-          <p
-            className={`text-sm text-gray-500 dark:text-gray-400 mt-0.5 whitespace-pre-line font-bold ${isMultiline ? "line-clamp-2 break-words" : ""}`}>
-            {entry.explanation}
+      <div>
+        <div
+          className={`flex items-start justify-between p-5 pb-4 gap-3  rounded-t-xl ${categoryColors[entry.category]} ${entry.mastery_level === 5 ? "ps-7" : ""}`}>
+          <div className="flex-1 min-w-0">
+            <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">{entry.word}</p>
+          </div>{" "}
+          <p className="text-xs text-gray-300 dark:text-gray-600 mt-1 absolute top-10 right-5">
+            {new Date(entry.createdAt).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })}
           </p>
-          {/* Example */}
-          {entry.example && (
+          <span
+            className={[
+              "shrink-0 inline-block px-2.5 py-0.5 rounded-full text-xs font-medium",
+              categoryColors[entry.category],
+            ].join(" ")}>
+            {t(`dashboard.categories.${entry.category}`)}
+          </span>
+        </div>{" "}
+        {/* Content row */}{" "}
+        <div className="flex flex-col sm:flex-row px-5 items-start sm:items-center gap-3 justify-between">
+          <div className={`flex flex-col items-start ${entry.img ? "justify-start" : "justify-between"} gap-3 h-full`}>
             <p
-              className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-gray-400 dark:border-gray-200 whitespace-pre-line pl-3${isMultiline ? " line-clamp-3 break-words" : ""}`}>
-              {entry.example}
+              className={`text-sm text-gray-500 dark:text-gray-400 mt-0.5 whitespace-pre-line font-bold ${isMultiline ? "line-clamp-2 break-words" : ""}`}>
+              {entry.explanation}
             </p>
-          )}{" "}
-          {/* Tags */}
-          {entry.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {entry.tags.map((tag) => (
-                <span
-                  key={tag.id}
-                  className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
-                  #{tag.name}
-                </span>
-              ))}
-            </div>
+            {/* Example */}
+            {entry.example && (
+              <p
+                className={`text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-gray-400 dark:border-gray-200 whitespace-pre-line pl-3${isMultiline ? " line-clamp-3 break-words" : " line-clamp-3 break-words"}`}>
+                {entry.example}
+              </p>
+            )}{" "}
+            {/* Tags */}
+            {entry.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {entry.tags.map((tag) => (
+                  <span
+                    key={tag.id}
+                    className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
+                    #{tag.name}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+          {entry.img && (
+            <EntryImage
+              src={getEntryImageUrl(entry.img)}
+              alt={entry.word}
+              style={{ width: 150, height: 150, objectFit: "cover" }}
+              className="shrink-0 m-auto sm:m-0"
+            />
           )}
         </div>
-        {entry.img && (
-          <EntryImage
-            src={getEntryImageUrl(entry.img)}
-            alt={entry.word}
-            style={{ width: 150, height: 150, objectFit: "cover" }}
-            className="shrink-0 m-auto sm:m-0"
-          />
-        )}
       </div>
       {/* Footer row — stop propagation so clicks here don't open detail view */}
       <div

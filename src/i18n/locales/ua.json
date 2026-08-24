@@ -124,6 +124,7 @@
     "tagLabel": "Тег",
     "masteredLabel": "Засвоєно",
     "masteredOnly": "Тільки засвоєні",
+    "staleOnly": "Не повторювалось 30+ днів",
     "practiceLabel": "Практика",
     "inPractice": "В практиці",
     "notInPractice": "Не в практиці",
@@ -482,7 +483,8 @@
       "all": "Всі",
       "unmastered": "Незасвоєні:",
       "unmasteredOnly": "Не засвоєно",
-      "masteredOnly": "Засвоєно"
+      "masteredOnly": "Засвоєно",
+      "staleOnly": "Не повторювалось 30+ днів"
     }
   }
 }

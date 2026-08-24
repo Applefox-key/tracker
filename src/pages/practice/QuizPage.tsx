@@ -2,16 +2,15 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
-import { usePracticeEntries, usePracticeTags, shuffle, type MasteryFilter } from "@/features/practice/hooks/usePracticeEntries";
-import { PracticeFilterPanel } from "@/features/practice/components/PracticeFilterPanel";
+import { usePracticeEntries, shuffle } from "@/features/practice/hooks/usePracticeEntries";
+import { usePracticeFilters } from "@/features/practice/hooks/usePracticeFilters";
+import { PracticeFiltersArea } from "@/features/practice/components/PracticeFiltersArea";
 import { PracticeHelpModal } from "@/features/practice/components/PracticeHelpModal";
 import { Button } from "@/shared/ui/Button";
-import { SideDrawer } from "@/shared/ui/SideDrawer";
 import { EntryImage } from "@/shared/ui/EntryImage";
 import { getEntryImageUrl } from "@/api/api";
-import type { Entry, EntryCategory } from "@/features/entries/types";
+import type { Entry } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
-import { TfiPanel } from "react-icons/tfi";
 
 const LS_QUIZ_MODE = "quiz_start_side";
 const LS_QUIZ_SHOW_IMAGES = "quiz_show_images";
@@ -30,14 +29,9 @@ function buildOptions(correct: Entry, pool: Entry[], answerField: "word" | "expl
 export function QuizPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const allTags = usePracticeTags();
+  const filterState = usePracticeFilters();
+  const { filters, showFilters, setShowFilters, activeFilterCount, clearFilters } = filterState;
 
-  const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null);
-  const [selectedTag, setSelectedTag] = useState<number | null>(null);
-  const [masteryFilter, setMasteryFilter] = useState<MasteryFilter>(null);
-  const [showFilters, setShowFilters] = useState(false);
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [startSide, setStartSide] = useState<StartSide>(() =>
     localStorage.getItem(LS_QUIZ_MODE) === "word" ? "word" : "explanation",
   );
@@ -52,7 +46,7 @@ export function QuizPage() {
   const [showExample, setShowExample] = useState(false);
   const [wrongEntries, setWrongEntries] = useState<Entry[]>([]);
 
-  const filteredEntries = usePracticeEntries("quiz", { selectedRatings, selectedCategory, selectedTag, masteryFilter });
+  const filteredEntries = usePracticeEntries("quiz", filters);
   const { reviewEntry } = useEntryCrud();
 
   useEffect(() => {
@@ -60,11 +54,7 @@ export function QuizPage() {
     if (canStart) startSession();
     else setPhase("idle");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRatings, selectedCategory, selectedTag, masteryFilter]);
-
-  const activeFilterCount = [selectedRatings.length > 0, selectedCategory !== null, selectedTag !== null, masteryFilter !== null].filter(
-    Boolean,
-  ).length;
+  }, [filters]);
 
   const answerField: "word" | "explanation" = startSide === "word" ? "explanation" : "word";
   const currentQuestion = questions[currentIdx] ?? null;
@@ -89,13 +79,6 @@ export function QuizPage() {
     const next = !showImages;
     setShowImages(next);
     localStorage.setItem(LS_QUIZ_SHOW_IMAGES, String(next));
-  }
-
-  function clearFilters() {
-    setSelectedRatings([]);
-    setSelectedCategory(null);
-    setSelectedTag(null);
-    setMasteryFilter(null);
   }
 
   function startSession() {
@@ -136,7 +119,6 @@ export function QuizPage() {
     }
   }
 
-  const filtersTitle = t("practice.filters") + (activeFilterCount > 0 ? ` (${activeFilterCount})` : "");
   const btnInactive =
     "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600";
 
@@ -217,53 +199,7 @@ export function QuizPage() {
 
       <hr className="border-gray-200 dark:border-gray-700" />
 
-      {/* ── Collapsible filters panel ───────────────────────────── */}
-      {showFilters && (
-        <div className="hidden sm:block">
-          <PracticeFilterPanel
-            allTags={allTags}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-            selectedTag={selectedTag}
-            onTagChange={setSelectedTag}
-            selectedRatings={selectedRatings}
-            onRatingsChange={setSelectedRatings}
-            masteryFilter={masteryFilter}
-            onMasteryFilterChange={setMasteryFilter}
-          />
-        </div>
-      )}
-
-      {/* Mobile filter sidebar */}
-      <SideDrawer
-        open={isMobileDrawerOpen}
-        onClose={() => setIsMobileDrawerOpen(false)}
-        onOpen={() => setIsMobileDrawerOpen(true)}
-        tabLabel={t("practice.filters")}
-        tabIcon={<TfiPanel className="text-xl" />}
-        title={filtersTitle}
-        hasActiveIndicator={activeFilterCount > 0}
-        verticalPosition="top-0"
-        headerAction={
-          activeFilterCount > 0 ? (
-            <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">
-              {t("practice.clearFilters")}
-            </button>
-          ) : undefined
-        }>
-        <PracticeFilterPanel
-          allTags={allTags}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          selectedTag={selectedTag}
-          onTagChange={setSelectedTag}
-          selectedRatings={selectedRatings}
-          onRatingsChange={setSelectedRatings}
-          masteryFilter={masteryFilter}
-          onMasteryFilterChange={setMasteryFilter}
-          inDrawer
-        />
-      </SideDrawer>
+      <PracticeFiltersArea filterState={filterState} />
 
       {/* ── Idle: start prompt ──────────────────────────────────── */}
       {phase === "idle" && (
@@ -302,7 +238,8 @@ export function QuizPage() {
 
       {/* ── Playing ─────────────────────────────────────────────── */}
       {phase === "playing" && (
-        <div className={["flex flex-col gap-6 max-w-xl mx-auto w-full", answered ? "pb-28 sm:pb-0" : ""].join(" ").trim()}>
+        <div
+          className={["flex flex-col gap-6 max-w-xl mx-auto w-full", answered ? "pb-28 sm:pb-0" : ""].join(" ").trim()}>
           <div className="flex items-center gap-4">
             <button
               onClick={() => setPhase("idle")}
@@ -320,7 +257,7 @@ export function QuizPage() {
             </span>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col gap-4">
+          <div className=" bg-teal-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-8 flex flex-col gap-4">
             <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">
               {startSide === "word" ? t("practice.quiz.promptExplanation") : t("practice.quiz.promptWord")}
             </span>
