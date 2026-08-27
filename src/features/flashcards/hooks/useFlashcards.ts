@@ -5,7 +5,7 @@ import { Flashcard } from '../types'
 import { EntryTag } from '@/features/entries/types'
 import { getEntryImageUrl } from '@/api/api'
 import type { PracticeFilters } from '@/features/practice/hooks/usePracticeEntries'
-import { EMPTY_FILTERS } from '@/features/practice/hooks/usePracticeEntries'
+import { EMPTY_FILTERS, inSelectedPeriod } from '@/features/practice/hooks/usePracticeEntries'
 
 function isStale(lastReviewedAt: string | null | undefined): boolean {
   if (!lastReviewedAt) return true
@@ -14,11 +14,12 @@ function isStale(lastReviewedAt: string | null | undefined): boolean {
   return new Date(lastReviewedAt) < cutoff
 }
 
+
 export function useFlashcards(filters: PracticeFilters = EMPTY_FILTERS) {
   const entries = useEntriesStore((s) => s.entries)
   const { currentIndex, isFlipped, goNext, goPrev, flip, reset } = useFlashcardsStore()
 
-  const { selectedRatings, selectedCategory, selectedTag, masteryFilter, staleOnly } = filters
+  const { selectedRatings, selectedCategory, selectedTag, masteryFilter, staleOnly, dateFilter } = filters
 
   const [shuffledIds, setShuffledIds] = useState<number[] | null>(null)
 
@@ -41,6 +42,7 @@ export function useFlashcards(filters: PracticeFilters = EMPTY_FILTERS) {
         if (masteryFilter === 'unmastered' && e.rating >= 5) return false
         if (masteryFilter === 'mastered' && e.rating < 5) return false
         if (staleOnly && !isStale(e.last_reviewed_at)) return false
+        if (dateFilter !== null && !inSelectedPeriod(e.createdAt, dateFilter)) return false
         return true
       })
       .map((e) => ({
@@ -52,7 +54,7 @@ export function useFlashcards(filters: PracticeFilters = EMPTY_FILTERS) {
         img: e.img ? getEntryImageUrl(e.img) : null,
         category: e.category,
       }))
-  }, [entries, selectedRatings, selectedCategory, selectedTag, masteryFilter, staleOnly])
+  }, [entries, selectedRatings, selectedCategory, selectedTag, masteryFilter, staleOnly, dateFilter])
 
   // Apply stored shuffle order to current filtered cards (handles entries being updated mid-session)
   const cards: Flashcard[] = useMemo(() => {
@@ -78,7 +80,7 @@ export function useFlashcards(filters: PracticeFilters = EMPTY_FILTERS) {
     const arr = [...filteredCards]
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
-      ;[arr[i], arr[j]] = [arr[j], arr[i]]
+        ;[arr[i], arr[j]] = [arr[j], arr[i]]
     }
     setShuffledIds(arr.map((c) => c.id))
     reset()

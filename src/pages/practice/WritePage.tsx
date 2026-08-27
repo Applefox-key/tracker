@@ -57,7 +57,7 @@ export function WritePage() {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, answerState, currentIdx, inputValue]);
 
   useEffect(() => {
@@ -95,7 +95,6 @@ export function WritePage() {
       setShowExample(false);
     }
   }
-
 
   return (
     <div className="flex flex-col gap-4">
@@ -149,7 +148,11 @@ export function WritePage() {
 
       <hr className="border-gray-200 dark:border-gray-700" />
 
-      <PracticeFiltersArea filterState={filterState} allowedCategories={WRITE_ALLOWED_CATEGORIES} />
+      <PracticeFiltersArea
+        filterState={filterState}
+        allowedCategories={WRITE_ALLOWED_CATEGORIES}
+        avaliableEntriesCount={filteredEntries.length}
+      />
 
       {/* ── Idle ────────────────────────────────────────────────── */}
       {phase === "idle" && (

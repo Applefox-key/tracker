@@ -34,7 +34,6 @@ function isWriteable(entry: Entry): boolean {
   return ["word", "phrase", "idiom"].includes(entry.category);
 }
 
-
 function buildQueue(entries: Entry[], modes: CustomMode[]): QueueItem[] {
   return entries.map((entry) => {
     if (!entry.last_reviewed_at) return { entry, mode: "flashcard" };
@@ -287,7 +286,9 @@ export function CustomPracticePage() {
 
       <hr className="border-gray-200 dark:border-gray-700" />
 
-      {phase === "idle" && <PracticeFiltersArea filterState={filterState} />}
+      {phase === "idle" && (
+        <PracticeFiltersArea filterState={filterState} avaliableEntriesCount={filteredEntries.length} />
+      )}
 
       {/* ── Idle ────────────────────────────────────────────────── */}
       {phase === "idle" && (

@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import type { EntryCategory } from '@/features/entries/types'
 import type { MasteryFilter, PracticeFilters } from './usePracticeEntries'
 import { usePracticeTags } from './usePracticeEntries'
+export type DateFilter = 'month' | 'days' | 'today' | 'week'
 
 export function usePracticeFilters() {
   const [selectedRatings, setSelectedRatings] = useState<number[]>([])
@@ -9,15 +10,16 @@ export function usePracticeFilters() {
   const [selectedTag, setSelectedTag] = useState<number | null>(null)
   const [masteryFilter, setMasteryFilter] = useState<MasteryFilter>(null)
   const [staleOnly, setStaleOnly] = useState(false)
+  const [dateFilter, setDateFilter] = useState<DateFilter | null>(null)
   const [showFilters, setShowFilters] = useState(false)
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false)
 
   const allTags = usePracticeTags()
 
   const filters: PracticeFilters = useMemo(
-    () => ({ selectedRatings, selectedCategory, selectedTag, masteryFilter, staleOnly }),
+    () => ({ selectedRatings, selectedCategory, selectedTag, masteryFilter, staleOnly, dateFilter }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedRatings.join(','), selectedCategory, selectedTag, masteryFilter, staleOnly],
+    [selectedRatings.join(','), selectedCategory, selectedTag, masteryFilter, staleOnly, dateFilter],
   )
 
   const activeFilterCount = [
@@ -26,6 +28,7 @@ export function usePracticeFilters() {
     selectedTag !== null,
     masteryFilter !== null,
     staleOnly,
+    dateFilter !== null,
   ].filter(Boolean).length
 
   function clearFilters() {
@@ -34,6 +37,8 @@ export function usePracticeFilters() {
     setSelectedTag(null)
     setMasteryFilter(null)
     setStaleOnly(false)
+    setDateFilter(null)
+
   }
 
   const filterPanelProps = {
@@ -48,6 +53,8 @@ export function usePracticeFilters() {
     onMasteryFilterChange: setMasteryFilter,
     staleOnly,
     onStaleOnlyChange: setStaleOnly,
+    dateFilter,
+    onDateFilterChange: setDateFilter
   }
 
   return {
@@ -69,7 +76,7 @@ export function usePracticeFilters() {
     isMobileDrawerOpen,
     setIsMobileDrawerOpen,
     activeFilterCount,
-    clearFilters,
+    clearFilters, setDateFilter
   }
 }
 

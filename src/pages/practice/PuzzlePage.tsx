@@ -139,7 +139,7 @@ export function PuzzlePage() {
 
       <hr className="border-gray-200 dark:border-gray-700" />
 
-      <PracticeFiltersArea filterState={filterState} />
+      <PracticeFiltersArea filterState={filterState} avaliableEntriesCount={filteredEntries.length} />
 
       {/* ── Idle: start prompt ──────────────────────────────────── */}
       {phase === "idle" && (

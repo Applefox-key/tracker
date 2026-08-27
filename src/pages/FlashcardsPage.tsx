@@ -210,7 +210,7 @@ export function FlashcardsPage() {
 
       <hr className="hidden sm:block border-gray-200 dark:border-gray-700" />
 
-      <PracticeFiltersArea filterState={filterState} />
+      <PracticeFiltersArea filterState={filterState} avaliableEntriesCount={total} />
 
       {/* ── Card area or empty state ─────────────────────────────── */}
       {!currentCard ? (

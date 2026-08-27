@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 interface SideDrawerProps {
   open: boolean;
@@ -8,6 +9,7 @@ interface SideDrawerProps {
   tabLabel: string;
   tabIcon?: React.ReactNode;
   title: string;
+  subtitle?: string;
   hasActiveIndicator?: boolean;
   verticalPosition?: string;
   headerAction?: React.ReactNode;
@@ -22,6 +24,7 @@ export function SideDrawer({
   tabLabel,
   tabIcon,
   title,
+  subtitle,
   hasActiveIndicator = false,
   verticalPosition = "top-0",
   headerAction,
@@ -36,7 +39,7 @@ export function SideDrawer({
   }, [open]);
 
   const isRight = side === "right";
-
+  const { t } = useTranslation();
   return (
     <>
       {/* Peek tab — mobile only */}
@@ -48,8 +51,8 @@ export function SideDrawer({
   
           ${verticalPosition}
           ${isRight ? "right-0 rounded-l-md" : "left-0 rounded-r-md"}
-          ${isRight && open ? "-translate-x-[22rem]" : ""}
-          ${!isRight && open ? "translate-x-[22rem]" : ""}`}>
+          ${isRight && open ? "-translate-x-[100vw]" : ""}
+          ${!isRight && open ? "translate-x-[100vw]" : ""}`}>
         {tabIcon}
 
         <span
@@ -79,12 +82,17 @@ export function SideDrawer({
 
       {/* Drawer panel */}
       <div
-        className={`sm:hidden fixed inset-y-0 z-50 w-[22rem] bg-white dark:bg-gray-900 shadow-2xl
+        className={`sm:hidden fixed inset-y-0 z-50 w-[100vw] max-w-full bg-white dark:bg-gray-900 shadow-2xl
           flex flex-col transition-transform duration-300 ease-in-out
           ${isRight ? "right-0" : "left-0"}
           ${open ? "translate-x-0" : isRight ? "translate-x-full" : "-translate-x-full"}`}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
           <span className="font-semibold text-base text-gray-800 dark:text-gray-100">{title}</span>
+          {subtitle && (
+            <span className="absolute text-sm top-10 italic text-base text-gray-300 dark:text-gray-700">
+              {subtitle}
+            </span>
+          )}
           <div className="flex items-center gap-3">
             {headerAction}
             <button
@@ -97,6 +105,12 @@ export function SideDrawer({
           </div>
         </div>
         <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-5">{children}</div>
+        <button
+          onClick={onClose}
+          className="inline-flex items-center justify-center gap-2 font-medium transition-colors py-4
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 focus-visible:ring-emerald-500 px-4 py-2 text-md ">
+          {t("entries.detail.close")}
+        </button>
       </div>
     </>
   );

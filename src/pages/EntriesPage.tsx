@@ -410,7 +410,7 @@ export function EntriesPage() {
             ) : undefined
           }>
           <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{t("entries.form.category")}</span>
+            <span className="text-sm font-medium text-amber-500 dark:text-amber-400">{t("entries.form.category")}</span>
             <div className="flex gap-2 flex-wrap">
               {CATEGORIES.map(({ value, label }) => (
                 <button
@@ -610,7 +610,7 @@ function AdvancedFiltersPanel({
   const labelCls = sidebar
     ? "text-xs 3xl:text-sm font-medium text-gray-500 dark:text-gray-400"
     : inDrawer
-      ? "text-sm font-medium text-gray-500 dark:text-gray-400"
+      ? "text-sm font-medium text-amber-500 dark:text-amber-400"
       : "text-xs font-medium text-gray-500 dark:text-gray-400";
   const btnCls = sidebar
     ? "px-2.5 py-1 3xl:py-1.5 rounded-full text-xs 3xl:text-sm font-medium border transition-colors"

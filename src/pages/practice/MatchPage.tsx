@@ -270,7 +270,7 @@ export function MatchPage() {
 
         <hr className="border-gray-200 dark:border-gray-700" />
 
-        <PracticeFiltersArea filterState={filterState} />
+        <PracticeFiltersArea filterState={filterState} avaliableEntriesCount={filteredEntries.length} />
 
         {/* ── Idle: start prompt ──────────────────────────────────── */}
         {phase === "idle" && (
@@ -404,7 +404,9 @@ export function MatchPage() {
                 </div>
                 <div className="flex flex-col">
                   {matchedPairsList.map((pair, i) => (
-                    <div key={i} className="pair-enter py-1.5 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                    <div
+                      key={i}
+                      className="pair-enter py-1.5 border-b border-gray-100 dark:border-gray-800 last:border-0">
                       {/* mobile: stacked full-width */}
                       <div className="flex flex-col gap-1 sm:hidden">
                         <div className="flex justify-start relative">
@@ -437,7 +439,6 @@ export function MatchPage() {
                 </div>
               </div>
             )}
-
           </div>
         )}
 
