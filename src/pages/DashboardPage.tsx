@@ -25,6 +25,7 @@ import { AddEntryFab } from "@/features/entries/components/AddEntryFab";
 import { EntryForm, EntryFormValues } from "@/features/entries/components/AddEntryForm";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { entriesApi, type DayStat } from "@/api/api";
+import MysteryOrb from "@/shared/ui/MyseryOrb";
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -173,6 +174,7 @@ function StreakFruits({
           {LAP_FRUITS[i % LAP_FRUITS.length]}
         </span>
       ))}
+      <MysteryOrb />
       {overflow > 0 && (
         <span
           className={
