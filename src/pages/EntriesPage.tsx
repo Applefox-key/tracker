@@ -16,6 +16,7 @@ import { TbTargetArrow, TbCrown } from "react-icons/tb";
 import { AddEntryFab } from "@/features/entries/components/AddEntryFab";
 import { TfiPanel } from "react-icons/tfi";
 import Masonry from "react-masonry-css";
+import { CgExport, CgImport } from "react-icons/cg";
 
 export function EntriesPage() {
   const { t } = useTranslation();
@@ -109,6 +110,17 @@ export function EntriesPage() {
     "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600";
   const filterBtnActive = "bg-emerald-600 text-white border-emerald-600";
 
+  function handleExport() {
+    const name = `Entries`;
+    const rows = entries.map((c) => [c.word, c.explanation, c.example ?? ""].join("\n") + "\n");
+    const blob = new Blob([rows.join("\n")], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${name}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
   return (
     <div className="flex flex-col sm:flex-row gap-6 pb-10 sm:pb-0 max-w-7xl 3xl:max-w-[2000px] m-auto items-start">
       {/* ===== DESKTOP LEFT SIDEBAR ===== */}
@@ -217,23 +229,20 @@ export function EntriesPage() {
                       setShowImportModal(true);
                     }}
                     className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors text-left">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                      <line x1="12" y1="18" x2="12" y2="12" />
-                      <line x1="9" y1="15" x2="15" y2="15" />
-                    </svg>
+                    <CgImport className="w-4 h-4" />
                     {t("entries.addBundle")}
                   </button>
+
+                  {entries.length > 0 && (
+                    <button
+                      onClick={() => {
+                        setShowAddMenu(false);
+                        handleExport();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors text-left">
+                      <CgExport className="w-4 h-4" /> Export
+                    </button>
+                  )}
                 </div>
               )}
             </div>
