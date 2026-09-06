@@ -275,7 +275,7 @@ export const entriesApi = {
       entries: entries.map((e) => ({ ...e, includeInPractice: e.includeInPractice ? 1 : 0 })),
       tagIds,
     }
-    const res = await apiClient.post<{ count: number; ids: number[] }>('/entries/batch', { data: payload })
+    const res = await apiClient.post<{ count: number; ids: number[] }>('/entries/batch', payload)
     return res.data
   },
 }
