@@ -154,7 +154,7 @@ const LAP_FRUITS = ["🍋", "🫐", "🍏", "🍇", "🍒", "🍊", "🥝"] as c
 
 function StreakFruits({
   completedLaps,
-  max = 7,
+  max = 12,
   small = false,
 }: {
   completedLaps: number;
