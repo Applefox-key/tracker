@@ -375,7 +375,7 @@ function WeeklyActivityChip({
           <span className="shrink-0 text-[10px] font-bold text-gray-600 border  dark:text-gray-300 bg-white dark:bg-gray-700 px-1.5 py-1 rounded-full leading-none whitespace-nowrap">
             {t("dashboard.streakLap", { count: lapNumber })}
           </span>
-          <StreakFruits completedLaps={Math.floor(streak / 7)} max={5} small />
+          <StreakFruits completedLaps={Math.floor(streak / 7)} max={12} small />
         </div>
       )}
       {/* Bottom: full-width bar chart */}
