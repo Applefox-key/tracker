@@ -529,34 +529,38 @@ function EntryHeaderStrip({ entry, onView }: { entry: Entry; onView: (e: Entry) 
   return (
     <div
       className={[
-        "flex items-center gap-3 px-4 py-3 cursor-pointer border-l-4 border-b border-gray-100 dark:border-gray-700/50 last:border-b-0",
+        "flex items-start sm:items-center justify-between flex-col sm:flex-row  px-4 py-3 my-[1px] sm:my-0 cursor-pointer border-l-4 border-b border-gray-100 dark:border-gray-700/50 last:border-b-0",
         "bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors",
         "shadow-[0_1px_3px_rgba(0,0,0,0.06)]",
         headerAccent[entry.category],
       ].join(" ")}
       onClick={() => onView(entry)}>
-      <span
-        className={`shrink-0 w-2.5 h-2.5 rounded-full ring-2 ring-white dark:ring-gray-800 ${entry.mastery_level != null ? masteryColors[entry.mastery_level] : "bg-gray-300 dark:bg-gray-600"}`}
-      />
-      <span
-        className={[
-          "shrink-0 px-2 py-0.5 rounded-full text-xs font-medium hidden sm:inline-block",
-          categoryColors[entry.category],
-        ].join(" ")}>
-        {t(`dashboard.categories.${entry.category}`)}
-      </span>
-      <p className="flex-1 min-w-0 font-semibold text-gray-900 dark:text-gray-100 truncate">{entry.word}</p>
-      {entry.mastery_level === 5 && <TbCrown className="shrink-0 text-emerald-400 text-base" title="Mastered" />}
-      <RatingStars value={entry.rating} readOnly />
-      <p className="shrink-0 text-xs text-gray-400 dark:text-gray-500 hidden sm:block tabular-nums">
-        {new Date(entry.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-      </p>{" "}
-      <TbTargetArrow
-        className={[
-          "text-sm shrink-0",
-          entry.includeInPractice ? "text-green-500" : "text-gray-300 dark:text-gray-600",
-        ].join(" ")}
-      />
+      <div className="flex items-baseline sm:items-center gap-3">
+        <span
+          className={`shrink-0 w-2.5 h-2.5 rounded-full ring-2 ring-white dark:ring-gray-800 ${entry.mastery_level != null ? masteryColors[entry.mastery_level] : "bg-gray-300 dark:bg-gray-600"}`}
+        />
+        <span
+          className={[
+            "shrink-0 px-2 py-0.5 rounded-full text-xs font-medium hidden sm:inline-block",
+            categoryColors[entry.category],
+          ].join(" ")}>
+          {t(`dashboard.categories.${entry.category}`)}
+        </span>
+        <p className="flex-1 min-w-0 font-semibold text-gray-900 dark:text-gray-100 sm:truncate">{entry.word}</p>
+      </div>
+      <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+        {entry.mastery_level === 5 && <TbCrown className="shrink-0 text-emerald-400 text-base" title="Mastered" />}
+        <RatingStars value={entry.rating} readOnly />
+        <p className="shrink-0 text-xs text-gray-400 dark:text-gray-500 hidden sm:block tabular-nums">
+          {new Date(entry.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+        </p>{" "}
+        <TbTargetArrow
+          className={[
+            "text-sm shrink-0",
+            entry.includeInPractice ? "text-green-500" : "text-gray-300 dark:text-gray-600",
+          ].join(" ")}
+        />
+      </div>
     </div>
   );
 }

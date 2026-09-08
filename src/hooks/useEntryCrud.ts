@@ -15,11 +15,7 @@ export interface BatchEntryInput {
 }
 
 /**
- * Returns mode-aware CRUD operations for entries.
- *
- * - demo / unauthenticated → operates on local Zustand store only
- * - authenticated          → calls the server via TanStack Query mutations,
- *                            then sets tag associations via entryTagsApi
+git pyl
  */
 export function useEntryCrud() {
   const mode = useAuthStore((s) => s.mode)
