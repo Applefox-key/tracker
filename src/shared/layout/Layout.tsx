@@ -314,10 +314,18 @@ export function Layout() {
       </header>
 
       {/* ── Burger menu overlay — mobile only ── */}
-      {!isGameRoute && burgerOpen && (
+      {!isGameRoute && (
         <>
-          <div className="sm:hidden fixed inset-0 z-20 bg-black/40" onClick={() => setBurgerOpen(false)} />
-          <div className="sm:hidden fixed top-0 right-0 bottom-0 z-[52] w-72 bg-white dark:bg-gray-800 shadow-xl flex flex-col">
+          <div
+            className={`sm:hidden fixed inset-0 z-20 bg-black/40 transition-opacity duration-300 ${
+              burgerOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+            onClick={() => setBurgerOpen(false)}
+          />
+          <div
+            className={`sm:hidden fixed top-0 right-0 bottom-0 z-[52] w-[100vw] max-w-full bg-white dark:bg-gray-800 shadow-xl flex flex-col transition-transform duration-300 ease-in-out ${
+              burgerOpen ? "translate-x-0" : "translate-x-full"
+            }`}>
             <div className="flex items-center justify-between px-4 h-16 border-b border-gray-200 dark:border-gray-700 shrink-0">
               <button
                 onClick={() => setBurgerOpen(false)}
@@ -410,6 +418,12 @@ export function Layout() {
                 </button>
               </div>
             )}
+            <button
+              onClick={() => setBurgerOpen(false)}
+              className="inline-flex items-center justify-center gap-2 font-medium transition-colors py-4
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 focus-visible:ring-emerald-500 px-4 py-2 text-md ">
+              {t("entries.detail.close")}
+            </button>
           </div>
         </>
       )}
