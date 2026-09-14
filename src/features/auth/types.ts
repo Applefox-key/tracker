@@ -6,6 +6,7 @@ export interface User {
   name: string
   img: string | null
   settings?: Record<string, unknown>
+  api_token?: string | null
 }
 
 export interface LoginCredentials {

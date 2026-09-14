@@ -178,6 +178,11 @@ export const authApi = {
     localStorage.setItem('Auth', 'false')
   },
 
+  async regenerateApiToken(): Promise<string> {
+    const res = await apiClient.post<{ api_token: string }>('/users/api-token', {})
+    return res.data.api_token
+  },
+
   async sendPasswordResetEmail(email: string): Promise<void> {
     await apiClient.post('/resetpassword', { email })
   },

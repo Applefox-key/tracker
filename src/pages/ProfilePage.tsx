@@ -25,6 +25,14 @@ export function ProfilePage() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
+  const [localApiToken, setLocalApiToken] = useState<string | null>(user?.api_token ?? null);
+  const [showToken, setShowToken] = useState(false);
+  const [tokenCopied, setTokenCopied] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
+  const [regenConfirm, setRegenConfirm] = useState(false);
+  const [regenError, setRegenError] = useState<string | null>(null);
+  const [showApiHelp, setShowApiHelp] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleLogout() {
@@ -38,6 +46,38 @@ export function ProfilePage() {
   useEffect(() => {
     setAvatarImgError(false);
   }, [currentAvatar]);
+
+  useEffect(() => {
+    if (user && !user.api_token) {
+      authApi.getUser().then((fresh) => {
+        setUser(fresh);
+        setLocalApiToken(fresh.api_token ?? null);
+      }).catch(() => {});
+    }
+  }, []);
+
+  async function handleCopyToken() {
+    if (!localApiToken) return;
+    await navigator.clipboard.writeText(localApiToken);
+    setTokenCopied(true);
+    setTimeout(() => setTokenCopied(false), 2000);
+  }
+
+  async function handleRegenerateToken() {
+    setRegenerating(true);
+    setRegenError(null);
+    try {
+      const newToken = await authApi.regenerateApiToken();
+      setLocalApiToken(newToken);
+      setUser({ ...user!, api_token: newToken });
+      setRegenConfirm(false);
+      setShowToken(false);
+    } catch {
+      setRegenError(t("profile.apiTokenRegenError"));
+    } finally {
+      setRegenerating(false);
+    }
+  }
 
   const nameDirty = name.trim() !== (user?.name ?? "");
   const emailDirty = email.trim() !== (user?.email ?? "");
@@ -230,6 +270,109 @@ export function ProfilePage() {
               </button>
             );
           })}
+        </div>
+      </div>
+
+      {/* API Token */}
+      <div className="flex flex-col gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+        <div>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("profile.apiToken")}</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t("profile.apiTokenHint")}</p>
+        </div>
+        {localApiToken ? (
+          <div className="flex items-center gap-2">
+            <input
+              type={showToken ? "text" : "password"}
+              value={localApiToken}
+              readOnly
+              className={`flex-1 font-mono text-xs ${inputCls}`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowToken((v) => !v)}
+              className="shrink-0 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              {showToken ? t("profile.apiTokenHide") : t("profile.apiTokenShow")}
+            </button>
+            <button
+              type="button"
+              onClick={handleCopyToken}
+              className="shrink-0 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              {tokenCopied ? t("profile.apiTokenCopied") : t("profile.apiTokenCopy")}
+            </button>
+          </div>
+        ) : (
+          <p className="text-xs text-gray-400 dark:text-gray-500">{t("profile.apiTokenLoading")}</p>
+        )}
+        <div className="flex items-center gap-3">
+          {regenConfirm ? (
+            <>
+              <span className="text-xs text-gray-500 dark:text-gray-400">{t("profile.apiTokenRegenConfirm")}</span>
+              <button
+                type="button"
+                onClick={handleRegenerateToken}
+                disabled={regenerating}
+                className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-medium hover:bg-red-600 transition-colors disabled:opacity-50">
+                {regenerating ? t("profile.regenerating") : t("profile.yes")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setRegenConfirm(false)}
+                className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                {t("profile.no")}
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setRegenConfirm(true)}
+              className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              {t("profile.apiTokenRegenerate")}
+            </button>
+          )}
+          {regenError && <p className="text-xs text-red-500 dark:text-red-400">{regenError}</p>}
+        </div>
+
+        {/* How to use collapsible */}
+        <div className="border-t border-gray-100 dark:border-gray-700 pt-3">
+          <button
+            type="button"
+            onClick={() => setShowApiHelp((v) => !v)}
+            className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors">
+            <svg
+              className={`w-3 h-3 transition-transform ${showApiHelp ? "rotate-90" : ""}`}
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+              strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+            {showApiHelp ? t("profile.apiHelpHide") : t("profile.apiHelpShow")}
+          </button>
+
+          {showApiHelp && (
+            <div className="mt-3 flex flex-col gap-3">
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t("profile.apiHelpDesc")}</p>
+              <pre className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-xs font-mono text-gray-700 dark:text-gray-300 overflow-x-auto whitespace-pre">{`POST https://api.learnypie.com/entries
+Authorization: Bearer YOUR_TOKEN
+Content-Type: application/json
+
+{
+  "data": {
+    "word": "resilience",
+    "explanation": "стійкість / устойчивость",
+    "example": "She showed great resilience.",
+    "category": "word"
+  }
+}`}</pre>
+              <div className="text-xs text-gray-500 dark:text-gray-400 flex flex-col gap-1">
+                <p><span className="font-medium text-gray-700 dark:text-gray-300">word</span> — {t("profile.apiHelpFieldWord")}</p>
+                <p><span className="font-medium text-gray-700 dark:text-gray-300">explanation</span> — {t("profile.apiHelpFieldExplanation")}</p>
+                <p><span className="font-medium text-gray-700 dark:text-gray-300">example</span> — {t("profile.apiHelpFieldExample")}</p>
+                <p>
+                  <span className="font-medium text-gray-700 dark:text-gray-300">category</span> —{" "}
+                  <span className="font-mono">word · phrase · grammar · idiom · note</span>
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
