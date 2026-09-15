@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import type { EntryCategory } from '@/features/entries/types'
-import type { MasteryFilter, PracticeFilters } from './usePracticeEntries'
+import type { MasteryFilter, PracticeFilters, ReviewFilter } from './usePracticeEntries'
 import { usePracticeTags } from './usePracticeEntries'
 export type DateFilter = 'month' | 'days' | 'today' | 'week'
 
@@ -9,7 +9,7 @@ export function usePracticeFilters() {
   const [selectedCategory, setSelectedCategory] = useState<EntryCategory | null>(null)
   const [selectedTag, setSelectedTag] = useState<number | null>(null)
   const [masteryFilter, setMasteryFilter] = useState<MasteryFilter>(null)
-  const [staleOnly, setStaleOnly] = useState(false)
+  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>(null)
   const [dateFilter, setDateFilter] = useState<DateFilter | null>(null)
   const [showFilters, setShowFilters] = useState(false)
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false)
@@ -17,9 +17,9 @@ export function usePracticeFilters() {
   const allTags = usePracticeTags()
 
   const filters: PracticeFilters = useMemo(
-    () => ({ selectedRatings, selectedCategory, selectedTag, masteryFilter, staleOnly, dateFilter }),
+    () => ({ selectedRatings, selectedCategory, selectedTag, masteryFilter, reviewFilter, dateFilter }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedRatings.join(','), selectedCategory, selectedTag, masteryFilter, staleOnly, dateFilter],
+    [selectedRatings.join(','), selectedCategory, selectedTag, masteryFilter, reviewFilter, dateFilter],
   )
 
   const activeFilterCount = [
@@ -27,7 +27,7 @@ export function usePracticeFilters() {
     selectedCategory !== null,
     selectedTag !== null,
     masteryFilter !== null,
-    staleOnly,
+    reviewFilter !== null,
     dateFilter !== null,
   ].filter(Boolean).length
 
@@ -36,9 +36,8 @@ export function usePracticeFilters() {
     setSelectedCategory(null)
     setSelectedTag(null)
     setMasteryFilter(null)
-    setStaleOnly(false)
+    setReviewFilter(null)
     setDateFilter(null)
-
   }
 
   const filterPanelProps = {
@@ -51,10 +50,10 @@ export function usePracticeFilters() {
     onRatingsChange: setSelectedRatings,
     masteryFilter,
     onMasteryFilterChange: setMasteryFilter,
-    staleOnly,
-    onStaleOnlyChange: setStaleOnly,
+    reviewFilter,
+    onReviewFilterChange: setReviewFilter,
     dateFilter,
-    onDateFilterChange: setDateFilter
+    onDateFilterChange: setDateFilter,
   }
 
   return {
@@ -69,14 +68,15 @@ export function usePracticeFilters() {
     setSelectedTag,
     masteryFilter,
     setMasteryFilter,
-    staleOnly,
-    setStaleOnly,
+    reviewFilter,
+    setReviewFilter,
     showFilters,
     setShowFilters,
     isMobileDrawerOpen,
     setIsMobileDrawerOpen,
     activeFilterCount,
-    clearFilters, setDateFilter
+    clearFilters,
+    setDateFilter,
   }
 }
 

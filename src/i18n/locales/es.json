@@ -485,7 +485,9 @@
       "unmastered": "Sin dominar:",
       "unmasteredOnly": "Sin dominar",
       "masteredOnly": "Dominadas",
-      "staleOnly": "Sin repasar 30+ días"
+      "staleOnly": "Sin repasar 30+ días",
+      "reviewLabel": "Repaso",
+      "notPracticedToday": "Sin repasar hoy"
     }
   }
 }

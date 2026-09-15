@@ -14,12 +14,21 @@ function isStale(lastReviewedAt: string | null | undefined): boolean {
   return new Date(lastReviewedAt) < cutoff
 }
 
+function isPracticedToday(lastReviewedAt: string | null | undefined): boolean {
+  if (!lastReviewedAt) return false
+  const today = new Date()
+  const reviewed = new Date(lastReviewedAt)
+  return reviewed.getFullYear() === today.getFullYear()
+    && reviewed.getMonth() === today.getMonth()
+    && reviewed.getDate() === today.getDate()
+}
+
 
 export function useFlashcards(filters: PracticeFilters = EMPTY_FILTERS) {
   const entries = useEntriesStore((s) => s.entries)
   const { currentIndex, isFlipped, goNext, goPrev, flip, reset } = useFlashcardsStore()
 
-  const { selectedRatings, selectedCategory, selectedTag, masteryFilter, staleOnly, dateFilter } = filters
+  const { selectedRatings, selectedCategory, selectedTag, masteryFilter, reviewFilter, dateFilter } = filters
 
   const [shuffledIds, setShuffledIds] = useState<number[] | null>(null)
 
@@ -41,7 +50,8 @@ export function useFlashcards(filters: PracticeFilters = EMPTY_FILTERS) {
         if (selectedTag !== null && !e.tags.some((t) => t.id === selectedTag)) return false
         if (masteryFilter === 'unmastered' && e.rating >= 5) return false
         if (masteryFilter === 'mastered' && e.rating < 5) return false
-        if (staleOnly && !isStale(e.last_reviewed_at)) return false
+        if (reviewFilter === 'stale' && !isStale(e.last_reviewed_at)) return false
+        if (reviewFilter === 'notToday' && isPracticedToday(e.last_reviewed_at)) return false
         if (dateFilter !== null && !inSelectedPeriod(e.createdAt, dateFilter)) return false
         return true
       })
@@ -54,7 +64,7 @@ export function useFlashcards(filters: PracticeFilters = EMPTY_FILTERS) {
         img: e.img ? getEntryImageUrl(e.img) : null,
         category: e.category,
       }))
-  }, [entries, selectedRatings, selectedCategory, selectedTag, masteryFilter, staleOnly, dateFilter])
+  }, [entries, selectedRatings, selectedCategory, selectedTag, masteryFilter, reviewFilter, dateFilter])
 
   // Apply stored shuffle order to current filtered cards (handles entries being updated mid-session)
   const cards: Flashcard[] = useMemo(() => {
@@ -74,7 +84,7 @@ export function useFlashcards(filters: PracticeFilters = EMPTY_FILTERS) {
   useEffect(() => {
     setShuffledIds(null)
     reset()
-  }, [ratingsKey, selectedCategory, selectedTag, masteryFilter, staleOnly, reset])
+  }, [ratingsKey, selectedCategory, selectedTag, masteryFilter, reviewFilter, reset])
 
   function shuffleOnce() {
     const arr = [...filteredCards]

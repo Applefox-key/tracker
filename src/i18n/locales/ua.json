@@ -505,7 +505,9 @@
       "unmastered": "Незасвоєні:",
       "unmasteredOnly": "Не засвоєно",
       "masteredOnly": "Засвоєно",
-      "staleOnly": "Не повторювалось 30+ днів"
+      "staleOnly": "Не повторювалось 30+ днів",
+      "reviewLabel": "Повторення",
+      "notPracticedToday": "Не повторювалось сьогодні"
     }
   }
 }

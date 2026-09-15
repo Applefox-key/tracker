@@ -509,7 +509,9 @@
       "unmastered": "Неосвоенные:",
       "unmasteredOnly": "Не освоено",
       "masteredOnly": "Освоено",
-      "staleOnly": "Не повторялось 30+ дней"
+      "staleOnly": "Не повторялось 30+ дней",
+      "reviewLabel": "Повторение",
+      "notPracticedToday": "Не повторялось сегодня"
     }
   }
 }

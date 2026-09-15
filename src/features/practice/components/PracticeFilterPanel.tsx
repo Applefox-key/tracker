@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { RatingMultiSelect } from "@/shared/ui/RatingMultiSelect";
 import type { EntryCategory, EntryTag } from "@/features/entries/types";
-import type { MasteryFilter } from "@/features/practice/hooks/usePracticeEntries";
+import type { MasteryFilter, ReviewFilter } from "@/features/practice/hooks/usePracticeEntries";
 import { DateFilter } from "../hooks/usePracticeFilters";
 
 const CATEGORY_KEYS: EntryCategory[] = ["word", "phrase", "grammar", "idiom", "note"];
@@ -22,8 +22,8 @@ interface Props {
   onRatingsChange: (r: number[]) => void;
   masteryFilter?: MasteryFilter;
   onMasteryFilterChange?: (v: MasteryFilter) => void;
-  staleOnly?: boolean;
-  onStaleOnlyChange?: (v: boolean) => void;
+  reviewFilter?: ReviewFilter;
+  onReviewFilterChange?: (v: ReviewFilter) => void;
   dateFilter?: DateFilter | null;
   onDateFilterChange?: (v: DateFilter | null) => void;
   allowedCategories?: EntryCategory[];
@@ -40,8 +40,8 @@ export function PracticeFilterPanel({
   onRatingsChange,
   masteryFilter = null,
   onMasteryFilterChange,
-  staleOnly = false,
-  onStaleOnlyChange,
+  reviewFilter = null,
+  onReviewFilterChange,
   dateFilter,
   onDateFilterChange,
   allowedCategories,
@@ -128,17 +128,24 @@ export function PracticeFilterPanel({
             </div>
           </>
         )}
-        {onStaleOnlyChange && (
-          <>
-            <div className="w-px bg-gray-200 dark:bg-gray-600 self-stretch shrink-0 hidden sm:block" />
+      </div>
+      {onReviewFilterChange && (
+        <div className={sectionCls}>
+          <span className={labelCls}>{t("practice.filterPanel.reviewLabel")}</span>
+          <div className={groupCls}>
             <button
-              onClick={() => onStaleOnlyChange(!staleOnly)}
-              className={[btnBase, " max-w-fit ", staleOnly ? active : inactive].join(" ")}>
+              onClick={() => onReviewFilterChange(reviewFilter === "stale" ? null : "stale")}
+              className={[btnBase, reviewFilter === "stale" ? active : inactive].join(" ")}>
               {t("practice.filterPanel.staleOnly")}
             </button>
-          </>
-        )}
-      </div>
+            <button
+              onClick={() => onReviewFilterChange(reviewFilter === "notToday" ? null : "notToday")}
+              className={[btnBase, reviewFilter === "notToday" ? active : inactive].join(" ")}>
+              {t("practice.filterPanel.notPracticedToday")}
+            </button>
+          </div>
+        </div>
+      )}
       {allTags.length > 0 && (
         <div className={sectionCls}>
           <span className={labelCls}>{t("practice.filterPanel.tag")}</span>

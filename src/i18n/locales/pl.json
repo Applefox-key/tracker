@@ -499,7 +499,9 @@
       "unmastered": "Nieopanowane:",
       "unmasteredOnly": "Nie opanowane",
       "masteredOnly": "Opanowane",
-      "staleOnly": "Nie powtarzane 30+ dni"
+      "staleOnly": "Nie powtarzane 30+ dni",
+      "reviewLabel": "Powtórzenia",
+      "notPracticedToday": "Nie powtarzane dzisiaj"
     }
   }
 }
