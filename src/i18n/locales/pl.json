@@ -301,6 +301,7 @@
     "clear": "Wyczyść",
     "backToPractice": "← Ćwiczenia",
     "quit": "✕ Wyjdź",
+    "skip": "Pomiń",
     "retryMistakes": "Powtórz błędy ({{count}})",
     "modes": {
       "flashcards": { "label": "Fiszki", "description": "Odwracaj fiszki, aby sprawdzić pamięć" },
@@ -329,7 +330,9 @@
       "helpFlashcard": "Odwróć fiszkę, aby zobaczyć odpowiedź, a następnie oceń, jak dobrze ją pamiętałeś.",
       "helpQuiz": "Wybierz poprawne słowo spośród 4 opcji na podstawie podanego wyjaśnienia.",
       "helpPuzzle": "Ułóż poprawne słowo lub frazę, klikając kafelki.",
-      "helpWrite": "Wpisz poprawne słowo na podstawie wyjaśnienia. Naciśnij Enter, aby sprawdzić."
+      "helpWrite": "Wpisz poprawne słowo na podstawie wyjaśnienia. Naciśnij Enter, aby sprawdzić.",
+      "skippedCount": "{{count}} pominięto",
+      "skippedCount_other": "{{count}} pominięto"
     },
     "due": {
       "title": "Na dziś",
@@ -340,6 +343,8 @@
       "cardsToReview_many": "{{count}} fiszek do powtórki",
       "cardsToReview_other": "{{count}} fiszek do powtórki",
       "selectModes": "Tryby ćwiczeń",
+      "newCardsNote": "Nowe fiszki są najpierw pokazywane do zapoznania, a następnie pojawią się jutro do pierwszego powtórzenia.",
+      "newBadge": "Nowe",
       "start": "Rozpocznij powtórkę",
       "done": "Sesja zakończona!",
       "reviewed": "Powtórzono {{count}} fiszek",
@@ -395,7 +400,9 @@
       "again": "Nie wiem",
       "hard": "Trudne",
       "good": "Dobrze",
-      "easy": "Łatwe"
+      "easy": "Łatwe",
+      "gotIt": "Zapoznałem się",
+      "introHint": "Zapamiętaj tę fiszkę"
     },
     "quiz": {
       "title": "Tryb quizu",

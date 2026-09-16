@@ -250,6 +250,11 @@ export const entriesApi = {
     return toEntry(res.data)
   },
 
+  async introduceEntry(id: number): Promise<Entry> {
+    const res = await apiClient.post<RawEntry>(`/entries/${id}/introduce`)
+    return toEntry(res.data)
+  },
+
   async resetMastery(id: number): Promise<Entry> {
     const res = await apiClient.patch<RawEntry>(`/entries/${id}`, {
       ease_factor: 2.5,

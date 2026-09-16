@@ -10,6 +10,7 @@ interface FlashCardProps {
   reversed?: boolean;
   flipAnimated?: boolean;
   showImageOnFront?: boolean;
+  isIntro?: boolean;
 }
 
 export function FlashCard({
@@ -19,6 +20,7 @@ export function FlashCard({
   reversed = false,
   flipAnimated = true,
   showImageOnFront = false,
+  isIntro = false,
 }: FlashCardProps) {
   const { t } = useTranslation();
   const effectiveReversed = reversed && !["grammar", "note"].includes(card.category);
@@ -42,7 +44,7 @@ export function FlashCard({
           style={{ backfaceVisibility: "hidden" }}>
           {/* Header */}
           <div className="flex items-center justify-between px-5 pt-4 pb-2 shrink-0">
-            <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">{frontLabel}</span>
+            <span className="text-xs font-medium text-emerald-500 uppercase tracking-widest">{frontLabel}</span>{" "}
             <SpeakButton text={frontText} />
           </div>
 
@@ -79,6 +81,23 @@ export function FlashCard({
 
           {/* Footer */}
           <div className="shrink-0 px-5 pb-4 pt-2 flex justify-center">
+            {" "}
+            {isIntro && (
+              <div className="flex justify-center py-1">
+                <span
+                  className="  absolute bottom-3 left-2
+                                inline-flex items-center gap-1.5
+                                px-2.5 py-0.5
+                                rounded-full
+                                border border-emerald-300/80 dark:border-emerald-700/60
+                                bg-emerald-50/95 dark:bg-emerald-900/40
+                                text-emerald-600 dark:text-emerald-300
+                                font-bold uppercase tracking-wider
+                                shadow-[0_0_10px_rgba(16,185,129,0.25),0_4px_12px_rgba(16,185,129,0.15)]">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" /> {t("practice.due.newBadge")}
+                </span>
+              </div>
+            )}
             <span className="text-xs text-gray-300 dark:text-gray-600">{t("practice.flashcards.tapToReveal")}</span>
           </div>
         </div>

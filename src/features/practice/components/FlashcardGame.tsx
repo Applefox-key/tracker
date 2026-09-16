@@ -62,33 +62,55 @@ function GradeButtons({ onGrade }: { onGrade: (g: SRGrade) => void }) {
 interface FlashcardGameProps {
   entry: Entry;
   onGrade: (grade: SRGrade) => void;
+  onSkip?: () => void;
+  isIntro?: boolean;
+  onIntroComplete?: () => void;
 }
 
-export function FlashcardGame({ entry, onGrade }: FlashcardGameProps) {
+export function FlashcardGame({ entry, onGrade, onSkip, isIntro, onIntroComplete }: FlashcardGameProps) {
   const { t } = useTranslation();
   const [isFlipped, setIsFlipped] = useState(false);
 
+  const introButtons = (
+    <div className="flex flex-col gap-2">
+      {/* <p className="text-center text-xs text-gray-400 dark:text-gray-500">{t("practice.sr.introHint")}</p> */}
+      <button
+        onClick={onIntroComplete}
+        className="w-full py-3 rounded-xl border border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 bg-white dark:bg-gray-800 font-semibold text-sm transition-colors">
+        {t("practice.sr.gotIt")}
+      </button>
+    </div>
+  );
+
+  const gradeButtons = isFlipped ? isIntro ? introButtons : <GradeButtons onGrade={onGrade} /> : null;
+
+  const skipButton = onSkip && !isIntro ? (
+    <button
+      onClick={onSkip}
+      className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-center">
+      {t("practice.skip")}
+    </button>
+  ) : null;
+
   return (
-    <div className={["flex flex-col gap-4", isFlipped ? "pb-32 sm:pb-0" : ""].join(" ").trim()}>
+    <div className={["flex flex-col gap-4", isFlipped ? "pb-32 sm:pb-0" : (skipButton ? "pb-14 sm:pb-0" : "")].join(" ").trim()}>
       <FlashCard
         card={entryToCard(entry)}
         isFlipped={isFlipped}
         onFlip={() => setIsFlipped((v) => !v)}
         reversed={true}
+        isIntro={isIntro}
       />
-      {!isFlipped && (
-        <p className="text-center text-xs text-gray-300 dark:text-gray-600">{t("practice.flashcards.tapHint")}</p>
-      )}
-      {isFlipped && (
-        <div className="hidden sm:block">
-          <GradeButtons onGrade={onGrade} />
-        </div>
-      )}
-      {isFlipped && (
+      {isIntro && <p className="text-center text-xs text-gray-400 dark:text-gray-500">{t("practice.sr.introHint")}</p>}
+      {!isFlipped && skipButton && <div className="hidden sm:flex justify-center">{skipButton}</div>}
+      {gradeButtons && <div className="hidden sm:block">{gradeButtons}</div>}
+      {gradeButtons && skipButton && <div className="hidden sm:flex justify-center">{skipButton}</div>}
+      {(gradeButtons || (!isFlipped && skipButton)) && (
         <div
           className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] dark:shadow-[0_-4px_16px_rgba(0,0,0,0.4)] px-4 pt-4"
           style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom))" }}>
-          <GradeButtons onGrade={onGrade} />
+          {gradeButtons}
+          {skipButton && <div className="flex justify-center pt-2">{skipButton}</div>}
         </div>
       )}
     </div>

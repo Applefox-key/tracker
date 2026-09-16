@@ -293,6 +293,7 @@
     "clear": "Limpiar",
     "backToPractice": "← Práctica",
     "quit": "✕ Salir",
+    "skip": "Omitir",
     "retryMistakes": "Repetir errores ({{count}})",
     "modes": {
       "flashcards": { "label": "Tarjetas", "description": "Voltea las tarjetas para poner a prueba tu memoria" },
@@ -319,7 +320,9 @@
       "helpFlashcard": "Voltea la tarjeta para ver la respuesta y valora qué tan bien la recordaste.",
       "helpQuiz": "Elige la palabra correcta entre 4 opciones según la explicación mostrada.",
       "helpPuzzle": "Construye la palabra o frase correcta haciendo clic en las piezas.",
-      "helpWrite": "Escribe la palabra correcta a partir de su explicación. Pulsa Enter para comprobar."
+      "helpWrite": "Escribe la palabra correcta a partir de su explicación. Pulsa Enter para comprobar.",
+      "skippedCount": "{{count}} omitido",
+      "skippedCount_other": "{{count}} omitidos"
     },
     "due": {
       "title": "Para hoy",
@@ -328,6 +331,8 @@
       "cardsToReview": "{{count}} tarjeta para repasar",
       "cardsToReview_other": "{{count}} tarjetas para repasar",
       "selectModes": "Modos de práctica",
+      "newCardsNote": "Las tarjetas nuevas se muestran primero para familiarizarse, luego aparecerán mañana para el primer repaso.",
+      "newBadge": "Nuevo",
       "start": "Comenzar repaso",
       "done": "¡Sesión completada!",
       "reviewed": "Repasadas {{count}} tarjetas",
@@ -381,7 +386,9 @@
       "again": "Olvidé",
       "hard": "Difícil",
       "good": "Bien",
-      "easy": "Fácil"
+      "easy": "Fácil",
+      "gotIt": "Entendido",
+      "introHint": "Familiarízate con esta tarjeta"
     },
     "quiz": {
       "title": "Modo quiz",

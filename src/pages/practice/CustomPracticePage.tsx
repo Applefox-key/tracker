@@ -50,7 +50,7 @@ function buildQueue(entries: Entry[], modes: CustomMode[]): QueueItem[] {
 
 // ── WriteItem ─────────────────────────────────────────────────────────────────
 
-function WriteItem({ entry, onNext }: { entry: Entry; onNext: () => void }) {
+function WriteItem({ entry, onNext, onSkip }: { entry: Entry; onNext: () => void; onSkip?: () => void }) {
   const { t } = useTranslation();
   const { reviewEntry } = useEntryCrud();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -147,15 +147,29 @@ function WriteItem({ entry, onNext }: { entry: Entry; onNext: () => void }) {
 
       {answerState === "unanswered" ? (
         <>
-          <div className="hidden sm:flex justify-end">
+          <div className="hidden sm:flex justify-end items-center gap-4">
+            {onSkip && (
+              <button
+                onClick={onSkip}
+                className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                {t("practice.skip")}
+              </button>
+            )}
             <Button onClick={handleSubmit} disabled={inputValue.trim() === ""}>
               {t("practice.write.checkAnswer")}
             </Button>
           </div>
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 sm:hidden z-10">
+          <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 sm:hidden z-10 flex flex-col gap-2">
             <Button onClick={handleSubmit} disabled={inputValue.trim() === ""} className="w-full h-14 text-base">
               {t("practice.write.checkAnswer")}
             </Button>
+            {onSkip && (
+              <button
+                onClick={onSkip}
+                className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-center py-1">
+                {t("practice.skip")}
+              </button>
+            )}
           </div>
         </>
       ) : (
@@ -198,6 +212,7 @@ export function CustomPracticePage() {
   const [phase, setPhase] = useState<Phase>("idle");
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [currentIdx, setCurrentIdx] = useState(0);
+  const [skippedCount, setSkippedCount] = useState(0);
 
   const filteredEntries = useMemo(() => applyFilters(allEntries, filters), [allEntries, filters]);
 
@@ -213,12 +228,18 @@ export function CustomPracticePage() {
     const q = buildQueue(shuffle(filteredEntries), selectedModes);
     setQueue(q);
     setCurrentIdx(0);
+    setSkippedCount(0);
     setPhase("playing");
   }
 
   function handleNext() {
     if (currentIdx + 1 >= queue.length) setPhase("done");
     else setCurrentIdx((i) => i + 1);
+  }
+
+  function handleSkip() {
+    setSkippedCount((c) => c + 1);
+    handleNext();
   }
 
   const current = queue[currentIdx];
@@ -380,6 +401,7 @@ export function CustomPracticePage() {
                     reviewEntry(current.entry.id, grade, "flashcard", false);
                     handleNext();
                   }}
+                  onSkip={handleSkip}
                 />
               )}
               {current.mode === "quiz" && (
@@ -391,6 +413,7 @@ export function CustomPracticePage() {
                     if (!hintUsed) reviewEntry(current.entry.id, isCorrect ? 5 : 0, "quiz");
                   }}
                   onNext={handleNext}
+                  onSkip={handleSkip}
                 />
               )}
               {current.mode === "puzzle" && (
@@ -403,13 +426,11 @@ export function CustomPracticePage() {
                     if (!hintUsed) reviewEntry(current.entry.id, retried ? 4 : 5, "puzzle");
                     handleNext();
                   }}
-                  onSkip={(hintUsed) => {
-                    if (!hintUsed) reviewEntry(current.entry.id, 0, "puzzle");
-                    handleNext();
-                  }}
+                  onSkip={handleSkip}
+                  onSkipEarly={handleSkip}
                 />
               )}
-              {current.mode === "write" && <WriteItem entry={current.entry} onNext={handleNext} />}
+              {current.mode === "write" && <WriteItem entry={current.entry} onNext={handleNext} onSkip={handleSkip} />}
             </div>
           )}
         </div>
@@ -422,8 +443,13 @@ export function CustomPracticePage() {
           <div>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t("practice.due.done")}</h2>
             <p className="text-gray-500 dark:text-gray-400 mt-1">
-              {t("practice.due.reviewed", { count: queue.length })}
+              {t("practice.due.reviewed", { count: queue.length - skippedCount })}
             </p>
+            {skippedCount > 0 && (
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-0.5">
+                {t("practice.custom.skippedCount", { count: skippedCount })}
+              </p>
+            )}
           </div>
           <div className="flex gap-3 flex-wrap justify-center">
             <Button variant="secondary" onClick={startSession}>

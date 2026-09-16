@@ -19,6 +19,8 @@ type Phase = "loading" | "idle" | "playing" | "done";
 interface QueueItem {
   entry: Entry;
   mode: DueMode;
+  introPhase?: "card" | "puzzle";
+  hasIntroPuzzle?: boolean;
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -29,17 +31,27 @@ function isPuzzleable(entry: Entry): boolean {
 }
 
 function buildQueue(entries: Entry[], modes: DueMode[]): QueueItem[] {
-  return entries.map((entry) => {
-    if (!entry.last_reviewed_at) return { entry, mode: "flashcard" };
-    const valid = modes.filter((m) => {
-      if (m === "quiz") return entries.length >= 4;
-      if (m === "puzzle") return isPuzzleable(entry);
-      return true;
-    });
-    const pool = valid.length > 0 ? valid : ["flashcard" as DueMode];
-    const mode = pool[Math.floor(Math.random() * pool.length)];
-    return { entry, mode };
-  });
+  const result: QueueItem[] = [];
+  for (const entry of entries) {
+    const isNew = !entry.last_reviewed_at && !entry.next_review_at;
+    if (isNew) {
+      const hasPuzzle = isPuzzleable(entry);
+      result.push({ entry, mode: "flashcard", introPhase: "card", hasIntroPuzzle: hasPuzzle });
+      if (hasPuzzle) {
+        result.push({ entry, mode: "puzzle", introPhase: "puzzle" });
+      }
+    } else {
+      const valid = modes.filter((m) => {
+        if (m === "quiz") return entries.length >= 4;
+        if (m === "puzzle") return isPuzzleable(entry);
+        return true;
+      });
+      const pool = valid.length > 0 ? valid : ["flashcard" as DueMode];
+      const mode = pool[Math.floor(Math.random() * pool.length)];
+      result.push({ entry, mode });
+    }
+  }
+  return result;
 }
 
 // ── DuePage ───────────────────────────────────────────────────────────────────
@@ -119,7 +131,9 @@ export function DuePage() {
   }
 
   const current = queue[currentIdx];
-  const progress = queue.length > 0 ? Math.round((currentIdx / queue.length) * 100) : 0;
+  const displayTotal = queue.filter(q => q.introPhase !== "puzzle").length;
+  const displayIdx = queue.slice(0, currentIdx + 1).filter(q => q.introPhase !== "puzzle").length;
+  const progress = displayTotal > 0 ? Math.round(((displayIdx - 1) / displayTotal) * 100) : 0;
   const hasDue = dueEntries.length > 0;
 
   const btnInactive =
@@ -263,7 +277,7 @@ export function DuePage() {
               />
             </div>
             <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0 tabular-nums">
-              {currentIdx + 1} / {queue.length}
+              {displayIdx} / {displayTotal}
             </span>
           </div>
 
@@ -272,9 +286,16 @@ export function DuePage() {
               {current.mode === "flashcard" && (
                 <FlashcardGame
                   entry={current.entry}
+                  isIntro={current.introPhase === "card"}
                   onGrade={(grade) => {
                     reviewEntry(current.entry.id, grade, "flashcard", true)
                       .then(updated => { if (updated) handleReviewed(current.entry, updated); });
+                    handleNext();
+                  }}
+                  onIntroComplete={() => {
+                    if (!current.hasIntroPuzzle) {
+                      entriesApi.introduceEntry(current.entry.id).catch(() => {});
+                    }
                     handleNext();
                   }}
                 />
@@ -300,14 +321,18 @@ export function DuePage() {
                   nextLabel={t("practice.puzzle.next")}
                   skipLabel={t("practice.puzzle.skip")}
                   onCorrect={(hintUsed, retried) => {
-                    if (!hintUsed) {
+                    if (current.introPhase === "puzzle") {
+                      entriesApi.introduceEntry(current.entry.id).catch(() => {});
+                    } else if (!hintUsed) {
                       reviewEntry(current.entry.id, retried ? 4 : 5, "puzzle")
                         .then(updated => { if (updated) handleReviewed(current.entry, updated); });
                     }
                     handleNext();
                   }}
                   onSkip={(hintUsed) => {
-                    if (!hintUsed) {
+                    if (current.introPhase === "puzzle") {
+                      entriesApi.introduceEntry(current.entry.id).catch(() => {});
+                    } else if (!hintUsed) {
                       reviewEntry(current.entry.id, 0, "puzzle")
                         .then(updated => { if (updated) handleReviewed(current.entry, updated); });
                     }
@@ -336,7 +361,7 @@ export function DuePage() {
             <div>
               <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t("practice.due.done")}</h2>
               <p className="text-gray-500 dark:text-gray-400 mt-1">
-                {t("practice.due.reviewed", { count: queue.length })}
+                {t("practice.due.reviewed", { count: displayTotal })}
               </p>
             </div>
 

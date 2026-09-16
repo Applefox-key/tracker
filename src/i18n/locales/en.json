@@ -293,6 +293,7 @@
     "clear": "Clear",
     "backToPractice": "← Practice",
     "quit": "✕ Quit",
+    "skip": "Skip",
     "retryMistakes": "Retry mistakes ({{count}})",
     "modes": {
       "flashcards": { "label": "Flashcards", "description": "Flip cards to test your memory" },
@@ -319,7 +320,9 @@
       "helpFlashcard": "Flip the card to reveal the answer, then rate how well you recalled it.",
       "helpQuiz": "Choose the correct word from 4 options based on the explanation shown.",
       "helpPuzzle": "Assemble the correct word or phrase by clicking the tiles.",
-      "helpWrite": "Type the correct word from its explanation. Press Enter to check."
+      "helpWrite": "Type the correct word from its explanation. Press Enter to check.",
+      "skippedCount": "{{count}} skipped",
+      "skippedCount_other": "{{count}} skipped"
     },
     "due": {
       "title": "Due Today",
@@ -329,7 +332,8 @@
       "cardsToReview": "{{count}} card to review",
       "cardsToReview_other": "{{count}} cards to review",
       "selectModes": "Practice modes",
-      "newCardsNote": "New cards are always shown as flashcards, regardless of your mode selection.",
+      "newCardsNote": "New cards are shown for introduction first, then appear tomorrow for your first real review.",
+      "newBadge": "New",
       "start": "Start review",
       "done": "Session complete!",
       "reviewed": "Reviewed {{count}} cards",
@@ -383,7 +387,9 @@
       "again": "Forgot",
       "hard": "Hard",
       "good": "Good",
-      "easy": "Easy"
+      "easy": "Easy",
+      "gotIt": "Got it",
+      "introHint": "Get familiar with this card"
     },
     "quiz": {
       "title": "Quiz mode",

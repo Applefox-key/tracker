@@ -10,9 +10,10 @@ interface QuizGameProps {
   nextLabel: string;
   onSelect: (isCorrect: boolean, hintUsed: boolean) => void;
   onNext: () => void;
+  onSkip?: () => void;
 }
 
-export function QuizGame({ entry, pool, nextLabel, onSelect, onNext }: QuizGameProps) {
+export function QuizGame({ entry, pool, nextLabel, onSelect, onNext, onSkip }: QuizGameProps) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<string | null>(null);
   const [showExample, setShowExample] = useState(false);
@@ -84,6 +85,15 @@ export function QuizGame({ entry, pool, nextLabel, onSelect, onNext }: QuizGameP
         })}
       </div>
 
+      {!answered && onSkip && (
+        <div className="flex justify-center">
+          <button
+            onClick={onSkip}
+            className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+            {t("practice.skip")}
+          </button>
+        </div>
+      )}
       {answered && (
         <div className="flex justify-end">
           <Button onClick={onNext}>{nextLabel}</Button>

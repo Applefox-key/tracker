@@ -66,6 +66,7 @@ interface PuzzleGameProps {
   skipLabel: string;
   onCorrect: (hintUsed: boolean, retried: boolean) => void;
   onSkip: (hintUsed: boolean) => void;
+  onSkipEarly?: () => void;
 }
 
 export function PuzzleGame({
@@ -76,6 +77,7 @@ export function PuzzleGame({
   skipLabel,
   onCorrect,
   onSkip,
+  onSkipEarly,
 }: PuzzleGameProps) {
   const { t } = useTranslation();
   const [pool, setPool] = useState<Tile[]>([]);
@@ -250,16 +252,25 @@ export function PuzzleGame({
       )}
       {/* HINT */}
       {phase === "thinking" ? (
-        <button
-          onClick={() => setShowTilesHint((v) => !v)}
-          className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-          {showTilesHint
-            ? t("practice.puzzle.tilesPlaced", {
-                placed: placed.length,
-                total: tLen,
-              })
-            : t("practice.puzzle.hint")}
-        </button>
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => setShowTilesHint((v) => !v)}
+            className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+            {showTilesHint
+              ? t("practice.puzzle.tilesPlaced", {
+                  placed: placed.length,
+                  total: tLen,
+                })
+              : t("practice.puzzle.hint")}
+          </button>
+          {onSkipEarly && (
+            <button
+              onClick={onSkipEarly}
+              className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+              {t("practice.skip")}
+            </button>
+          )}
+        </div>
       ) : (
         <div>
           {phase === "wrong" && (
