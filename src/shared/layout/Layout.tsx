@@ -53,6 +53,7 @@ export function Layout() {
     "/practice/due",
     "/practice/write",
     "/practice/custom",
+    "/practice/auto-flashcards",
   ].includes(location.pathname);
   const [appsOpen, setAppsOpen] = useState(false);
   const [burgerOpen, setBurgerOpen] = useState(false);
