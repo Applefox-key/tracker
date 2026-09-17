@@ -168,7 +168,7 @@ export function Layout() {
               <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">{t(motivationKey)}</span>
             </div>
           ) : (
-            <span className="sm:hidden absolute left-1/2 -translate-x-1/2 text-xl font-bold text-emerald-600 tracking-tight whitespace-nowrap pointer-events-none">
+            <span className="sm:hidden absolute left-3 text-xl font-bold text-emerald-600 tracking-tight whitespace-nowrap pointer-events-none">
               {t("layout.logo")}
             </span>
           )}

@@ -6,14 +6,69 @@ import { useAuthStore } from "@/features/auth/store/authStore";
 import { wordCount, EMPTY_FILTERS } from "@/features/practice/hooks/usePracticeEntries";
 import { entriesApi } from "@/api/api";
 import { FiChevronRight, FiLock } from "react-icons/fi";
+import { BsCardText, BsLightbulb, BsLink45Deg, BsPencilSquare } from "react-icons/bs";
+import { IoExtensionPuzzleOutline } from "react-icons/io5";
+import { GiSandsOfTime } from "react-icons/gi";
+import { MdPalette } from "react-icons/md";
 
 const MODES = [
-  { key: "flashcards" as const, icon: "🃏", route: "/flashcards", min: 1 },
-  { key: "quiz" as const, icon: "🧠", route: "/practice/quiz", min: 4 },
-  { key: "match" as const, icon: "🔗", route: "/practice/match", min: 2 },
-  { key: "puzzle" as const, icon: "🧩", route: "/practice/puzzle", min: 1 },
-  { key: "write" as const, icon: "✍️", route: "/practice/write", min: 1 },
-  { key: "custom" as const, icon: "🎨", route: "/practice/custom", min: 1, emphasized: true },
+  {
+    key: "flashcards" as const,
+    icon: BsCardText,
+    iconColor: "#3B82F6",
+    iconBg: "bg-blue-50 dark:bg-blue-900/30",
+    route: "/flashcards",
+    min: 1,
+  },
+  {
+    key: "quiz" as const,
+    icon: BsLightbulb,
+    iconColor: "#A855F7",
+    iconBg: "bg-purple-50 dark:bg-purple-900/30",
+    route: "/practice/quiz",
+    min: 4,
+  },
+  {
+    key: "match" as const,
+    icon: BsLink45Deg,
+    iconColor: "#F97316",
+    iconBg: "bg-orange-50 dark:bg-orange-900/30",
+    route: "/practice/match",
+    min: 2,
+  },
+  {
+    key: "puzzle" as const,
+    icon: IoExtensionPuzzleOutline,
+    iconColor: "#10B981",
+    iconBg: "bg-emerald-50 dark:bg-emerald-900/30",
+    route: "/practice/puzzle",
+    min: 1,
+  },
+  {
+    key: "write" as const,
+    icon: BsPencilSquare,
+    iconColor: "#F59E0B",
+    iconBg: "bg-amber-50 dark:bg-amber-900/30",
+    route: "/practice/write",
+    min: 1,
+  },
+  {
+    key: "autoFlashcards" as const,
+    icon: GiSandsOfTime,
+    iconColor: "#14B8A6",
+    iconBg: "bg-teal-50 dark:bg-teal-900/30",
+    route: "/practice/auto-flashcards",
+    min: 1,
+  },
+  {
+    key: "custom" as const,
+    icon: MdPalette,
+    iconColor: "#7C3AED",
+    iconBg: "bg-violet-100 dark:bg-violet-900/40",
+    route: "/practice/custom",
+    min: 1,
+    emphasized: true,
+  },
 ];
 
 export function PracticePage() {
@@ -40,6 +95,7 @@ export function PracticePage() {
       puzzle: base.filter((e) => !["note", "grammar"].includes(e.category)).filter((e) => wordCount(e.word) <= 10)
         .length,
       write: base.filter((e) => ["word", "phrase", "idiom"].includes(e.category)).length,
+      autoFlashcards: base.length,
       custom: base.length,
     };
   }, [entries]);
@@ -92,11 +148,8 @@ export function PracticePage() {
               ].join(" ")}>
               {/* Icon */}
               <div
-                className={[
-                  "w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0",
-                  mode.emphasized ? "bg-violet-100 dark:bg-violet-900/40" : "bg-gray-100 dark:bg-gray-700/50",
-                ].join(" ")}>
-                {mode.icon}
+                className={["w-12 h-12 rounded-xl flex items-center justify-center shrink-0", mode.iconBg].join(" ")}>
+                <mode.icon className="w-6 h-6" style={{ color: mode.iconColor }} />
               </div>
 
               {/* Content */}

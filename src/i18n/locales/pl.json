@@ -161,11 +161,31 @@
       "resetYes": "Tak",
       "resetNo": "Nie",
       "fields": {
-        "word":    { "word": "Słowo",           "explanation": "Tłumaczenie",          "example": "Przykład" },
-        "phrase":  { "word": "Fraza",           "explanation": "Tłumaczenie",          "example": "Notatka" },
-        "grammar": { "word": "Punkt gramatyczny","explanation": "Wyjaśnienie",         "example": "Przykład" },
-        "idiom":   { "word": "Idiom",           "explanation": "Tłumaczenie / Znaczenie","example": "Notatka" },
-        "note":    { "word": "Tytuł",           "explanation": "Wyjaśnienie",          "example": "Przykład" }
+        "word": {
+          "word": "Słowo",
+          "explanation": "Tłumaczenie",
+          "example": "Przykład"
+        },
+        "phrase": {
+          "word": "Fraza",
+          "explanation": "Tłumaczenie",
+          "example": "Notatka"
+        },
+        "grammar": {
+          "word": "Punkt gramatyczny",
+          "explanation": "Wyjaśnienie",
+          "example": "Przykład"
+        },
+        "idiom": {
+          "word": "Idiom",
+          "explanation": "Tłumaczenie / Znaczenie",
+          "example": "Notatka"
+        },
+        "note": {
+          "word": "Tytuł",
+          "explanation": "Wyjaśnienie",
+          "example": "Przykład"
+        }
       }
     },
     "card": {
@@ -319,13 +339,38 @@
     "skip": "Pomiń",
     "retryMistakes": "Powtórz błędy ({{count}})",
     "modes": {
-      "flashcards": { "label": "Fiszki", "description": "Odwracaj fiszki, aby sprawdzić pamięć" },
-      "quiz": { "label": "Quiz", "description": "Wybierz poprawną odpowiedź spośród 4 opcji" },
-      "match": { "label": "Dopasuj", "description": "Połącz słowa z ich wyjaśnieniami" },
-      "puzzle": { "label": "Puzzle", "description": "Ułóż litery lub słowa w prawidłowej kolejności" },
-      "due": { "label": "Na dziś", "description": "Powtórz fiszki zaplanowane na dzisiaj" },
-      "write": { "label": "Napisz słowo", "description": "Wpisz poprawne słowo na podstawie jego wyjaśnienia" },
-      "custom": { "label": "Mikser", "description": "Powtórz fiszki mieszając wszystkie gry" }
+      "flashcards": {
+        "label": "Fiszki",
+        "description": "Odwracaj fiszki, aby sprawdzić pamięć"
+      },
+      "quiz": {
+        "label": "Quiz",
+        "description": "Wybierz poprawną odpowiedź spośród 4 opcji"
+      },
+      "match": {
+        "label": "Dopasuj",
+        "description": "Połącz słowa z ich wyjaśnieniami"
+      },
+      "puzzle": {
+        "label": "Puzzle",
+        "description": "Ułóż litery lub słowa w prawidłowej kolejności"
+      },
+      "due": {
+        "label": "Na dziś",
+        "description": "Powtórz fiszki zaplanowane na dzisiaj"
+      },
+      "write": {
+        "label": "Napisz słowo",
+        "description": "Wpisz poprawne słowo na podstawie jego wyjaśnienia"
+      },
+      "custom": {
+        "label": "Mikser",
+        "description": "Powtórz fiszki mieszając wszystkie gry"
+      },
+      "autoFlashcards": {
+        "label": "Auto Fiszki",
+        "description": "Karty odwracają się automatycznie z ustawioną prędkością"
+      }
     },
     "custom": {
       "title": "Mikser",
@@ -503,7 +548,11 @@
       "wrong": "Niepoprawnie",
       "correctAnswer": "Poprawna odpowiedź:",
       "showExample": "Pokaż przykład…",
-      "diffLegend": { "missing": "brakujące", "extra": "zbędne", "correct": "poprawne" },
+      "diffLegend": {
+        "missing": "brakujące",
+        "extra": "zbędne",
+        "correct": "poprawne"
+      },
       "startWrite": "Zacznij →",
       "next": "Dalej →",
       "seeResults": "Wyniki",
@@ -524,6 +573,21 @@
       "staleOnly": "Nie powtarzane 30+ dni",
       "reviewLabel": "Powtórzenia",
       "notPracticedToday": "Nie powtarzane dzisiaj"
+    },
+    "autoFlashcards": {
+      "title": "Auto Fiszki",
+      "helpDesc": "Karty odwracają się automatycznie z ustawionym opóźnieniem. Po prostu obserwuj i przyswajaj — idealne do pasywnej nauki.",
+      "delayLabel": "Opóźnienie",
+      "perSide": "{{value}}s na stronę",
+      "startBtn": "Zacznij →",
+      "playBtn": "Graj",
+      "pauseBtn": "Pauza",
+      "prevBtn": "← Poprzednia",
+      "nextBtn": "Następna →",
+      "done": "Gotowe!",
+      "doneDesc": "Przejrzałeś wszystkie {{count}} kart.",
+      "tryAgain": "Zagraj ponownie",
+      "backToPractice": "Powrót do ćwiczeń"
     }
   }
 }

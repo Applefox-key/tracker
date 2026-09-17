@@ -73,7 +73,6 @@
     "statsExpand": "Show more stats",
     "statsCollapse": "Show less",
     "statMastered": "Mastered",
-
     "statGold": "Gold",
     "statSilver": "Silver",
     "badgesComingSoon": "Badges — coming soon",
@@ -157,11 +156,31 @@
       "resetYes": "Yes",
       "resetNo": "No",
       "fields": {
-        "word":    { "word": "Word",          "explanation": "Translation",          "example": "Example" },
-        "phrase":  { "word": "Phrase",        "explanation": "Translation",          "example": "Note" },
-        "grammar": { "word": "Grammar Point", "explanation": "Explanation",          "example": "Example" },
-        "idiom":   { "word": "Idiom",         "explanation": "Translation / Meaning","example": "Note" },
-        "note":    { "word": "Title",         "explanation": "Explanation",          "example": "Example" }
+        "word": {
+          "word": "Word",
+          "explanation": "Translation",
+          "example": "Example"
+        },
+        "phrase": {
+          "word": "Phrase",
+          "explanation": "Translation",
+          "example": "Note"
+        },
+        "grammar": {
+          "word": "Grammar Point",
+          "explanation": "Explanation",
+          "example": "Example"
+        },
+        "idiom": {
+          "word": "Idiom",
+          "explanation": "Translation / Meaning",
+          "example": "Note"
+        },
+        "note": {
+          "word": "Title",
+          "explanation": "Explanation",
+          "example": "Example"
+        }
       }
     },
     "card": {
@@ -311,13 +330,38 @@
     "skip": "Skip",
     "retryMistakes": "Retry mistakes ({{count}})",
     "modes": {
-      "flashcards": { "label": "Flashcards", "description": "Flip cards to test your memory" },
-      "quiz": { "label": "Quiz", "description": "Choose the correct answer from 4 options" },
-      "match": { "label": "Match", "description": "Connect words with their explanations" },
-      "puzzle": { "label": "Puzzle", "description": "Arrange letters or words in correct order" },
-      "due": { "label": "Due Today", "description": "Review cards scheduled for today" },
-      "write": { "label": "Write It", "description": "Type the correct word from its explanation" },
-      "custom": { "label": "Mixer", "description": "Review cards by mixing all game modes" }
+      "flashcards": {
+        "label": "Flashcards",
+        "description": "Flip cards to test your memory"
+      },
+      "quiz": {
+        "label": "Quiz",
+        "description": "Choose the correct answer from 4 options"
+      },
+      "match": {
+        "label": "Match",
+        "description": "Connect words with their explanations"
+      },
+      "puzzle": {
+        "label": "Puzzle",
+        "description": "Arrange letters or words in correct order"
+      },
+      "due": {
+        "label": "Due Today",
+        "description": "Review cards scheduled for today"
+      },
+      "write": {
+        "label": "Write It",
+        "description": "Type the correct word from its explanation"
+      },
+      "custom": {
+        "label": "Mixer",
+        "description": "Review cards by mixing all game modes"
+      },
+      "autoFlashcards": {
+        "label": "Auto Flip",
+        "description": "Cards flip automatically at your set speed"
+      }
     },
     "custom": {
       "title": "Mixer",
@@ -490,7 +534,11 @@
       "wrong": "Incorrect",
       "correctAnswer": "Correct answer:",
       "showExample": "Show example…",
-      "diffLegend": { "missing": "missing", "extra": "extra", "correct": "correct" },
+      "diffLegend": {
+        "missing": "missing",
+        "extra": "extra",
+        "correct": "correct"
+      },
       "startWrite": "Start →",
       "next": "Next →",
       "seeResults": "See results",
@@ -511,6 +559,21 @@
       "staleOnly": "Not reviewed 30+ days",
       "reviewLabel": "Review",
       "notPracticedToday": "Not reviewed today"
+    },
+    "autoFlashcards": {
+      "title": "Auto Flip",
+      "helpDesc": "Cards flip automatically at the speed you set. Just watch and absorb — ideal for passive review.",
+      "delayLabel": "Flip delay",
+      "perSide": "{{value}}s per side",
+      "startBtn": "Start →",
+      "playBtn": "Play",
+      "pauseBtn": "Pause",
+      "prevBtn": "← Prev",
+      "nextBtn": "Next →",
+      "done": "All done!",
+      "doneDesc": "You went through all {{count}} cards.",
+      "tryAgain": "Play again",
+      "backToPractice": "Back to Practice"
     }
   }
 }

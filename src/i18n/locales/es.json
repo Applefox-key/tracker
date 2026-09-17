@@ -157,11 +157,31 @@
       "resetYes": "Sí",
       "resetNo": "No",
       "fields": {
-        "word":    { "word": "Palabra",         "explanation": "Traducción",          "example": "Ejemplo" },
-        "phrase":  { "word": "Frase",           "explanation": "Traducción",          "example": "Nota" },
-        "grammar": { "word": "Punto gramatical","explanation": "Explicación",         "example": "Ejemplo" },
-        "idiom":   { "word": "Modismo",         "explanation": "Traducción / Significado","example": "Nota" },
-        "note":    { "word": "Título",          "explanation": "Explicación",         "example": "Ejemplo" }
+        "word": {
+          "word": "Palabra",
+          "explanation": "Traducción",
+          "example": "Ejemplo"
+        },
+        "phrase": {
+          "word": "Frase",
+          "explanation": "Traducción",
+          "example": "Nota"
+        },
+        "grammar": {
+          "word": "Punto gramatical",
+          "explanation": "Explicación",
+          "example": "Ejemplo"
+        },
+        "idiom": {
+          "word": "Modismo",
+          "explanation": "Traducción / Significado",
+          "example": "Nota"
+        },
+        "note": {
+          "word": "Título",
+          "explanation": "Explicación",
+          "example": "Ejemplo"
+        }
       }
     },
     "card": {
@@ -311,13 +331,38 @@
     "skip": "Omitir",
     "retryMistakes": "Repetir errores ({{count}})",
     "modes": {
-      "flashcards": { "label": "Tarjetas", "description": "Voltea las tarjetas para poner a prueba tu memoria" },
-      "quiz": { "label": "Quiz", "description": "Elige la respuesta correcta de 4 opciones" },
-      "match": { "label": "Emparejar", "description": "Conecta palabras con sus explicaciones" },
-      "puzzle": { "label": "Puzzle", "description": "Ordena letras o palabras en el orden correcto" },
-      "due": { "label": "Para hoy", "description": "Repasa las tarjetas programadas para hoy" },
-      "write": { "label": "Escribe la palabra", "description": "Escribe la palabra correcta a partir de su explicación" },
-      "custom": { "label": "Mezclador", "description": "Repasa tarjetas mezclando todos los modos de juego" }
+      "flashcards": {
+        "label": "Tarjetas",
+        "description": "Voltea las tarjetas para poner a prueba tu memoria"
+      },
+      "quiz": {
+        "label": "Quiz",
+        "description": "Elige la respuesta correcta de 4 opciones"
+      },
+      "match": {
+        "label": "Emparejar",
+        "description": "Conecta palabras con sus explicaciones"
+      },
+      "puzzle": {
+        "label": "Puzzle",
+        "description": "Ordena letras o palabras en el orden correcto"
+      },
+      "due": {
+        "label": "Para hoy",
+        "description": "Repasa las tarjetas programadas para hoy"
+      },
+      "write": {
+        "label": "Escribe la palabra",
+        "description": "Escribe la palabra correcta a partir de su explicación"
+      },
+      "custom": {
+        "label": "Mezclador",
+        "description": "Repasa tarjetas mezclando todos los modos de juego"
+      },
+      "autoFlashcards": {
+        "label": "Auto Tarjetas",
+        "description": "Las tarjetas giran automáticamente a la velocidad que elijas"
+      }
     },
     "custom": {
       "title": "Mezclador",
@@ -489,7 +534,11 @@
       "wrong": "Incorrecto",
       "correctAnswer": "Respuesta correcta:",
       "showExample": "Mostrar ejemplo…",
-      "diffLegend": { "missing": "faltante", "extra": "extra", "correct": "correcto" },
+      "diffLegend": {
+        "missing": "faltante",
+        "extra": "extra",
+        "correct": "correcto"
+      },
       "startWrite": "Empezar →",
       "next": "Siguiente →",
       "seeResults": "Ver resultados",
@@ -510,6 +559,21 @@
       "staleOnly": "Sin repasar 30+ días",
       "reviewLabel": "Repaso",
       "notPracticedToday": "Sin repasar hoy"
+    },
+    "autoFlashcards": {
+      "title": "Auto Tarjetas",
+      "helpDesc": "Las tarjetas giran automáticamente con el retraso que configures. Solo mira y absorbe — ideal para repaso pasivo.",
+      "delayLabel": "Retraso",
+      "perSide": "{{value}}s por lado",
+      "startBtn": "Empezar →",
+      "playBtn": "Reproducir",
+      "pauseBtn": "Pausa",
+      "prevBtn": "← Anterior",
+      "nextBtn": "Siguiente →",
+      "done": "¡Listo!",
+      "doneDesc": "Repasaste todas las {{count}} tarjetas.",
+      "tryAgain": "Jugar de nuevo",
+      "backToPractice": "Volver a práctica"
     }
   }
 }
