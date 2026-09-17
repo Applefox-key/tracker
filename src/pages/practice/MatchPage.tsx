@@ -52,9 +52,14 @@ export function MatchPage() {
   const [exitingIds, setExitingIds] = useState<Set<string>>(new Set());
   const [matchedPairsList, setMatchedPairsList] = useState<Array<{ word: string; explanation: string }>>([]);
 
-  const { reviewEntry } = useEntryCrud();
+  const { reviewEntry, logGameComplete } = useEntryCrud();
 
   const filteredEntries = usePracticeEntries("match", filters);
+
+  useEffect(() => {
+    if (phase === "done") logGameComplete();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   useEffect(() => {
     if (phase !== "playing") return;

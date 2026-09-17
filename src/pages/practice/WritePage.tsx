@@ -35,12 +35,17 @@ export function WritePage() {
   const [showExample, setShowExample] = useState(false);
 
   const filteredEntries = usePracticeEntries("write", filters);
-  const { reviewEntry } = useEntryCrud();
+  const { reviewEntry, logGameComplete } = useEntryCrud();
 
   const currentQuestion = questions[currentIdx] ?? null;
   const canStart = filteredEntries.length >= 1;
   const progressPct = questions.length > 0 ? Math.round((currentIdx / questions.length) * 100) : 0;
   const resultPct = phase === "done" && questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0;
+
+  useEffect(() => {
+    if (phase === "done") logGameComplete();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   useEffect(() => {
     if (phase === "playing" && answerState === "unanswered") {

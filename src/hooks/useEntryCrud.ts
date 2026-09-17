@@ -84,6 +84,12 @@ export function useEntryCrud() {
     }
   }
 
+  function logGameComplete() {
+    if (mode !== 'authenticated') return
+    entriesApi.logGameComplete().catch(() => {})
+    queryClient.invalidateQueries({ queryKey: ['weeklyStats'] })
+  }
+
   async function addBatchEntries(entries: BatchEntryInput[], tagIds: number[]): Promise<{ count: number }> {
     if (mode === 'authenticated') {
       const result = await entriesApi.batchCreateEntries(entries, tagIds)
@@ -96,5 +102,5 @@ export function useEntryCrud() {
     }
   }
 
-  return { addEntry, updateEntry, removeEntry, reviewEntry, resetMastery, addBatchEntries }
+  return { addEntry, updateEntry, removeEntry, reviewEntry, resetMastery, addBatchEntries, logGameComplete }
 }

@@ -24,7 +24,7 @@
     "motivateMorning": "Gotowy na naukę dziś?",
     "motivateAfternoon": "Nie zatrzymuj się!",
     "motivateEvening": "Zakończ dzień czymś nowym!",
-    "dueToday": "🎯 {{count}} na dziś",
+    "dueToday": "{{count}} na dziś",
     "more": "Więcej"
   },
   "dashboard": {
@@ -62,8 +62,11 @@
     "recentEntries": "Ostatnie wpisy",
     "viewAll": "Wszystkie →",
     "weeklyActivity": "Aktywność tygodniowa",
+    "viewActivity": "Szczegóły →",
     "tooltipEntries": "Dodano",
-    "tooltipReviews": "Powtórzeń",
+    "tooltipReviews": "Oceniono",
+    "tooltipGames": "Gier",
+    "tooltipTotal": "Łącznie",
     "days": "dni",
     "dueTodaySub": "karty do powtórki",
     "dueTodayNone": "Wszystko zrobione!",
@@ -88,6 +91,18 @@
       "idiom": "Idiomy",
       "note": "Notatki"
     }
+  },
+  "activity": {
+    "title": "Historia aktywności",
+    "heatmap": "Kalendarz",
+    "last8Weeks": "Ostatnie 8 tygodni",
+    "selectHint": "Dotknij dnia, aby zobaczyć szczegóły",
+    "weeklyBreakdown": "Podział tygodniowy",
+    "longestStreak": "Najdłuższa seria",
+    "bestDay": "Najlepszy dzień",
+    "bestWeek": "Najlepszy tydzień",
+    "legendLess": "Mniej",
+    "legendMore": "Więcej"
   },
   "entries": {
     "title": "Wpisy",

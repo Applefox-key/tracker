@@ -24,7 +24,7 @@
     "motivateMorning": "Починаємо день з нового?",
     "motivateAfternoon": "Продовжуємо навчатися!",
     "motivateEvening": "Завершуємо день продуктивно!",
-    "dueToday": "🎯 {{count}} на сьог.",
+    "dueToday": "{{count}} на сьог.",
     "more": "Ще"
   },
   "dashboard": {
@@ -70,8 +70,11 @@
     "recentEntries": "Останні записи",
     "viewAll": "Всі →",
     "weeklyActivity": "Активність за тиждень",
+    "viewActivity": "Детальніше →",
     "tooltipEntries": "Додано",
-    "tooltipReviews": "Повторень",
+    "tooltipReviews": "Оцінено",
+    "tooltipGames": "Ігор",
+    "tooltipTotal": "Всього",
     "days": "днів",
     "dueTodaySub": "картки на повторення",
     "dueTodayNone": "Всe гаразд!",
@@ -96,6 +99,18 @@
       "idiom": "Ідіоми",
       "note": "Нотатки"
     }
+  },
+  "activity": {
+    "title": "Історія активності",
+    "heatmap": "Календар",
+    "last8Weeks": "Останні 8 тижнів",
+    "selectHint": "Натисніть на день, щоб побачити деталі",
+    "weeklyBreakdown": "По тижнях",
+    "longestStreak": "Найдовша серія",
+    "bestDay": "Найкращий день",
+    "bestWeek": "Найкращий тиждень",
+    "legendLess": "Менше",
+    "legendMore": "Більше"
   },
   "entries": {
     "title": "Записи",

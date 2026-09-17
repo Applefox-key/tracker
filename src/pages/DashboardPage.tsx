@@ -306,14 +306,14 @@ function WeeklyActivityChip({
       return {
         entries_added: stat.entries_added,
         reviews_count: stat.reviews_count,
+        games_completed: stat.games_completed ?? 0,
         letter: d.toLocaleDateString(i18n.language, { weekday: "narrow" }),
         isToday: stat.date === today,
       };
     });
   }, [weeklyStats, i18n.language]);
 
-  const maxEntries = Math.max(...days.map((d) => d.entries_added), 1);
-  const maxReviews = Math.max(...days.map((d) => d.reviews_count), 1);
+  const maxTotal = Math.max(...days.map((d) => d.entries_added + d.reviews_count + d.games_completed), 1);
 
   const lastDay = days[days.length - 1];
   const lapNumber = streak > 0 ? Math.ceil(streak / 7) : 0;
@@ -338,8 +338,16 @@ function WeeklyActivityChip({
 
   return (
     <div className="flex flex-col gap-1 px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-sm">
-      {/* Top row: [pie] [text flex-1] [badge] [today stats] */}
+      <div className="flex items-center justify-between mb-0.5">
+        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">{t("dashboard.weeklyActivity")}</p>
+        <Link
+          to="/activity"
+          className="text-xs text-gray-400 dark:text-gray-500 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
+          {t("dashboard.viewActivity")}
+        </Link>
+      </div>
 
+      {/* Top row: [pie] [text flex-1] [badge] [today stats] */}
       <div className="flex items-center gap-2">
         <StreakCake3D streak={streak} small />
         <div className="flex-1 min-w-0">
@@ -368,6 +376,10 @@ function WeeklyActivityChip({
             <span className="w-2 h-2 rounded-[2px] bg-indigo-400" />
             {lastDay?.reviews_count ?? 0} {t("dashboard.tooltipReviews")}
           </span>
+          <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
+            <span className="w-2 h-2 rounded-[2px] bg-amber-400" />
+            {lastDay?.games_completed ?? 0} {t("dashboard.tooltipGames")}
+          </span>
         </div>
       </div>
       {lapNumber >= 2 && (
@@ -378,29 +390,28 @@ function WeeklyActivityChip({
           <StreakFruits completedLaps={Math.floor(streak / 7)} max={12} small />
         </div>
       )}
-      {/* Bottom: full-width bar chart */}
+      {/* Bottom: full-width stacked bar chart */}
       <div className="flex flex-col gap-1">
-        <div className="flex items-end gap-[10px] h-10">
-          {days.map((d, i) => (
-            <div key={i} className="flex-1 flex items-end gap-[1px]" style={{ height: "100%" }}>
-              {d.entries_added > 0 ? (
-                <div
-                  className="flex-1 rounded-t-md bg-emerald-400 dark:bg-emerald-400 transition-all duration-300"
-                  style={{ height: `${Math.max((d.entries_added / maxEntries) * 100, 18)}%` }}
-                />
-              ) : (
-                <div className="flex-1 rounded-t-md bg-gray-300 dark:bg-gray-600/40" style={{ height: "3px" }} />
-              )}
-              {d.reviews_count > 0 ? (
-                <div
-                  className="flex-1 rounded-t-md bg-indigo-400 dark:bg-indigo-400 transition-all duration-300"
-                  style={{ height: `${Math.max((d.reviews_count / maxReviews) * 100, 18)}%` }}
-                />
-              ) : (
-                <div className="flex-1 rounded-t-md bg-gray-300 dark:bg-gray-600/40" style={{ height: "3px" }} />
-              )}
-            </div>
-          ))}
+        <div className="flex items-end gap-[6px] h-10">
+          {days.map((d, i) => {
+            const total = d.entries_added + d.reviews_count + d.games_completed;
+            const barH = total > 0 ? Math.max((total / maxTotal) * 100, 18) : 0;
+            return (
+              <div key={i} className="flex-1 flex flex-col justify-end" style={{ height: "100%" }}>
+                {total > 0 ? (
+                  <div
+                    className="w-full rounded-t-md overflow-hidden flex flex-col-reverse transition-all duration-300"
+                    style={{ height: `${barH}%` }}>
+                    <div style={{ flex: d.entries_added || 0 }} className="bg-emerald-400 dark:bg-emerald-400" />
+                    <div style={{ flex: d.reviews_count || 0 }} className="bg-indigo-400" />
+                    <div style={{ flex: d.games_completed || 0 }} className="bg-amber-400" />
+                  </div>
+                ) : (
+                  <div className="w-full bg-gray-300 dark:bg-gray-600/40 rounded-t-sm" style={{ height: "3px" }} />
+                )}
+              </div>
+            );
+          })}
         </div>
         <div className="flex gap-[3px]">
           {days.map((d, i) => (
@@ -409,7 +420,7 @@ function WeeklyActivityChip({
                 className={`text-[9px] font-medium leading-none select-none ${
                   d.isToday
                     ? "text-emerald-500 dark:text-emerald-400 font-bold"
-                    : d.entries_added + d.reviews_count > 0
+                    : d.entries_added + d.reviews_count + d.games_completed > 0
                       ? "text-gray-600 dark:text-gray-400"
                       : "text-gray-400 dark:text-gray-600"
                 }`}>
@@ -524,66 +535,85 @@ function DesktopWeeklyActivity({ weeklyStats }: { weeklyStats: DayStat[] }) {
       return {
         entries_added: stat.entries_added,
         reviews_count: stat.reviews_count,
+        games_completed: stat.games_completed ?? 0,
         letter: d.toLocaleDateString(i18n.language, { weekday: "narrow" }),
         isToday: stat.date === today,
       };
     });
   }, [weeklyStats, i18n.language]);
 
-  const maxEntries = Math.max(...days.map((d) => d.entries_added), 1);
-  const maxReviews = Math.max(...days.map((d) => d.reviews_count), 1);
+  const maxTotal = Math.max(...days.map((d) => d.entries_added + d.reviews_count + d.games_completed), 1);
 
   return (
     <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-5 flex flex-col gap-3 shadow-sm">
-      <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">{t("dashboard.weeklyActivity")}</p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">{t("dashboard.weeklyActivity")}</p>
+        <Link
+          to="/activity"
+          className="text-xs text-gray-400 dark:text-gray-500 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
+          {t("dashboard.viewActivity")}
+        </Link>
+      </div>
       <div className="flex items-end gap-2 flex-1" style={{ minHeight: "80px" }}>
-        {days.map((d, i) => (
-          <div
-            key={i}
-            className="flex-1 flex flex-col items-center gap-1.5 relative"
-            onMouseEnter={() => setHoveredIdx(i)}
-            onMouseLeave={() => setHoveredIdx(null)}>
-            {hoveredIdx === i && (
-              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-10 bg-gray-900 dark:bg-gray-700 text-white rounded-lg px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none flex flex-col gap-1">
-                <div className="flex items-center gap-1.5 text-[11px]">
-                  <span className="w-2 h-2 rounded-sm bg-emerald-400 shrink-0" />
-                  <span className="text-gray-300">{t("dashboard.tooltipEntries")}:</span>
-                  <span className="font-semibold">{d.entries_added}</span>
+        {days.map((d, i) => {
+          const total = d.entries_added + d.reviews_count + d.games_completed;
+          const barH = total > 0 ? Math.max((total / maxTotal) * 100, 15) : 0;
+          return (
+            <div
+              key={i}
+              className="flex-1 flex flex-col items-center gap-1.5 relative"
+              onMouseEnter={() => setHoveredIdx(i)}
+              onMouseLeave={() => setHoveredIdx(null)}>
+              {hoveredIdx === i && (
+                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-10 bg-gray-900 dark:bg-gray-700 text-white rounded-lg px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none flex flex-col gap-1">
+                  <div className="flex items-center gap-1.5 text-[11px]">
+                    <span className="w-2 h-2 rounded-sm bg-emerald-400 shrink-0" />
+                    <span className="text-gray-300">{t("dashboard.tooltipEntries")}:</span>
+                    <span className="font-semibold">{d.entries_added}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[11px]">
+                    <span className="w-2 h-2 rounded-sm bg-indigo-400 shrink-0" />
+                    <span className="text-gray-300">{t("dashboard.tooltipReviews")}:</span>
+                    <span className="font-semibold">{d.reviews_count}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[11px]">
+                    <span className="w-2 h-2 rounded-sm bg-amber-400 shrink-0" />
+                    <span className="text-gray-300">{t("dashboard.tooltipGames")}:</span>
+                    <span className="font-semibold">{d.games_completed}</span>
+                  </div>
+                  <div className="border-t border-gray-700 dark:border-gray-500 pt-1 mt-0.5 flex items-center justify-between gap-3 text-[11px]">
+                    <span className="text-gray-400">{t("dashboard.tooltipTotal")}:</span>
+                    <span className="font-bold">{total}</span>
+                  </div>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-gray-700" />
                 </div>
-                <div className="flex items-center gap-1.5 text-[11px]">
-                  <span className="w-2 h-2 rounded-sm bg-indigo-400 shrink-0" />
-                  <span className="text-gray-300">{t("dashboard.tooltipReviews")}:</span>
-                  <span className="font-semibold">{d.reviews_count}</span>
-                </div>
-                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-gray-700" />
+              )}
+              <div className="w-full flex flex-col justify-end" style={{ height: "64px" }}>
+                {total > 0 ? (
+                  <div
+                    className="w-full rounded-t-md overflow-hidden flex flex-col-reverse transition-all duration-300"
+                    style={{ height: `${barH}%` }}>
+                    <div style={{ flex: d.entries_added || 0 }} className="bg-emerald-400 dark:bg-emerald-500" />
+                    <div style={{ flex: d.reviews_count || 0 }} className="bg-indigo-400" />
+                    <div style={{ flex: d.games_completed || 0 }} className="bg-amber-400" />
+                  </div>
+                ) : (
+                  <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-t-sm" style={{ height: "4px" }} />
+                )}
               </div>
-            )}
-            <div className="w-full flex items-end " style={{ height: "64px" }}>
-              <div
-                className={`flex-1 rounded-t-md transition-all duration-300 ${d.entries_added > 0 ? "bg-emerald-400 dark:bg-emerald-500" : "bg-gray-200 dark:bg-gray-600"}`}
-                style={{
-                  height: d.entries_added > 0 ? `${Math.max((d.entries_added / maxEntries) * 100, 15)}%` : "4px",
-                }}
-              />
-              <div
-                className={`flex-1 rounded-t-md transition-all duration-300 ${d.reviews_count > 0 ? "bg-indigo-400 dark:bg-indigo-400" : "bg-gray-200 dark:bg-gray-600"}`}
-                style={{
-                  height: d.reviews_count > 0 ? `${Math.max((d.reviews_count / maxReviews) * 100, 15)}%` : "4px",
-                }}
-              />
+              <span
+                className={`text-[10px] font-medium select-none ${
+                  d.isToday
+                    ? "text-emerald-500 dark:text-emerald-400 font-bold"
+                    : total > 0
+                      ? "text-gray-600 dark:text-gray-400"
+                      : "text-gray-400 dark:text-gray-600"
+                }`}>
+                {d.letter}
+              </span>
             </div>
-            <span
-              className={`text-[10px] font-medium select-none ${
-                d.isToday
-                  ? "text-emerald-500 dark:text-emerald-400 font-bold"
-                  : d.entries_added + d.reviews_count > 0
-                    ? "text-gray-600 dark:text-gray-400"
-                    : "text-gray-400 dark:text-gray-600"
-              }`}>
-              {d.letter}
-            </span>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -984,6 +1014,7 @@ export function DashboardPage() {
             return t >= from && t < to;
           }).length,
           reviews_count: 0,
+          games_completed: 0,
         };
       }),
     [entries],

@@ -153,15 +153,6 @@ export function Layout() {
         <div className="max-w-full 3xl:max-w-[2000px] mx-auto px-4 sm:px-6 relative flex items-center justify-between h-16">
           {/* Left: due badge (mobile) | logo (desktop) */}
           <div className="flex items-center gap-2">
-            {dueCount !== null && dueCount > 0 ? (
-              <Link
-                to="/practice/due"
-                className="sm:hidden text-xs font-bold text-violet-600 dark:text-violet-400 whitespace-nowrap bg-violet-100 dark:bg-violet-900/40 px-2.5 py-3 rounded-full leading-tight">
-                {t("layout.dueToday", { count: dueCount })}
-              </Link>
-            ) : (
-              <div className="sm:hidden w-8" />
-            )}
             {/* Logo - desktop only */}
             <span className="hidden sm:inline text-xl font-bold text-emerald-600 tracking-tight">
               {t("layout.logo")}
@@ -170,7 +161,7 @@ export function Layout() {
 
           {/* Title / Greeting - mobile only, absolutely centered */}
           {isDashboard ? (
-            <div className="sm:hidden absolute left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none">
+            <div className="sm:hidden absolute left-3  flex flex-col items-left pointer-events-none">
               <span className="text-base font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">
                 {user?.name ? t("layout.greeting", { name: user.name.split(" ")[0] }) : t("layout.greetingAnon")}
               </span>
@@ -464,7 +455,14 @@ export function Layout() {
             .filter(({ to }) => to !== "/tags" && to !== "/about")
             .map(({ to, labelKey, icon }) => (
               <NavLink key={to} to={to} end className={bottomNavLinkCls} onClick={() => setBurgerOpen(false)}>
-                <span className="text-xl leading-none">{icon}</span>
+                <span className="relative text-xl leading-none">
+                  {icon}
+                  {to === "/practice" && dueCount !== null && dueCount > 0 && (
+                    <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-[3px] rounded-full bg-red-500 text-white text-[10px] font-bold leading-4 flex items-center justify-center pointer-events-none">
+                      {dueCount > 99 ? "99+" : dueCount}
+                    </span>
+                  )}
+                </span>
                 <span>{t(labelKey)}</span>
               </NavLink>
             ))}

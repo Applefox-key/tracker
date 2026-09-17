@@ -35,9 +35,14 @@ export function PuzzlePage() {
   const [score, setScore] = useState(0);
   const [wrongEntries, setWrongEntries] = useState<Entry[]>([]);
 
-  const { reviewEntry } = useEntryCrud();
+  const { reviewEntry, logGameComplete } = useEntryCrud();
 
   const filteredEntries = usePracticeEntries("puzzle", filters);
+
+  useEffect(() => {
+    if (phase === "done") logGameComplete();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   useEffect(() => {
     if (phase !== "playing") return;

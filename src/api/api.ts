@@ -9,11 +9,20 @@ export interface DayStat {
   date: string           // YYYY-MM-DD
   entries_added: number
   reviews_count: number
+  games_completed: number
 }
 
 export interface WeeklyStatsResponse {
   days: DayStat[]
   streak: number
+}
+
+export interface ActivityHistoryResponse {
+  days: DayStat[]
+  totals: { entries: number; reviews: number; games: number }
+  best_day: number
+  current_streak: number
+  longest_streak: number
 }
 
 // ── Raw server shapes ──────────────────────────────────────────────────────
@@ -274,6 +283,17 @@ export const entriesApi = {
   async getWeeklyStats(): Promise<WeeklyStatsResponse> {
     const tz = -new Date().getTimezoneOffset()
     const res = await apiClient.get<WeeklyStatsResponse>(`/entries/stats/weekly?tz=${tz}`)
+    return res.data
+  },
+
+  async logGameComplete(): Promise<void> {
+    const tz = -new Date().getTimezoneOffset()
+    await apiClient.post(`/entries/stats/game-complete?tz=${tz}`)
+  },
+
+  async getActivityHistory(weeks = 8): Promise<ActivityHistoryResponse> {
+    const tz = -new Date().getTimezoneOffset()
+    const res = await apiClient.get<ActivityHistoryResponse>(`/entries/stats/history?tz=${tz}&weeks=${weeks}`)
     return res.data
   },
 

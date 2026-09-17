@@ -24,7 +24,7 @@
     "motivateMorning": "Ready to learn today?",
     "motivateAfternoon": "Keep the momentum going!",
     "motivateEvening": "End the day with something new!",
-    "dueToday": "🎯 {{count}} due",
+    "dueToday": "{{count}} due",
     "more": "More"
   },
   "dashboard": {
@@ -60,8 +60,11 @@
     "recentEntries": "Recent Entries",
     "viewAll": "View all →",
     "weeklyActivity": "Weekly Activity",
+    "viewActivity": "Details →",
     "tooltipEntries": "Added",
-    "tooltipReviews": "Reviews",
+    "tooltipReviews": "Rated",
+    "tooltipGames": "Games",
+    "tooltipTotal": "Total",
     "days": "days",
     "dueTodaySub": "cards to review",
     "dueTodayNone": "All caught up!",
@@ -87,6 +90,18 @@
       "idiom": "Idioms",
       "note": "Notes"
     }
+  },
+  "activity": {
+    "title": "Activity History",
+    "heatmap": "Calendar",
+    "last8Weeks": "Last 8 weeks",
+    "selectHint": "Select a day to see details",
+    "weeklyBreakdown": "Weekly Breakdown",
+    "longestStreak": "Longest Streak",
+    "bestDay": "Best Day",
+    "bestWeek": "Best Week",
+    "legendLess": "Less",
+    "legendMore": "More"
   },
   "entries": {
     "title": "Entries",

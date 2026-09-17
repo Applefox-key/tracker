@@ -47,7 +47,12 @@ export function QuizPage() {
   const [wrongEntries, setWrongEntries] = useState<Entry[]>([]);
 
   const filteredEntries = usePracticeEntries("quiz", filters);
-  const { reviewEntry } = useEntryCrud();
+  const { reviewEntry, logGameComplete } = useEntryCrud();
+
+  useEffect(() => {
+    if (phase === "done") logGameComplete();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   useEffect(() => {
     if (phase !== "playing") return;

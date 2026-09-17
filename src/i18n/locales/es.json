@@ -24,7 +24,7 @@
     "motivateMorning": "¿Listo para aprender hoy?",
     "motivateAfternoon": "¡Sigue adelante!",
     "motivateEvening": "¡Termina el día aprendiendo algo nuevo!",
-    "dueToday": "🎯 {{count}} para hoy",
+    "dueToday": "{{count}} para hoy",
     "more": "Más"
   },
   "dashboard": {
@@ -60,8 +60,11 @@
     "recentEntries": "Entradas recientes",
     "viewAll": "Ver todo →",
     "weeklyActivity": "Actividad semanal",
+    "viewActivity": "Ver más →",
     "tooltipEntries": "Añadidas",
-    "tooltipReviews": "Repasos",
+    "tooltipReviews": "Calificadas",
+    "tooltipGames": "Juegos",
+    "tooltipTotal": "Total",
     "days": "días",
     "dueTodaySub": "tarjetas para repasar",
     "dueTodayNone": "¡Todo al día!",
@@ -86,6 +89,18 @@
       "idiom": "Modismos",
       "note": "Notas"
     }
+  },
+  "activity": {
+    "title": "Historial de actividad",
+    "heatmap": "Calendario",
+    "last8Weeks": "Últimas 8 semanas",
+    "selectHint": "Toca un día para ver los detalles",
+    "weeklyBreakdown": "Resumen semanal",
+    "longestStreak": "Racha más larga",
+    "bestDay": "Mejor día",
+    "bestWeek": "Mejor semana",
+    "legendLess": "Menos",
+    "legendMore": "Más"
   },
   "entries": {
     "title": "Entradas",
