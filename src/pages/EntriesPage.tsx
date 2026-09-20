@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/shared/ui/Button";
 import { RatingMultiSelect } from "@/shared/ui/RatingMultiSelect";
 import { RatingStars } from "@/shared/ui/RatingStars";
@@ -11,8 +12,10 @@ import { EditEntryModal } from "@/features/entries/components/EditEntryModal";
 import { EntryDetailModal } from "@/features/entries/components/EntryDetailModal";
 import { ImportBundleModal } from "@/features/entries/components/ImportBundleModal";
 import { useEntries, DateFilter, PracticeFilter } from "@/features/entries/hooks/useEntries";
+import { useEntryCrud } from "@/hooks/useEntryCrud";
+import { entryTagsApi } from "@/api/api";
 import { Entry, EntryCategory } from "@/features/entries/types";
-import { TbTargetArrow, TbCrown } from "react-icons/tb";
+import { TbTargetArrow, TbCrown, TbTagPlus } from "react-icons/tb";
 import { AddEntryFab } from "@/features/entries/components/AddEntryFab";
 import { TfiPanel } from "react-icons/tfi";
 import Masonry from "react-masonry-css";
@@ -20,6 +23,7 @@ import { CgExport, CgImport } from "react-icons/cg";
 
 export function EntriesPage() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   const CATEGORIES: Array<{ value: EntryCategory | "all"; label: string }> = [
     { value: "all", label: t("entries.all") },
@@ -39,6 +43,8 @@ export function EntriesPage() {
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const addMenuRef = useRef<HTMLDivElement>(null);
+  const [bulkTagId, setBulkTagId] = useState<number | null>(null);
+  const [selectedEntryIds, setSelectedEntryIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -60,6 +66,10 @@ export function EntriesPage() {
   useEffect(() => {
     if (location.state?.openCreateForm) {
       setShowForm(true);
+      navigate(location.pathname, { replace: true, state: null });
+    }
+    if (location.state?.bulkTagId) {
+      setBulkTagId(location.state.bulkTagId as number);
       navigate(location.pathname, { replace: true, state: null });
     }
   }, [location, navigate]);
@@ -90,6 +100,8 @@ export function EntriesPage() {
     removeEntry,
   } = useEntries(initialDateFilter, initialCategoryFilter, initialMasteredOnly);
 
+  const { updateEntry } = useEntryCrud();
+
   const advancedFilterCount = [
     filterCategory !== "all",
     selectedTag !== null,
@@ -104,6 +116,30 @@ export function EntriesPage() {
     const { tagIds, imgFile, removeImg: _, ...entryData } = values;
     addEntry({ ...entryData, tags: [] }, tagIds, imgFile ?? undefined);
     setShowForm(false);
+  }
+
+  function toggleEntrySelection(id: number) {
+    setSelectedEntryIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  async function applyBulkTag() {
+    if (!bulkTagId) return;
+    const entryIds = entries.filter((e) => selectedEntryIds.has(e.id)).map((e) => e.id);
+    if (entryIds.length === 0) return;
+    await entryTagsApi.bulkAssignTag(bulkTagId, entryIds);
+    await queryClient.invalidateQueries({ queryKey: ["entries"] });
+    setBulkTagId(null);
+    setSelectedEntryIds(new Set());
+  }
+
+  function cancelBulkTag() {
+    setBulkTagId(null);
+    setSelectedEntryIds(new Set());
   }
 
   const filterBtnInactive =
@@ -159,6 +195,14 @@ export function EntriesPage() {
               staleFilter={staleFilter}
               setStaleFilter={setStaleFilter}
               filterBtnActive={filterBtnActive}
+              bulkTagId={bulkTagId}
+              onBulkTag={(tagId) => {
+                if (bulkTagId === tagId) cancelBulkTag();
+                else {
+                  setBulkTagId(tagId);
+                  setSelectedEntryIds(new Set());
+                }
+              }}
               sidebar
             />
           </div>
@@ -247,6 +291,43 @@ export function EntriesPage() {
               )}
             </div>
           </div>
+
+          {/* Bulk tag mode banner */}
+          {bulkTagId !== null && (
+            <div className="flex items-center gap-2 px-3 py-2 bg-emerald-600 rounded-lg text-sm">
+              <span className="flex-1 truncate min-w-0 text-white font-medium">
+                {t("entries.bulkTag.banner", { tag: allTags.find((tg) => tg.id === bulkTagId)?.name ?? "" })}
+              </span>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => {
+                    const selectable = entries.filter((e) => !e.tags.some((t) => t.id === bulkTagId)).map((e) => e.id);
+                    if (selectedEntryIds.size === selectable.length && selectable.length > 0)
+                      setSelectedEntryIds(new Set());
+                    else setSelectedEntryIds(new Set(selectable));
+                  }}
+                  className="text-xs font-medium text-emerald-100 hover:text-white transition-colors underline underline-offset-2">
+                  {selectedEntryIds.size > 0
+                    ? t("entries.bulkTag.deselectAll")
+                    : t("entries.bulkTag.selectAll")}
+                </button>
+                <span className="text-emerald-200 text-xs">
+                  {t("entries.bulkTag.selected", { count: selectedEntryIds.size })}
+                </span>
+                <button
+                  onClick={applyBulkTag}
+                  disabled={selectedEntryIds.size === 0}
+                  className="px-3 py-1 bg-white text-emerald-700 font-semibold rounded-md text-xs disabled:opacity-40 disabled:cursor-not-allowed hover:bg-emerald-50 transition-colors">
+                  {t("entries.bulkTag.apply")}
+                </button>
+                <button
+                  onClick={cancelBulkTag}
+                  className="px-2 py-1 border border-emerald-400 text-emerald-100 hover:text-white hover:border-white rounded-md text-xs transition-colors">
+                  {t("entries.bulkTag.cancel")}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Entry count + view toggle */}
           <div className="flex items-center justify-between px-1 sm:px-0">
@@ -360,21 +441,112 @@ export function EntriesPage() {
             breakpointCols={{ default: 3, 2000: 2, 639: 1 }}
             className="flex gap-4 w-full"
             columnClassName="flex flex-col gap-4 flex-1 min-w-0">
-            {entries.map((entry) => (
-              <EntryCard
-                key={entry.id}
-                entry={entry}
-                onRemove={(id) => setConfirmDeleteEntry(entries.find((e) => e.id === id) ?? null)}
-                onEdit={setEditingEntry}
-                onView={setViewingEntry}
-              />
-            ))}
+            {entries.map((entry) => {
+              const isSelected = selectedEntryIds.has(entry.id);
+              const alreadyHasTag = bulkTagId !== null && entry.tags.some((t) => t.id === bulkTagId);
+              return bulkTagId !== null ? (
+                <div
+                  key={entry.id}
+                  onClick={alreadyHasTag ? undefined : () => toggleEntrySelection(entry.id)}
+                  className={[
+                    "relative rounded-xl ring-2 transition-all",
+                    alreadyHasTag
+                      ? "opacity-50 cursor-default ring-transparent"
+                      : isSelected
+                        ? "cursor-pointer ring-emerald-500 shadow-md shadow-emerald-200 dark:shadow-emerald-900/30"
+                        : "cursor-pointer ring-transparent",
+                  ].join(" ")}>
+                  <div className="absolute top-2 left-2 z-20 pointer-events-none">
+                    <div
+                      className={[
+                        "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors",
+                        alreadyHasTag
+                          ? "bg-emerald-100 dark:bg-emerald-900/40 border-emerald-400 dark:border-emerald-600"
+                          : isSelected
+                            ? "bg-emerald-500 border-emerald-500"
+                            : "bg-white/90 dark:bg-gray-800/90 border-gray-300 dark:border-gray-500",
+                      ].join(" ")}>
+                      {(isSelected || alreadyHasTag) && (
+                        <svg
+                          className={["w-3 h-3", alreadyHasTag ? "text-emerald-500 dark:text-emerald-400" : "text-white"].join(" ")}
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round">
+                          <path d="M2 6l3 3 5-5" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                  <div className="pointer-events-none">
+                    <EntryCard
+                      entry={entry}
+                      onRemove={(id) => setConfirmDeleteEntry(entries.find((e) => e.id === id) ?? null)}
+                      onEdit={setEditingEntry}
+                      onView={setViewingEntry}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <EntryCard
+                  key={entry.id}
+                  entry={entry}
+                  onRemove={(id) => setConfirmDeleteEntry(entries.find((e) => e.id === id) ?? null)}
+                  onEdit={setEditingEntry}
+                  onView={setViewingEntry}
+                />
+              );
+            })}
           </Masonry>
         ) : (
           <div className="w-full flex flex-col rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
-            {entries.map((entry) => (
-              <EntryHeaderStrip key={entry.id} entry={entry} onView={setViewingEntry} />
-            ))}
+            {entries.map((entry) => {
+              const isSelected = selectedEntryIds.has(entry.id);
+              const alreadyHasTag = bulkTagId !== null && entry.tags.some((t) => t.id === bulkTagId);
+              return (
+                <div key={entry.id} className={["relative", alreadyHasTag ? "opacity-50" : ""].join(" ")}>
+                  {bulkTagId !== null && (
+                    <div
+                      className={[
+                        "absolute inset-0 z-10 flex items-center pl-4",
+                        alreadyHasTag ? "cursor-default" : "cursor-pointer",
+                        !alreadyHasTag && isSelected ? "bg-emerald-500/10" : "",
+                      ].join(" ")}
+                      onClick={alreadyHasTag ? undefined : () => toggleEntrySelection(entry.id)}>
+                      <div
+                        className={[
+                          "w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors",
+                          alreadyHasTag
+                            ? "bg-emerald-100 dark:bg-emerald-900/40 border-emerald-400 dark:border-emerald-600"
+                            : isSelected
+                              ? "bg-emerald-500 border-emerald-500"
+                              : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600",
+                        ].join(" ")}>
+                        {(isSelected || alreadyHasTag) && (
+                          <svg
+                            className={["w-3 h-3", alreadyHasTag ? "text-emerald-500 dark:text-emerald-400" : "text-white"].join(" ")}
+                            viewBox="0 0 12 12"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round">
+                            <path d="M2 6l3 3 5-5" />
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  <EntryHeaderStrip
+                    entry={entry}
+                    onView={setViewingEntry}
+                    onRatingChange={(v) => updateEntry(entry.id, { rating: v })}
+                  />
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -450,6 +622,14 @@ export function EntriesPage() {
             staleFilter={staleFilter}
             setStaleFilter={setStaleFilter}
             filterBtnActive={filterBtnActive}
+            bulkTagId={bulkTagId}
+            onBulkTag={(tagId) => {
+              if (bulkTagId === tagId) cancelBulkTag();
+              else {
+                setBulkTagId(tagId);
+                setSelectedEntryIds(new Set());
+              }
+            }}
             inDrawer
           />
         </SideDrawer>
@@ -524,7 +704,15 @@ const masteryColors: Record<number, string> = {
   5: "bg-emerald-400",
 };
 
-function EntryHeaderStrip({ entry, onView }: { entry: Entry; onView: (e: Entry) => void }) {
+function EntryHeaderStrip({
+  entry,
+  onView,
+  onRatingChange,
+}: {
+  entry: Entry;
+  onView: (e: Entry) => void;
+  onRatingChange: (v: number) => void;
+}) {
   const { t } = useTranslation();
   return (
     <div
@@ -550,7 +738,9 @@ function EntryHeaderStrip({ entry, onView }: { entry: Entry; onView: (e: Entry) 
       </div>
       <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
         {entry.mastery_level === 5 && <TbCrown className="shrink-0 text-emerald-400 text-base" title="Mastered" />}
-        <RatingStars value={entry.rating} readOnly />
+        <span onClick={(e) => e.stopPropagation()}>
+          <RatingStars value={entry.rating} onChange={onRatingChange} starClassName="text-base" />
+        </span>
         <p className="shrink-0 text-xs text-gray-400 dark:text-gray-500 hidden sm:block tabular-nums">
           {new Date(entry.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
         </p>{" "}
@@ -599,6 +789,8 @@ interface AdvancedFiltersPanelProps {
   filterBtnActive: string;
   inDrawer?: boolean;
   sidebar?: boolean;
+  bulkTagId?: number | null;
+  onBulkTag?: (tagId: number) => void;
 }
 
 function AdvancedFiltersPanel({
@@ -618,6 +810,8 @@ function AdvancedFiltersPanel({
   filterBtnActive,
   inDrawer,
   sidebar,
+  bulkTagId,
+  onBulkTag,
 }: AdvancedFiltersPanelProps) {
   const { t } = useTranslation();
   const labelCls = sidebar
@@ -696,14 +890,28 @@ function AdvancedFiltersPanel({
       {allTags.length > 0 && (
         <div className={`flex flex-col ${sectionGap}`}>
           <span className={labelCls}>{t("entries.tagLabel")}</span>
-          <div className={`flex ${gapCls} flex-wrap`}>
+          <div className={`flex ${gapCls} flex-wrap `}>
             {allTags.map((tag) => (
-              <button
-                key={tag.id}
-                onClick={() => setSelectedTag(selectedTag === tag.id ? null : tag.id)}
-                className={[btnCls, selectedTag === tag.id ? filterBtnActive : tagBtnInactive].join(" ")}>
-                #{tag.name}
-              </button>
+              <div key={tag.id} className="group inline-flex items-center gap-1 relative">
+                <button
+                  onClick={() => setSelectedTag(selectedTag === tag.id ? null : tag.id)}
+                  className={[btnCls, selectedTag === tag.id ? filterBtnActive : tagBtnInactive].join(" ")}>
+                  #{tag.name}
+                </button>
+                {onBulkTag && (
+                  <button
+                    onClick={() => onBulkTag(tag.id)}
+                    title={t("entries.bulkTag.assignBtn")}
+                    className={[
+                      "absolute -top-[10px] -right-[11px]  shrink-0 p-1 rounded-full border transition-all",
+                      bulkTagId === tag.id
+                        ? "bg-emerald-100 dark:bg-emerald-900/40 border-emerald-400 dark:border-emerald-500 text-emerald-600 dark:text-emerald-400"
+                        : "border-transparent text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 opacity-0 group-hover:opacity-100",
+                    ].join(" ")}>
+                    <TbTagPlus className=" w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
             ))}
           </div>
         </div>

@@ -84,16 +84,20 @@ export function FlashcardGame({ entry, onGrade, onSkip, isIntro, onIntroComplete
 
   const gradeButtons = isFlipped ? isIntro ? introButtons : <GradeButtons onGrade={onGrade} /> : null;
 
-  const skipButton = onSkip && !isIntro ? (
-    <button
-      onClick={onSkip}
-      className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-center">
-      {t("practice.skip")}
-    </button>
-  ) : null;
+  const skipButton =
+    onSkip && !isIntro ? (
+      <button
+        onClick={onSkip}
+        className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-center">
+        {t("practice.skip")}
+      </button>
+    ) : null;
 
   return (
-    <div className={["flex flex-col gap-4", isFlipped ? "pb-32 sm:pb-0" : (skipButton ? "pb-14 sm:pb-0" : "")].join(" ").trim()}>
+    <div
+      className={["flex flex-col gap-4", isFlipped ? "pb-32 sm:pb-0" : skipButton ? "pb-14 sm:pb-0" : ""]
+        .join(" ")
+        .trim()}>
       <FlashCard
         card={entryToCard(entry)}
         isFlipped={isFlipped}

@@ -50,7 +50,9 @@ export function useEntryCrud() {
     removeImg?: boolean,
   ) {
     if (mode === 'authenticated') {
-      await updateMutation.mutateAsync({ id, data, imgFile, removeImg })
+      if (Object.keys(data).length > 0 || imgFile != null || removeImg) {
+        await updateMutation.mutateAsync({ id, data, imgFile, removeImg })
+      }
       if (tagIds !== undefined) {
         await entryTagsApi.setEntryTags(id, tagIds)
         await queryClient.invalidateQueries({ queryKey: ['entries'] })

@@ -1,10 +1,12 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { useEntriesStore } from "@/features/entries/store/entriesStore";
 import { useEntryTags, useDeleteEntryTag } from "@/hooks/useEntries";
 import { entryTagsApi } from "@/api/api";
 import { useQueryClient } from "@tanstack/react-query";
+import { TbTagPlus } from "react-icons/tb";
 import type { EntryTag } from "@/features/entries/types";
 
 function TagRow({
@@ -12,11 +14,13 @@ function TagRow({
   usageCount,
   onRename,
   onDelete,
+  onBulkAssign,
 }: {
   tag: EntryTag;
   usageCount: number;
   onRename: (id: number, name: string) => Promise<void>;
   onDelete: (id: number) => void;
+  onBulkAssign: (id: number) => void;
 }) {
   const { t } = useTranslation();
   const [editing, setEditing] = useState(false);
@@ -26,7 +30,11 @@ function TagRow({
 
   async function save() {
     const trimmed = value.trim();
-    if (!trimmed || trimmed === tag.name) { setEditing(false); setValue(tag.name); return; }
+    if (!trimmed || trimmed === tag.name) {
+      setEditing(false);
+      setValue(tag.name);
+      return;
+    }
     setSaving(true);
     await onRename(tag.id, trimmed);
     setSaving(false);
@@ -35,7 +43,10 @@ function TagRow({
 
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter") save();
-    if (e.key === "Escape") { setEditing(false); setValue(tag.name); }
+    if (e.key === "Escape") {
+      setEditing(false);
+      setValue(tag.name);
+    }
   }
 
   return (
@@ -66,7 +77,10 @@ function TagRow({
             {saving ? "…" : t("tags.save")}
           </button>
           <button
-            onClick={() => { setEditing(false); setValue(tag.name); }}
+            onClick={() => {
+              setEditing(false);
+              setValue(tag.name);
+            }}
             className="text-xs px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
             {t("tags.cancel")}
           </button>
@@ -88,10 +102,24 @@ function TagRow({
       ) : (
         <div className="flex gap-1 shrink-0">
           <button
+            onClick={() => onBulkAssign(tag.id)}
+            title={t("entries.bulkTag.assignBtn")}
+            className="p-1.5 rounded-lg text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors">
+            <TbTagPlus className="w-3.5 h-3.5" />
+          </button>
+          <button
             onClick={() => setEditing(true)}
             title={t("tags.rename")}
             className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
             </svg>
@@ -100,7 +128,15 @@ function TagRow({
             onClick={() => setConfirmDelete(true)}
             title={t("tags.delete")}
             className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round">
               <polyline points="3 6 5 6 21 6" />
               <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
               <path d="M10 11v6M14 11v6" />
@@ -115,6 +151,7 @@ function TagRow({
 
 export function TagsPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const mode = useAuthStore((s) => s.mode);
   const entries = useEntriesStore((s) => s.entries);
   const updateEntry = useEntriesStore((s) => s.updateEntry);
@@ -153,6 +190,10 @@ export function TagsPage() {
     }
   }
 
+  function handleBulkAssign(id: number) {
+    navigate("/entries", { state: { bulkTagId: id } });
+  }
+
   function handleDelete(id: number) {
     if (mode === "authenticated") {
       deleteTagMutation.mutate(id);
@@ -186,6 +227,7 @@ export function TagsPage() {
               usageCount={usageMap.get(tag.id) ?? 0}
               onRename={handleRename}
               onDelete={handleDelete}
+              onBulkAssign={handleBulkAssign}
             />
           ))}
         </div>

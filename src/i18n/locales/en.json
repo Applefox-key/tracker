@@ -126,6 +126,15 @@
     "dateLabel": "Created",
     "ratingLabel": "Rating",
     "tagLabel": "Tag",
+    "bulkTag": {
+      "assignBtn": "Assign tag to multiple entries",
+      "banner": "Assigning #{{tag}} — click entries to select",
+      "selected": "{{count}} selected",
+      "selectAll": "All",
+      "deselectAll": "None",
+      "apply": "Apply",
+      "cancel": "Cancel"
+    },
     "masteredLabel": "Mastered",
     "masteredOnly": "Mastered only",
     "staleOnly": "Not reviewed 30+ days",

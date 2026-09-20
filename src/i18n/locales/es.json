@@ -127,6 +127,15 @@
     "dateLabel": "Creado",
     "ratingLabel": "Calificación",
     "tagLabel": "Etiqueta",
+    "bulkTag": {
+      "assignBtn": "Asignar etiqueta a varias entradas",
+      "banner": "Asignando #{{tag}} — selecciona entradas",
+      "selected": "{{count}} seleccionadas",
+      "selectAll": "Todas",
+      "deselectAll": "Ninguna",
+      "apply": "Aplicar",
+      "cancel": "Cancelar"
+    },
     "masteredLabel": "Dominado",
     "masteredOnly": "Solo dominadas",
     "staleOnly": "Sin repasar 30+ días",

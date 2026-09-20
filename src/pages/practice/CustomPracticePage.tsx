@@ -202,7 +202,7 @@ export function CustomPracticePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const allEntries = useEntriesStore((s) => s.entries);
-  const { reviewEntry } = useEntryCrud();
+  const { reviewEntry, logGameComplete } = useEntryCrud();
 
   const filterState = usePracticeFilters();
   const { filters, showFilters, setShowFilters, activeFilterCount, clearFilters } = filterState;
@@ -210,6 +210,11 @@ export function CustomPracticePage() {
   const [showHelp, setShowHelp] = useState(false);
   const [selectedModes, setSelectedModes] = useState<CustomMode[]>(["flashcard", "quiz", "puzzle", "write"]);
   const [phase, setPhase] = useState<Phase>("idle");
+
+  useEffect(() => {
+    if (phase === "done") logGameComplete();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [skippedCount, setSkippedCount] = useState(0);

@@ -131,6 +131,15 @@
     "dateLabel": "Utworzono",
     "ratingLabel": "Ocena",
     "tagLabel": "Tag",
+    "bulkTag": {
+      "assignBtn": "Przypisz tag do wielu wpisów",
+      "banner": "Przypisuję #{{tag}} — kliknij wpisy, aby wybrać",
+      "selected": "Wybrano: {{count}}",
+      "selectAll": "Wszystkie",
+      "deselectAll": "Odznacz",
+      "apply": "Zastosuj",
+      "cancel": "Anuluj"
+    },
     "masteredLabel": "Opanowane",
     "masteredOnly": "Tylko opanowane",
     "staleOnly": "Nie powtarzane 30+ dni",

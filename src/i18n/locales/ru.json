@@ -139,6 +139,15 @@
     "dateLabel": "Добавлено",
     "ratingLabel": "Оценка",
     "tagLabel": "Тег",
+    "bulkTag": {
+      "assignBtn": "Назначить тег нескольким записям",
+      "banner": "Присваиваем #{{tag}} — выберите записи",
+      "selected": "Выбрано: {{count}}",
+      "selectAll": "Все",
+      "deselectAll": "Снять",
+      "apply": "Применить",
+      "cancel": "Отмена"
+    },
     "masteredLabel": "Освоено",
     "masteredOnly": "Только освоенные",
     "staleOnly": "Не повторялось 30+ дней",

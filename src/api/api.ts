@@ -340,4 +340,8 @@ export const entryTagsApi = {
   async setEntryTags(entryId: number, tagIds: number[]): Promise<void> {
     await apiClient.put(`/entry-tags/entry/${entryId}`, { tagIds })
   },
+
+  async bulkAssignTag(tagId: number, entryIds: number[]): Promise<void> {
+    await apiClient.put('/entry-tags/bulk-assign', { tagId, entryIds })
+  },
 }
