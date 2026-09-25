@@ -162,19 +162,11 @@ function StreakFruits({
   small?: boolean;
 }) {
   if (completedLaps === 0) return null;
-  const visible = Math.min(completedLaps, max);
-  const overflow = completedLaps - visible;
+  const overflow = Math.max(0, completedLaps - max);
+  const visible = completedLaps - overflow;
   return (
-    <div className="flex items-center gap-0.5 flex-wrap">
-      {Array.from({ length: visible }, (_, i) => (
-        <span
-          key={i}
-          className={small ? "text-[11px] leading-none" : "text-md leading-none select-none"}
-          title={`Week ${i + 1}`}>
-          {LAP_FRUITS[i % LAP_FRUITS.length]}
-        </span>
-      ))}
-      <MysteryOrb />
+    <div className="flex items-center gap-0.5 flex-wrap flex-row-reverse">
+      {" "}
       {overflow > 0 && (
         <span
           className={
@@ -185,6 +177,18 @@ function StreakFruits({
           +{overflow}
         </span>
       )}
+      {Array.from({ length: visible }, (_, i) => {
+        const lapIndex = overflow + i;
+        return (
+          <span
+            key={lapIndex}
+            className={small ? "text-[11px] leading-none" : "text-md leading-none select-none"}
+            title={`Week ${lapIndex + 1}`}>
+            {LAP_FRUITS[lapIndex % LAP_FRUITS.length]}
+          </span>
+        );
+      })}
+      <MysteryOrb />
     </div>
   );
 }
