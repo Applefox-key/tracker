@@ -549,6 +549,8 @@
       "wrongFeedback": "✗ Спробуй ще",
       "checkAnswer": "Перевірити",
       "hint": "Підказка",
+      "revealNextLetter": "Відкрити букву",
+      "revealNextWord": "Відкрити слово",
       "tryAgain": "Спробувати ще",
       "skip": "Пропустити →",
       "finish": "Завершити",

@@ -543,6 +543,8 @@
       "wrongFeedback": "✗ Spróbuj ponownie",
       "checkAnswer": "Sprawdź",
       "hint": "Podpowiedź",
+      "revealNextLetter": "Odkryj literę",
+      "revealNextWord": "Odkryj słowo",
       "tryAgain": "Spróbuj ponownie",
       "skip": "Pomiń →",
       "finish": "Zakończ",

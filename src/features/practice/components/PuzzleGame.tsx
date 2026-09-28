@@ -89,6 +89,7 @@ export function PuzzleGame({
   const [showExample, setShowExample] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
   const [showTilesHint, setShowTilesHint] = useState(false);
+  const [autoRevealedIds, setAutoRevealedIds] = useState<Set<string>>(new Set());
 
   const tLen = wordCount(entry.word) === 1 ? entry.word.length : wordCount(entry.word);
 
@@ -103,6 +104,7 @@ export function PuzzleGame({
     setShowExample(false);
     setHintUsed(false);
     setShowTilesHint(false);
+    setAutoRevealedIds(new Set());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entry.id]);
 
@@ -114,6 +116,7 @@ export function PuzzleGame({
 
   function removePlaced(tile: Tile) {
     if (phase !== "thinking") return;
+    if (isRevealed(tile)) return;
     setPlaced((p) => p.filter((t) => t.id !== tile.id));
     setUsedTileIds((s) => {
       const next = new Set(s);
@@ -133,14 +136,50 @@ export function PuzzleGame({
     }
   }
 
+  function getCorrectSequence(mode: "letter" | "word"): Tile[] {
+    if (mode === "letter") {
+      return entry.word.toLowerCase().split("").map((c, i) => ({ id: `l${i}`, value: c }));
+    }
+    return entry.word.trim().split(/\s+/).map((w, i) => ({ id: `w${i}`, value: w }));
+  }
+
+  function isRevealed(tile: Tile): boolean {
+    return autoRevealedIds.has(tile.id);
+  }
+
+  function revealNext() {
+    const sequence = getCorrectSequence(tileMode);
+    // Find first position where user is stuck (placed tile doesn't match correct sequence)
+    const stuckAt = sequence.findIndex((t, i) => placed[i]?.id !== t.id);
+    if (stuckAt === -1) return; // All positions already correct
+    const tileToReveal = sequence[stuckAt];
+    // Keep correct tiles before stuckAt, insert revealed tile, keep remaining user tiles that don't conflict
+    const newPlaced = [
+      ...placed.slice(0, stuckAt),
+      tileToReveal,
+      ...placed.slice(stuckAt + 1).filter((t) => t.id !== tileToReveal.id),
+    ];
+    setPlaced(newPlaced);
+    setUsedTileIds(new Set(newPlaced.map((t) => t.id)));
+    setAutoRevealedIds((prev) => new Set([...prev, tileToReveal.id]));
+    setHintUsed(true);
+  }
+
   function tryAgain() {
     const { tiles, mode } = buildTiles(entry, allEntries);
     setPool(tiles);
-    setPlaced([]);
-    setUsedTileIds(new Set());
     setTileMode(mode);
     setPhase("thinking");
     setHasRetried(true);
+    if (autoRevealedIds.size > 0) {
+      const sequence = getCorrectSequence(mode);
+      const autoTiles = sequence.filter((t) => autoRevealedIds.has(t.id));
+      setPlaced(autoTiles);
+      setUsedTileIds(new Set(autoTiles.map((t) => t.id)));
+    } else {
+      setPlaced([]);
+      setUsedTileIds(new Set());
+    }
   }
 
   return (
@@ -196,14 +235,22 @@ export function PuzzleGame({
           </span>
         )}
 
-        {placed.map((tile) => (
-          <button
-            key={tile.id}
-            onClick={() => removePlaced(tile)}
-            className="min-h-[3rem] min-w-[3rem] px-4 py-2 rounded-lg bg-emerald-600 text-white text-base font-medium hover:bg-emerald-700 active:bg-emerald-800 transition-colors touch-manipulation">
-            {tile.value}
-          </button>
-        ))}
+        {placed.map((tile) => {
+          const revealed = isRevealed(tile);
+          return (
+            <button
+              key={tile.id}
+              onClick={() => removePlaced(tile)}
+              className={[
+                "min-h-[3rem] min-w-[3rem] px-4 py-2 rounded-lg text-white text-base font-medium transition-colors touch-manipulation",
+                revealed
+                  ? "bg-blue-400 dark:bg-blue-500 cursor-default"
+                  : "bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800",
+              ].join(" ")}>
+              {tile.value}
+            </button>
+          );
+        })}
 
         {phase === "thinking" && placed.length !== 0 && (
           <button
@@ -253,16 +300,27 @@ export function PuzzleGame({
       {/* HINT */}
       {phase === "thinking" ? (
         <div className="flex items-center justify-between">
-          <button
-            onClick={() => setShowTilesHint((v) => !v)}
-            className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-            {showTilesHint
-              ? t("practice.puzzle.tilesPlaced", {
-                  placed: placed.length,
-                  total: tLen,
-                })
-              : t("practice.puzzle.hint")}
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowTilesHint((v) => !v)}
+              className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+              {showTilesHint
+                ? t("practice.puzzle.tilesPlaced", {
+                    placed: placed.length,
+                    total: tLen,
+                  })
+                : t("practice.puzzle.hint")}
+            </button>
+            {showTilesHint && getCorrectSequence(tileMode).some((t, i) => placed[i]?.id !== t.id) && (
+              <button
+                onClick={revealNext}
+                className="text-xs text-blue-400 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors">
+                {tileMode === "letter"
+                  ? t("practice.puzzle.revealNextLetter")
+                  : t("practice.puzzle.revealNextWord")}
+              </button>
+            )}
+          </div>
           {onSkipEarly && (
             <button
               onClick={onSkipEarly}

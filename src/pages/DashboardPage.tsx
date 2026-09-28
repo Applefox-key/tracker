@@ -1200,15 +1200,15 @@ function WeeklyStreakWidget({
 
         {/* Bars + badges + day labels + motivational text */}
         <div className="flex-1 flex flex-col gap-1 min-w-0">
-          <div className="flex items-end gap-[5px] h-20">
+          <div className="flex gap-[5px]">
             {days.map((d, i) => {
               const total = d.entries_added + d.reviews_count + d.games_completed;
               const barH = total > 0 ? Math.max((total / maxTotal) * 100, 12) : 0;
+              const pct = maxTotal > 0 ? total / maxTotal : 0;
               return (
                 <div
                   key={i}
-                  className="flex-1 max-w-[44px] flex flex-col justify-end relative"
-                  style={{ height: "100%" }}
+                  className="flex-1 max-w-[44px] flex flex-col items-center gap-0.5 relative"
                   onMouseEnter={() => setHoveredIdx(i)}
                   onMouseLeave={() => setHoveredIdx(null)}>
                   {hoveredIdx === i && (
@@ -1235,49 +1235,33 @@ function WeeklyStreakWidget({
                       <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-gray-700" />
                     </div>
                   )}
-                  {total > 0 ? (
-                    <div
-                      className="w-full rounded-t-md overflow-hidden flex flex-col-reverse transition-all duration-300"
-                      style={{ height: `${barH}%` }}>
-                      <div style={{ flex: d.entries_added || 0 }} className="bg-emerald-400" />
-                      <div style={{ flex: d.reviews_count || 0 }} className="bg-indigo-400" />
-                      <div style={{ flex: d.games_completed || 0 }} className="bg-amber-400" />
-                    </div>
-                  ) : (
-                    <div className="w-full bg-gray-300 dark:bg-gray-600/40 rounded-t-sm" style={{ height: "3px" }} />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="flex gap-[5px]">
-            {days.map((d, i) => {
-              const total = d.entries_added + d.reviews_count + d.games_completed;
-              const pct = maxTotal > 0 ? total / maxTotal : 0;
-              return (
-                <div key={i} className="flex-1 max-w-[44px] flex justify-center">
+                  <div className="w-full flex flex-col justify-end" style={{ height: "80px" }}>
+                    {total > 0 ? (
+                      <div
+                        className="w-full rounded-t-md overflow-hidden flex flex-col-reverse transition-all duration-300"
+                        style={{ height: `${barH}%` }}>
+                        <div style={{ flex: d.entries_added || 0 }} className="bg-emerald-400" />
+                        <div style={{ flex: d.reviews_count || 0 }} className="bg-indigo-400" />
+                        <div style={{ flex: d.games_completed || 0 }} className="bg-amber-400" />
+                      </div>
+                    ) : (
+                      <div className="w-full bg-gray-300 dark:bg-gray-600/40 rounded-t-sm" style={{ height: "3px" }} />
+                    )}
+                  </div>
                   <DayActivityBadge pct={pct} isToday={d.isToday} />
+                  <span
+                    className={`text-[9px] font-medium leading-none select-none ${
+                      d.isToday
+                        ? "text-emerald-500 dark:text-emerald-400 font-bold"
+                        : total > 0
+                          ? "text-gray-600 dark:text-gray-400"
+                          : "text-gray-400 dark:text-gray-600"
+                    }`}>
+                    {d.letter}
+                  </span>
                 </div>
               );
             })}
-          </div>
-
-          <div className="flex gap-[5px]">
-            {days.map((d, i) => (
-              <div key={i} className="flex-1 max-w-[44px] flex justify-center">
-                <span
-                  className={`text-[9px] font-medium leading-none select-none ${
-                    d.isToday
-                      ? "text-emerald-500 dark:text-emerald-400 font-bold"
-                      : d.entries_added + d.reviews_count + d.games_completed > 0
-                        ? "text-gray-600 dark:text-gray-400"
-                        : "text-gray-400 dark:text-gray-600"
-                  }`}>
-                  {d.letter}
-                </span>
-              </div>
-            ))}
           </div>
         </div>
 

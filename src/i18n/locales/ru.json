@@ -552,6 +552,8 @@
       "wrongFeedback": "✗ Попробуй снова",
       "checkAnswer": "Проверить",
       "hint": "Подсказка",
+      "revealNextLetter": "Открыть букву",
+      "revealNextWord": "Открыть слово",
       "tryAgain": "Попробовать снова",
       "skip": "Пропустить →",
       "finish": "Завершить",

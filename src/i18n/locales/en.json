@@ -530,6 +530,8 @@
       "wrongFeedback": "✗ Try again",
       "checkAnswer": "Check",
       "hint": "Hint",
+      "revealNextLetter": "Reveal letter",
+      "revealNextWord": "Reveal word",
       "tryAgain": "Try again",
       "skip": "Skip →",
       "finish": "Finish",
