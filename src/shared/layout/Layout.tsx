@@ -10,9 +10,10 @@ import { useEntriesData } from "@/hooks/useEntriesData";
 import { useEntriesStore } from "@/features/entries/store/entriesStore";
 import { getAvatarUrl } from "@/api/api";
 import { ImStatsBars } from "react-icons/im";
-import { PiCardsThree } from "react-icons/pi";
+import { PiCardsThree, PiCards } from "react-icons/pi";
 import { TbTargetArrow } from "react-icons/tb";
-import { IoPricetagsOutline } from "react-icons/io5";
+import { IoPricetagsOutline, IoRocketOutline } from "react-icons/io5";
+import { FaRegCommentDots } from "react-icons/fa6";
 
 const APPS = [
   {
@@ -22,6 +23,7 @@ const APPS = [
     current: false,
     iconBg: "#eef2ff",
     iconColor: "#4f46e5",
+    icon: <PiCards className="text-[22px] text-indigo-500" />,
   },
   {
     name: "SayLoop",
@@ -30,6 +32,7 @@ const APPS = [
     current: false,
     iconBg: "#faf5ff",
     iconColor: "#0d9488",
+    icon: <FaRegCommentDots className="text-[22px] text-teal-500" />,
   },
   {
     name: "Tracker",
@@ -38,6 +41,7 @@ const APPS = [
     current: true,
     iconBg: "#f0fdf4",
     iconColor: "#16a34a",
+    icon: <IoRocketOutline className="text-[22px] text-green-500" />,
   },
 ] as const;
 
@@ -135,10 +139,7 @@ export function Layout() {
         <div
           className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
           style={{ background: app.iconBg }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill={app.iconColor}>
-            <rect x="2" y="3" width="20" height="14" rx="2" />
-            <path d="M8 21h8M12 17v4" />
-          </svg>
+          {app.icon}
         </div>
         <div className="min-w-0">
           <p className="text-xs font-semibold text-green-800 dark:text-green-400">{app.name}</p>
@@ -157,10 +158,7 @@ export function Layout() {
         <div
           className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
           style={{ background: app.iconBg }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill={app.iconColor}>
-            <rect x="2" y="3" width="20" height="14" rx="2" />
-            <path d="M8 21h8M12 17v4" />
-          </svg>
+          {app.icon}
         </div>
         <div className="min-w-0">
           <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">{app.name}</p>
@@ -261,19 +259,14 @@ export function Layout() {
                         <div
                           key={app.name}
                           className="flex flex-col gap-1 p-2.5 rounded-xl border-2 border-green-500 bg-green-50 dark:bg-green-900/20 cursor-default">
-                          <div
-                            className="w-7 h-7 rounded-lg flex items-center justify-center mb-1"
-                            style={{ background: app.iconBg }}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill={app.iconColor}>
-                              <rect x="2" y="3" width="20" height="14" rx="2" />
-                              <path d="M8 21h8M12 17v4" />
-                            </svg>
+                          <div className="flex items-center justify-between nowrap">
+                            <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-1">{app.icon}</div>{" "}
+                            <span className="text-xs bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 rounded px-1.5 py-0.5 w-fit mt-0.5">
+                              {t("layout.appCurrent")}
+                            </span>
                           </div>
                           <span className="text-xs font-semibold text-green-800 dark:text-green-400">{app.name}</span>
                           <span className="text-xs text-green-500 dark:text-green-500 leading-tight">{app.desc}</span>
-                          <span className="text-xs bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 rounded px-1.5 py-0.5 w-fit mt-0.5">
-                            {t("layout.appCurrent")}
-                          </span>
                         </div>
                       ) : (
                         <a
@@ -282,14 +275,7 @@ export function Layout() {
                           target="_blank"
                           rel="noreferrer"
                           className="flex flex-col gap-1 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-violet-300 dark:hover:border-violet-700 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors no-underline cursor-pointer">
-                          <div
-                            className="w-7 h-7 rounded-lg flex items-center justify-center mb-1"
-                            style={{ background: app.iconBg }}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill={app.iconColor}>
-                              <rect x="2" y="3" width="20" height="14" rx="2" />
-                              <path d="M8 21h8M12 17v4" />
-                            </svg>
-                          </div>
+                          <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-1">{app.icon}</div>
                           <span className="text-xs font-semibold text-gray-800 dark:text-gray-200">{app.name}</span>
                           <span className="text-xs text-gray-400 dark:text-gray-500 leading-tight">{app.desc}</span>
                         </a>
