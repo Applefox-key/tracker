@@ -41,6 +41,7 @@
     "streakLegendary_many": "{{count}} днів поспіль 🔥",
     "streakLegendary_other": "{{count}} днів поспіль 🔥",
     "streakLegendarySub": "легендарно!",
+    "newRecordSub": "новий рекорд!",
     "streakKeepUp": "{{count}} днів поспіль 🔥",
     "streakKeepUp_one": "{{count}} день поспіль 🔥",
     "streakKeepUp_few": "{{count}} дні поспіль 🔥",

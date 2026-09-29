@@ -37,6 +37,7 @@
     "streak1Sub": "great start!",
     "streakLegendary": "🔥 {{count}}-day streak",
     "streakLegendarySub": "legendary!",
+    "newRecordSub": "new record!",
     "streakKeepUp": "🔥 {{count}}-day streak",
     "streakKeepUpSub": "keep it up!",
     "noStreak": "No streak yet",

@@ -30,6 +30,7 @@ import { IoMdFlame } from "react-icons/io";
 import { GrTrophy } from "react-icons/gr";
 import { MdCancel } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
+import { IoRocket } from "react-icons/io5";
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -967,8 +968,63 @@ function DayActivityBadge({ pct, isToday }: { pct: number; isToday: boolean }) {
 
 // ── Streak progress ring ───────────────────────────────────────────────────
 
+const SPACE_ORB_BG = `
+  radial-gradient(circle at 25% 28%, rgba(255,255,255,0.95) 0.6px, transparent 0.6px),
+  radial-gradient(circle at 72% 18%, rgba(255,255,255,0.85) 0.5px, transparent 0.5px),
+  radial-gradient(circle at 58% 72%, rgba(255,255,255,0.9) 0.6px, transparent 0.6px),
+  radial-gradient(circle at 14% 68%, rgba(255,255,255,0.8) 0.4px, transparent 0.4px),
+  radial-gradient(circle at 84% 52%, rgba(255,255,255,0.7) 0.5px, transparent 0.5px),
+  radial-gradient(circle at 45% 15%, rgba(255,255,255,0.6) 0.4px, transparent 0.4px),
+  radial-gradient(circle at 33% 58%, rgba(167,139,250,0.35) 0%, transparent 45%),
+  radial-gradient(circle at 68% 35%, rgba(96,165,250,0.25) 0%, transparent 40%),
+  linear-gradient(135deg,#050014,#0d0228,#150a3a,#0a0a2e)
+`;
+
+function SpaceRocketOrb({
+  sizeClass = "w-7 h-7",
+  iconSize = 18,
+  iconRotation,
+}: {
+  sizeClass?: string;
+  iconSize?: number;
+  iconRotation?: number;
+}) {
+  return (
+    <div className={`relative ${sizeClass}`}>
+      <div
+        className="absolute inset-0 rounded-full blur-md animate-pulse"
+        style={{ background: "rgba(139,92,246,0.5)" }}
+      />
+      <div
+        className="relative w-full h-full rounded-full animate-[spin_10s_linear_infinite]"
+        style={{
+          background: SPACE_ORB_BG,
+          boxShadow: "inset 0 0 10px rgba(139,92,246,0.4), 0 2px 10px rgba(30,0,80,0.6)",
+        }}>
+        <div className="absolute left-1.5 top-1 h-2.5 w-5 rounded-full bg-white/20 blur-[2px] -rotate-[25deg]" />
+      </div>
+      <span
+        className="absolute z-0 w-1.5 h-2 rounded-full blur-[0.5px] animate-pulse"
+        style={{
+          bottom: "18%",
+          left: "22%",
+          transform: "rotate(45deg)",
+          background: "linear-gradient(to bottom, #ef4444, #f97316, #facc15)",
+          boxShadow: "0 0 6px #f97316, 0 0 10px #ef4444",
+        }}
+      />
+      <span
+        className="absolute inset-0 flex items-center justify-center drop-shadow-[0_0_3px_rgba(250,204,21,0.9)]"
+        style={iconRotation !== undefined ? { transform: `rotate(${iconRotation}deg)` } : undefined}>
+        <IoRocket size={iconSize} color="#facc15" />
+      </span>
+    </div>
+  );
+}
+
 function StreakProgressRing({ streak, longestStreak }: { streak: number; longestStreak: number }) {
   const { t } = useTranslation();
+
   const effective = Math.max(longestStreak, streak, 1);
   const pct = streak / effective;
   const r = 42;
@@ -977,28 +1033,55 @@ function StreakProgressRing({ streak, longestStreak }: { streak: number; longest
   // 240° arc, 120° gap centered at the bottom
   // rotate(150deg) puts SVG 0° (= 3 o'clock) at 8 o'clock visually,
   // so the arc runs from 8 o'clock → clockwise → 4 o'clock and the gap sits at the bottom.
-  const trackLen = (240 / 360) * circ;
+  const trackLen = (270 / 360) * circ;
   const gapLen = circ - trackLen;
   const progressLen = pct * trackLen;
 
   const isRecord = streak > 0 && streak >= longestStreak;
+  const isNewRecord = streak > 0 && longestStreak > 0 && streak > longestStreak;
   const strokeColor = streak === 0 ? "#d1d5db" : isRecord ? "#f59e0b" : "#f97316";
   const emoji = streak === 0 ? "😴" : streak === 1 ? "🌱" : "🔥";
   const streakSub =
     streak === 0
       ? t("dashboard.noStreakSub")
-      : streak === 1
-        ? t("dashboard.streak1Sub")
-        : streak >= 7
-          ? t("dashboard.streakLegendarySub")
-          : t("dashboard.streakKeepUpSub");
+      : isNewRecord
+        ? t("dashboard.newRecordSub")
+        : streak === 1
+          ? t("dashboard.streak1Sub")
+          : streak >= 7
+            ? t("dashboard.streakLegendarySub")
+            : t("dashboard.streakKeepUpSub");
+
+  const startAngleRad = 135 * (Math.PI / 180);
+  const totalArcRad = 270 * (Math.PI / 180);
+  const currentAngleRad = startAngleRad + pct * totalArcRad;
+  const rocketX = 50 + r * Math.cos(currentAngleRad);
+  const rocketY = 50 + r * Math.sin(currentAngleRad);
+  const rocketRotation = (currentAngleRad * 180) / Math.PI + 135;
+
   return (
     <div className="relative flex items-center justify-center shrink-0" style={{ width: 148, height: 148 }}>
       <svg
         viewBox="0 0 100 100"
-        style={{ width: 148, height: 148, transform: "rotate(150deg)", position: "absolute" }}
+        style={{
+          width: 148,
+          height: 148,
+          transform: "rotate(135deg)",
+          position: "absolute",
+          filter: streak > 0 ? `drop-shadow(0px 0px 4px ${strokeColor}99)` : undefined,
+        }}
         aria-hidden>
-        {/* Horseshoe track */}
+        {/* Track 3D: shadow edge → main gray → highlight */}
+        <circle
+          cx="50"
+          cy="50"
+          r={r}
+          fill="none"
+          stroke="rgba(0,0,0,0.10)"
+          strokeWidth="13"
+          strokeDasharray={`${trackLen} ${gapLen}`}
+          strokeLinecap="round"
+        />
         <circle
           cx="50"
           cy="50"
@@ -1008,36 +1091,84 @@ function StreakProgressRing({ streak, longestStreak }: { streak: number; longest
           strokeWidth="9"
           strokeDasharray={`${trackLen} ${gapLen}`}
           strokeLinecap="round"
-          className="dark:stroke-gray-700"
+          className="dark:stroke-gray-600"
         />
-        {/* Progress arc */}
+        <circle
+          cx="50"
+          cy="50"
+          r={r}
+          fill="none"
+          stroke="rgba(255,255,255,0.65)"
+          strokeWidth="4"
+          strokeDasharray={`${trackLen} ${gapLen}`}
+          strokeLinecap="round"
+        />
+
+        {/* Progress 3D: shadow edge → main color → highlight */}
         {streak > 0 && (
-          <circle
-            cx="50"
-            cy="50"
-            r={r}
-            fill="none"
-            stroke={strokeColor}
-            strokeWidth="9"
-            strokeDasharray={`${progressLen} ${circ - progressLen}`}
-            strokeLinecap="round"
-          />
+          <>
+            <circle
+              cx="50"
+              cy="50"
+              r={r}
+              fill="none"
+              stroke="rgba(100,40,10,0.22)"
+              strokeWidth="13"
+              strokeDasharray={`${progressLen} ${circ - progressLen}`}
+              strokeLinecap="round"
+            />
+            <circle
+              cx="50"
+              cy="50"
+              r={r}
+              fill="none"
+              stroke={strokeColor}
+              strokeWidth="9"
+              strokeDasharray={`${progressLen} ${circ - progressLen}`}
+              strokeLinecap="round"
+            />
+            <circle
+              cx="50"
+              cy="50"
+              r={r}
+              fill="none"
+              stroke="rgba(255,235,100,0.6)"
+              strokeWidth="4"
+              strokeDasharray={`${progressLen} ${circ - progressLen}`}
+              strokeLinecap="round"
+            />
+          </>
         )}
       </svg>
+
+      {streak > 0 && !isNewRecord && (
+        <div
+          className="absolute z-20 pointer-events-none transition-all duration-300 ease-out"
+          style={{
+            left: `${rocketX}%`,
+            top: `${rocketY}%`,
+            transform: `translate(-50%, -50%) rotate(${rocketRotation}deg)`,
+          }}>
+          <SpaceRocketOrb />
+        </div>
+      )}
+
       <div className="relative z-10 flex flex-col items-center leading-none gap-1">
         <div className="flex items-baseline gap-0.5 leading-none">
           <span className="text-4xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">{streak}</span>
-          {longestStreak > 0 && (
+          {longestStreak > 0 && !isNewRecord && (
             <span className="text-sm font-semibold text-gray-400 dark:text-gray-500 leading-none">
               /{longestStreak}
             </span>
           )}
         </div>
         <span className="text-[11px] text-gray-400 dark:text-gray-500 leading-none">{t("dashboard.days")}</span>
-        <span className=" text-xl leading-none">{emoji}</span>
+        {isNewRecord ? (
+          <SpaceRocketOrb sizeClass="w-8 h-8" iconSize={14} iconRotation={360} />
+        ) : (
+          <span className="text-xl leading-none">{emoji}</span>
+        )}
       </div>
-      {/* Motivation sits in the bottom gap */}
-      {/* <span className="absolute bottom-3 z-10 text-xl leading-none">{emoji}</span> */}
       <p
         className={`absolute bottom-3  text-[11px] text-center italic font-semibold leading-none ${
           streak > 0 ? "text-amber-500 dark:text-amber-400" : "text-gray-400 dark:text-gray-500"
