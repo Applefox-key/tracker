@@ -320,7 +320,7 @@
     "no": "Ні",
     "apiHelpShow": "Як використовувати →",
     "apiHelpHide": "Приховати інструкцію",
-    "apiHelpDesc": "Надішліть POST-запит із токеном у заголовку Authorization. Обов'язкові поля: word, explanation. Опціональні: example, category.",
+    "apiHelpDesc": "Надішліть POST-запит із токеном у заголовку Authorization. Обов'язкові поля: word, explanation. Опціональні: example, category. Усі записи, створені через API, автоматично позначаються тегом «via API».",
     "apiHelpFieldWord": "слово або фраза для збереження",
     "apiHelpFieldExplanation": "переклад або пояснення",
     "apiHelpFieldExample": "приклад речення (необов'язково)"

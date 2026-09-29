@@ -306,7 +306,7 @@
     "no": "No",
     "apiHelpShow": "How to use →",
     "apiHelpHide": "Hide instructions",
-    "apiHelpDesc": "Send a POST request with your token in the Authorization header. Required fields: word, explanation. Optional: example, category.",
+    "apiHelpDesc": "Send a POST request with your token in the Authorization header. Required fields: word, explanation. Optional: example, category. All entries created via API are automatically tagged with \"via API\".",
     "apiHelpFieldWord": "the word or phrase to save",
     "apiHelpFieldExplanation": "translation or explanation",
     "apiHelpFieldExample": "example sentence (optional)"

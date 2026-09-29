@@ -306,7 +306,7 @@
     "no": "No",
     "apiHelpShow": "Cómo usar →",
     "apiHelpHide": "Ocultar instrucciones",
-    "apiHelpDesc": "Envía una solicitud POST con tu token en el encabezado Authorization. Campos requeridos: word, explanation. Opcionales: example, category.",
+    "apiHelpDesc": "Envía una solicitud POST con tu token en el encabezado Authorization. Campos requeridos: word, explanation. Opcionales: example, category. Todas las entradas creadas mediante la API se etiquetan automáticamente con «via API».",
     "apiHelpFieldWord": "la palabra o frase a guardar",
     "apiHelpFieldExplanation": "traducción o explicación",
     "apiHelpFieldExample": "oración de ejemplo (opcional)"

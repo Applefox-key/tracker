@@ -312,7 +312,7 @@
     "no": "Nie",
     "apiHelpShow": "Jak używać →",
     "apiHelpHide": "Ukryj instrukcję",
-    "apiHelpDesc": "Wyślij żądanie POST z tokenem w nagłówku Authorization. Wymagane pola: word, explanation. Opcjonalne: example, category.",
+    "apiHelpDesc": "Wyślij żądanie POST z tokenem w nagłówku Authorization. Wymagane pola: word, explanation. Opcjonalne: example, category. Wszystkie wpisy utworzone przez API są automatycznie oznaczane tagiem «via API».",
     "apiHelpFieldWord": "słowo lub fraza do zapisania",
     "apiHelpFieldExplanation": "tłumaczenie lub wyjaśnienie",
     "apiHelpFieldExample": "przykładowe zdanie (opcjonalne)"
