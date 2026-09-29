@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { DemoBanner } from "@/features/auth/components/DemoBanner";
 import { DarkModeToggle } from "@/shared/ui/DarkModeToggle";
@@ -44,6 +45,7 @@ export function Layout() {
   const { t } = useTranslation();
   const { isAuthenticated, mode, user, logout } = useAuthStore();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const location = useLocation();
   const isGameRoute = [
     "/flashcards",
@@ -107,6 +109,7 @@ export function Layout() {
 
   function handleLogout() {
     logout();
+    queryClient.clear();
     navigate("/login", { replace: true });
   }
 

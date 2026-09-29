@@ -981,8 +981,8 @@ const SPACE_ORB_BG = `
 `;
 
 function SpaceRocketOrb({
-  sizeClass = "w-7 h-7",
-  iconSize = 18,
+  sizeClass = "w-9 h-9",
+  iconSize = 22,
   iconRotation,
 }: {
   sizeClass?: string;
@@ -1164,7 +1164,7 @@ function StreakProgressRing({ streak, longestStreak }: { streak: number; longest
         </div>
         <span className="text-[11px] text-gray-400 dark:text-gray-500 leading-none">{t("dashboard.days")}</span>
         {isNewRecord ? (
-          <SpaceRocketOrb sizeClass="w-8 h-8" iconSize={14} iconRotation={360} />
+          <SpaceRocketOrb iconSize={14} iconRotation={360} />
         ) : (
           <span className="text-xl leading-none">{emoji}</span>
         )}
