@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Entry } from "../types";
 import { MULTILINE_CATEGORIES } from "../constants";
@@ -21,12 +21,14 @@ interface EntryDetailModalProps {
   entry: Entry;
   onClose: () => void;
   onEdit: (entry: Entry) => void;
+  onDelete?: () => void;
   onPrev?: () => void;
   onNext?: () => void;
 }
 
-export function EntryDetailModal({ entry, onClose, onEdit, onPrev, onNext }: EntryDetailModalProps) {
+export function EntryDetailModal({ entry, onClose, onEdit, onDelete, onPrev, onNext }: EntryDetailModalProps) {
   const { t } = useTranslation();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const isMultiline = MULTILINE_CATEGORIES.has(entry.category);
 
   const explanationLabel = t(`entries.form.fields.${entry.category}.explanation`);
@@ -255,7 +257,35 @@ export function EntryDetailModal({ entry, onClose, onEdit, onPrev, onNext }: Ent
                 </button>
               </div>
             )}
-            <div className="flex justify-end gap-2">
+            <div className="flex items-center gap-2">
+              {onDelete && (
+                confirmingDelete ? (
+                  <span className="flex items-center gap-1.5">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">
+                      {t("entries.form.deleteConfirm")}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => { onDelete(); setConfirmingDelete(false); }}
+                      className="text-xs font-medium text-red-500 hover:text-red-700 dark:hover:text-red-300 hover:underline shrink-0">
+                      {t("entries.form.deleteYes")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmingDelete(false)}
+                      className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:underline shrink-0">
+                      {t("entries.form.deleteNo")}
+                    </button>
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingDelete(true)}
+                    className="text-xs text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:underline shrink-0">
+                    {t("entries.form.deleteEntry")}
+                  </button>
+                )
+              )}
               <Button variant="secondary" onClick={onClose}>
                 {t("entries.detail.close")}
               </Button>

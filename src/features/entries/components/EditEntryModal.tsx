@@ -10,7 +10,7 @@ interface EditEntryModalProps {
 }
 
 export function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
-  const { updateEntry, resetMastery } = useEntryCrud();
+  const { updateEntry, resetMastery, removeEntry } = useEntryCrud();
   const [masteryReset, setMasteryReset] = useState(false);
 
   function handleSubmit(values: EntryFormValues) {
@@ -43,6 +43,7 @@ export function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
           currentImgUrl={entry.img ? getEntryImageUrl(entry.img) : null}
           masteryLevel={masteryReset ? null : entry.mastery_level}
           onResetMastery={handleResetMastery}
+          onDelete={() => { removeEntry(entry.id); onClose(); }}
           onSubmit={handleSubmit}
           onCancel={onClose}
         />

@@ -186,6 +186,10 @@
       "resetConfirm": "Уверены?",
       "resetYes": "Да",
       "resetNo": "Нет",
+      "deleteEntry": "Удалить",
+      "deleteConfirm": "Уверены?",
+      "deleteYes": "Да",
+      "deleteNo": "Нет",
       "fields": {
         "word": {
           "word": "Слово",

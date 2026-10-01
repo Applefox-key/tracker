@@ -178,6 +178,10 @@
       "resetConfirm": "Na pewno?",
       "resetYes": "Tak",
       "resetNo": "Nie",
+      "deleteEntry": "Usuń",
+      "deleteConfirm": "Na pewno?",
+      "deleteYes": "Tak",
+      "deleteNo": "Nie",
       "fields": {
         "word": {
           "word": "Słowo",

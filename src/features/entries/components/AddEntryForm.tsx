@@ -10,6 +10,7 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { translateText, getDefaultLangPair, langLabel } from "@/lib/translate";
 import type { LangCode } from "@/lib/userSettings";
+import { ToggleSwitch } from "@/shared/ui/ToggleSwitch";
 
 export interface EntryFormValues {
   word: string;
@@ -34,6 +35,8 @@ interface EntryFormProps {
   masteryLevel?: number | null;
   /** Called when user clicks "Reset mastery" (edit mode only) */
   onResetMastery?: () => void;
+  /** Called when user confirms deletion (edit mode only) */
+  onDelete?: () => void;
   onSubmit: (values: EntryFormValues) => void;
   onCancel: () => void;
 }
@@ -76,6 +79,7 @@ export function EntryForm({
   currentImgUrl,
   masteryLevel,
   onResetMastery,
+  onDelete,
   onSubmit,
   onCancel,
 }: EntryFormProps) {
@@ -90,6 +94,7 @@ export function EntryForm({
   const [rating, setRating] = useState(init.rating);
   const [includeInPractice, setIncludeInPractice] = useState(init.includeInPractice);
   const [confirmingReset, setConfirmingReset] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   const { speechLangs } = useUserSettings();
   const validLangs = speechLangs.filter((c) => c !== "") as LangCode[];
@@ -186,9 +191,7 @@ export function EntryForm({
       <div className={isMultiline ? "flex flex-col gap-3" : "grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-3"}>
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              {wordLabel} *
-            </label>
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{wordLabel} *</label>
             <VoiceInputButton onResult={(t) => setWord(t)} lang={wordLang} onLangChange={setWordLang} />
           </div>
           <input
@@ -201,9 +204,7 @@ export function EntryForm({
         </div>
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              {explanationLabel} *
-            </label>
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{explanationLabel} *</label>
             <div className="flex items-center gap-1.5">
               {translateError && <span className="text-xs text-red-500 dark:text-red-400">{translateError}</span>}
               {validLangs.length >= 2 && (
@@ -212,7 +213,7 @@ export function EntryForm({
                   onClick={handleTranslateExplanation}
                   disabled={translatingExpl || !word.trim() || wordLang === explanationLang}
                   title={`Translate word → explanation (${langLabel(wordLang)}→${langLabel(explanationLang)})`}
-                  className="flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-800/60 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                  className="flex items-center gap-1 h-7 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-800/60 disabled:opacity-40 disabled:cursor-not-allowed transition-colors border border-emerald-300 dark:border-emerald-700">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" />
                   </svg>
@@ -326,7 +327,12 @@ export function EntryForm({
           </label>
           <StarRating value={rating} onChange={setRating} />
         </div>
-        <div className="flex items-center flex-col gap-1">
+        <ToggleSwitch
+          checked={includeInPractice}
+          onChange={(v) => setIncludeInPractice(v)}
+          label={t("entries.form.practice")}
+        />
+        {/* <div className="flex items-center flex-col gap-1">
           <label
             htmlFor="flashcards-check-mobile"
             className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
@@ -339,7 +345,7 @@ export function EntryForm({
             onChange={(e) => setIncludeInPractice(e.target.checked)}
             className="w-4 h-4 accent-emerald-600 cursor-pointer"
           />
-        </div>
+        </div> */}
       </div>{" "}
       <hr className="shadow-sm m-0 p-0" />
       {/* Mobile-only: Category chips (col) + Image(right) */}
@@ -452,8 +458,12 @@ export function EntryForm({
           </label>
           <StarRating value={rating} onChange={setRating} />
         </div>
-
-        <div className="flex items-center gap-2 pb-0.5 shrink-0">
+        <ToggleSwitch
+          checked={includeInPractice}
+          onChange={(v) => setIncludeInPractice(v)}
+          label={t("entries.form.practice")}
+        />
+        {/* <div className="flex items-center gap-2 pb-0.5 shrink-0">
           <input
             id="flashcards-check"
             type="checkbox"
@@ -466,7 +476,7 @@ export function EntryForm({
             className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
             {t("entries.form.practice")}
           </label>
-        </div>
+        </div> */}
       </div>
       {/* Tags — desktop only */}
       <div className="flex flex-col gap-1 flex-1 min-w-0">
@@ -529,7 +539,35 @@ export function EntryForm({
         ) : (
           <div />
         )}
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          {isEdit && onDelete && (
+            confirmingDelete ? (
+              <span className="flex items-center gap-1.5">
+                <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">
+                  {t("entries.form.deleteConfirm")}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => { onDelete(); setConfirmingDelete(false); }}
+                  className="text-xs font-medium text-red-500 hover:text-red-700 dark:hover:text-red-300 hover:underline shrink-0">
+                  {t("entries.form.deleteYes")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmingDelete(false)}
+                  className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:underline shrink-0">
+                  {t("entries.form.deleteNo")}
+                </button>
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setConfirmingDelete(true)}
+                className="text-xs text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:underline shrink-0">
+                {t("entries.form.deleteEntry")}
+              </button>
+            )
+          )}
           <Button type="button" variant="secondary" onClick={onCancel}>
             {t("entries.form.cancel")}
           </Button>

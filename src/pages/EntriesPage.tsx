@@ -225,7 +225,7 @@ export function EntriesPage() {
           </div>
 
           {/* Desktop: search + category chips + Add Entry button */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-3 flex-wrap">
             <input
               type="search"
               value={search}
@@ -233,7 +233,7 @@ export function EntriesPage() {
               placeholder={t("entries.searchPlaceholder")}
               className="w-48 shrink-0 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
             />
-            <div className="flex gap-1.5 flex-1 flex-wrap items-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex gap-1.5 flex-1 flex-wrap  items-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {CATEGORIES.map(({ value, label }) => (
                 <button
                   key={value}
@@ -246,6 +246,10 @@ export function EntriesPage() {
                 </button>
               ))}
             </div>
+            <Button variant="secondary" onClick={() => navigate("/practice")} className="hidden sm:flex shrink-0">
+              <TbTargetArrow className="w-4 h-4" />
+              {t("nav.practice")}
+            </Button>
             {/* Add Entry split button */}
             <div className="relative shrink-0 flex" ref={addMenuRef}>
               <button
@@ -307,9 +311,7 @@ export function EntriesPage() {
                     else setSelectedEntryIds(new Set(selectable));
                   }}
                   className="text-xs font-medium text-emerald-100 hover:text-white transition-colors underline underline-offset-2">
-                  {selectedEntryIds.size > 0
-                    ? t("entries.bulkTag.deselectAll")
-                    : t("entries.bulkTag.selectAll")}
+                  {selectedEntryIds.size > 0 ? t("entries.bulkTag.deselectAll") : t("entries.bulkTag.selectAll")}
                 </button>
                 <span className="text-emerald-200 text-xs">
                   {t("entries.bulkTag.selected", { count: selectedEntryIds.size })}
@@ -468,7 +470,10 @@ export function EntriesPage() {
                       ].join(" ")}>
                       {(isSelected || alreadyHasTag) && (
                         <svg
-                          className={["w-3 h-3", alreadyHasTag ? "text-emerald-500 dark:text-emerald-400" : "text-white"].join(" ")}
+                          className={[
+                            "w-3 h-3",
+                            alreadyHasTag ? "text-emerald-500 dark:text-emerald-400" : "text-white",
+                          ].join(" ")}
                           viewBox="0 0 12 12"
                           fill="none"
                           stroke="currentColor"
@@ -526,7 +531,10 @@ export function EntriesPage() {
                         ].join(" ")}>
                         {(isSelected || alreadyHasTag) && (
                           <svg
-                            className={["w-3 h-3", alreadyHasTag ? "text-emerald-500 dark:text-emerald-400" : "text-white"].join(" ")}
+                            className={[
+                              "w-3 h-3",
+                              alreadyHasTag ? "text-emerald-500 dark:text-emerald-400" : "text-white",
+                            ].join(" ")}
                             viewBox="0 0 12 12"
                             fill="none"
                             stroke="currentColor"
@@ -563,6 +571,7 @@ export function EntriesPage() {
                 setViewingEntry(null);
                 setEditingEntry(entry);
               }}
+              onDelete={() => { removeEntry(viewingEntry.id); setViewingEntry(null); }}
               onPrev={idx > 0 ? () => setViewingEntry(entries[idx - 1]) : undefined}
               onNext={idx < entries.length - 1 ? () => setViewingEntry(entries[idx + 1]) : undefined}
             />
@@ -723,7 +732,7 @@ function EntryHeaderStrip({
         headerAccent[entry.category],
       ].join(" ")}
       onClick={() => onView(entry)}>
-      <div className="flex items-baseline sm:items-center gap-3">
+      <div className="flex items-baseline sm:items-center gap-3 sm:max-w-[75%]">
         <span
           className={`shrink-0 w-2.5 h-2.5 rounded-full ring-2 ring-white dark:ring-gray-800 ${entry.mastery_level != null ? masteryColors[entry.mastery_level] : "bg-gray-300 dark:bg-gray-600"}`}
         />
