@@ -210,10 +210,7 @@ export function Layout() {
 
           {/* Right controls */}
           <div className="flex items-center gap-1">
-            {/* Theme toggle - desktop only; on mobile it lives inside the burger menu */}
-            <div className="hidden sm:block">
-              <DarkModeToggle />
-            </div>
+            <DarkModeToggle />
 
             {/* Language switcher - desktop only; on mobile it lives inside the burger menu */}
             <div className="hidden sm:block">
