@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FaCrown } from "react-icons/fa";
@@ -104,529 +104,6 @@ const CATEGORY_STYLES: Array<{
     mobileClasses: "max-sm:bg-teal-200 max-sm:border-l-2 max-sm:border-teal-500",
   },
 ];
-
-// ── Badge milestones ──────────────────────────────────────────────────────
-
-// ── Streak 2.5D cake ─────────────────────────────────────────────────────────
-
-// const LAP_COLORS = [
-//   {
-//     top: "fill-amber-400 dark:fill-amber-500",
-//     side: "fill-amber-600 dark:fill-amber-700",
-//     fadedTop: "fill-amber-200 dark:fill-amber-800",
-//     fadedSide: "fill-amber-300 dark:fill-amber-700",
-//   },
-//   {
-//     top: "fill-blue-400 dark:fill-blue-500",
-//     side: "fill-blue-600 dark:fill-blue-700",
-//     fadedTop: "fill-blue-200 dark:fill-blue-800",
-//     fadedSide: "fill-blue-300 dark:fill-blue-700",
-//   },
-//   {
-//     top: "fill-emerald-400 dark:fill-emerald-500",
-//     side: "fill-emerald-600 dark:fill-emerald-700",
-//     fadedTop: "fill-emerald-200 dark:fill-emerald-800",
-//     fadedSide: "fill-emerald-300 dark:fill-emerald-700",
-//   },
-//   {
-//     top: "fill-violet-400 dark:fill-violet-500",
-//     side: "fill-violet-600 dark:fill-violet-700",
-//     fadedTop: "fill-violet-200 dark:fill-violet-800",
-//     fadedSide: "fill-violet-300 dark:fill-violet-700",
-//   },
-//   {
-//     top: "fill-pink-400 dark:fill-pink-500",
-//     side: "fill-pink-600 dark:fill-pink-700",
-//     fadedTop: "fill-pink-200 dark:fill-pink-800",
-//     fadedSide: "fill-pink-300 dark:fill-pink-700",
-//   },
-//   {
-//     top: "fill-orange-400 dark:fill-orange-500",
-//     side: "fill-orange-600 dark:fill-orange-700",
-//     fadedTop: "fill-orange-200 dark:fill-orange-800",
-//     fadedSide: "fill-orange-300 dark:fill-orange-700",
-//   },
-//   {
-//     top: "fill-teal-400 dark:fill-teal-500",
-//     side: "fill-teal-600 dark:fill-teal-700",
-//     fadedTop: "fill-teal-200 dark:fill-teal-800",
-//     fadedSide: "fill-teal-300 dark:fill-teal-700",
-//   },
-// ] as const;
-
-// fruit per lap: amber→🍋 blue→🫐 emerald→🍏 violet→🍇 pink→🍒 orange→🍊 teal→🥝
-// const LAP_FRUITS = ["🍋", "🫐", "🍏", "🍇", "🍒", "🍊", "🥝"] as const;
-
-// function StreakFruits({
-//   completedLaps,
-//   max = 12,
-//   small = false,
-// }: {
-//   completedLaps: number;
-//   max?: number;
-//   small?: boolean;
-// }) {
-//   if (completedLaps === 0) return null;
-//   const overflow = Math.max(0, completedLaps - max);
-//   const visible = completedLaps - overflow;
-//   return (
-//     <div className="flex items-center gap-0.5 flex-wrap flex-row-reverse">
-//       {" "}
-//       {overflow > 0 && (
-//         <span
-//           className={
-//             small
-//               ? "text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-0.5"
-//               : "text-md font-bold text-gray-400 dark:text-gray-500 ml-0.5"
-//           }>
-//           +{overflow}
-//         </span>
-//       )}
-//       {Array.from({ length: visible }, (_, i) => {
-//         const lapIndex = overflow + i;
-//         return (
-//           <span
-//             key={lapIndex}
-//             className={small ? "text-[11px] leading-none" : "text-md leading-none select-none"}
-//             title={`Week ${lapIndex + 1}`}>
-//             {LAP_FRUITS[lapIndex % LAP_FRUITS.length]}
-//           </span>
-//         );
-//       })}
-//       <MysteryOrb />
-//     </div>
-//   );
-// }
-
-// function StreakCake3D({
-//   streak,
-//   total = 7,
-//   small = false,
-//   hideBadge = false,
-// }: {
-//   streak: number;
-//   total?: number;
-//   small?: boolean;
-//   hideBadge?: boolean;
-// }) {
-//   const { t } = useTranslation();
-//   const cx = 60,
-//     cy = 36;
-//   const rx = 52,
-//     ry = 20;
-//   const depth = 14;
-//   const STEP = (2 * Math.PI) / total;
-//   const START = -Math.PI / 2;
-
-//   const completedLaps = Math.floor(streak / 7);
-//   const progress = streak % 7;
-//   const lapNumber = streak > 0 ? Math.ceil(streak / 7) : 0;
-//   const currentColor = LAP_COLORS[completedLaps % LAP_COLORS.length];
-//   const prevColor = completedLaps > 0 ? LAP_COLORS[(completedLaps - 1) % LAP_COLORS.length] : null;
-
-//   const pt = (angle: number, bot = false): [number, number] => [
-//     cx + rx * Math.cos(angle),
-//     cy + (bot ? depth : 0) + ry * Math.sin(angle),
-//   ];
-
-//   const sectors = Array.from({ length: total }, (_, i) => {
-//     const a0 = START + i * STEP;
-//     const a1 = a0 + STEP;
-//     const midSin = Math.sin(a0 + STEP / 2);
-//     const [tx0, ty0] = pt(a0);
-//     const [tx1, ty1] = pt(a1);
-//     const [bx0, by0] = pt(a0, true);
-//     const [bx1, by1] = pt(a1, true);
-//     const topPath = `M ${cx} ${cy} L ${tx0.toFixed(2)} ${ty0.toFixed(2)} A ${rx} ${ry} 0 0 1 ${tx1.toFixed(2)} ${ty1.toFixed(2)} Z`;
-//     const sidePath =
-//       midSin > -0.25
-//         ? `M ${tx0.toFixed(2)} ${ty0.toFixed(2)} L ${bx0.toFixed(2)} ${by0.toFixed(2)} A ${rx} ${ry} 0 0 1 ${bx1.toFixed(2)} ${by1.toFixed(2)} L ${tx1.toFixed(2)} ${ty1.toFixed(2)} Z`
-//         : null;
-
-//     // progress===0 && streak>0 means lap just completed — show all sectors in that lap's color
-//     const isFilledCurrent = progress === 0 ? streak > 0 : i < progress;
-
-//     let topClass: string;
-//     let sideClass: string;
-//     if (isFilledCurrent) {
-//       // When lap just completed (progress===0), show previous lap's color (the one just done)
-//       const color = progress === 0 ? (prevColor ?? currentColor) : currentColor;
-//       topClass = color.top;
-//       sideClass = color.side;
-//     } else if (prevColor) {
-//       // Empty slots in lap 2+: faded version of the previous lap
-//       topClass = prevColor.fadedTop;
-//       sideClass = prevColor.fadedSide;
-//     } else {
-//       // Empty slots in lap 1: plain gray
-//       topClass = "fill-gray-200 dark:fill-gray-600";
-//       sideClass = "fill-gray-300 dark:fill-gray-500";
-//     }
-
-//     return { i, topClass, sideClass, midSin, topPath, sidePath };
-//   });
-
-//   const sideSectors = [...sectors].filter((s) => s.sidePath !== null).sort((a, b) => a.midSin - b.midSin);
-
-//   return (
-//     <div className="flex flex-col items-center gap-0.5 shrink-0">
-//       <svg viewBox="0 0 120 80" className="w-20 h-14" aria-hidden>
-//         <ellipse cx={cx} cy={cy + depth + ry + 2} rx={rx - 4} ry={4} fill="rgba(0,0,0,0.12)" />
-//         <ellipse cx={cx} cy={cy + depth} rx={rx} ry={ry} className="fill-gray-200 dark:fill-gray-600" />
-//         {sideSectors.map((s) => (
-//           <path key={`w${s.i}`} d={s.sidePath!} className={s.sideClass} />
-//         ))}
-//         {sectors.map((s) => (
-//           <path
-//             key={`t${s.i}`}
-//             d={s.topPath}
-//             stroke="rgba(255,255,255,0.45)"
-//             strokeWidth="0.7"
-//             className={s.topClass}
-//           />
-//         ))}
-//       </svg>
-//       {!small && !hideBadge && lapNumber >= 2 && (
-//         <span className="text-[9px] font-bold bg-gray-700 dark:bg-gray-300 text-white dark:text-gray-800 px-1.5 py-0.5 rounded-full leading-none whitespace-nowrap">
-//           {t("dashboard.streakLap", { count: lapNumber })}
-//         </span>
-//       )}
-//     </div>
-//   );
-// }
-
-// ── Weekly activity chip — mobile ─────────────────────────────────────────
-
-// function WeeklyActivityChip({
-//   streak,
-//   weeklyStats,
-//   todayCount,
-// }: {
-//   streak: number;
-//   weeklyStats: DayStat[];
-//   todayCount: number;
-// }) {
-//   const { t, i18n } = useTranslation();
-
-//   const days = useMemo(() => {
-//     const today = new Date().toISOString().slice(0, 10);
-//     return weeklyStats.map((stat) => {
-//       const d = new Date(stat.date + "T12:00:00");
-//       return {
-//         entries_added: stat.entries_added,
-//         reviews_count: stat.reviews_count,
-//         games_completed: stat.games_completed ?? 0,
-//         letter: d.toLocaleDateString(i18n.language, { weekday: "narrow" }),
-//         isToday: stat.date === today,
-//       };
-//     });
-//   }, [weeklyStats, i18n.language]);
-
-//   const maxTotal = Math.max(...days.map((d) => d.entries_added + d.reviews_count + d.games_completed), 1);
-
-//   const lastDay = days[days.length - 1];
-//   const lapNumber = streak > 0 ? Math.ceil(streak / 7) : 0;
-
-//   const streakMain =
-//     streak === 0
-//       ? null
-//       : streak === 1
-//         ? t("dashboard.streak1")
-//         : streak >= 7
-//           ? t("dashboard.streakLegendary", { count: streak })
-//           : t("dashboard.streakKeepUp", { count: streak });
-
-//   const streakSub =
-//     streak === 0
-//       ? null
-//       : streak === 1
-//         ? t("dashboard.streak1Sub")
-//         : streak >= 7
-//           ? t("dashboard.streakLegendarySub")
-//           : t("dashboard.streakKeepUpSub");
-
-//   return (
-//     <div className="flex flex-col gap-1 px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-sm">
-//       <div className="flex items-center justify-between mb-0.5">
-//         <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">{t("dashboard.weeklyActivity")}</p>
-//         <Link
-//           to="/activity"
-//           className="text-xs text-gray-400 dark:text-gray-500 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
-//           {t("dashboard.viewActivity")}
-//         </Link>
-//       </div>
-
-//       {/* Top row: [pie] [text flex-1] [badge] [today stats] */}
-//       <div className="flex items-center gap-2">
-//         <StreakCake3D streak={streak} small />
-//         <div className="flex-1 min-w-0">
-//           {streakMain ? (
-//             <>
-//               <div className="flex flex-col  max-w-fit">
-//                 <p className="text-sm font-semibold text-amber-500 dark:text-amber-400 leading-snug">{streakMain}</p>
-//                 <p className="text-xs text-right italic text-amber-400 dark:text-amber-300 leading-snug">{streakSub}</p>
-//               </div>
-//             </>
-//           ) : (
-//             <>
-//               <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-snug">
-//                 {t("dashboard.noStreak")}
-//               </p>
-//               <p className="text-xs text-gray-400 dark:text-gray-500 leading-snug">{t("dashboard.noStreakSub")}</p>
-//             </>
-//           )}
-//         </div>
-//         <div className="shrink-0 flex flex-col items-end gap-0.5">
-//           <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
-//             <span className="w-2 h-2 rounded-[2px] bg-emerald-400" />
-//             {todayCount} {t("dashboard.tooltipEntries")}
-//           </span>
-//           <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
-//             <span className="w-2 h-2 rounded-[2px] bg-indigo-400" />
-//             {lastDay?.reviews_count ?? 0} {t("dashboard.tooltipReviews")}
-//           </span>
-//           <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
-//             <span className="w-2 h-2 rounded-[2px] bg-amber-400" />
-//             {lastDay?.games_completed ?? 0} {t("dashboard.tooltipGames")}
-//           </span>
-//         </div>
-//       </div>
-//       {lapNumber >= 2 && (
-//         <div className="flex items-center gap-1.5 mb-1">
-//           <span className="shrink-0 text-[10px] font-bold text-gray-600 border  dark:text-gray-300 bg-white dark:bg-gray-700 px-1.5 py-1 rounded-full leading-none whitespace-nowrap">
-//             {t("dashboard.streakLap", { count: lapNumber })}
-//           </span>
-//           <StreakFruits completedLaps={Math.floor(streak / 7)} max={12} small />
-//         </div>
-//       )}
-//       {/* Bottom: full-width stacked bar chart */}
-//       <div className="flex flex-col gap-1">
-//         <div className="flex items-end gap-[6px] h-10">
-//           {days.map((d, i) => {
-//             const total = d.entries_added + d.reviews_count + d.games_completed;
-//             const barH = total > 0 ? Math.max((total / maxTotal) * 100, 18) : 0;
-//             return (
-//               <div key={i} className="flex-1 flex flex-col justify-end" style={{ height: "100%" }}>
-//                 {total > 0 ? (
-//                   <div
-//                     className="w-full rounded-t-md overflow-hidden flex flex-col-reverse transition-all duration-300"
-//                     style={{ height: `${barH}%` }}>
-//                     <div style={{ flex: d.entries_added || 0 }} className="bg-emerald-400 dark:bg-emerald-400" />
-//                     <div style={{ flex: d.reviews_count || 0 }} className="bg-indigo-400" />
-//                     <div style={{ flex: d.games_completed || 0 }} className="bg-amber-400" />
-//                   </div>
-//                 ) : (
-//                   <div className="w-full bg-gray-300 dark:bg-gray-600/40 rounded-t-sm" style={{ height: "3px" }} />
-//                 )}
-//               </div>
-//             );
-//           })}
-//         </div>
-//         <div className="flex gap-[3px]">
-//           {days.map((d, i) => (
-//             <div key={i} className="flex-1 flex justify-center">
-//               <span
-//                 className={`text-[9px] font-medium leading-none select-none ${
-//                   d.isToday
-//                     ? "text-emerald-500 dark:text-emerald-400 font-bold"
-//                     : d.entries_added + d.reviews_count + d.games_completed > 0
-//                       ? "text-gray-600 dark:text-gray-400"
-//                       : "text-gray-400 dark:text-gray-600"
-//                 }`}>
-//                 {d.letter}
-//               </span>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// ── Desktop streak block ──────────────────────────────────────────────────
-
-// function DesktopStreakBlock({
-//   streak,
-//   todayCount,
-//   todayReviews,
-// }: {
-//   streak: number;
-//   todayCount: number;
-//   todayReviews: number;
-// }) {
-//   const { t } = useTranslation();
-
-//   const streakMain =
-//     streak === 0
-//       ? t("dashboard.noStreak")
-//       : streak === 1
-//         ? t("dashboard.streak1")
-//         : streak >= 7
-//           ? t("dashboard.streakLegendary", { count: streak })
-//           : t("dashboard.streakKeepUp", { count: streak });
-
-//   const streakSub =
-//     streak === 0
-//       ? t("dashboard.noStreakSub")
-//       : streak === 1
-//         ? t("dashboard.streak1Sub")
-//         : streak >= 7
-//           ? t("dashboard.streakLegendarySub")
-//           : t("dashboard.streakKeepUpSub");
-
-//   return (
-//     <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-5 flex flex-col gap-2 shadow-sm">
-//       <div className="flex items-center gap-4">
-//         <StreakCake3D streak={streak} hideBadge />
-//         <div className="flex-1 min-w-0">
-//           <p
-//             className={`text-base font-bold leading-snug ${streak > 0 ? "text-amber-500 dark:text-amber-400" : "text-gray-500 dark:text-gray-400"}`}>
-//             {streakMain}
-//           </p>
-//           <p
-//             className={`text-sm leading-snug ${streak > 0 ? "text-amber-400 dark:text-amber-300" : "text-gray-400 dark:text-gray-500"}`}>
-//             {streakSub}
-//           </p>
-//         </div>
-//       </div>
-//       {/* <div className="flex items-center gap-4"> */}
-//       <div className="flex-1 min-w-0">
-//         {Math.floor(streak / 7) >= 1 && (
-//           <div className="flex items-center gap-1.5 mt-1">
-//             {Math.ceil(streak / 7) >= 2 && (
-//               <span className="shrink-0 text-[12px] font-bold text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-700 border px-1.5 py-1 rounded-full leading-none whitespace-nowrap">
-//                 {t("dashboard.streakLap", { count: Math.ceil(streak / 7) })}
-//               </span>
-//             )}
-//             <StreakFruits completedLaps={Math.floor(streak / 7)} max={7} />
-//           </div>
-//         )}
-//         {/* </div> */}
-//       </div>
-//       <div className="flex gap-2">
-//         <div className="flex-1 bg-white dark:bg-gray-700 rounded-xl p-3 flex items-center gap-2.5 shadow-sm">
-//           <div className="w-8 h-8 rounded-lg bg-orange-400 flex items-center justify-center text-white shrink-0">
-//             <FiPlusCircle size={16} />
-//           </div>
-//           <div className="min-w-0">
-//             <p className="text-xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">{todayCount}</p>
-//             <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight truncate">
-//               {t("dashboard.statToday")}
-//             </p>
-//           </div>
-//         </div>
-//         <div className="flex-1 bg-white dark:bg-gray-700 rounded-xl p-3 flex items-center gap-2.5 shadow-sm">
-//           <div className="w-8 h-8 rounded-lg bg-violet-500 flex items-center justify-center text-white shrink-0">
-//             <FiTarget size={16} />
-//           </div>
-//           <div className="min-w-0">
-//             <p className="text-xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">{todayReviews}</p>
-//             <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight truncate">
-//               {t("dashboard.statTodayReviews")}
-//             </p>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// // ── Desktop weekly activity bar ───────────────────────────────────────────
-
-// function DesktopWeeklyActivity({ weeklyStats }: { weeklyStats: DayStat[] }) {
-//   const { t, i18n } = useTranslation();
-//   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-
-//   const days = useMemo(() => {
-//     const today = new Date().toISOString().slice(0, 10);
-//     return weeklyStats.map((stat) => {
-//       const d = new Date(stat.date + "T12:00:00");
-//       return {
-//         entries_added: stat.entries_added,
-//         reviews_count: stat.reviews_count,
-//         games_completed: stat.games_completed ?? 0,
-//         letter: d.toLocaleDateString(i18n.language, { weekday: "narrow" }),
-//         isToday: stat.date === today,
-//       };
-//     });
-//   }, [weeklyStats, i18n.language]);
-
-//   const maxTotal = Math.max(...days.map((d) => d.entries_added + d.reviews_count + d.games_completed), 1);
-
-//   return (
-//     <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-5 flex flex-col gap-3 shadow-sm">
-//       <div className="flex items-center justify-between">
-//         <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">{t("dashboard.weeklyActivity")}</p>
-//         <Link
-//           to="/activity"
-//           className="text-xs text-gray-400 dark:text-gray-500 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
-//           {t("dashboard.viewActivity")}
-//         </Link>
-//       </div>
-//       <div className="flex items-end gap-2 flex-1" style={{ minHeight: "80px" }}>
-//         {days.map((d, i) => {
-//           const total = d.entries_added + d.reviews_count + d.games_completed;
-//           const barH = total > 0 ? Math.max((total / maxTotal) * 100, 15) : 0;
-//           return (
-//             <div
-//               key={i}
-//               className="flex-1 flex flex-col items-center gap-1.5 relative"
-//               onMouseEnter={() => setHoveredIdx(i)}
-//               onMouseLeave={() => setHoveredIdx(null)}>
-//               {hoveredIdx === i && (
-//                 <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-10 bg-gray-900 dark:bg-gray-700 text-white rounded-lg px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none flex flex-col gap-1">
-//                   <div className="flex items-center gap-1.5 text-[11px]">
-//                     <span className="w-2 h-2 rounded-sm bg-emerald-400 shrink-0" />
-//                     <span className="text-gray-300">{t("dashboard.tooltipEntries")}:</span>
-//                     <span className="font-semibold">{d.entries_added}</span>
-//                   </div>
-//                   <div className="flex items-center gap-1.5 text-[11px]">
-//                     <span className="w-2 h-2 rounded-sm bg-indigo-400 shrink-0" />
-//                     <span className="text-gray-300">{t("dashboard.tooltipReviews")}:</span>
-//                     <span className="font-semibold">{d.reviews_count}</span>
-//                   </div>
-//                   <div className="flex items-center gap-1.5 text-[11px]">
-//                     <span className="w-2 h-2 rounded-sm bg-amber-400 shrink-0" />
-//                     <span className="text-gray-300">{t("dashboard.tooltipGames")}:</span>
-//                     <span className="font-semibold">{d.games_completed}</span>
-//                   </div>
-//                   <div className="border-t border-gray-700 dark:border-gray-500 pt-1 mt-0.5 flex items-center justify-between gap-3 text-[11px]">
-//                     <span className="text-gray-400">{t("dashboard.tooltipTotal")}:</span>
-//                     <span className="font-bold">{total}</span>
-//                   </div>
-//                   <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-gray-700" />
-//                 </div>
-//               )}
-//               <div className="w-full flex flex-col justify-end" style={{ height: "64px" }}>
-//                 {total > 0 ? (
-//                   <div
-//                     className="w-full rounded-t-md overflow-hidden flex flex-col-reverse transition-all duration-300"
-//                     style={{ height: `${barH}%` }}>
-//                     <div style={{ flex: d.entries_added || 0 }} className="bg-emerald-400 dark:bg-emerald-500" />
-//                     <div style={{ flex: d.reviews_count || 0 }} className="bg-indigo-400" />
-//                     <div style={{ flex: d.games_completed || 0 }} className="bg-amber-400" />
-//                   </div>
-//                 ) : (
-//                   <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-t-sm" style={{ height: "4px" }} />
-//                 )}
-//               </div>
-//               <span
-//                 className={`text-[10px] font-medium select-none ${
-//                   d.isToday
-//                     ? "text-emerald-500 dark:text-emerald-400 font-bold"
-//                     : total > 0
-//                       ? "text-gray-600 dark:text-gray-400"
-//                       : "text-gray-400 dark:text-gray-600"
-//                 }`}>
-//                 {d.letter}
-//               </span>
-//             </div>
-//           );
-//         })}
-//       </div>
-//     </div>
-//   );
-// }
 
 // ── Desktop Due Today card ────────────────────────────────────────────────
 
@@ -946,10 +423,10 @@ function DayActivityBadge({ pct, isToday }: { pct: number; isToday: boolean }) {
   if (level <= 2) {
     return (
       <div
-        className={`w-6 h-6 rounded-full border-2 border-green-400 dark:border-green-500 flex items-center justify-center${
+        className={`w-6 h-6 rounded-full border-2 border-emerald-400 dark:border-emerald-500 flex items-center justify-center${
           isToday ? " ring-2 ring-offset-1 ring-green-300 ring-offset-gray-100 dark:ring-offset-gray-800" : ""
         }`}>
-        <FaCheckCircle size={18} className="text-green-500" />
+        <FaCheckCircle size={18} className="text-emerald-500" />
       </div>
     );
   }
@@ -961,7 +438,7 @@ function DayActivityBadge({ pct, isToday }: { pct: number; isToday: boolean }) {
           ? " bg-orange-500 ring-2 ring-offset-1 ring-orange-300 ring-offset-gray-100 dark:ring-offset-gray-800"
           : " border-2 border-amber-400 dark:border-amber-500"
       }`}>
-      <IoMdFlame size={22} className="leading-none text-amber-700" />
+      <IoMdFlame size={22} className="leading-none text-orange-500" />
     </div>
   );
 }
@@ -980,6 +457,18 @@ const SPACE_ORB_BG = `
   linear-gradient(135deg,#050014,#0d0228,#150a3a,#0a0a2e)
 `;
 
+const SPACE_ORB_BG_DAY = `
+  radial-gradient(circle at 25% 28%, rgba(255,255,255,0.95) 0.6px, transparent 0.6px),
+  radial-gradient(circle at 72% 18%, rgba(255,255,255,0.85) 0.5px, transparent 0.5px),
+  radial-gradient(circle at 58% 72%, rgba(255,255,255,0.9) 0.6px, transparent 0.6px),
+  radial-gradient(circle at 14% 68%, rgba(255,255,255,0.8) 0.4px, transparent 0.4px),
+  radial-gradient(circle at 84% 52%, rgba(255,255,255,0.7) 0.5px, transparent 0.5px),
+  radial-gradient(circle at 45% 15%, rgba(255,255,255,0.6) 0.4px, transparent 0.4px),
+  radial-gradient(circle at 33% 58%, rgba(139, 150, 250, 0.45) 0%, transparent 45%),
+  radial-gradient(circle at 68% 35%, rgba(96,165,250,0.35) 0%, transparent 40%),
+  linear-gradient(135deg,#3d68ab,#3d68ab,#3d68ab,#3d68ab)
+  `;
+
 function SpaceRocketOrb({
   sizeClass = "w-9 h-9",
   iconSize = 22,
@@ -989,6 +478,13 @@ function SpaceRocketOrb({
   iconSize?: number;
   iconRotation?: number;
 }) {
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
+  useEffect(() => {
+    const obs = new MutationObserver(() => setIsDark(document.documentElement.classList.contains("dark")));
+    obs.observe(document.documentElement, { attributeFilter: ["class"] });
+    return () => obs.disconnect();
+  }, []);
+
   return (
     <div className={`relative ${sizeClass}`}>
       <div
@@ -998,7 +494,7 @@ function SpaceRocketOrb({
       <div
         className="relative w-full h-full rounded-full animate-[spin_10s_linear_infinite]"
         style={{
-          background: SPACE_ORB_BG,
+          background: isDark ? SPACE_ORB_BG : SPACE_ORB_BG_DAY,
           boxShadow: "inset 0 0 10px rgba(139,92,246,0.4), 0 2px 10px rgba(30,0,80,0.6)",
         }}>
         <div className="absolute left-1.5 top-1 h-2.5 w-5 rounded-full bg-white/20 blur-[2px] -rotate-[25deg]" />
@@ -1014,9 +510,9 @@ function SpaceRocketOrb({
         }}
       />
       <span
-        className="absolute inset-0 flex items-center justify-center drop-shadow-[0_0_3px_rgba(250,204,21,0.9)]"
+        className="absolute inset-0 flex items-center justify-center dakr:drop-shadow-[0_0_3px_rgba(250,204,21,0.9)]"
         style={iconRotation !== undefined ? { transform: `rotate(${iconRotation}deg)` } : undefined}>
-        <IoRocket size={iconSize} color="#facc15" />
+        <IoRocket size={iconSize} color="#dbb310" />
       </span>
     </div>
   );
@@ -1295,15 +791,14 @@ function WeeklyStreakWidget({
   const { t, i18n } = useTranslation();
 
   const days = useMemo(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    return weeklyStats.map((stat) => {
+    return weeklyStats.map((stat, i) => {
       const d = new Date(stat.date + "T12:00:00");
       return {
         entries_added: stat.entries_added,
         reviews_count: stat.reviews_count,
         games_completed: stat.games_completed ?? 0,
         letter: d.toLocaleDateString(i18n.language, { weekday: "narrow" }),
-        isToday: stat.date === today,
+        isToday: i === weeklyStats.length - 1,
       };
     });
   }, [weeklyStats, i18n.language]);
