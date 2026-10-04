@@ -26,10 +26,12 @@ export const EMPTY_FILTERS: PracticeFilters = {
   dateFilter: null,
 }
 
-function isStale(lastReviewedAt: string | null | undefined): boolean {
-  if (!lastReviewedAt) return true
+function isStale(lastReviewedAt: string | null | undefined, createdAt?: string): boolean {
   const cutoff = new Date()
   cutoff.setDate(cutoff.getDate() - 30)
+  if (!lastReviewedAt) {
+    return createdAt ? new Date(createdAt) < cutoff : true
+  }
   return new Date(lastReviewedAt) < cutoff
 }
 
@@ -74,7 +76,7 @@ export function applyFilters(entries: Entry[], f: PracticeFilters): Entry[] {
     if (f.selectedTag !== null && !e.tags.some((t) => t.id === f.selectedTag)) return false
     if (f.masteryFilter === 'unmastered' && e.rating >= 5) return false
     if (f.masteryFilter === 'mastered' && e.rating < 5) return false
-    if (f.reviewFilter === 'stale' && !isStale(e.last_reviewed_at)) return false
+    if (f.reviewFilter === 'stale' && !isStale(e.last_reviewed_at, e.createdAt)) return false
     if (f.reviewFilter === 'notToday' && isPracticedToday(e.last_reviewed_at)) return false
     if (f.dateFilter !== null && !inSelectedPeriod(e.createdAt, f.dateFilter)) return false
     return true

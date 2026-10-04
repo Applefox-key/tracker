@@ -7,10 +7,12 @@ import { getEntryImageUrl } from '@/api/api'
 import type { PracticeFilters } from '@/features/practice/hooks/usePracticeEntries'
 import { EMPTY_FILTERS, inSelectedPeriod } from '@/features/practice/hooks/usePracticeEntries'
 
-function isStale(lastReviewedAt: string | null | undefined): boolean {
-  if (!lastReviewedAt) return true
+function isStale(lastReviewedAt: string | null | undefined, createdAt?: string): boolean {
   const cutoff = new Date()
   cutoff.setDate(cutoff.getDate() - 30)
+  if (!lastReviewedAt) {
+    return createdAt ? new Date(createdAt) < cutoff : true
+  }
   return new Date(lastReviewedAt) < cutoff
 }
 
@@ -50,7 +52,7 @@ export function useFlashcards(filters: PracticeFilters = EMPTY_FILTERS) {
         if (selectedTag !== null && !e.tags.some((t) => t.id === selectedTag)) return false
         if (masteryFilter === 'unmastered' && e.rating >= 5) return false
         if (masteryFilter === 'mastered' && e.rating < 5) return false
-        if (reviewFilter === 'stale' && !isStale(e.last_reviewed_at)) return false
+        if (reviewFilter === 'stale' && !isStale(e.last_reviewed_at, e.createdAt)) return false
         if (reviewFilter === 'notToday' && isPracticedToday(e.last_reviewed_at)) return false
         if (dateFilter !== null && !inSelectedPeriod(e.createdAt, dateFilter)) return false
         return true

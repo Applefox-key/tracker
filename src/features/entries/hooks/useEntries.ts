@@ -6,10 +6,12 @@ import { EntryCategory, EntryTag } from '../types'
 export type DateFilter = 'all' | 'today' | 'week'
 export type PracticeFilter = 'all' | 'inPractice' | 'notInPractice'
 
-function isStaleEntry(lastReviewedAt: string | null | undefined): boolean {
-  if (!lastReviewedAt) return true
+function isStaleEntry(lastReviewedAt: string | null | undefined, createdAt?: string): boolean {
   const cutoff = new Date()
   cutoff.setDate(cutoff.getDate() - 30)
+  if (!lastReviewedAt) {
+    return createdAt ? new Date(createdAt) < cutoff : true
+  }
   return new Date(lastReviewedAt) < cutoff
 }
 
@@ -70,7 +72,7 @@ export function useEntries(
         practiceFilter === 'all' ? true :
         practiceFilter === 'inPractice' ? e.includeInPractice :
         !e.includeInPractice
-      const matchesStale = !staleFilter || isStaleEntry(e.last_reviewed_at)
+      const matchesStale = !staleFilter || isStaleEntry(e.last_reviewed_at, e.createdAt)
       return matchesSearch && matchesCategory && matchesTag && matchesRating && matchesDate && matchesMastered && matchesPractice && matchesStale
     })
   }, [entries, search, filterCategory, selectedTag, selectedRatings, dateFilter, masteredOnly, practiceFilter, staleFilter])
