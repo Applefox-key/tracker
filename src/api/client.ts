@@ -36,10 +36,11 @@ apiClient.interceptors.response.use(
         throw new Error('Network error. Please check your connection.')
       }
       if (error.response?.status === 401 || error.response?.status === 403) {
+        const wasAuthenticated = localStorage.getItem('Auth') === 'true'
         localStorage.removeItem(TOKEN_KEY)
         localStorage.setItem('Auth', 'false')
         localStorage.removeItem('auth') // clear Zustand auth persist key
-        if (!window.location.pathname.startsWith('/login')) {
+        if (wasAuthenticated && !window.location.pathname.startsWith('/login')) {
           window.location.href = '/login'
         }
       }
