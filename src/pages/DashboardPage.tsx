@@ -234,13 +234,19 @@ function RapidReviewCard({ entries }: { entries: Entry[] }) {
 
   const eligible = useMemo(() => entries.filter((e) => QUICK_REVIEW_CATEGORIES.includes(e.category)), [entries]);
 
-  const [entryId, setEntryId] = useState<number | null>(() =>
-    eligible.length > 0 ? eligible[Math.floor(Math.random() * eligible.length)].id : null,
-  );
+  const [entryId, setEntryId] = useState<number | null>(null);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const entry = useMemo(() => eligible.find((e) => e.id === entryId) ?? eligible[0] ?? null, [eligible, entryId]);
+  useEffect(() => {
+    if (eligible.length === 0) return;
+    const found = eligible.some((e) => e.id === entryId);
+    if (!found) {
+      setEntryId(eligible[Math.floor(Math.random() * eligible.length)].id);
+    }
+  }, [eligible, entryId]);
+
+  const entry = useMemo(() => eligible.find((e) => e.id === entryId) ?? null, [eligible, entryId]);
 
   const shuffle = () => {
     if (eligible.length === 0 || isAnimating) return;
