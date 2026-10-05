@@ -62,7 +62,7 @@ export function DuePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const authMode = useAuthStore((s) => s.mode);
-  const { reviewEntry } = useEntryCrud();
+  const { reviewEntry, logGameComplete } = useEntryCrud();
 
   const [showHelp, setShowHelp] = useState(false);
   const [phase, setPhase] = useState<Phase>("loading");
@@ -89,6 +89,7 @@ export function DuePage() {
 
   useEffect(() => {
     if (phase !== "done") return;
+    logGameComplete();
     entriesApi
       .getDueEntries()
       .then((fresh) => {
@@ -96,6 +97,7 @@ export function DuePage() {
         setRemainingDue(fresh.length);
       })
       .catch(() => setRemainingDue(0));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
   function toggleMode(m: DueMode) {

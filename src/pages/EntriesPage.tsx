@@ -212,7 +212,9 @@ export function EntriesPage() {
       {/* ===== MAIN CONTENT ===== */}
       <div className="flex-1 min-w-0 w-full flex flex-col gap-4">
         {/* Sticky bar */}
-        <div className="sticky top-16 z-20 -mx-4 px-4 sm:mx-0 sm:px-0 bg-white dark:bg-gray-900 flex flex-col gap-2 pb-3 sm:-mt-8 sm:pt-8">
+        <div
+          className="sticky top-16 z-20 -mx-4 px-4 sm:mx-0 sm:px-2 sm:mt-4 bg-white dark:bg-gray-900 flex flex-col gap-2 pb-3 sm:-mt-8 sm:pt-6
+              border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
           {/* Mobile: search box (mr-8 leaves space for SideDrawer tab) */}
           <div className="sm:hidden flex flex-col gap-2 p-3 mr-8 mt-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
             <input
@@ -571,7 +573,10 @@ export function EntriesPage() {
                 setViewingEntry(null);
                 setEditingEntry(entry);
               }}
-              onDelete={() => { removeEntry(viewingEntry.id); setViewingEntry(null); }}
+              onDelete={() => {
+                removeEntry(viewingEntry.id);
+                setViewingEntry(null);
+              }}
               onPrev={idx > 0 ? () => setViewingEntry(entries[idx - 1]) : undefined}
               onNext={idx < entries.length - 1 ? () => setViewingEntry(entries[idx + 1]) : undefined}
             />

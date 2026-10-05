@@ -207,14 +207,26 @@ export function EntryDetailModal({ entry, onClose, onEdit, onDelete, onPrev, onN
                   ].join(" ")}
                 />
               </div>{" "}
-              <p className="text-xs text-gray-300 dark:text-gray-600">
-                {t("entries.detail.added")}{" "}
-                {new Date(entry.createdAt).toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </p>
+              <div className="flex flex-col items-end gap-0.5">
+                <p className="text-xs text-gray-300 dark:text-gray-600">
+                  {t("entries.detail.added")}{" "}
+                  {new Date(entry.createdAt).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </p>
+                {entry.next_review_at && (
+                  <p className="text-xs text-gray-300 dark:text-gray-600">
+                    {t("entries.detail.nextReview")}{" "}
+                    {new Date(entry.next_review_at).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
           <div className="flex justify-between gap-2 px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-100 sm:bg-gray-50 dark:bg-gray-700/50 sm:rounded-b-2xl shadow-sm">
@@ -225,14 +237,26 @@ export function EntryDetailModal({ entry, onClose, onEdit, onDelete, onPrev, onN
                 masteryLevel={entry.mastery_level}
                 showAutoRating={entry.includeInPractice}
               />
-              <p className="text-xs text-gray-300 dark:text-gray-600">
-                {t("entries.detail.added")}{" "}
-                {new Date(entry.createdAt).toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </p>
+              <div className="flex flex-col items-end gap-0.5">
+                <p className="text-xs text-gray-300 dark:text-gray-600">
+                  {t("entries.detail.added")}{" "}
+                  {new Date(entry.createdAt).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </p>
+                {entry.next_review_at && (
+                  <p className="text-xs text-gray-300 dark:text-gray-600">
+                    {t("entries.detail.nextReview")}{" "}
+                    {new Date(entry.next_review_at).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
+                )}
+              </div>
             </div>
             {/* Mobile: prev/next arrows */}
             {(onPrev || onNext) && (
