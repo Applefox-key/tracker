@@ -18,6 +18,7 @@ export function useEntriesData() {
   const mode = useAuthStore((s) => s.mode)
   const setEntries = useEntriesStore((s) => s.setEntries)
   const setDueCount = useEntriesStore((s) => s.setDueCount)
+  const setIsLoading = useEntriesStore((s) => s.setIsLoading)
 
   // Server fetch — disabled in demo and unauthenticated modes
   const { data: serverEntries, isLoading } = useQuery({
@@ -33,6 +34,11 @@ export function useEntriesData() {
     enabled: mode === 'authenticated',
     staleTime: 60_000,
   })
+
+  // Sync loading state into store
+  useEffect(() => {
+    setIsLoading(mode === 'authenticated' && isLoading)
+  }, [mode, isLoading, setIsLoading])
 
   // Populate store based on mode change
   useEffect(() => {

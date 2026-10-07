@@ -985,12 +985,78 @@ function CategoryRingCard({ label, count, total, hexColor, mobileBg, mobileText,
   );
 }
 
+// ── Skeleton primitives ───────────────────────────────────────────────────
+
+function Sk({ className }: { className?: string }) {
+  return <div className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl ${className ?? ""}`} />;
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="flex flex-col gap-4 sm:gap-6 max-w-7xl mx-auto">
+      {/* Title row — desktop */}
+      <div className="hidden sm:flex items-center justify-between">
+        <div className="flex flex-col gap-2">
+          <Sk className="h-8 w-52" />
+          <Sk className="h-4 w-72" />
+        </div>
+        <div className="flex gap-2">
+          <Sk className="h-9 w-28" />
+          <Sk className="h-9 w-36" />
+          <Sk className="h-9 w-24" />
+        </div>
+      </div>
+
+      {/* Streak + due today — desktop */}
+      <div className="hidden sm:grid grid-cols-3 gap-4">
+        <Sk className="col-span-2 h-44" />
+        <Sk className="h-44" />
+      </div>
+
+      {/* Streak widget — mobile */}
+      <Sk className="sm:hidden h-52" />
+
+      {/* Stat cards — mobile */}
+      <div className="flex gap-2.5 sm:hidden">
+        <Sk className="flex-1 h-20" />
+        <Sk className="flex-1 h-20" />
+        <Sk className="flex-1 h-20" />
+      </div>
+
+      {/* Stat cards — desktop */}
+      <div className="hidden sm:grid grid-cols-6 gap-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Sk key={i} className="h-24" />
+        ))}
+      </div>
+
+      {/* Category rings — mobile */}
+      <div className="flex gap-1 sm:hidden mb-8">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Sk key={i} className="flex-1 h-28" />
+        ))}
+      </div>
+
+      {/* Bottom 3-col — desktop */}
+      <div className="hidden sm:grid grid-cols-3 gap-4">
+        <Sk className="h-52" />
+        <Sk className="h-52" />
+        <Sk className="h-52" />
+      </div>
+
+      {/* Recent entries — mobile */}
+      <Sk className="sm:hidden h-36" />
+    </div>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────
 
 export function DashboardPage() {
   const { t } = useTranslation();
   const entries = useEntriesStore((s) => s.entries);
   const dueCount = useEntriesStore((s) => s.dueCount);
+  const isLoading = useEntriesStore((s) => s.isLoading);
   const [showAddForm, setShowAddForm] = useState(false);
   const [statsExpanded, setStatsExpanded] = useState(false);
   const { addEntry } = useEntryCrud();
@@ -1097,6 +1163,8 @@ export function DashboardPage() {
     () => [...entries].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 3),
     [entries],
   );
+
+  if (isLoading) return <DashboardSkeleton />;
 
   return (
     <div className="flex flex-col gap-4 sm:gap-6 max-w-7xl mx-auto">
