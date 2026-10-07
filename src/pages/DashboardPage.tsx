@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FaCrown } from "react-icons/fa";
@@ -812,6 +812,7 @@ function WeeklyStreakWidget({
   const maxTotal = Math.max(...days.map((d) => d.entries_added + d.reviews_count + d.games_completed), 1);
   const todayDay = days.find((d) => d.isToday) ?? days[days.length - 1];
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const touchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   return (
     <div className="flex flex-col gap-2 px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 shadow-sm">
@@ -837,14 +838,30 @@ function WeeklyStreakWidget({
               const total = d.entries_added + d.reviews_count + d.games_completed;
               const barH = total > 0 ? Math.max((total / maxTotal) * 100, 12) : 0;
               const pct = maxTotal > 0 ? total / maxTotal : 0;
+              const tipAlign =
+                i === 0 ? "left-0" :
+                i >= days.length - 1 ? "right-0 left-auto" :
+                "left-1/2 -translate-x-1/2";
+              const arrowAlign =
+                i === 0 ? "left-[22px]" :
+                i >= days.length - 1 ? "right-[22px] left-auto" :
+                "left-1/2 -translate-x-1/2";
               return (
                 <div
                   key={i}
                   className="flex-1 max-w-[44px] flex flex-col items-center gap-0.5 relative"
                   onMouseEnter={() => setHoveredIdx(i)}
-                  onMouseLeave={() => setHoveredIdx(null)}>
+                  onMouseLeave={() => setHoveredIdx(null)}
+                  onTouchStart={(e) => {
+                    e.preventDefault();
+                    if (touchTimerRef.current) clearTimeout(touchTimerRef.current);
+                    setHoveredIdx(i);
+                  }}
+                  onTouchEnd={() => {
+                    touchTimerRef.current = setTimeout(() => setHoveredIdx(null), 1500);
+                  }}>
                   {hoveredIdx === i && (
-                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-10 bg-gray-900 dark:bg-gray-700 text-white rounded-lg px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none flex flex-col gap-1">
+                    <div className={`absolute bottom-full mb-2 ${tipAlign} z-50 bg-gray-900 dark:bg-gray-700 text-white rounded-lg px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none flex flex-col gap-1`}>
                       <div className="flex items-center gap-1.5 text-[11px]">
                         <span className="w-2 h-2 rounded-sm bg-emerald-400 shrink-0" />
                         <span className="text-gray-300">{t("dashboard.tooltipEntries")}:</span>
@@ -864,7 +881,7 @@ function WeeklyStreakWidget({
                         <span className="text-gray-400">{t("dashboard.tooltipTotal")}:</span>
                         <span className="font-bold">{total}</span>
                       </div>
-                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-gray-700" />
+                      <div className={`absolute top-full ${arrowAlign} border-4 border-transparent border-t-gray-900 dark:border-t-gray-700`} />
                     </div>
                   )}
                   <div className="w-full flex flex-col justify-end" style={{ height: "80px" }}>
