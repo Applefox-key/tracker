@@ -156,6 +156,24 @@
     "inPractice": "W praktyce",
     "notInPractice": "Poza praktyką",
     "all": "Wszystkie",
+    "sortLabel": "Sortuj",
+    "sortGroups": {
+      "date": "Dodano",
+      "alpha": "Alfabetycznie",
+      "rating": "Ocena",
+      "mastery": "Opanowanie",
+      "reviewed": "Aktywność powtórek"
+    },
+    "sortOptions": {
+      "date_desc": "Najnowsze",
+      "date_asc": "Najstarsze",
+      "alpha_asc": "A → Z",
+      "alpha_desc": "Z → A",
+      "highestFirst": "Najwyższe pierwsze",
+      "lowestFirst": "Najniższe pierwsze",
+      "reviewed_asc": "Dawno nie powtarzane",
+      "reviewed_desc": "Ostatnio powtarzane"
+    },
     "form": {
       "editTitle": "Edytuj wpis",
       "newTitle": "Nowy wpis",
@@ -329,7 +347,7 @@
     "signIn": "Zaloguj się, aby zacząć",
     "featuresTitle": "Funkcje",
     "aboutTitle": "O aplikacji",
-    "aboutText": "Language Progress Tracker to osobisty pomocnik w nauce, który pomaga uczącym się języków organizować słownictwo, notatki gramatyczne i idiomy w jednym miejscu. Utrwalaj wiedzę przez tryby ćwiczeń — fiszki, quizy, dopasowywanie par i zagadki. Aplikacja jest szybka, pozbawiona rozpraszaczy i działa offline.",
+    "aboutText": "Language Progress Tracker to osobisty pomocnik w nauce, który pomaga uczącym się języków organizować słownictwo, notatki gramatyczne i idiomy w jednym miejscu. Utrwalaj wiedzę przez tryby ćwiczeń — fiszki, quizy, dopasowywanie par i zagadki. Aplikacja jest szybka, pozbawiona rozpraszaczy i wolna od rozpraszaczy.",
     "features": {
       "entries": {
         "title": "Wpisy",

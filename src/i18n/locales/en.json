@@ -152,6 +152,24 @@
     "inPractice": "In practice",
     "notInPractice": "Not in practice",
     "all": "All",
+    "sortLabel": "Sort",
+    "sortGroups": {
+      "date": "Added",
+      "alpha": "Alphabetical",
+      "rating": "Rating",
+      "mastery": "Mastery",
+      "reviewed": "Review Activity"
+    },
+    "sortOptions": {
+      "date_desc": "Newest first",
+      "date_asc": "Oldest first",
+      "alpha_asc": "A → Z",
+      "alpha_desc": "Z → A",
+      "highestFirst": "Highest first",
+      "lowestFirst": "Lowest first",
+      "reviewed_asc": "Least reviewed",
+      "reviewed_desc": "Recently reviewed"
+    },
     "form": {
       "editTitle": "Edit Entry",
       "newTitle": "New Entry",
@@ -323,7 +341,7 @@
     "signIn": "Sign in to get started",
     "featuresTitle": "Features",
     "aboutTitle": "About",
-    "aboutText": "Language Progress Tracker is a personal study companion built to help language learners organise their vocabulary, grammar notes, and idioms in one place. Reinforce what you learn through practice modes — flashcards, quizzes, matching pairs, and puzzles. It is designed to be fast, distraction-free, and offline-friendly.",
+    "aboutText": "Language Progress Tracker is a personal study companion built to help language learners organise their vocabulary, grammar notes, and idioms in one place. Reinforce what you learn through practice modes — flashcards, quizzes, matching pairs, and puzzles. It is designed to be fast and distraction-free.",
     "features": {
       "entries": {
         "title": "Entries",

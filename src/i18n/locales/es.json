@@ -152,6 +152,24 @@
     "inPractice": "En práctica",
     "notInPractice": "Sin práctica",
     "all": "Todas",
+    "sortLabel": "Ordenar",
+    "sortGroups": {
+      "date": "Añadido",
+      "alpha": "Alfabético",
+      "rating": "Calificación",
+      "mastery": "Dominio",
+      "reviewed": "Actividad de repaso"
+    },
+    "sortOptions": {
+      "date_desc": "Más recientes",
+      "date_asc": "Más antiguas",
+      "alpha_asc": "A → Z",
+      "alpha_desc": "Z → A",
+      "highestFirst": "Mayor primero",
+      "lowestFirst": "Menor primero",
+      "reviewed_asc": "Menos repasado",
+      "reviewed_desc": "Repasado recientemente"
+    },
     "form": {
       "editTitle": "Editar entrada",
       "newTitle": "Nueva entrada",
@@ -323,7 +341,7 @@
     "signIn": "Inicia sesión para comenzar",
     "featuresTitle": "Funciones",
     "aboutTitle": "Acerca de",
-    "aboutText": "Language Progress Tracker es un compañero de estudio personal creado para ayudar a los estudiantes de idiomas a organizar su vocabulario, notas gramaticales e idioms en un solo lugar. Refuerza lo aprendido mediante modos de práctica: tarjetas, cuestionarios, pares y puzzles. Está diseñado para ser rápido, sin distracciones y apto para uso sin conexión.",
+    "aboutText": "Language Progress Tracker es un compañero de estudio personal creado para ayudar a los estudiantes de idiomas a organizar su vocabulario, notas gramaticales e idioms en un solo lugar. Refuerza lo aprendido mediante modos de práctica: tarjetas, cuestionarios, pares y puzzles. Está diseñado para ser rápido, sin distracciones y sin distracciones.",
     "features": {
       "entries": {
         "title": "Entradas",

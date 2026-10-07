@@ -5,6 +5,12 @@ import { EntryCategory, EntryTag } from '../types'
 
 export type DateFilter = 'all' | 'today' | 'week'
 export type PracticeFilter = 'all' | 'inPractice' | 'notInPractice'
+export type SortBy =
+  | 'date_desc' | 'date_asc'
+  | 'alpha_asc' | 'alpha_desc'
+  | 'rating_desc' | 'rating_asc'
+  | 'mastery_desc' | 'mastery_asc'
+  | 'reviewed_asc' | 'reviewed_desc'
 
 function isStaleEntry(lastReviewedAt: string | null | undefined, createdAt?: string): boolean {
   const cutoff = new Date()
@@ -44,6 +50,7 @@ export function useEntries(
   const [masteredOnly, setMasteredOnly] = useState(initialMasteredOnly)
   const [practiceFilter, setPracticeFilter] = useState<PracticeFilter>('all')
   const [staleFilter, setStaleFilter] = useState(false)
+  const [sortBy, setSortBy] = useState<SortBy>('date_desc')
 
   const allTags = useMemo(() => {
     const seen = new Map<number, EntryTag>()
@@ -54,9 +61,31 @@ export function useEntries(
   const filtered = useMemo(() => {
     const today = startOfToday()
     const week = startOfWeek()
-    return [...entries].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    ).filter((e) => {
+
+    function sortEntries(a: typeof entries[0], b: typeof entries[0]): number {
+      switch (sortBy) {
+        case 'date_asc':  return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        case 'alpha_asc': return a.word.localeCompare(b.word)
+        case 'alpha_desc': return b.word.localeCompare(a.word)
+        case 'rating_desc': return b.rating - a.rating
+        case 'rating_asc':  return a.rating - b.rating
+        case 'mastery_desc': return (b.mastery_level ?? 0) - (a.mastery_level ?? 0)
+        case 'mastery_asc':  return (a.mastery_level ?? 0) - (b.mastery_level ?? 0)
+        case 'reviewed_asc': {
+          const ta = a.last_reviewed_at ? new Date(a.last_reviewed_at).getTime() : 0
+          const tb = b.last_reviewed_at ? new Date(b.last_reviewed_at).getTime() : 0
+          return ta - tb
+        }
+        case 'reviewed_desc': {
+          const ta = a.last_reviewed_at ? new Date(a.last_reviewed_at).getTime() : 0
+          const tb = b.last_reviewed_at ? new Date(b.last_reviewed_at).getTime() : 0
+          return tb - ta
+        }
+        default: return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      }
+    }
+
+    return [...entries].sort(sortEntries).filter((e) => {
       const matchesSearch =
         e.word.toLowerCase().includes(search.toLowerCase()) ||
         e.explanation.toLowerCase().includes(search.toLowerCase())
@@ -75,7 +104,7 @@ export function useEntries(
       const matchesStale = !staleFilter || isStaleEntry(e.last_reviewed_at, e.createdAt)
       return matchesSearch && matchesCategory && matchesTag && matchesRating && matchesDate && matchesMastered && matchesPractice && matchesStale
     })
-  }, [entries, search, filterCategory, selectedTag, selectedRatings, dateFilter, masteredOnly, practiceFilter, staleFilter])
+  }, [entries, search, filterCategory, selectedTag, selectedRatings, dateFilter, masteredOnly, practiceFilter, staleFilter, sortBy])
 
   const hasActiveFilters =
     search !== '' || filterCategory !== 'all' || selectedTag !== null ||
@@ -112,6 +141,8 @@ export function useEntries(
     setPracticeFilter,
     staleFilter,
     setStaleFilter,
+    sortBy,
+    setSortBy,
     hasActiveFilters,
     clearFilters,
     addEntry,

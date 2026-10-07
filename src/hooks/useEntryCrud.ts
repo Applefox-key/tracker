@@ -73,9 +73,13 @@ export function useEntryCrud() {
 
   async function reviewEntry(id: number, grade: SRGrade, practiceMode: PracticeMode, isDue = false): Promise<Entry | undefined> {
     if (mode === 'authenticated') {
-      const result = await reviewMutation.mutateAsync({ id, grade, mode: practiceMode, isDue })
-      queryClient.invalidateQueries({ queryKey: ['weeklyStats'] })
-      return result
+      try {
+        const result = await reviewMutation.mutateAsync({ id, grade, mode: practiceMode, isDue })
+        queryClient.invalidateQueries({ queryKey: ['weeklyStats'] })
+        return result
+      } catch {
+        // no network — game continues, progress not saved
+      }
     }
   }
 

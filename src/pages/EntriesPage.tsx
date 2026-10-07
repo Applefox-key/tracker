@@ -11,7 +11,7 @@ import { EntryForm, EntryFormValues } from "@/features/entries/components/AddEnt
 import { EditEntryModal } from "@/features/entries/components/EditEntryModal";
 import { EntryDetailModal } from "@/features/entries/components/EntryDetailModal";
 import { ImportBundleModal } from "@/features/entries/components/ImportBundleModal";
-import { useEntries, DateFilter, PracticeFilter } from "@/features/entries/hooks/useEntries";
+import { useEntries, DateFilter, PracticeFilter, SortBy } from "@/features/entries/hooks/useEntries";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { entryTagsApi } from "@/api/api";
 import { Entry, EntryCategory } from "@/features/entries/types";
@@ -94,6 +94,8 @@ export function EntriesPage() {
     setPracticeFilter,
     staleFilter,
     setStaleFilter,
+    sortBy,
+    setSortBy,
     hasActiveFilters,
     clearFilters,
     addEntry,
@@ -213,7 +215,7 @@ export function EntriesPage() {
       <div className="flex-1 min-w-0 w-full flex flex-col gap-4">
         {/* Sticky bar */}
         <div
-          className="sticky top-16 z-20 -mx-4 px-4 sm:mx-0 sm:px-2 sm:mt-4 bg-white dark:bg-gray-900 flex flex-col gap-2 pb-3 sm:-mt-8 sm:pt-6
+          className="sticky top-16 z-20 -mx-4 px-4 sm:mx-0 sm:mt-4 bg-white dark:bg-gray-900 flex flex-col gap-2 pb-3 sm:-mt-8 sm:pt-6
               border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
           {/* Mobile: search box (mr-8 leaves space for SideDrawer tab) */}
           <div className="sm:hidden flex flex-col gap-2 p-3 mr-8 mt-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
@@ -333,11 +335,39 @@ export function EntriesPage() {
             </div>
           )}
 
-          {/* Entry count + view toggle */}
-          <div className="flex items-center justify-between px-1 sm:px-0">
-            <p className="text-sm text-gray-400 dark:text-gray-500">
-              {t("entries.showing", { shown: entries.length, total: totalCount })}
+          {/* Entry count + sort + view toggle */}
+          <div className="flex items-center justify-between px-1 sm:px-0 gap-2">
+            <p className="text-sm text-gray-400 dark:text-gray-500 shrink-0">
+              <span className="sm:hidden">{entries.length}/{totalCount}</span>
+              <span className="hidden sm:inline">{t("entries.showing", { shown: entries.length, total: totalCount })}</span>
             </p>
+            <div className="flex items-center gap-2 ml-auto">
+              <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0 hidden sm:inline">{t("entries.sortLabel")}:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortBy)}
+                className="text-xs border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer">
+                <optgroup label={t("entries.sortGroups.date")}>
+                  <option value="date_desc">{t("entries.sortOptions.date_desc")}</option>
+                  <option value="date_asc">{t("entries.sortOptions.date_asc")}</option>
+                </optgroup>
+                <optgroup label={t("entries.sortGroups.alpha")}>
+                  <option value="alpha_asc">{t("entries.sortOptions.alpha_asc")}</option>
+                  <option value="alpha_desc">{t("entries.sortOptions.alpha_desc")}</option>
+                </optgroup>
+                <optgroup label={t("entries.sortGroups.rating")}>
+                  <option value="rating_desc">{t("entries.sortOptions.highestFirst")}</option>
+                  <option value="rating_asc">{t("entries.sortOptions.lowestFirst")}</option>
+                </optgroup>
+                <optgroup label={t("entries.sortGroups.mastery")}>
+                  <option value="mastery_desc">{t("entries.sortOptions.highestFirst")}</option>
+                  <option value="mastery_asc">{t("entries.sortOptions.lowestFirst")}</option>
+                </optgroup>
+                <optgroup label={t("entries.sortGroups.reviewed")}>
+                  <option value="reviewed_asc">{t("entries.sortOptions.reviewed_asc")}</option>
+                  <option value="reviewed_desc">{t("entries.sortOptions.reviewed_desc")}</option>
+                </optgroup>
+              </select>
             <div className="flex items-center gap-1 p-0.5 bg-gray-100 dark:bg-gray-700 rounded-lg">
               <button
                 onClick={() => setViewMode("expanded")}
@@ -379,6 +409,7 @@ export function EntriesPage() {
                   <rect x="3" y="18" width="18" height="4" rx="1" />
                 </svg>
               </button>
+            </div>
             </div>
           </div>
         </div>

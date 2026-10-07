@@ -164,6 +164,24 @@
     "inPractice": "В практике",
     "notInPractice": "Не в практике",
     "all": "Все",
+    "sortLabel": "Сортировка",
+    "sortGroups": {
+      "date": "Добавлено",
+      "alpha": "Алфавит",
+      "rating": "Оценка",
+      "mastery": "Владение",
+      "reviewed": "Повторение"
+    },
+    "sortOptions": {
+      "date_desc": "Сначала новые",
+      "date_asc": "Сначала старые",
+      "alpha_asc": "А → Я",
+      "alpha_desc": "Я → А",
+      "highestFirst": "Высокие первыми",
+      "lowestFirst": "Низкие первыми",
+      "reviewed_asc": "Давно не повторялось",
+      "reviewed_desc": "Недавно повторялось"
+    },
     "form": {
       "editTitle": "Редактировать запись",
       "newTitle": "Новая запись",
