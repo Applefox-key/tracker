@@ -87,6 +87,10 @@
     "statSilver": "Silver",
     "badgesComingSoon": "Badges — coming soon",
     "badgesComingSoonSub": "Achievement system is on the way",
+    "streakRingTooltipNoStreak": "No active streak yet. Practice today — every great streak starts with day 1!",
+    "streakRingTooltipProgress": "Your best streak is {{longestStreak}} days. {{daysToGo}} more to beat the record. Keep going!",
+    "streakRingTooltipMatched": "You've matched your record of {{streak}} days in a row! One more day for a new all-time high.",
+    "streakRingTooltipNewRecord": "You've set a new record — {{streak}} days in a row! Amazing!",
     "rapidReview": {
       "title": "Rapid Review",
       "tapToFlip": "tap to flip",

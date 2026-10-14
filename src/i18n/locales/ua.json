@@ -96,6 +96,10 @@
     "statSilver": "Срібло",
     "badgesComingSoon": "Бейджі — скоро",
     "badgesComingSoonSub": "Система досягнень у розробці",
+    "streakRingTooltipNoStreak": "Немає активної серії. Позаймайтеся сьогодні — кожен рекорд починається з першого дня!",
+    "streakRingTooltipProgress": "Ваш рекорд — {{longestStreak}} дн. Залишилось {{daysToGo}} дн., щоб побити його. Так тримати!",
+    "streakRingTooltipMatched": "Ви повторили рекорд — {{streak}} днів поспіль! Ще один день — і новий рекорд.",
+    "streakRingTooltipNewRecord": "Ви встановили новий рекорд — {{streak}} днів поспіль. Неймовірно!",
     "rapidReview": {
       "title": "Швидке повторення",
       "tapToFlip": "натисни щоб перегорнути",

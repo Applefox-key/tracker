@@ -96,6 +96,10 @@
     "statSilver": "Серебро",
     "badgesComingSoon": "Бейджи — скоро",
     "badgesComingSoonSub": "Система достижений уже в разработке",
+    "streakRingTooltipNoStreak": "Нет активной серии. Позанимайтесь сегодня — каждый рекорд начинается с первого дня!",
+    "streakRingTooltipProgress": "Ваш рекорд — {{longestStreak}} дн. Осталось {{daysToGo}} дн., чтобы побить его. Так держать!",
+    "streakRingTooltipMatched": "Вы повторили рекорд — {{streak}} дней подряд! Ещё один день — и новый рекорд.",
+    "streakRingTooltipNewRecord": "Вы установили новый рекорд — {{streak}} дней подряд. Невероятно!",
     "rapidReview": {
       "title": "Быстрое повторение",
       "tapToFlip": "нажми чтобы перевернуть",

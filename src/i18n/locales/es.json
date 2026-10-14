@@ -86,6 +86,10 @@
     "statSilver": "Plata",
     "badgesComingSoon": "Insignias — próximamente",
     "badgesComingSoonSub": "El sistema de logros está en camino",
+    "streakRingTooltipNoStreak": "Sin racha activa. Practica hoy — ¡cada racha comienza con el día 1!",
+    "streakRingTooltipProgress": "Tu mejor racha es {{longestStreak}} días. Te quedan {{daysToGo}} para batir el récord. ¡Sigue así!",
+    "streakRingTooltipMatched": "¡Has igualado tu récord de {{streak}} días seguidos! Un día más y será un nuevo récord.",
+    "streakRingTooltipNewRecord": "¡Nuevo récord! {{streak}} días seguidos. ¡Increíble!",
     "rapidReview": {
       "title": "Repaso rápido",
       "tapToFlip": "toca para voltear",

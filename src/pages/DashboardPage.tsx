@@ -441,7 +441,7 @@ function DayActivityBadge({ pct, isToday }: { pct: number; isToday: boolean }) {
     <div
       className={`w-6 h-6 rounded-full flex items-center justify-center${
         isToday
-          ? " bg-orange-500 ring-2 ring-offset-1 ring-orange-300 ring-offset-gray-100 dark:ring-offset-gray-800"
+          ? " bg-orange-300 ring-2 ring-offset-1 ring-orange-300 ring-offset-gray-100 dark:ring-offset-gray-800"
           : " border-2 border-amber-400 dark:border-amber-500"
       }`}>
       <IoMdFlame size={22} className="leading-none text-orange-500" />
@@ -526,6 +526,19 @@ function SpaceRocketOrb({
 
 function StreakProgressRing({ streak, longestStreak }: { streak: number; longestStreak: number }) {
   const { t } = useTranslation();
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!tooltipOpen) return;
+    function handleOutside(e: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setTooltipOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, [tooltipOpen]);
 
   const effective = Math.max(longestStreak, streak, 1);
   const pct = streak / effective;
@@ -554,6 +567,17 @@ function StreakProgressRing({ streak, longestStreak }: { streak: number; longest
             ? t("dashboard.streakLegendarySub")
             : t("dashboard.streakKeepUpSub");
 
+  const tooltipText =
+    streak === 0
+      ? t("dashboard.streakRingTooltipNoStreak")
+      : isNewRecord
+        ? t("dashboard.streakRingTooltipNewRecord", { streak })
+        : streak === longestStreak && longestStreak > 0
+          ? t("dashboard.streakRingTooltipMatched", { streak })
+          : streak < longestStreak
+            ? t("dashboard.streakRingTooltipProgress", { longestStreak, daysToGo: longestStreak - streak })
+            : t("dashboard.streakRingTooltipNewRecord", { streak });
+
   const startAngleRad = 135 * (Math.PI / 180);
   const totalArcRad = 270 * (Math.PI / 180);
   const currentAngleRad = startAngleRad + pct * totalArcRad;
@@ -562,7 +586,17 @@ function StreakProgressRing({ streak, longestStreak }: { streak: number; longest
   const rocketRotation = (currentAngleRad * 180) / Math.PI + 135;
 
   return (
-    <div className="relative flex items-center justify-center shrink-0" style={{ width: 148, height: 148 }}>
+    <div ref={wrapperRef} className="relative" style={{ width: 148 }}>
+      {tooltipOpen && (
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 z-50 w-52 rounded-2xl bg-white dark:bg-gray-800 shadow-xl border border-gray-100 dark:border-gray-700 px-3 py-2.5 text-xs text-gray-700 dark:text-gray-200 text-center leading-relaxed pointer-events-none">
+          {tooltipText}
+          <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-white dark:border-t-gray-800" />
+        </div>
+      )}
+      <div
+        className="relative flex items-center justify-center shrink-0 cursor-pointer"
+        style={{ width: 148, height: 148 }}
+        onClick={() => setTooltipOpen((v) => !v)}>
       <svg
         viewBox="0 0 100 100"
         style={{
@@ -678,6 +712,7 @@ function StreakProgressRing({ streak, longestStreak }: { streak: number; longest
         {streakSub}
       </p>
     </div>
+  </div>
   );
 }
 
@@ -839,13 +874,9 @@ function WeeklyStreakWidget({
               const barH = total > 0 ? Math.max((total / maxTotal) * 100, 12) : 0;
               const pct = maxTotal > 0 ? total / maxTotal : 0;
               const tipAlign =
-                i === 0 ? "left-0" :
-                i >= days.length - 1 ? "right-0 left-auto" :
-                "left-1/2 -translate-x-1/2";
+                i === 0 ? "left-0" : i >= days.length - 1 ? "right-0 left-auto" : "left-1/2 -translate-x-1/2";
               const arrowAlign =
-                i === 0 ? "left-[22px]" :
-                i >= days.length - 1 ? "right-[22px] left-auto" :
-                "left-1/2 -translate-x-1/2";
+                i === 0 ? "left-[22px]" : i >= days.length - 1 ? "right-[22px] left-auto" : "left-1/2 -translate-x-1/2";
               return (
                 <div
                   key={i}
@@ -861,7 +892,8 @@ function WeeklyStreakWidget({
                     touchTimerRef.current = setTimeout(() => setHoveredIdx(null), 1500);
                   }}>
                   {hoveredIdx === i && (
-                    <div className={`absolute bottom-full mb-2 ${tipAlign} z-50 bg-gray-900 dark:bg-gray-700 text-white rounded-lg px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none flex flex-col gap-1`}>
+                    <div
+                      className={`absolute bottom-full mb-2 ${tipAlign} z-50 bg-gray-900 dark:bg-gray-700 text-white rounded-lg px-2.5 py-1.5 shadow-lg whitespace-nowrap pointer-events-none flex flex-col gap-1`}>
                       <div className="flex items-center gap-1.5 text-[11px]">
                         <span className="w-2 h-2 rounded-sm bg-emerald-400 shrink-0" />
                         <span className="text-gray-300">{t("dashboard.tooltipEntries")}:</span>
@@ -881,7 +913,9 @@ function WeeklyStreakWidget({
                         <span className="text-gray-400">{t("dashboard.tooltipTotal")}:</span>
                         <span className="font-bold">{total}</span>
                       </div>
-                      <div className={`absolute top-full ${arrowAlign} border-4 border-transparent border-t-gray-900 dark:border-t-gray-700`} />
+                      <div
+                        className={`absolute top-full ${arrowAlign} border-4 border-transparent border-t-gray-900 dark:border-t-gray-700`}
+                      />
                     </div>
                   )}
                   <div className="w-full flex flex-col justify-end" style={{ height: "80px" }}>

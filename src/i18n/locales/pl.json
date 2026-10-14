@@ -88,6 +88,10 @@
     "statSilver": "Srebro",
     "badgesComingSoon": "Odznaki — wkrótce",
     "badgesComingSoonSub": "System osiągnięć w drodze",
+    "streakRingTooltipNoStreak": "Brak aktywnej serii. Poćwicz dziś — każdy rekord zaczyna się od pierwszego dnia!",
+    "streakRingTooltipProgress": "Twój rekord to {{longestStreak}} dni. Zostało {{daysToGo}} dni do pobicia rekordu. Tak trzymaj!",
+    "streakRingTooltipMatched": "Wyrównałeś swój rekord — {{streak}} dni z rzędu! Jeszcze jeden dzień i nowy rekord.",
+    "streakRingTooltipNewRecord": "Nowy rekord! {{streak}} dni z rzędu. Niesamowite!",
     "rapidReview": {
       "title": "Szybka powtórka",
       "tapToFlip": "dotknij, aby obrócić",
