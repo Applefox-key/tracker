@@ -25,7 +25,6 @@ import { AddEntryFab } from "@/features/entries/components/AddEntryFab";
 import { EntryForm, EntryFormValues } from "@/features/entries/components/AddEntryForm";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { entriesApi, type DayStat } from "@/api/api";
-// import MysteryOrb from "@/shared/ui/MyseryOrb";
 import { IoMdFlame } from "react-icons/io";
 import { GrTrophy } from "react-icons/gr";
 import { MdCancel } from "react-icons/md";
@@ -45,6 +44,16 @@ function daysAgo(n: number): Date {
   d.setDate(d.getDate() - n);
   d.setHours(0, 0, 0, 0);
   return d;
+}
+
+function useDarkMode() {
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
+  useEffect(() => {
+    const obs = new MutationObserver(() => setIsDark(document.documentElement.classList.contains("dark")));
+    obs.observe(document.documentElement, { attributeFilter: ["class"] });
+    return () => obs.disconnect();
+  }, []);
+  return isDark;
 }
 
 // ── Category config ───────────────────────────────────────────────────────
@@ -188,38 +197,74 @@ function DesktopStatCard({ label, value, sub, icon, iconBg, to, toState }: Deskt
   return card;
 }
 
-function DesktopMasteredCard({ goldCount, silverCount }: { goldCount: number; silverCount: number }) {
+// ── Mastered card (desktop + mobile variants) ─────────────────────────────
+
+function MasteredCard({
+  goldCount,
+  silverCount,
+  variant,
+}: {
+  goldCount: number;
+  silverCount: number;
+  variant: "desktop" | "mobile";
+}) {
   const { t } = useTranslation();
+  const isMobile = variant === "mobile";
+
+  const content = (
+    <>
+      <div className={`flex items-center ${isMobile ? "gap-2" : "gap-3"} justify-around w-full`}>
+        <div
+          className={`${isMobile ? "w-9 h-9" : "w-10 h-10"} shrink-0 rounded-xl bg-amber-400 flex items-center justify-center`}>
+          <FaCrown
+            size={isMobile ? 16 : 18}
+            className="text-amber-100"
+            style={{ filter: `drop-shadow(0 0 ${isMobile ? "1px" : "2px"} #89651d)` }}
+          />
+        </div>
+        <p className="text-2xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">
+          {goldCount + silverCount}
+        </p>
+      </div>
+      <p
+        className={`${isMobile ? "text-[11px] truncate" : "text-[13px]"} font-semibold text-center text-gray-700 dark:text-gray-300 leading-tight w-full`}>
+        {t("dashboard.statMastered")}
+      </p>
+      <div className="flex justify-center gap-5">
+        <div className={`flex items-center ${isMobile ? "gap-1" : "gap-1.5"}`}>
+          <FaCrown size={isMobile ? 9 : 10} className="text-amber-400 shrink-0" />
+          <span
+            className={`${isMobile ? "text-[10px]" : "text-[11px]"} text-center text-gray-400 dark:text-gray-500 leading-tight w-full`}>
+            {goldCount}
+          </span>
+        </div>
+        <div className={`flex items-center ${isMobile ? "gap-1" : "gap-1.5"}`}>
+          <FaCrown size={isMobile ? 9 : 10} className="text-slate-400 shrink-0" />
+          <span
+            className={`${isMobile ? "text-[10px]" : "text-[11px]"} text-center text-gray-400 dark:text-gray-500 leading-tight w-full`}>
+            {silverCount}
+          </span>
+        </div>
+      </div>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <Link to="/entries" state={{ masteredOnly: true }} className="flex-1">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm flex flex-col gap-1.5 h-full cursor-pointer active:scale-95 transition-transform">
+          {content}
+        </div>
+      </Link>
+    );
+  }
+
   return (
     <Link to="/entries" state={{ masteredOnly: true }} className="block">
       <Card
         padding="sm"
         className="flex flex-col items-center gap-2 p-4 h-full hover:shadow-md transition-shadow cursor-pointer">
-        <div className="flex items-center gap-3 justify-around w-full">
-          <div className="w-10 h-10 shrink-0 rounded-xl bg-amber-400 flex items-center justify-center">
-            <FaCrown size={18} className="text-amber-100" style={{ filter: "drop-shadow(0 0 2px #89651d)" }} />
-          </div>
-          <p className="text-2xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">
-            {goldCount + silverCount}
-          </p>
-        </div>
-        <p className="text-[13px] font-semibold text-center text-gray-700 dark:text-gray-300 leading-tight w-full">
-          {t("dashboard.statMastered")}
-        </p>
-        <div className="flex justify-center gap-5">
-          <div className="flex items-center gap-1.5">
-            <FaCrown size={10} className="text-amber-400 shrink-0" />
-            <span className="text-[11px] text-center text-gray-400 dark:text-gray-500 leading-tight w-full">
-              {goldCount}
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <FaCrown size={10} className="text-slate-400 shrink-0" />
-            <span className="text-[11px] text-center text-gray-400 dark:text-gray-500 leading-tight w-full">
-              {silverCount}
-            </span>
-          </div>
-        </div>
+        {content}
       </Card>
     </Link>
   );
@@ -290,7 +335,6 @@ function RapidReviewCard({ entries }: { entries: Entry[] }) {
               transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
               transition: "transform 400ms cubic-bezier(0.4, 0, 0.2, 1)",
             }}>
-            {/* Front */}
             <div
               className="absolute inset-0 bg-white dark:bg-gray-800 border-2 border-amber-400/60 dark:border-amber-500/40 rounded-2xl shadow-sm flex flex-col"
               style={{ backfaceVisibility: "hidden" }}>
@@ -311,7 +355,6 @@ function RapidReviewCard({ entries }: { entries: Entry[] }) {
               </div>
             </div>
 
-            {/* Back */}
             <div
               className="absolute inset-0 bg-emerald-600 dark:bg-emerald-700 rounded-2xl shadow-sm flex flex-col items-center justify-center px-5 py-4 gap-2"
               style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
@@ -382,37 +425,6 @@ function MobileStatCard({ label, value, sub, icon, iconBg, to, toState, onIconCl
   return card;
 }
 
-function MobileMasteredCard({ goldCount, silverCount }: { goldCount: number; silverCount: number }) {
-  const { t } = useTranslation();
-  return (
-    <Link to="/entries" state={{ masteredOnly: true }} className="flex-1">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm flex flex-col gap-1.5 h-full cursor-pointer active:scale-95 transition-transform">
-        <div className="flex items-center gap-2 justify-around">
-          <div className="w-9 h-9 shrink-0 rounded-xl bg-amber-400 flex items-center justify-center">
-            <FaCrown size={16} className="text-amber-100" style={{ filter: "drop-shadow(0 0 1px #89651d)" }} />
-          </div>
-          <p className="text-2xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">
-            {goldCount + silverCount}
-          </p>
-        </div>
-        <p className="text-[11px] font-semibold text-center text-gray-700 dark:text-gray-300 leading-tight truncate">
-          {t("dashboard.statMastered")}
-        </p>
-        <div className="flex justify-center gap-5">
-          <div className="flex items-center gap-1">
-            <FaCrown size={9} className="text-amber-400 shrink-0" />
-            <span className="text-[10px] text-center text-gray-400 dark:text-gray-500">{goldCount}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <FaCrown size={9} className="text-slate-400 shrink-0" />
-            <span className="text-[10px] text-center text-gray-400 dark:text-gray-500">{silverCount}</span>
-          </div>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
 // ── Day activity badge ─────────────────────────────────────────────────────
 
 function DayActivityBadge({ pct, isToday }: { pct: number; isToday: boolean }) {
@@ -449,7 +461,7 @@ function DayActivityBadge({ pct, isToday }: { pct: number; isToday: boolean }) {
   );
 }
 
-// ── Streak progress ring ───────────────────────────────────────────────────
+// ── Space rocket orb ───────────────────────────────────────────────────────
 
 const SPACE_ORB_BG = `
   radial-gradient(circle at 25% 28%, rgba(255,255,255,0.95) 0.6px, transparent 0.6px),
@@ -484,12 +496,7 @@ function SpaceRocketOrb({
   iconSize?: number;
   iconRotation?: number;
 }) {
-  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
-  useEffect(() => {
-    const obs = new MutationObserver(() => setIsDark(document.documentElement.classList.contains("dark")));
-    obs.observe(document.documentElement, { attributeFilter: ["class"] });
-    return () => obs.disconnect();
-  }, []);
+  const isDark = useDarkMode();
 
   return (
     <div className={`relative ${sizeClass}`}>
@@ -524,6 +531,8 @@ function SpaceRocketOrb({
   );
 }
 
+// ── Streak progress ring ───────────────────────────────────────────────────
+
 function StreakProgressRing({ streak, longestStreak }: { streak: number; longestStreak: number }) {
   const { t } = useTranslation();
   const [tooltipOpen, setTooltipOpen] = useState(false);
@@ -545,9 +554,6 @@ function StreakProgressRing({ streak, longestStreak }: { streak: number; longest
   const r = 42;
   const circ = 2 * Math.PI * r;
 
-  // 240° arc, 120° gap centered at the bottom
-  // rotate(150deg) puts SVG 0° (= 3 o'clock) at 8 o'clock visually,
-  // so the arc runs from 8 o'clock → clockwise → 4 o'clock and the gap sits at the bottom.
   const trackLen = (270 / 360) * circ;
   const gapLen = circ - trackLen;
   const progressLen = pct * trackLen;
@@ -597,122 +603,127 @@ function StreakProgressRing({ streak, longestStreak }: { streak: number; longest
         className="relative flex items-center justify-center shrink-0 cursor-pointer"
         style={{ width: 148, height: 148 }}
         onClick={() => setTooltipOpen((v) => !v)}>
-      <svg
-        viewBox="0 0 100 100"
-        style={{
-          width: 148,
-          height: 148,
-          transform: "rotate(135deg)",
-          position: "absolute",
-          filter: streak > 0 ? `drop-shadow(0px 0px 4px ${strokeColor}99)` : undefined,
-        }}
-        aria-hidden>
-        {/* Track 3D: shadow edge → main gray → highlight */}
-        <circle
-          cx="50"
-          cy="50"
-          r={r}
-          fill="none"
-          stroke="rgba(0,0,0,0.10)"
-          strokeWidth="13"
-          strokeDasharray={`${trackLen} ${gapLen}`}
-          strokeLinecap="round"
-        />
-        <circle
-          cx="50"
-          cy="50"
-          r={r}
-          fill="none"
-          stroke="#e5e7eb"
-          strokeWidth="9"
-          strokeDasharray={`${trackLen} ${gapLen}`}
-          strokeLinecap="round"
-          className="dark:stroke-gray-600"
-        />
-        <circle
-          cx="50"
-          cy="50"
-          r={r}
-          fill="none"
-          stroke="rgba(255,255,255,0.65)"
-          strokeWidth="4"
-          strokeDasharray={`${trackLen} ${gapLen}`}
-          strokeLinecap="round"
-        />
-
-        {/* Progress 3D: shadow edge → main color → highlight */}
-        {streak > 0 && (
-          <>
-            <circle
-              cx="50"
-              cy="50"
-              r={r}
-              fill="none"
-              stroke="rgba(100,40,10,0.22)"
-              strokeWidth="13"
-              strokeDasharray={`${progressLen} ${circ - progressLen}`}
-              strokeLinecap="round"
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r={r}
-              fill="none"
-              stroke={strokeColor}
-              strokeWidth="9"
-              strokeDasharray={`${progressLen} ${circ - progressLen}`}
-              strokeLinecap="round"
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r={r}
-              fill="none"
-              stroke="rgba(255,235,100,0.6)"
-              strokeWidth="4"
-              strokeDasharray={`${progressLen} ${circ - progressLen}`}
-              strokeLinecap="round"
-            />
-          </>
-        )}
-      </svg>
-
-      {streak > 0 && !isNewRecord && (
-        <div
-          className="absolute z-20 pointer-events-none transition-all duration-300 ease-out"
+        <svg
+          viewBox="0 0 100 100"
           style={{
-            left: `${rocketX}%`,
-            top: `${rocketY}%`,
-            transform: `translate(-50%, -50%) rotate(${rocketRotation}deg)`,
-          }}>
-          <SpaceRocketOrb />
-        </div>
-      )}
+            width: 148,
+            height: 148,
+            transform: "rotate(135deg)",
+            position: "absolute",
+            filter: streak > 0 ? `drop-shadow(0px 0px 4px ${strokeColor}99)` : undefined,
+          }}
+          aria-hidden>
+          <circle
+            cx="50"
+            cy="50"
+            r={r}
+            fill="none"
+            stroke="rgba(0,0,0,0.10)"
+            strokeWidth="13"
+            strokeDasharray={`${trackLen} ${gapLen}`}
+            strokeLinecap="round"
+          />
+          <circle
+            cx="50"
+            cy="50"
+            r={r}
+            fill="none"
+            stroke="#e5e7eb"
+            strokeWidth="9"
+            strokeDasharray={`${trackLen} ${gapLen}`}
+            strokeLinecap="round"
+            className="dark:stroke-gray-600"
+          />
+          <circle
+            cx="50"
+            cy="50"
+            r={r}
+            fill="none"
+            stroke="rgba(255,255,255,0.65)"
+            strokeWidth="4"
+            strokeDasharray={`${trackLen} ${gapLen}`}
+            strokeLinecap="round"
+          />
+          {streak > 0 && (
+            <>
+              <circle
+                cx="50"
+                cy="50"
+                r={r}
+                fill="none"
+                stroke="rgba(100,40,10,0.22)"
+                strokeWidth="13"
+                strokeDasharray={`${progressLen} ${circ - progressLen}`}
+                strokeLinecap="round"
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r={r}
+                fill="none"
+                stroke={strokeColor}
+                strokeWidth="9"
+                strokeDasharray={`${progressLen} ${circ - progressLen}`}
+                strokeLinecap="round"
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r={r}
+                fill="none"
+                stroke="rgba(255,235,100,0.6)"
+                strokeWidth="4"
+                strokeDasharray={`${progressLen} ${circ - progressLen}`}
+                strokeLinecap="round"
+              />
+            </>
+          )}
+        </svg>
 
-      <div className="relative z-10 flex flex-col items-center leading-none gap-1">
-        <div className="flex items-baseline gap-0.5 leading-none">
-          <span className="text-4xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">{streak}</span>
-          {longestStreak > 0 && !isNewRecord && (
-            <span className="text-sm font-semibold text-gray-400 dark:text-gray-500 leading-none">
-              /{longestStreak}
-            </span>
+        {streak > 0 && !isNewRecord && (
+          <div
+            className="absolute z-20 pointer-events-none transition-all duration-300 ease-out"
+            style={{
+              left: `${rocketX}%`,
+              top: `${rocketY}%`,
+              transform: `translate(-50%, -50%) rotate(${rocketRotation}deg)`,
+            }}>
+            <SpaceRocketOrb />
+          </div>
+        )}
+
+        <div className="relative z-10 flex flex-col items-center leading-none gap-1">
+          {isNewRecord ? (
+            <>
+              <SpaceRocketOrb sizeClass="w-14 h-14" iconSize={30} iconRotation={360} />
+              <div className="flex items-baseline gap-0.5 leading-none mt-0.5">
+                <span className="text-xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">{streak}</span>
+              </div>
+              <span className="text-[11px] text-gray-400 dark:text-gray-500 leading-none">{t("dashboard.days")}</span>
+            </>
+          ) : (
+            <>
+              <div className="flex items-baseline gap-0.5 leading-none">
+                <span className="text-4xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">{streak}</span>
+                {longestStreak > 0 && (
+                  <span className="text-sm font-semibold text-gray-400 dark:text-gray-500 leading-none">
+                    /{longestStreak}
+                  </span>
+                )}
+              </div>
+              <span className="text-[11px] text-gray-400 dark:text-gray-500 leading-none">{t("dashboard.days")}</span>
+              <span className="text-xl leading-none">{emoji}</span>
+            </>
           )}
         </div>
-        <span className="text-[11px] text-gray-400 dark:text-gray-500 leading-none">{t("dashboard.days")}</span>
-        {isNewRecord ? (
-          <SpaceRocketOrb iconSize={14} iconRotation={360} />
-        ) : (
-          <span className="text-xl leading-none">{emoji}</span>
-        )}
+        <p
+          className={`absolute bottom-3 text-[11px] text-center italic font-semibold leading-none ${
+            streak > 0 ? "text-amber-500 dark:text-amber-400" : "text-gray-400 dark:text-gray-500"
+          }`}>
+          {streakSub}
+        </p>
       </div>
-      <p
-        className={`absolute bottom-3  text-[11px] text-center italic font-semibold leading-none ${
-          streak > 0 ? "text-amber-500 dark:text-amber-400" : "text-gray-400 dark:text-gray-500"
-        }`}>
-        {streakSub}
-      </p>
     </div>
-  </div>
   );
 }
 
@@ -861,12 +872,10 @@ function WeeklyStreakWidget({
       </div>
 
       <div className="flex items-stretch gap-3">
-        {/* Ring — left on mobile, right on desktop */}
         <div className="sm:order-last shrink-0 flex flex-col items-center gap-0.5">
           <StreakProgressRing streak={streak} longestStreak={longestStreak} />
         </div>
 
-        {/* Bars + badges + day labels + motivational text */}
         <div className="flex-1 flex flex-col gap-1 min-w-0">
           <div className="flex gap-[5px]">
             {days.map((d, i) => {
@@ -948,7 +957,6 @@ function WeeklyStreakWidget({
           </div>
         </div>
 
-        {/* Right: record card + activity card — desktop only */}
         <div className="hidden sm:flex flex-col gap-2 shrink-0 w-40">
           <RecordCard streak={streak} longestStreak={longestStreak} />
           <ActivityDetailsCard
@@ -959,7 +967,6 @@ function WeeklyStreakWidget({
         </div>
       </div>
 
-      {/* Mobile: cards stacked below ring+bars */}
       <div className="flex gap-2 sm:hidden">
         <div className="flex-1">
           <RecordCard streak={streak} longestStreak={longestStreak} />
@@ -1036,7 +1043,7 @@ function CategoryRingCard({ label, count, total, hexColor, mobileBg, mobileText,
   );
 }
 
-// ── Skeleton primitives ───────────────────────────────────────────────────
+// ── Skeleton ──────────────────────────────────────────────────────────────
 
 function Sk({ className }: { className?: string }) {
   return <div className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl ${className ?? ""}`} />;
@@ -1045,7 +1052,6 @@ function Sk({ className }: { className?: string }) {
 function DashboardSkeleton() {
   return (
     <div className="flex flex-col gap-4 sm:gap-6 max-w-7xl mx-auto">
-      {/* Title row — desktop */}
       <div className="hidden sm:flex items-center justify-between">
         <div className="flex flex-col gap-2">
           <Sk className="h-8 w-52" />
@@ -1057,45 +1063,31 @@ function DashboardSkeleton() {
           <Sk className="h-9 w-24" />
         </div>
       </div>
-
-      {/* Streak + due today — desktop */}
       <div className="hidden sm:grid grid-cols-3 gap-4">
         <Sk className="col-span-2 h-44" />
         <Sk className="h-44" />
       </div>
-
-      {/* Streak widget — mobile */}
       <Sk className="sm:hidden h-52" />
-
-      {/* Stat cards — mobile */}
       <div className="flex gap-2.5 sm:hidden">
         <Sk className="flex-1 h-20" />
         <Sk className="flex-1 h-20" />
         <Sk className="flex-1 h-20" />
       </div>
-
-      {/* Stat cards — desktop */}
       <div className="hidden sm:grid grid-cols-6 gap-4">
         {Array.from({ length: 6 }).map((_, i) => (
           <Sk key={i} className="h-24" />
         ))}
       </div>
-
-      {/* Category rings — mobile */}
       <div className="flex gap-1 sm:hidden mb-8">
         {Array.from({ length: 5 }).map((_, i) => (
           <Sk key={i} className="flex-1 h-28" />
         ))}
       </div>
-
-      {/* Bottom 3-col — desktop */}
       <div className="hidden sm:grid grid-cols-3 gap-4">
         <Sk className="h-52" />
         <Sk className="h-52" />
         <Sk className="h-52" />
       </div>
-
-      {/* Recent entries — mobile */}
       <Sk className="sm:hidden h-36" />
     </div>
   );
@@ -1127,7 +1119,6 @@ export function DashboardPage() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Fallback for demo/unauthenticated: calculate from entries (entries only, no reviews)
   const fallbackStats = useMemo<DayStat[]>(
     () =>
       Array.from({ length: 7 }, (_, i) => {
@@ -1138,8 +1129,8 @@ export function DashboardPage() {
         return {
           date,
           entries_added: entries.filter((e) => {
-            const t = new Date(e.createdAt).getTime();
-            return t >= from && t < to;
+            const ts = new Date(e.createdAt).getTime();
+            return ts >= from && ts < to;
           }).length,
           reviews_count: 0,
           games_completed: 0,
@@ -1160,7 +1151,6 @@ export function DashboardPage() {
     if (mode === "authenticated" && weeklyStatsData?.streak !== undefined) {
       return weeklyStatsData.streak;
     }
-    // Demo/unauthenticated fallback: count from entries only
     const activityDates = new Set(
       entries.map((e) => {
         const d = new Date(e.createdAt);
@@ -1185,30 +1175,31 @@ export function DashboardPage() {
     return s;
   }, [mode, weeklyStatsData, entries]);
 
-  const stats = useMemo(() => {
+  const { stats, categoryCounts } = useMemo(() => {
     const today = startOfToday();
     const weekStart = daysAgo(7);
+    const counts: Partial<Record<EntryCategory, number>> = {};
+    let todayCount = 0, weekCount = 0, flashCount = 0, ratingSum = 0, goldCount = 0, silverCount = 0;
 
-    const todayCount = entries.filter((e) => new Date(e.createdAt) >= today).length;
-    const weekCount = entries.filter((e) => new Date(e.createdAt) >= weekStart).length;
-    const flashCount = entries.filter((e) => e.includeInPractice).length;
-    const avgRating =
-      entries.length > 0 ? (entries.reduce((sum, e) => sum + e.rating, 0) / entries.length).toFixed(1) : "—";
-    const goldCount = entries.filter((e) => e.mastery_level === 5).length;
-    const silverCount = entries.filter((e) => e.mastery_level === 4).length;
+    for (const e of entries) {
+      const created = new Date(e.createdAt);
+      if (created >= today) todayCount++;
+      if (created >= weekStart) weekCount++;
+      if (e.includeInPractice) flashCount++;
+      ratingSum += e.rating;
+      if (e.mastery_level === 5) goldCount++;
+      if (e.mastery_level === 4) silverCount++;
+      counts[e.category] = (counts[e.category] ?? 0) + 1;
+    }
 
-    return { todayCount, weekCount, flashCount, avgRating, goldCount, silverCount };
+    const avgRating = entries.length > 0 ? (ratingSum / entries.length).toFixed(1) : "—";
+    return {
+      stats: { todayCount, weekCount, flashCount, avgRating, goldCount, silverCount },
+      categoryCounts: counts,
+    };
   }, [entries]);
 
-  // const todayReviews = weeklyStats[weeklyStats.length - 1]?.reviews_count ?? 0;
   const longestStreak = activityHistoryData?.longest_streak ?? streak;
-
-  const categoryCounts = useMemo(() => {
-    return entries.reduce<Partial<Record<EntryCategory, number>>>((acc, e) => {
-      acc[e.category] = (acc[e.category] ?? 0) + 1;
-      return acc;
-    }, {});
-  }, [entries]);
 
   const recentEntries = useMemo(
     () => [...entries].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 3),
@@ -1240,30 +1231,15 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Row 1 desktop: new streak widget (2/3) + due today (1/3) ── */}
-      <div className="hidden sm:grid grid-cols-3 gap-4">
-        <div className="col-span-2">
+      {/* ── Row 1: streak widget (full width mobile / 2/3 desktop) + due today ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="sm:col-span-2">
           <WeeklyStreakWidget streak={streak} weeklyStats={weeklyStats} longestStreak={longestStreak} />
         </div>
-
-        <DesktopDueTodayCard dueCount={dueCount} />
+        <div className="hidden sm:block">
+          <DesktopDueTodayCard dueCount={dueCount} />
+        </div>
       </div>
-
-      {/* ── Weekly streak widget — mobile only ── */}
-      <div className="sm:hidden">
-        <WeeklyStreakWidget streak={streak} weeklyStats={weeklyStats} longestStreak={longestStreak} />
-      </div>
-
-      {/* ── Row 2 desktop: old streak + weekly activity ── */}
-      {/* <div className="hidden sm:grid grid-cols-3 gap-4">
-        <DesktopStreakBlock streak={streak} todayCount={stats.todayCount} todayReviews={todayReviews} />
-        <DesktopWeeklyActivity weeklyStats={weeklyStats} />
-      </div> */}
-
-      {/* ── Weekly activity chip — mobile only ── */}
-      {/* <div className="sm:hidden">
-        <WeeklyActivityChip streak={streak} weeklyStats={weeklyStats} todayCount={stats.todayCount} />
-      </div> */}
 
       {/* ── Stats — mobile (3 icon cards + expandable row) ── */}
       <div className="flex flex-col gap-2 sm:hidden">
@@ -1297,7 +1273,6 @@ export function DashboardPage() {
           />
         </div>
 
-        {/* Expandable extra stats */}
         {statsExpanded && (
           <div className="flex gap-2.5">
             <MobileStatCard
@@ -1316,7 +1291,7 @@ export function DashboardPage() {
               iconBg="bg-amber-400"
               to="/practice"
             />
-            <MobileMasteredCard goldCount={stats.goldCount} silverCount={stats.silverCount} />
+            <MasteredCard goldCount={stats.goldCount} silverCount={stats.silverCount} variant="mobile" />
           </div>
         )}
 
@@ -1381,7 +1356,7 @@ export function DashboardPage() {
           iconBg="bg-amber-400"
           to="/practice"
         />
-        <DesktopMasteredCard goldCount={stats.goldCount} silverCount={stats.silverCount} />
+        <MasteredCard goldCount={stats.goldCount} silverCount={stats.silverCount} variant="desktop" />
       </div>
 
       {/* ── Category rings — mobile ── */}
@@ -1412,7 +1387,6 @@ export function DashboardPage() {
 
       {/* ── Desktop row 3: category rings + rapid review + recent entries ── */}
       <div className="hidden sm:grid grid-cols-3 gap-4">
-        {/* Category distribution */}
         <Card>
           <CardHeader className="mb-4">
             <div className="flex items-center justify-between">
@@ -1446,12 +1420,10 @@ export function DashboardPage() {
           )}
         </Card>
 
-        {/* Rapid review */}
         <Card>
           <RapidReviewCard entries={entries} />
         </Card>
 
-        {/* Recent entries */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -1521,7 +1493,6 @@ export function DashboardPage() {
         )}
       </Card>
 
-      {/* FAB — mobile only, above bottom nav */}
       <AddEntryFab to="/entries" state={{ openCreateForm: true }} ariaLabel={t("dashboard.addEntry")} />
 
       {showAddForm && (
