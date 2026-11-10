@@ -19,6 +19,7 @@ export const DEFAULT_SPEECH_LANGS: LangCode[] = ["en-US"]
 
 export interface TrackerSettings {
   onboarded?: boolean
+  practiceMode?: boolean
 }
 
 export interface UserSettings {

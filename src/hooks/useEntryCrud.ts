@@ -3,6 +3,7 @@ import { useAuthStore } from '@/features/auth/store/authStore'
 import { useEntriesStore } from '@/features/entries/store/entriesStore'
 import { useCreateEntry, useUpdateEntry, useDeleteEntry, useReviewEntry } from '@/hooks/useEntries'
 import { entryTagsApi, entriesApi } from '@/api/api'
+import { useUserSettings } from '@/hooks/useUserSettings'
 import type { Entry, EntryCategory, SRGrade, PracticeMode } from '@/features/entries/types'
 
 export interface BatchEntryInput {
@@ -23,6 +24,7 @@ export function useEntryCrud() {
   const storeUpdate = useEntriesStore((s) => s.updateEntry)
   const storeRemove = useEntriesStore((s) => s.removeEntry)
   const queryClient = useQueryClient()
+  const { tracker } = useUserSettings()
 
   const createMutation = useCreateEntry()
   const updateMutation = useUpdateEntry()
@@ -72,6 +74,7 @@ export function useEntryCrud() {
   }
 
   async function reviewEntry(id: number, grade: SRGrade, practiceMode: PracticeMode, isDue = false): Promise<Entry | undefined> {
+    if (tracker.practiceMode !== false && !isDue) return undefined
     if (mode === 'authenticated') {
       try {
         const result = await reviewMutation.mutateAsync({ id, grade, mode: practiceMode, isDue })

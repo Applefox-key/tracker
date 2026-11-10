@@ -5,12 +5,16 @@ import { useAuthStore } from "@/features/auth/store/authStore";
 import { authApi, getAvatarUrl } from "@/api/api";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { ALL_SPEECH_LANGS, type LangCode } from "@/lib/userSettings";
+import { ToggleSwitch } from "@/shared/ui/ToggleSwitch";
+
+type ProfileTab = "profile" | "settings";
 
 export function ProfilePage() {
   const { t } = useTranslation();
   const { user, updateUser, setUser, logout, mode } = useAuthStore();
   const navigate = useNavigate();
-  const { speechLangs, saveSpeechLangs } = useUserSettings();
+  const { speechLangs, saveSpeechLangs, tracker, saveTracker } = useUserSettings();
+  const [activeTab, setActiveTab] = useState<ProfileTab>("profile");
 
   const [name, setName] = useState(user?.name ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
@@ -49,10 +53,13 @@ export function ProfilePage() {
 
   useEffect(() => {
     if (user && !user.api_token) {
-      authApi.getUser().then((fresh) => {
-        setUser(fresh);
-        setLocalApiToken(fresh.api_token ?? null);
-      }).catch(() => {});
+      authApi
+        .getUser()
+        .then((fresh) => {
+          setUser(fresh);
+          setLocalApiToken(fresh.api_token ?? null);
+        })
+        .catch(() => {});
     }
   }, []);
 
@@ -139,218 +146,261 @@ export function ProfilePage() {
   const inputCls =
     "border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100";
 
+  const tabs: { id: ProfileTab; label: string }[] = [
+    { id: "profile", label: t("profile.sectionProfile") },
+    { id: "settings", label: t("profile.sectionSettings") },
+  ];
+
   return (
-    <div className="max-w-lg mx-auto flex flex-col gap-6 py-4">
-      <div>
+    <div className="max-w-lg mx-auto flex flex-col gap-2 sm:gap-6 py-4">
+      <div className="hidden sm:block">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("profile.title")}</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{t("profile.subtitle")}</p>
       </div>
 
-      {/* Avatar */}
-      <div className="flex flex-col gap-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-        <p className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">{t("profile.photo")}</p>
-        <div className="flex items-center gap-4">
-          <div className="relative group">
-            <button
-              type="button"
-              onClick={handleAvatarClick}
-              className="relative w-16 h-16 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
-              {currentAvatar && !avatarImgError ? (
-                <img
-                  src={currentAvatar}
-                  alt={user?.name}
-                  className="w-full h-full object-cover"
-                  onError={() => setAvatarImgError(true)}
+      {/* Tab switcher */}
+      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
+            className={[
+              "flex-1 py-1.5 px-4 rounded-lg text-sm font-medium transition-colors",
+              activeTab === tab.id
+                ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200",
+            ].join(" ")}>
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === "profile" && (
+        <>
+          {/* Avatar */}
+          <div className="flex flex-col gap-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+            <p className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">
+              {t("profile.photo")}
+            </p>
+            <div className="flex items-center gap-4">
+              <div className="relative group">
+                <button
+                  type="button"
+                  onClick={handleAvatarClick}
+                  className="relative w-16 h-16 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                  {currentAvatar && !avatarImgError ? (
+                    <img
+                      src={currentAvatar}
+                      alt={user?.name}
+                      className="w-full h-full object-cover"
+                      onError={() => setAvatarImgError(true)}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-2xl font-semibold select-none">
+                      {initials}
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                    <svg
+                      className="w-5 h-5 text-white"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                      <polyline points="17 8 12 3 7 8" />
+                      <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg>
+                  </div>
+                </button>
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 dark:text-gray-100">{user?.name}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
+                <button
+                  type="button"
+                  onClick={handleAvatarClick}
+                  className="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 mt-0.5">
+                  {pendingFile ? t("profile.changeAgain") : t("profile.changePhoto")}
+                </button>
+              </div>
+            </div>
+            {pendingFile && (
+              <p className="text-xs text-emerald-600 dark:text-emerald-400">{t("profile.newPhotoSelected")}</p>
+            )}
+          </div>
+
+          {/* Name & Email */}
+          <div className="flex flex-col gap-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("profile.accountDetails")}</p>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="profile-name" className="text-sm text-gray-600 dark:text-gray-400">
+                {t("profile.name")}
+              </label>
+              <input
+                id="profile-name"
+                type="text"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setSaved(false);
+                }}
+                className={inputCls}
+                required
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="profile-email" className="text-sm text-gray-600 dark:text-gray-400">
+                {t("profile.email")}
+              </label>
+              <input
+                id="profile-email"
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setSaved(false);
+                }}
+                className={inputCls}
+                readOnly
+                tabIndex={-1}
+              />
+            </div>
+          </div>
+        </>
+      )}
+
+      {activeTab === "settings" && (
+        <>
+          {/* Speech languages */}
+          <div className="flex flex-col gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+            <div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("profile.speechLangs")}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t("profile.speechLangsHint")}</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {ALL_SPEECH_LANGS.map(({ code, label, name: langName }) => {
+                const active = pendingLangs.includes(code);
+                const isLast = active && pendingLangs.length === 1;
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => toggleLang(code)}
+                    disabled={isLast}
+                    title={langName}
+                    className={[
+                      "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors disabled:opacity-40 disabled:cursor-not-allowed",
+                      active
+                        ? "bg-emerald-600 text-white border-emerald-600"
+                        : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400",
+                    ].join(" ")}>
+                    <span className="font-mono text-xs">{label}</span>
+                    <span className="text-xs opacity-75">{langName}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Practice mode */}
+          <div className="flex flex-col gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+            <div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("profile.practiceMode")}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t("profile.practiceModeHint")}</p>
+            </div>
+            <ToggleSwitch
+              id="practice-mode-toggle"
+              checked={tracker.practiceMode !== false}
+              onChange={(val) => saveTracker({ practiceMode: val })}
+            />
+          </div>
+
+          {/* API Token */}
+          <div className="flex flex-col gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+            <div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("profile.apiToken")}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t("profile.apiTokenHint")}</p>
+            </div>
+            {localApiToken ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type={showToken ? "text" : "password"}
+                  value={localApiToken}
+                  readOnly
+                  className={`flex-1 font-mono text-xs ${inputCls}`}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowToken((v) => !v)}
+                  className="shrink-0 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  {showToken ? t("profile.apiTokenHide") : t("profile.apiTokenShow")}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCopyToken}
+                  className="shrink-0 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  {tokenCopied ? t("profile.apiTokenCopied") : t("profile.apiTokenCopy")}
+                </button>
+              </div>
+            ) : (
+              <p className="text-xs text-gray-400 dark:text-gray-500">{t("profile.apiTokenLoading")}</p>
+            )}
+            <div className="flex items-center gap-3">
+              {regenConfirm ? (
+                <>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">{t("profile.apiTokenRegenConfirm")}</span>
+                  <button
+                    type="button"
+                    onClick={handleRegenerateToken}
+                    disabled={regenerating}
+                    className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-medium hover:bg-red-600 transition-colors disabled:opacity-50">
+                    {regenerating ? t("profile.regenerating") : t("profile.yes")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRegenConfirm(false)}
+                    className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    {t("profile.no")}
+                  </button>
+                </>
               ) : (
-                <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-2xl font-semibold select-none">
-                  {initials}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setRegenConfirm(true)}
+                  className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  {t("profile.apiTokenRegenerate")}
+                </button>
               )}
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+              {regenError && <p className="text-xs text-red-500 dark:text-red-400">{regenError}</p>}
+            </div>
+
+            {/* How to use collapsible */}
+            <div className="border-t border-gray-100 dark:border-gray-700 pt-3">
+              <button
+                type="button"
+                onClick={() => setShowApiHelp((v) => !v)}
+                className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors">
                 <svg
-                  className="w-5 h-5 text-white"
+                  className={`w-3 h-3 transition-transform ${showApiHelp ? "rotate-90" : ""}`}
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="2"
+                  strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                  <polyline points="17 8 12 3 7 8" />
-                  <line x1="12" y1="3" x2="12" y2="15" />
+                  <polyline points="9 18 15 12 9 6" />
                 </svg>
-              </div>
-            </button>
-            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-          </div>
-          <div>
-            <p className="font-semibold text-gray-900 dark:text-gray-100">{user?.name}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
-            <button
-              type="button"
-              onClick={handleAvatarClick}
-              className="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 mt-0.5">
-              {pendingFile ? t("profile.changeAgain") : t("profile.changePhoto")}
-            </button>
-          </div>
-        </div>
-        {pendingFile && (
-          <p className="text-xs text-emerald-600 dark:text-emerald-400">
-            {t("profile.newPhotoSelected")}
-          </p>
-        )}
-      </div>
-
-      {/* Name & Email */}
-      <div className="flex flex-col gap-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("profile.accountDetails")}</p>
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="profile-name" className="text-sm text-gray-600 dark:text-gray-400">
-            {t("profile.name")}
-          </label>
-          <input
-            id="profile-name"
-            type="text"
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-              setSaved(false);
-            }}
-            className={inputCls}
-            required
-          />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="profile-email" className="text-sm text-gray-600 dark:text-gray-400">
-            {t("profile.email")}
-          </label>
-          <input
-            id="profile-email"
-            type="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setSaved(false);
-            }}
-            className={inputCls}
-            readOnly
-            tabIndex={-1}
-          />
-        </div>
-      </div>
-
-      {/* Speech languages */}
-      <div className="flex flex-col gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-        <div>
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("profile.speechLangs")}</p>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-            {t("profile.speechLangsHint")}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {ALL_SPEECH_LANGS.map(({ code, label, name: langName }) => {
-            const active = pendingLangs.includes(code);
-            const isLast = active && pendingLangs.length === 1;
-            return (
-              <button
-                key={label}
-                type="button"
-                onClick={() => toggleLang(code)}
-                disabled={isLast}
-                title={langName}
-                className={[
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors disabled:opacity-40 disabled:cursor-not-allowed",
-                  active
-                    ? "bg-emerald-600 text-white border-emerald-600"
-                    : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400",
-                ].join(" ")}>
-                <span className="font-mono text-xs">{label}</span>
-                <span className="text-xs opacity-75">{langName}</span>
+                {showApiHelp ? t("profile.apiHelpHide") : t("profile.apiHelpShow")}
               </button>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* API Token */}
-      <div className="flex flex-col gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-        <div>
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("profile.apiToken")}</p>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t("profile.apiTokenHint")}</p>
-        </div>
-        {localApiToken ? (
-          <div className="flex items-center gap-2">
-            <input
-              type={showToken ? "text" : "password"}
-              value={localApiToken}
-              readOnly
-              className={`flex-1 font-mono text-xs ${inputCls}`}
-            />
-            <button
-              type="button"
-              onClick={() => setShowToken((v) => !v)}
-              className="shrink-0 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-              {showToken ? t("profile.apiTokenHide") : t("profile.apiTokenShow")}
-            </button>
-            <button
-              type="button"
-              onClick={handleCopyToken}
-              className="shrink-0 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-              {tokenCopied ? t("profile.apiTokenCopied") : t("profile.apiTokenCopy")}
-            </button>
-          </div>
-        ) : (
-          <p className="text-xs text-gray-400 dark:text-gray-500">{t("profile.apiTokenLoading")}</p>
-        )}
-        <div className="flex items-center gap-3">
-          {regenConfirm ? (
-            <>
-              <span className="text-xs text-gray-500 dark:text-gray-400">{t("profile.apiTokenRegenConfirm")}</span>
-              <button
-                type="button"
-                onClick={handleRegenerateToken}
-                disabled={regenerating}
-                className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-medium hover:bg-red-600 transition-colors disabled:opacity-50">
-                {regenerating ? t("profile.regenerating") : t("profile.yes")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setRegenConfirm(false)}
-                className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                {t("profile.no")}
-              </button>
-            </>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setRegenConfirm(true)}
-              className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-              {t("profile.apiTokenRegenerate")}
-            </button>
-          )}
-          {regenError && <p className="text-xs text-red-500 dark:text-red-400">{regenError}</p>}
-        </div>
-
-        {/* How to use collapsible */}
-        <div className="border-t border-gray-100 dark:border-gray-700 pt-3">
-          <button
-            type="button"
-            onClick={() => setShowApiHelp((v) => !v)}
-            className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors">
-            <svg
-              className={`w-3 h-3 transition-transform ${showApiHelp ? "rotate-90" : ""}`}
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-              strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-            {showApiHelp ? t("profile.apiHelpHide") : t("profile.apiHelpShow")}
-          </button>
-
-          {showApiHelp && (
-            <div className="mt-3 flex flex-col gap-3">
-              <p className="text-xs text-gray-500 dark:text-gray-400">{t("profile.apiHelpDesc")}</p>
-              <pre className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-xs font-mono text-gray-700 dark:text-gray-300 overflow-x-auto whitespace-pre">{`POST https://api.learnypie.com/entries
+              {showApiHelp && (
+                <div className="mt-3 flex flex-col gap-3">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{t("profile.apiHelpDesc")}</p>
+                  <pre className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-xs font-mono text-gray-700 dark:text-gray-300 overflow-x-auto whitespace-pre">{`POST https://api.learnypie.com/entries
 Authorization: Bearer YOUR_TOKEN
 Content-Type: application/json
 
@@ -362,22 +412,33 @@ Content-Type: application/json
     "category": "word"
   }
 }`}</pre>
-              <div className="text-xs text-gray-500 dark:text-gray-400 flex flex-col gap-1">
-                <p><span className="font-medium text-gray-700 dark:text-gray-300">word</span> — {t("profile.apiHelpFieldWord")}</p>
-                <p><span className="font-medium text-gray-700 dark:text-gray-300">explanation</span> — {t("profile.apiHelpFieldExplanation")}</p>
-                <p><span className="font-medium text-gray-700 dark:text-gray-300">example</span> — {t("profile.apiHelpFieldExample")}</p>
-                <p>
-                  <span className="font-medium text-gray-700 dark:text-gray-300">category</span> —{" "}
-                  <span className="font-mono">word · phrase · grammar · idiom · note</span>
-                </p>
-              </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 flex flex-col gap-1">
+                    <p>
+                      <span className="font-medium text-gray-700 dark:text-gray-300">word</span> —{" "}
+                      {t("profile.apiHelpFieldWord")}
+                    </p>
+                    <p>
+                      <span className="font-medium text-gray-700 dark:text-gray-300">explanation</span> —{" "}
+                      {t("profile.apiHelpFieldExplanation")}
+                    </p>
+                    <p>
+                      <span className="font-medium text-gray-700 dark:text-gray-300">example</span> —{" "}
+                      {t("profile.apiHelpFieldExample")}
+                    </p>
+                    <p>
+                      <span className="font-medium text-gray-700 dark:text-gray-300">category</span> —{" "}
+                      <span className="font-mono">word · phrase · grammar · idiom · note</span>
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        </>
+      )}
 
-      {/* Save */}
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 flex items-center justify-between gap-4">
+      {/* Save — desktop */}
+      <div className="hidden sm:flex bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 items-center justify-between gap-4">
         <div className="text-sm">
           {saveError && <p className="text-red-600 dark:text-red-400">{saveError}</p>}
           {saved && <p className="text-emerald-600 dark:text-emerald-400">{t("profile.changesSaved")}</p>}
@@ -390,6 +451,25 @@ Content-Type: application/json
           onClick={handleSave}
           disabled={saving || !isDirty}
           className="shrink-0 px-6 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          {saving ? t("profile.saving") : t("profile.save")}
+        </button>
+      </div>
+
+      {/* Save — mobile fixed above bottom nav */}
+      <div
+        className="sm:hidden fixed left-0 right-0 z-20 px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700"
+        style={{ bottom: "calc(3.5rem + env(safe-area-inset-bottom))" }}>
+        {(saveError || saved) && (
+          <p
+            className={`text-xs mb-2 ${saveError ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`}>
+            {saveError ?? t("profile.changesSaved")}
+          </p>
+        )}
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={saving || !isDirty}
+          className="w-full py-3 rounded-xl bg-emerald-600 text-white text-sm font-semibold uppercase tracking-wide hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
           {saving ? t("profile.saving") : t("profile.save")}
         </button>
       </div>
@@ -416,6 +496,9 @@ Content-Type: application/json
           {mode === "demo" ? t("layout.exitDemo") : t("layout.logout")}
         </button>
       </div>
+
+      {/* Spacer so content clears the fixed mobile Save bar */}
+      <div className="sm:hidden h-20" />
     </div>
   );
 }

@@ -85,6 +85,7 @@ export function Layout() {
   const [burgerOpen, setBurgerOpen] = useState(false);
 
   const isDashboard = location.pathname === "/dashboard";
+  const isProfile = location.pathname === "/profile";
   const hour = new Date().getHours();
   const motivationKey =
     hour < 12 ? "layout.motivateMorning" : hour < 18 ? "layout.motivateAfternoon" : "layout.motivateEvening";
@@ -190,6 +191,10 @@ export function Layout() {
               </span>
               <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">{t(motivationKey)}</span>
             </div>
+          ) : isProfile ? (
+            <span className="sm:hidden absolute left-3 text-xl font-bold text-gray-900 dark:text-gray-100 tracking-tight whitespace-nowrap pointer-events-none">
+              {t("profile.title")}
+            </span>
           ) : (
             <span className="sm:hidden absolute left-3 text-xl font-bold text-emerald-600 tracking-tight whitespace-nowrap pointer-events-none">
               {t("layout.logo")}

@@ -309,7 +309,7 @@ export function DuePage() {
                   nextLabel={t("practice.quiz.next")}
                   onSelect={(isCorrect, hintUsed) => {
                     if (!hintUsed) {
-                      reviewEntry(current.entry.id, isCorrect ? 5 : 0, "quiz")
+                      reviewEntry(current.entry.id, isCorrect ? 5 : 0, "quiz", true)
                         .then(updated => { if (updated) handleReviewed(current.entry, updated); });
                     }
                   }}
@@ -326,7 +326,7 @@ export function DuePage() {
                     if (current.introPhase === "puzzle") {
                       entriesApi.introduceEntry(current.entry.id).catch(() => {});
                     } else if (!hintUsed) {
-                      reviewEntry(current.entry.id, retried ? 4 : 5, "puzzle")
+                      reviewEntry(current.entry.id, retried ? 4 : 5, "puzzle", true)
                         .then(updated => { if (updated) handleReviewed(current.entry, updated); });
                     }
                     handleNext();
@@ -335,7 +335,7 @@ export function DuePage() {
                     if (current.introPhase === "puzzle") {
                       entriesApi.introduceEntry(current.entry.id).catch(() => {});
                     } else if (!hintUsed) {
-                      reviewEntry(current.entry.id, 0, "puzzle")
+                      reviewEntry(current.entry.id, 0, "puzzle", true)
                         .then(updated => { if (updated) handleReviewed(current.entry, updated); });
                     }
                     handleNext();

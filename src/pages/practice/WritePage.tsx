@@ -10,6 +10,7 @@ import { Button } from "@/shared/ui/Button";
 import type { Entry, EntryCategory } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { AnswerDiff, normalizeAnswer } from "@/shared/ui/AnswerDiff";
+import { PracticeModeIndicator } from "@/shared/ui/PracticeModeIndicator";
 
 type Phase = "idle" | "playing" | "done";
 type AnswerState = "unanswered" | "correct" | "wrong";
@@ -122,6 +123,7 @@ export function WritePage() {
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.write.title")}</h1>
+              <PracticeModeIndicator />
               {phase !== "idle" && (
                 <button
                   onClick={() => setShowHelp(true)}

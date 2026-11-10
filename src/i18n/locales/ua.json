@@ -316,7 +316,7 @@
     "delete": "Видалити"
   },
   "profile": {
-    "title": "Профіль",
+    "title": "Акаунт",
     "subtitle": "Керуйте даними свого облікового запису",
     "photo": "Фото",
     "changePhoto": "Змінити фото",
@@ -350,7 +350,11 @@
     "apiHelpDesc": "Надішліть POST-запит із токеном у заголовку Authorization. Обов'язкові поля: word, explanation. Опціональні: example, category. Усі записи, створені через API, автоматично позначаються тегом «via API».",
     "apiHelpFieldWord": "слово або фраза для збереження",
     "apiHelpFieldExplanation": "переклад або пояснення",
-    "apiHelpFieldExample": "приклад речення (необов'язково)"
+    "apiHelpFieldExample": "приклад речення (необов'язково)",
+    "practiceMode": "Вільна практика",
+    "practiceModeHint": "Ігри не змінюють рівень слів. Прогрес оновлюється лише в режимі «До повторення».",
+    "sectionProfile": "Профіль",
+    "sectionSettings": "Налаштування"
   },
   "about": {
     "heroTitle": "Language Progress Tracker",
@@ -388,6 +392,8 @@
     "clearFilters": "Очистити фільтри",
     "clear": "Очистити",
     "backToPractice": "← Практика",
+    "practiceModeIndicator": "Вільна практика",
+    "practiceModeHint": "Ігри не змінюють рівень слів. Натисніть, щоб змінити в налаштуваннях.",
     "quit": "✕ Вийти",
     "skip": "Пропустити",
     "retryMistakes": "Повторити помилки ({{count}})",

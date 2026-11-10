@@ -308,7 +308,7 @@
     "delete": "Usuń"
   },
   "profile": {
-    "title": "Profil",
+    "title": "Konto",
     "subtitle": "Zarządzaj danymi swojego konta",
     "photo": "Zdjęcie",
     "changePhoto": "Zmień zdjęcie",
@@ -342,7 +342,11 @@
     "apiHelpDesc": "Wyślij żądanie POST z tokenem w nagłówku Authorization. Wymagane pola: word, explanation. Opcjonalne: example, category. Wszystkie wpisy utworzone przez API są automatycznie oznaczane tagiem «via API».",
     "apiHelpFieldWord": "słowo lub fraza do zapisania",
     "apiHelpFieldExplanation": "tłumaczenie lub wyjaśnienie",
-    "apiHelpFieldExample": "przykładowe zdanie (opcjonalne)"
+    "apiHelpFieldExample": "przykładowe zdanie (opcjonalne)",
+    "practiceMode": "Swobodna praktyka",
+    "practiceModeHint": "Gry nie wpływają na poziom słów. Postęp aktualizuje się tylko w trybie powtórek.",
+    "sectionProfile": "Profil",
+    "sectionSettings": "Ustawienia"
   },
   "about": {
     "heroTitle": "Language Progress Tracker",
@@ -380,6 +384,8 @@
     "clearFilters": "Wyczyść filtry",
     "clear": "Wyczyść",
     "backToPractice": "← Ćwiczenia",
+    "practiceModeIndicator": "Swobodna praktyka",
+    "practiceModeHint": "Gry nie wpływają na poziom słów. Kliknij, aby zmienić w ustawieniach.",
     "quit": "✕ Wyjdź",
     "skip": "Pomiń",
     "retryMistakes": "Powtórz błędy ({{count}})",

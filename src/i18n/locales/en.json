@@ -65,7 +65,7 @@
     "longestStreakShort": "Record",
     "recordAchieved": "New Record!",
     "recordMatched": "you've matched your record!",
-    "recordNotAchieved": "Record not achieved", 
+    "recordNotAchieved": "Record not achieved",
     "prevRecord": "Previous record: —",
     "daysToRecord": "{{count}} days to beat",
     "activityDetails": "Activity Details",
@@ -302,7 +302,7 @@
     "delete": "Delete"
   },
   "profile": {
-    "title": "Profile",
+    "title": "Account",
     "subtitle": "Manage your account details",
     "photo": "Photo",
     "changePhoto": "Change photo",
@@ -336,7 +336,11 @@
     "apiHelpDesc": "Send a POST request with your token in the Authorization header. Required fields: word, explanation. Optional: example, category. All entries created via API are automatically tagged with \"via API\".",
     "apiHelpFieldWord": "the word or phrase to save",
     "apiHelpFieldExplanation": "translation or explanation",
-    "apiHelpFieldExample": "example sentence (optional)"
+    "apiHelpFieldExample": "example sentence (optional)",
+    "practiceMode": "Free Practice",
+    "practiceModeHint": "Games don't affect word mastery. Progress updates only in Due review mode.",
+    "sectionProfile": "Profile",
+    "sectionSettings": "Settings"
   },
   "about": {
     "heroTitle": "Language Progress Tracker",
@@ -375,6 +379,8 @@
     "quit": "✕ Quit",
     "skip": "Skip",
     "retryMistakes": "Retry mistakes ({{count}})",
+    "practiceModeIndicator": "Free practice",
+    "practiceModeHint": "Games don't affect word mastery. Click to change in settings.",
     "modes": {
       "flashcards": {
         "label": "Flashcards",

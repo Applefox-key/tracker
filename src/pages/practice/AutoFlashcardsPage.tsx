@@ -8,6 +8,7 @@ import { PracticeFiltersArea } from "@/features/practice/components/PracticeFilt
 import { FlashCard } from "@/features/flashcards/components/FlashCard";
 import { getEntryImageUrl } from "@/api/api";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
+import { PracticeModeIndicator } from "@/shared/ui/PracticeModeIndicator";
 import { Button } from "@/shared/ui/Button";
 import type { Entry } from "@/features/entries/types";
 import type { Flashcard } from "@/features/flashcards/types";
@@ -120,9 +121,12 @@ export function AutoFlashcardsPage() {
             <FaArrowLeft />
             {t("practice.autoFlashcards.backToPractice")}
           </Button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {t("practice.autoFlashcards.title")}
-          </h1>
+          <div className="flex items-center gap-1.5">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {t("practice.autoFlashcards.title")}
+            </h1>
+            <PracticeModeIndicator />
+          </div>
         </div>
 
         {phase === "idle" && (

@@ -11,6 +11,7 @@ import { EntryImage } from "@/shared/ui/EntryImage";
 import { getEntryImageUrl } from "@/api/api";
 import type { Entry } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
+import { PracticeModeIndicator } from "@/shared/ui/PracticeModeIndicator";
 
 const LS_QUIZ_MODE = "quiz_start_side";
 const LS_QUIZ_SHOW_IMAGES = "quiz_show_images";
@@ -157,6 +158,7 @@ export function QuizPage() {
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.quiz.title")}</h1>
+              <PracticeModeIndicator />
               {phase !== "idle" && (
                 <button
                   onClick={() => setShowHelp(true)}

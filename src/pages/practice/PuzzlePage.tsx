@@ -10,6 +10,7 @@ import { PuzzleGame } from "@/features/practice/components/PuzzleGame";
 import { Button } from "@/shared/ui/Button";
 import type { Entry } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
+import { PracticeModeIndicator } from "@/shared/ui/PracticeModeIndicator";
 
 const LS_PUZZLE_SHOW_IMAGES = "puzzle_show_images";
 
@@ -104,6 +105,7 @@ export function PuzzlePage() {
           <div className="min-w-0 pb-2">
             <div className="flex items-center  gap-1.5">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.puzzle.title")}</h1>
+              <PracticeModeIndicator />
               {phase !== "idle" && (
                 <button
                   onClick={() => setShowHelp(true)}

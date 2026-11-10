@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FaArrowLeft } from "react-icons/fa";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
+import { PracticeModeIndicator } from "@/shared/ui/PracticeModeIndicator";
 import { useEntriesStore } from "@/features/entries/store/entriesStore";
 import { Button } from "@/shared/ui/Button";
 import { AnswerDiff, normalizeAnswer } from "@/shared/ui/AnswerDiff";
@@ -277,6 +278,7 @@ export function CustomPracticePage() {
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.custom.title")}</h1>
+              <PracticeModeIndicator />
               {phase !== "idle" && (
                 <button
                   onClick={() => setShowHelp(true)}
