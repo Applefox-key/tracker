@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FaArrowLeft } from "react-icons/fa";
+import { EntriesCount } from "@/shared/ui/EntriesCount";
 import { usePracticeEntries, shuffle } from "@/features/practice/hooks/usePracticeEntries";
 import { usePracticeFilters } from "@/features/practice/hooks/usePracticeFilters";
 import { PracticeFiltersArea } from "@/features/practice/components/PracticeFiltersArea";
+import { PracticeIdleFilters } from "@/features/practice/components/PracticeIdleFilters";
+import { PracticePageHeader } from "@/features/practice/components/PracticePageHeader";
 import { FlashCard } from "@/features/flashcards/components/FlashCard";
 import { getEntryImageUrl } from "@/api/api";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
-import { PracticeModeIndicator } from "@/shared/ui/PracticeModeIndicator";
 import { Button } from "@/shared/ui/Button";
 import type { Entry } from "@/features/entries/types";
 import type { Flashcard } from "@/features/flashcards/types";
@@ -34,7 +35,7 @@ export function AutoFlashcardsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const filterState = usePracticeFilters();
-  const { filters, activeFilterCount, clearFilters } = filterState;
+  const { filters } = filterState;
   const { logGameComplete } = useEntryCrud();
 
   const [delay, setDelay] = useState<number>(() => {
@@ -114,45 +115,18 @@ export function AutoFlashcardsPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
-        <div className="flex items-start gap-3 min-w-0 pb-2 pt-[1rem]">
-          <Button onClick={() => { setRunning(false); navigate("/practice"); }}>
-            <FaArrowLeft />
-            {t("practice.autoFlashcards.backToPractice")}
-          </Button>
-          <div className="flex items-center gap-1.5">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {t("practice.autoFlashcards.title")}
-            </h1>
-            <PracticeModeIndicator />
-          </div>
-        </div>
-
-        {phase === "idle" && (
-          <div className="flex items-center gap-2 sm:ml-auto flex-wrap sm:flex-nowrap">
-            <Button
-              variant={filterState.showFilters ? "primary" : "secondary"}
-              size="sm"
-              className="hidden sm:block"
-              onClick={() => filterState.setShowFilters((v) => !v)}>
-              {t("practice.filters")}
-              {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
-              <span className="text-xs ml-1">{filterState.showFilters ? "▲" : "▼"}</span>
-            </Button>
-            {activeFilterCount > 0 && (
-              <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">
-                {t("practice.clear")}
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-
-      <hr className="border-gray-200 dark:border-gray-700" />
+      <PracticePageHeader
+        title={t("practice.autoFlashcards.title")}
+        onBack={phase === "idle"
+          ? () => { setRunning(false); navigate("/practice"); }
+          : () => { setRunning(false); setPhase("idle"); }}
+        backLabel={t("practice.autoFlashcards.backToPractice")}
+        filterState={filterState}
+        showFilterBtn={phase === "idle"}
+      />
 
       {phase === "idle" && (
-        <PracticeFiltersArea filterState={filterState} avaliableEntriesCount={filteredEntries.length} />
+        <PracticeFiltersArea filterState={filterState} avaliableEntriesCount={filteredEntries.length} inlineOnMobile />
       )}
 
       {/* ── Idle ────────────────────────────────────────────────── */}
@@ -184,8 +158,10 @@ export function AutoFlashcardsPage() {
           </div>
 
           <p className="text-sm text-gray-400 dark:text-gray-500">
-            {t("practice.entriesAvailable", { count: filteredEntries.length })}
+            <EntriesCount count={filteredEntries.length} label={t("practice.entriesAvailable", { count: filteredEntries.length })} />
           </p>
+
+          <PracticeIdleFilters filterState={filterState} />
 
           {filteredEntries.length === 0 && (
             <p className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-2">

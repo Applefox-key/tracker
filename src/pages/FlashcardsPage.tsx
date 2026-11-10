@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FaArrowLeft } from "react-icons/fa";
+import { BackButton } from "@/shared/ui/BackButton";
 
 const LS_START_SIDE = "flashcard_start_side";
 const LS_SHOW_IMAGES = "flashcard_show_images";
@@ -132,10 +132,7 @@ export function FlashcardsPage() {
       <div className="-mx-4 px-4 pb-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm sm:mx-0 sm:px-0 sm:pb-0 sm:bg-transparent sm:border-0 sm:shadow-none">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <div className="flex items-center gap-3 pb-2 pt-[1rem]">
-            <Button onClick={() => routerNavigate("/practice")}>
-              <FaArrowLeft />
-              {t("practice.match.backToPractice")}
-            </Button>
+            <BackButton onClick={() => routerNavigate("/practice")} label={t("practice.match.backToPractice")} />
             <div className="flex items-center gap-1.5">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 shrink-0">
                 {t("practice.flashcards.title")}

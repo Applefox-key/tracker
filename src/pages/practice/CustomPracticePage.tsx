@@ -1,9 +1,8 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FaArrowLeft } from "react-icons/fa";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
-import { PracticeModeIndicator } from "@/shared/ui/PracticeModeIndicator";
+import { PracticePageHeader } from "@/features/practice/components/PracticePageHeader";
 import { useEntriesStore } from "@/features/entries/store/entriesStore";
 import { Button } from "@/shared/ui/Button";
 import { AnswerDiff, normalizeAnswer } from "@/shared/ui/AnswerDiff";
@@ -12,6 +11,7 @@ import { FlashcardGame } from "@/features/practice/components/FlashcardGame";
 import { QuizGame } from "@/features/practice/components/QuizGame";
 import { PuzzleGame } from "@/features/practice/components/PuzzleGame";
 import { PracticeFiltersArea } from "@/features/practice/components/PracticeFiltersArea";
+import { PracticeIdleFilters } from "@/features/practice/components/PracticeIdleFilters";
 import { applyFilters, shuffle, wordCount } from "@/features/practice/hooks/usePracticeEntries";
 import { usePracticeFilters } from "@/features/practice/hooks/usePracticeFilters";
 import type { Entry } from "@/features/entries/types";
@@ -206,7 +206,7 @@ export function CustomPracticePage() {
   const { reviewEntry, logGameComplete } = useEntryCrud();
 
   const filterState = usePracticeFilters();
-  const { filters, showFilters, setShowFilters, activeFilterCount, clearFilters } = filterState;
+  const { filters } = filterState;
 
   const [showHelp, setShowHelp] = useState(false);
   const [selectedModes, setSelectedModes] = useState<CustomMode[]>(["flashcard", "quiz", "puzzle", "write"]);
@@ -268,54 +268,18 @@ export function CustomPracticePage() {
         }))}
       />
 
-      {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
-        <div className="flex items-start gap-3 min-w-0 pb-2 pt-[1rem]">
-          <Button onClick={() => navigate("/practice")}>
-            <FaArrowLeft />
-            {t("practice.match.backToPractice")}
-          </Button>
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.custom.title")}</h1>
-              <PracticeModeIndicator />
-              {phase !== "idle" && (
-                <button
-                  onClick={() => setShowHelp(true)}
-                  className="text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 border border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500 rounded-full text-sm sm:text-xs font-bold w-6 h-6 sm:w-5 sm:h-5 flex items-center justify-center shrink-0 transition-colors mt-0.5">
-                  ?
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {phase === "idle" && (
-          <div className="flex items-center gap-2 sm:ml-auto flex-wrap sm:flex-nowrap">
-            <Button
-              variant={showFilters ? "primary" : "secondary"}
-              size="sm"
-              className="hidden sm:block"
-              onClick={() => setShowFilters((v) => !v)}>
-              {t("practice.filters")}
-              {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
-              <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
-            </Button>
-            {activeFilterCount > 0 && (
-              <button
-                onClick={clearFilters}
-                className="text-xs text-red-500 hover:text-red-700 font-medium hidden sm:block">
-                {t("practice.clear")}
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-
-      <hr className="border-gray-200 dark:border-gray-700" />
+      <PracticePageHeader
+        title={t("practice.custom.title")}
+        onBack={phase === "idle" ? () => navigate("/practice") : () => setPhase("idle")}
+        backLabel={t("practice.match.backToPractice")}
+        onHelp={() => setShowHelp(true)}
+        showHelpBtn={phase !== "idle"}
+        filterState={filterState}
+        showFilterBtn={phase === "idle"}
+      />
 
       {phase === "idle" && (
-        <PracticeFiltersArea filterState={filterState} avaliableEntriesCount={filteredEntries.length} />
+        <PracticeFiltersArea filterState={filterState} avaliableEntriesCount={filteredEntries.length} inlineOnMobile />
       )}
 
       {/* ── Idle ────────────────────────────────────────────────── */}
@@ -350,6 +314,8 @@ export function CustomPracticePage() {
               ))}
             </ul>
           </div>
+
+          <PracticeIdleFilters filterState={filterState} />
 
           {/* Entry count + start */}
           <div className="border-t border-gray-100 dark:border-gray-800 pt-4 flex flex-col items-center gap-3 text-center">

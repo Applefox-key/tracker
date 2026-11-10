@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { authApi, getAvatarUrl } from "@/api/api";
@@ -13,8 +13,11 @@ export function ProfilePage() {
   const { t } = useTranslation();
   const { user, updateUser, setUser, logout, mode } = useAuthStore();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { speechLangs, saveSpeechLangs, tracker, saveTracker } = useUserSettings();
-  const [activeTab, setActiveTab] = useState<ProfileTab>("profile");
+  const [activeTab, setActiveTab] = useState<ProfileTab>(
+    searchParams.get("tab") === "settings" ? "settings" : "profile",
+  );
 
   const [name, setName] = useState(user?.name ?? "");
   const [email, setEmail] = useState(user?.email ?? "");

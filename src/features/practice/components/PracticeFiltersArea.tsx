@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { TfiPanel } from "react-icons/tfi";
+import { IoFilterCircleSharp } from "react-icons/io5";
 import { SideDrawer } from "@/shared/ui/SideDrawer";
 import { PracticeFilterPanel } from "./PracticeFilterPanel";
 import type { EntryCategory } from "@/features/entries/types";
@@ -9,9 +9,15 @@ interface Props {
   filterState: PracticeFilterState;
   allowedCategories?: EntryCategory[];
   avaliableEntriesCount?: number | null;
+  inlineOnMobile?: boolean;
 }
 
-export function PracticeFiltersArea({ filterState, allowedCategories, avaliableEntriesCount = null }: Props) {
+export function PracticeFiltersArea({
+  filterState,
+  allowedCategories,
+  avaliableEntriesCount = null,
+  inlineOnMobile = false,
+}: Props) {
   const { t } = useTranslation();
   const { filterPanelProps, showFilters, isMobileDrawerOpen, setIsMobileDrawerOpen, activeFilterCount, clearFilters } =
     filterState;
@@ -26,24 +32,27 @@ export function PracticeFiltersArea({ filterState, allowedCategories, avaliableE
           <PracticeFilterPanel {...filterPanelProps} allowedCategories={allowedCategories} />
         </div>
       )}
-      <SideDrawer
-        open={isMobileDrawerOpen}
-        onClose={() => setIsMobileDrawerOpen(false)}
-        onOpen={() => setIsMobileDrawerOpen(true)}
-        tabLabel={t("practice.filters")}
-        tabIcon={<TfiPanel className="text-xl" />}
-        title={title}
-        subtitle={subtitle}
-        hasActiveIndicator={activeFilterCount > 0}
-        headerAction={
-          activeFilterCount > 0 ? (
-            <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">
-              {t("practice.clearFilters")}
-            </button>
-          ) : undefined
-        }>
-        <PracticeFilterPanel {...filterPanelProps} allowedCategories={allowedCategories} inDrawer />
-      </SideDrawer>
+      {!inlineOnMobile && (
+        <SideDrawer
+          open={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+          onOpen={() => setIsMobileDrawerOpen(true)}
+          tabLabel={t("practice.filters")}
+          // tabIcon={<TfiPanel className="text-xl" />}
+          tabIcon={<IoFilterCircleSharp className="text-[40px]" />}
+          title={title}
+          subtitle={subtitle}
+          hasActiveIndicator={activeFilterCount > 0}
+          headerAction={
+            activeFilterCount > 0 ? (
+              <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium">
+                {t("practice.clearFilters")}
+              </button>
+            ) : undefined
+          }>
+          <PracticeFilterPanel {...filterPanelProps} allowedCategories={allowedCategories} inDrawer />
+        </SideDrawer>
+      )}
     </>
   );
 }

@@ -28,6 +28,7 @@ interface Props {
   onDateFilterChange?: (v: DateFilter | null) => void;
   allowedCategories?: EntryCategory[];
   inDrawer?: boolean;
+  headerLine?: boolean;
 }
 
 export function PracticeFilterPanel({
@@ -46,11 +47,12 @@ export function PracticeFilterPanel({
   onDateFilterChange,
   allowedCategories,
   inDrawer = false,
+  headerLine = false,
 }: Props) {
   const { t } = useTranslation();
 
   const labelCls = inDrawer
-    ? "text-sm font-medium text-amber-700 dark:text-amber-400  "
+    ? `text-sm font-medium text-amber-700 dark:text-amber-400${headerLine ? " shrink-0" : "  "}`
     : "text-xs font-medium text-gray-500 dark:text-gray-400 pt-1.5 shrink-0 w-16 ";
   const btnBase = inDrawer
     ? "px-3 py-1.5 rounded-full text-sm font-medium border transition-colors"
@@ -58,18 +60,28 @@ export function PracticeFilterPanel({
   const tagBtn = inDrawer
     ? "px-3 py-1.5 rounded-full text-sm font-medium border transition-colors"
     : "px-2.5 py-1 rounded-full text-xs font-medium border transition-colors";
-  const sectionCls = inDrawer ? "flex flex-col gap-2 " : "flex items-start gap-2 flex-wrap ";
+  const sectionCls = inDrawer ? "flex flex-col gap-2" : "flex items-start gap-2 flex-wrap ";
   const groupCls = inDrawer ? "flex gap-2 flex-wrap" : "flex gap-1.5 flex-wrap";
 
   const visibleCategories = allowedCategories
     ? CATEGORY_KEYS.filter((k) => allowedCategories.includes(k))
     : CATEGORY_KEYS;
 
+  function renderLabel(text: string) {
+    if (!headerLine) return <span className={labelCls}>{text}</span>;
+    return (
+      <div className="flex items-center gap-2 min-w-0">
+        <span className={labelCls}>{text}</span>
+        <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700 min-w-4" />
+      </div>
+    );
+  }
+
   const content = (
     <>
       {" "}
       <div className={sectionCls}>
-        <span className={labelCls}>{t("practice.filterPanel.category")}</span>
+        {renderLabel(t("practice.filterPanel.category"))}
         <div className={groupCls}>
           <button
             onClick={() => onCategoryChange(null)}
@@ -88,7 +100,7 @@ export function PracticeFilterPanel({
       </div>{" "}
       {onDateFilterChange && (
         <div className={sectionCls}>
-          <span className={labelCls}>{t("entries.dateLabel")}</span>
+          {renderLabel(t("entries.dateLabel"))}
           <div className={groupCls}>
             {(
               [
@@ -109,7 +121,7 @@ export function PracticeFilterPanel({
         </div>
       )}
       <div className={sectionCls}>
-        <span className={labelCls}>{t("practice.filterPanel.rating")}</span>
+        {renderLabel(t("practice.filterPanel.rating"))}
         <RatingMultiSelect selected={selectedRatings} onChange={onRatingsChange} large={inDrawer} />
         {onMasteryFilterChange && (
           <>
@@ -131,7 +143,7 @@ export function PracticeFilterPanel({
       </div>
       {onReviewFilterChange && (
         <div className={sectionCls}>
-          <span className={labelCls}>{t("practice.filterPanel.reviewLabel")}</span>
+          {renderLabel(t("practice.filterPanel.reviewLabel"))}
           <div className={groupCls}>
             <button
               onClick={() => onReviewFilterChange(reviewFilter === "stale" ? null : "stale")}
@@ -148,7 +160,7 @@ export function PracticeFilterPanel({
       )}
       {allTags.length > 0 && (
         <div className={sectionCls}>
-          <span className={labelCls}>{t("practice.filterPanel.tag")}</span>
+          {renderLabel(t("practice.filterPanel.tag"))}
           <div className={groupCls}>
             {allTags.map((tag) => (
               <button

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FaArrowLeft } from "react-icons/fa";
+import { BackButton } from "@/shared/ui/BackButton";
 import { entriesApi } from "@/api/api";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
 import { useAuthStore } from "@/features/auth/store/authStore";
@@ -163,10 +163,7 @@ export function DuePage() {
       {/* ── Header (always visible) ─────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
         <div className="flex items-start gap-3 min-w-0 pb-2 pt-[1rem]">
-          <Button onClick={() => navigate("/practice")}>
-            <FaArrowLeft />
-            {t("practice.match.backToPractice")}
-          </Button>
+          <BackButton onClick={() => navigate("/practice")} label={t("practice.match.backToPractice")} />
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.due.title")}</h1>

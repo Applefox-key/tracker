@@ -503,9 +503,9 @@
       "introHint": "Get familiar with this card"
     },
     "quiz": {
-      "title": "Quiz mode",
+      "title": "Quiz",
       "resultsTitle": "Quiz — Results",
-      "modeName": "Quiz Mode",
+      "modeName": "Quiz",
       "chooseExplanation": "Choose Explanation",
       "chooseWord": "Choose Word",
       "promptExplanation": "What's the explanation?",

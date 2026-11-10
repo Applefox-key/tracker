@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FaArrowLeft } from "react-icons/fa";
+import { EntriesCount } from "@/shared/ui/EntriesCount";
 import { usePracticeEntries, shuffle } from "@/features/practice/hooks/usePracticeEntries";
 import { usePracticeFilters } from "@/features/practice/hooks/usePracticeFilters";
 import { PracticeFiltersArea } from "@/features/practice/components/PracticeFiltersArea";
+import { PracticeIdleFilters } from "@/features/practice/components/PracticeIdleFilters";
 import { PracticeHelpModal } from "@/features/practice/components/PracticeHelpModal";
+import { PracticePageHeader } from "@/features/practice/components/PracticePageHeader";
 import { PuzzleGame } from "@/features/practice/components/PuzzleGame";
 import { Button } from "@/shared/ui/Button";
 import type { Entry } from "@/features/entries/types";
 import { useEntryCrud } from "@/hooks/useEntryCrud";
-import { PracticeModeIndicator } from "@/shared/ui/PracticeModeIndicator";
 
 const LS_PUZZLE_SHOW_IMAGES = "puzzle_show_images";
 
@@ -20,7 +21,7 @@ export function PuzzlePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const filterState = usePracticeFilters();
-  const { filters, showFilters, setShowFilters, activeFilterCount, clearFilters } = filterState;
+  const { filters } = filterState;
   const [showImages, setShowImages] = useState(() => localStorage.getItem(LS_PUZZLE_SHOW_IMAGES) === "true");
   const [showHelp, setShowHelp] = useState(false);
 
@@ -95,58 +96,29 @@ export function PuzzlePage() {
         settings={[{ icon: "🖼", label: t("practice.showImages"), desc: t("practice.puzzle.helpShowImages") }]}
       />
 
-      {/* ── Header (always visible) ─────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
-        <div className="flex items-start  gap-3 min-w-0 pt-[1rem]">
-          <Button onClick={() => navigate("/practice")}>
-            <FaArrowLeft />
-            {t("practice.match.backToPractice")}
-          </Button>
-          <div className="min-w-0 pb-2">
-            <div className="flex items-center  gap-1.5">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("practice.puzzle.title")}</h1>
-              <PracticeModeIndicator />
-              {phase !== "idle" && (
-                <button
-                  onClick={() => setShowHelp(true)}
-                  className="text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 border border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500 rounded-full text-sm sm:text-xs font-bold w-6 h-6 sm:w-5 sm:h-5 flex items-center justify-center shrink-0 transition-colors mt-0.5">
-                  ?
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+      <PracticePageHeader
+        title={t("practice.puzzle.title")}
+        onBack={phase === "idle" ? () => navigate("/practice") : () => setPhase("idle")}
+        backLabel={t("practice.match.backToPractice")}
+        onHelp={() => setShowHelp(true)}
+        showHelpBtn={phase !== "idle"}
+        filterState={filterState}
+      >
+        <button
+          onClick={toggleShowImages}
+          className={[
+            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors",
+            showImages ? "bg-emerald-600 text-white border-emerald-600" : btnInactive,
+          ].join(" ")}>
+          🖼 {t("practice.showImages")}
+        </button>
+      </PracticePageHeader>
 
-        <div className="flex items-center gap-2 sm:ml-auto flex-wrap sm:flex-nowrap">
-          <button
-            onClick={toggleShowImages}
-            className={[
-              "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-colors",
-              showImages ? "bg-emerald-600 text-white border-emerald-600" : btnInactive,
-            ].join(" ")}>
-            🖼 {t("practice.showImages")}
-          </button>
-          <div className="hidden sm:block w-px h-4 bg-gray-200 dark:bg-gray-600 shrink-0" />
-          <Button
-            variant={showFilters ? "primary" : "secondary"}
-            size="sm"
-            className="hidden sm:block"
-            onClick={() => setShowFilters((v) => !v)}>
-            {t("practice.filters")}
-            {activeFilterCount > 0 && <span className="ml-1">({activeFilterCount})</span>}
-            <span className="text-xs ml-1">{showFilters ? "▲" : "▼"}</span>
-          </Button>
-          {activeFilterCount > 0 && (
-            <button onClick={clearFilters} className="text-xs text-red-500 hover:text-red-700 font-medium">
-              {t("practice.clear")}
-            </button>
-          )}
-        </div>
-      </div>
-
-      <hr className="border-gray-200 dark:border-gray-700" />
-
-      <PracticeFiltersArea filterState={filterState} avaliableEntriesCount={filteredEntries.length} />
+      <PracticeFiltersArea
+        filterState={filterState}
+        avaliableEntriesCount={filteredEntries.length}
+        inlineOnMobile={phase === "idle"}
+      />
 
       {/* ── Idle: start prompt ──────────────────────────────────── */}
       {phase === "idle" && (
@@ -155,8 +127,9 @@ export function PuzzlePage() {
             {t("practice.puzzle.helpDesc")}
           </p>
           <p className="text-sm text-gray-400 dark:text-gray-500">
-            {t("practice.entriesAvailable", { count: filteredEntries.length })}
+            <EntriesCount count={filteredEntries.length} label={t("practice.entriesAvailable", { count: filteredEntries.length })} />
           </p>
+          <PracticeIdleFilters filterState={filterState} />
           {!canStart && (
             <p className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-2">
               {t("practice.puzzle.noMatchingEntries")}

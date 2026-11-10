@@ -45,7 +45,7 @@ export function SideDrawer({
       {/* Peek tab — mobile only */}
       <button
         onClick={open ? onClose : onOpen}
-        className={`sm:hidden fixed z-[51] bg-emerald-600 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-white shadow-lg select-none flex  items-center justify-center gap-1 p-2 opacity-70
+        className={`sm:hidden fixed z-[51] bg-emerald-600 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-white dark:text-emerald-400 shadow-lg select-none flex  items-center justify-center gap-1 p-2 opacity-70
           transition-[transform,opacity] duration-300 ease-in-out h-14 
           ${open ? "opacity-100  dark:bg-emerald-600" : "opacity-70"}
   
@@ -54,7 +54,6 @@ export function SideDrawer({
           ${isRight && open ? "-translate-x-[100vw]" : ""}
           ${!isRight && open ? "translate-x-[100vw]" : ""}`}>
         {tabIcon}
-
         <span
           className="hidden sm:flex font-bold leading-none tracking-wide flex items-center gap-0.5"
           style={{ fontSize: "12px" }}>
