@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { PracticeFilterPanel } from "./PracticeFilterPanel";
 import type { EntryCategory } from "@/features/entries/types";
 import type { PracticeFilterState } from "../hooks/usePracticeFilters";
+import { IoFilterCircleSharp } from "react-icons/io5";
 
 interface Props {
   filterState: PracticeFilterState;
@@ -13,9 +14,10 @@ export function PracticeIdleFilters({ filterState, allowedCategories }: Props) {
   const { filterPanelProps, activeFilterCount, clearFilters } = filterState;
 
   return (
-    <div className="sm:hidden w-full border-t border-gray-200 dark:border-gray-700 pt-4">
+    <div className="sm:hidden w-full border border-gray-200 dark:border-gray-700 pt-4 bg-emerald-50 dark:bg-emerald-900/30 p-4 rounded-lg">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+        <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 flex justify-between">
+          <IoFilterCircleSharp className="text-[20px] text-emerald-600 dark:text-emerald-400 " />
           {t("practice.filters")}
           {activeFilterCount > 0 && (
             <span className="ml-1.5 text-emerald-600 dark:text-emerald-400">({activeFilterCount})</span>

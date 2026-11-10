@@ -45,8 +45,8 @@ export function PracticePageHeader({
                   ?
                 </button>
               )}
-              <PracticeModeIndicator />
-              <div className="absolute top-0 sm:relative"></div>
+              <PracticeModeIndicator small />
+              {/* <div className="absolute top-0 sm:relative"></div> */}
             </div>
           </div>
         </div>

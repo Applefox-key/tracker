@@ -6,6 +6,7 @@ import { authApi, getAvatarUrl } from "@/api/api";
 import { useUserSettings } from "@/hooks/useUserSettings";
 import { ALL_SPEECH_LANGS, type LangCode } from "@/lib/userSettings";
 import { ToggleSwitch } from "@/shared/ui/ToggleSwitch";
+import { PracticeModeIndicator } from "@/shared/ui/PracticeModeIndicator";
 
 type ProfileTab = "profile" | "settings";
 
@@ -312,7 +313,9 @@ export function ProfilePage() {
           {/* Practice mode */}
           <div className="flex flex-col gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
             <div>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("profile.practiceMode")}</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 flex justify-between items-center">
+                {t("profile.practiceMode")} <PracticeModeIndicator />
+              </p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t("profile.practiceModeHint")}</p>
             </div>
             <ToggleSwitch
